@@ -10,6 +10,8 @@
     <h1 class="page-title">Privacy <span class="green">Policy</span></h1>
     <p class="legal-updated">Last updated: <?= date('F j, Y') ?></p>
 
+    <hr style="border:none;border-top:1px solid var(--border);margin:24px auto 32px;max-width:120px;opacity:0.5">
+
     <div class="legal-block">
         <h2>1. Introduction</h2>
         <p>Volatys Dynamics LTD, operating as Doji Funding® ("we", "us", "our"), is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you use our website and services.</p>
@@ -75,6 +77,15 @@
         <h2>12. Contact</h2>
         <p>For privacy-related inquiries: <a href="mailto:privacy@dojifunding.com" class="green">privacy@dojifunding.com</a></p>
         <p style="margin-top:12px"><strong>Volatys Dynamics LTD</strong><br>Data Controller for Doji Funding®</p>
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:32px auto 0;max-width:120px;opacity:0.5">
+
+    <div style="text-align:center;padding:24px 0">
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false" style="color:var(--text3);font-size:13px;display:inline-flex;align-items:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+            Back to top
+        </a>
     </div>
 
 </div>

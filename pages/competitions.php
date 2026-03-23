@@ -10,6 +10,7 @@
 <!-- HERO with Liquid Wave -->
 <section class="hero" style="min-height:420px;padding:90px 32px 60px">
     <canvas class="hero-globe" id="waveCanvas"></canvas>
+    <div class="hero-glow" style="top:-200px;left:50%;transform:translateX(-50%)"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
         <div class="badge">Compete & Win</div>
@@ -17,6 +18,30 @@
         <p class="subtitle">Compete against other traders. Prove your skills. Win real prizes and funded accounts.</p>
     </div>
 </section>
+
+<!-- TRUST BAR -->
+<section style="background:var(--bg2);border-bottom:1px solid rgba(16,185,129,0.08)">
+    <div class="trust-bar" style="max-width:1200px;margin:0 auto">
+        <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <span><strong>700K+</strong> Configurations</span>
+        </div>
+        <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            <span><strong>Up to 90%</strong> Profit Split</span>
+        </div>
+        <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span><strong>24h</strong> Payouts</span>
+        </div>
+        <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span><strong>No</strong> Time Limit</span>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
 
 <!-- COMPETITION CARDS + RULES -->
 <section class="section" style="background:var(--bg)">
@@ -349,6 +374,8 @@
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 <!-- ═══ FREQUENTLY ASKED QUESTIONS ═══ -->
 <section class="section" style="background:var(--bg2)">
     <div class="section-inner" style="max-width:900px">
@@ -443,6 +470,8 @@
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 <!-- ═══ IMPORTANT INFORMATION & DISCLAIMER ═══ -->
 <section class="section" style="background:var(--bg)">
     <div class="section-inner" style="max-width:900px">
@@ -477,11 +506,13 @@
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 <!-- ═══ CTA ═══ -->
 <section class="section" style="background:var(--bg2)">
     <div class="section-inner" style="max-width:900px">
         <div class="comp-notify scroll-reveal">
-            <p class="comp-notify-title">🔔 Be the first to know when competitions launch</p>
+            <p class="comp-notify-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> Be the first to know when competitions launch</p>
             <p class="comp-notify-sub">Create your account now and you'll be notified as soon as competitions go live.</p>
             <?php if (!isLoggedIn()): ?>
             <button class="btn-primary comp-notify-btn" onclick="AuthModal.open('signup')">Create Account</button>
@@ -491,5 +522,7 @@
         </div>
     </div>
 </section>
+
+<div class="section-divider"></div>
 
 <?php include 'includes/community.php'; ?>

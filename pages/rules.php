@@ -10,7 +10,7 @@
     <h1 class="page-title">Trading <span class="green">Rules</span></h1>
     <p class="page-subtitle">Clear, transparent rules for every evaluation type. No hidden conditions.</p>
 
-    <div style="height:40px"></div>
+    <div class="section-divider"></div>
 
     <!-- Rule nav tabs -->
     <div class="rule-tabs">
@@ -83,7 +83,7 @@
         </div>
 
         <div class="rule-card">
-            <div class="rule-card-title">🚫 Prohibited Strategies</div>
+            <div class="rule-card-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff3b3b" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> Prohibited Strategies</div>
             <div class="rule-list">
                 <div class="rule-list-item forbidden"><?= icon('x-circle', 14) ?> Martingale / Grid Trading</div>
                 <div class="rule-list-item forbidden"><?= icon('x-circle', 14) ?> Hedging between multiple accounts</div>
@@ -94,7 +94,7 @@
         </div>
 
         <div class="rule-card">
-            <div class="rule-card-title">📰 News Trading</div>
+            <div class="rule-card-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><line x1="10" y1="6" x2="18" y2="6"/><line x1="10" y1="10" x2="18" y2="10"/><line x1="10" y1="14" x2="14" y2="14"/></svg> News Trading</div>
             <p>News trading eligibility depends on your evaluation type and configuration:</p>
             <div class="rule-grid">
                 <div class="rule-mini">
@@ -253,5 +253,7 @@ function showRuleTab(id, btn) {
     btn.classList.add('active');
 }
 </script>
+
+<div class="section-divider"></div>
 
 <?php include 'includes/community.php'; ?>

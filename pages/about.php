@@ -90,7 +90,7 @@
 
     </div>
 
-    <div style="height:64px"></div>
+    <div class="section-divider"></div>
 
     <!-- OUR VALUES -->
     <h2 style="text-align:center;margin-bottom:32px">Our <span class="green">Values</span></h2>
@@ -135,7 +135,7 @@
 
     </div>
 
-    <div style="height:64px"></div>
+    <div class="section-divider"></div>
 
     <!-- COMPANY INFORMATION -->
     <h2 style="text-align:center;margin-bottom:12px">The <span class="green">Company</span></h2>
@@ -166,7 +166,7 @@
         </div>
     </div>
 
-    <div style="height:64px"></div>
+    <div class="section-divider"></div>
 
     <!-- STATS BAR -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;text-align:center;padding:40px 24px;background:var(--bg3);border:1px solid var(--border);border-radius:16px">
@@ -188,7 +188,7 @@
         </div>
     </div>
 
-    <div style="height:64px"></div>
+    <div class="section-divider"></div>
 
     <!-- CTA -->
     <div style="text-align:center;padding:48px 24px;background:var(--bg3);border:1px solid var(--border);border-radius:16px">

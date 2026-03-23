@@ -57,7 +57,7 @@
             </div>
         </div>
 
-        <div style="height:24px"></div>
+        <div class="section-divider"></div>
 
         <!-- cTrader -->
         <div class="platform-card">
@@ -98,7 +98,7 @@
             </div>
         </div>
 
-        <div style="height:48px"></div>
+        <div class="section-divider"></div>
 
         <!-- Comparison -->
         <h2 style="text-align:center;margin-bottom:24px">Platform <span class="green">Comparison</span></h2>
@@ -126,5 +126,7 @@
 
     </div>
 </section>
+
+<div class="section-divider"></div>
 
 <?php include 'includes/community.php'; ?>

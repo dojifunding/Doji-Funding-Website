@@ -10,6 +10,8 @@
     <h1 class="page-title">Terms of <span class="green">Service</span></h1>
     <p class="legal-updated">Last updated: <?= date('F j, Y') ?></p>
 
+    <hr style="border:none;border-top:1px solid var(--border);margin:24px auto 32px;max-width:120px;opacity:0.5">
+
     <div class="legal-block">
         <h2>1. Introduction</h2>
         <p>These Terms of Service ("Terms") govern your access to and use of the services provided by Volatys Dynamics LTD ("Company", "we", "us", "our"), operating under the brand name Doji Funding® ("Doji Funding", "Platform"). By accessing or using our services, you agree to be bound by these Terms. If you do not agree, you must not use our services.</p>
@@ -83,6 +85,15 @@
         <h2>14. Contact</h2>
         <p>For questions regarding these Terms, contact us at: <a href="mailto:legal@dojifunding.com" class="green">legal@dojifunding.com</a> or visit our <a href="contact.php" class="green">Contact page</a>.</p>
         <p style="margin-top:12px"><strong>Volatys Dynamics LTD</strong><br>Operating as Doji Funding®</p>
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:32px auto 0;max-width:120px;opacity:0.5">
+
+    <div style="text-align:center;padding:24px 0">
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false" style="color:var(--text3);font-size:13px;display:inline-flex;align-items:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+            Back to top
+        </a>
     </div>
 
 </div>

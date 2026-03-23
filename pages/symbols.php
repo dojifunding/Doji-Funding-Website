@@ -21,6 +21,13 @@
             <button class="symbol-tab" onclick="showSymbolCat('stocks', this)">Stocks <span class="symbol-tab-count">800+</span></button>
         </div>
 
+        <div class="section-divider"></div>
+
+        <div style="margin:24px 0 16px;position:relative;max-width:400px">
+            <input type="text" id="symbolSearch" class="form-input" placeholder="Search instruments..." style="padding-left:36px;background:var(--bg3);border:1px solid var(--border)" oninput="filterSymbols(this.value)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+
         <!-- FOREX -->
         <div class="symbol-cat active" id="cat-forex">
             <h3 style="margin-bottom:16px">Forex Pairs <span style="color:var(--text3);font-size:14px;font-weight:400">— 60+ Major, Minor & Exotic pairs from 0.0 pips</span></h3>
@@ -176,6 +183,16 @@ function showSymbolCat(cat, btn) {
     document.getElementById('cat-' + cat).classList.add('active');
     btn.classList.add('active');
 }
+
+function filterSymbols(query) {
+    query = query.toLowerCase();
+    document.querySelectorAll('.symbol-item').forEach(function(item) {
+        var text = item.textContent.toLowerCase();
+        item.style.display = text.includes(query) ? '' : 'none';
+    });
+}
 </script>
+
+<div class="section-divider"></div>
 
 <?php include 'includes/community.php'; ?>

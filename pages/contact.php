@@ -10,14 +10,14 @@
     <h1 class="page-title">Contact <span class="green">Us</span></h1>
     <p class="page-subtitle">We're here to help. Reach out through any of the channels below.</p>
 
-    <div style="height:48px"></div>
+    <div class="section-divider"></div>
 
     <div class="contact-grid">
 
         <!-- Contact channels -->
         <div>
             <div class="contact-card">
-                <div class="contact-card-icon">📧</div>
+                <div class="contact-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg></div>
                 <h3>General Support</h3>
                 <p>Questions about your account, challenges, or trading rules.</p>
                 <a href="mailto:support@dojifunding.com" class="contact-link">support@dojifunding.com</a>
@@ -33,7 +33,7 @@
             </div>
 
             <div class="contact-card">
-                <div class="contact-card-icon">🤝</div>
+                <div class="contact-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
                 <h3>Affiliate Program</h3>
                 <p>Partnership inquiries, affiliate support, or custom deals.</p>
                 <a href="mailto:affiliates@dojifunding.com" class="contact-link">affiliates@dojifunding.com</a>
@@ -41,7 +41,7 @@
             </div>
 
             <div class="contact-card">
-                <div class="contact-card-icon">⚖️</div>
+                <div class="contact-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round"><path d="M12 3v18"/><path d="M2 12h4l4-9 4 9h4"/><circle cx="6" cy="16" r="2"/><circle cx="18" cy="16" r="2"/></svg></div>
                 <h3>Legal & Compliance</h3>
                 <p>Terms of service, privacy, data requests, or legal matters.</p>
                 <a href="mailto:legal@dojifunding.com" class="contact-link">legal@dojifunding.com</a>
@@ -92,7 +92,7 @@
 
     </div>
 
-    <div style="height:48px"></div>
+    <div class="section-divider"></div>
 
     <!-- Community -->
     <div class="contact-community">

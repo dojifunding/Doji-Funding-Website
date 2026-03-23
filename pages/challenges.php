@@ -12,6 +12,7 @@
 <!-- HERO with Liquid Wave -->
 <section class="hero" style="min-height:420px;padding:90px 32px 60px">
     <canvas class="hero-globe" id="waveCanvas"></canvas>
+    <div class="hero-glow" style="top:-200px;left:50%;transform:translateX(-50%)"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
         <div class="badge">Configure & Trade</div>
@@ -19,6 +20,30 @@
         <p class="subtitle">Select your evaluation type, customize every parameter, and see your price in real time.</p>
     </div>
 </section>
+
+<!-- TRUST BAR -->
+<section style="background:var(--bg2);border-bottom:1px solid rgba(16,185,129,0.08)">
+    <div class="trust-bar" style="max-width:1200px;margin:0 auto">
+        <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <span><strong>700K+</strong> Configurations</span>
+        </div>
+        <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            <span><strong>Up to 90%</strong> Profit Split</span>
+        </div>
+        <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span><strong>24h</strong> Payouts</span>
+        </div>
+        <div class="trust-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span><strong>No</strong> Time Limit</span>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
 
 <section style="padding:48px 16px 0;background:var(--bg)">
     <div class="section-inner">
@@ -116,7 +141,7 @@
 
                 <!-- Share -->
                 <button class="share-btn" onclick="Configurator.share()">
-                    🔗 Share Configuration
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Share Configuration
                 </button>
                 <div id="shareMsg"></div>
 
@@ -311,5 +336,7 @@
 
     </div>
 </section>
+
+<div class="section-divider"></div>
 
 <?php include 'includes/community.php'; ?>

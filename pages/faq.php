@@ -27,6 +27,8 @@ global $faqCategories;
             Each Q&amp;A pair generates a Question/Answer schema entity for Google rich results
         </div>
 
+        <hr style="border:none;border-top:1px solid var(--border);margin:0 auto 32px;max-width:120px;opacity:0.5">
+
         <!-- Category Tabs (built by JS from config data) -->
         <div class="faq-cats" id="faqCats"></div>
 

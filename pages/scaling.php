@@ -15,7 +15,7 @@
     <!-- Visual progression -->
     <div class="scale-progression">
         <div class="scale-step">
-            <div class="scale-icon">🏁</div>
+            <div class="scale-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
             <div class="scale-level">Funded</div>
             <div class="scale-size">$50K</div>
             <div class="scale-desc">Pass your challenge</div>
@@ -29,7 +29,7 @@
         </div>
         <div class="scale-arrow">→</div>
         <div class="scale-step">
-            <div class="scale-icon">🚀</div>
+            <div class="scale-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round"><path d="M6 12l-3 9 9-3 12-12-6-6-12 12z"/><path d="M15 7l2 2"/><circle cx="17" cy="5" r="1"/></svg></div>
             <div class="scale-level">Scale 2</div>
             <div class="scale-size">$200K</div>
             <div class="scale-desc">6 months profitable</div>
@@ -44,6 +44,8 @@
     </div>
 
     <div style="height:48px"></div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:0 auto 48px;max-width:120px;opacity:0.5">
 
     <!-- Scaling by evaluation type -->
     <h2 style="text-align:center;margin-bottom:24px">Scaling by <span class="green">Evaluation Type</span></h2>
@@ -91,6 +93,8 @@
 
     <div style="height:48px"></div>
 
+    <hr style="border:none;border-top:1px solid var(--border);margin:0 auto 48px;max-width:120px;opacity:0.5">
+
     <!-- Eligibility -->
     <h2 style="text-align:center;margin-bottom:24px">Eligibility <span class="green">Requirements</span></h2>
 
@@ -120,12 +124,15 @@
 
     <!-- Trader Levels -->
     <div style="height:48px"></div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:0 auto 48px;max-width:120px;opacity:0.5">
+
     <h2 style="text-align:center;margin-bottom:24px">Trader <span class="green">Levels</span></h2>
     <p style="text-align:center;color:var(--text3);font-size:14px;margin-bottom:32px">As you progress, you unlock better conditions and exclusive benefits.</p>
 
     <div class="level-timeline">
         <div class="level-item">
-            <div class="level-badge">🥉</div>
+            <div class="level-badge"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/></svg></div>
             <div class="level-info">
                 <div class="level-name">Rookie</div>
                 <div class="level-duration">0 — 3 months</div>
@@ -133,7 +140,7 @@
             </div>
         </div>
         <div class="level-item">
-            <div class="level-badge">🥈</div>
+            <div class="level-badge"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/></svg></div>
             <div class="level-info">
                 <div class="level-name">Trader</div>
                 <div class="level-duration">3 — 6 months</div>
@@ -141,7 +148,7 @@
             </div>
         </div>
         <div class="level-item">
-            <div class="level-badge">🥇</div>
+            <div class="level-badge"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/></svg></div>
             <div class="level-info">
                 <div class="level-name">Pro</div>
                 <div class="level-duration">6 — 12 months</div>

@@ -10,6 +10,8 @@
     <h1 class="page-title">Refund <span class="green">Policy</span></h1>
     <p class="legal-updated">Last updated: <?= date('F j, Y') ?></p>
 
+    <hr style="border:none;border-top:1px solid var(--border);margin:24px auto 32px;max-width:120px;opacity:0.5">
+
     <div class="legal-block">
         <h2>1. Overview</h2>
         <p>This Refund Policy outlines the conditions under which Volatys Dynamics LTD, operating as Doji Funding®, may issue refunds for Program Fees paid for our evaluation services.</p>
@@ -60,6 +62,15 @@
     <div class="legal-block">
         <h2>9. Contact</h2>
         <p>Questions about this policy? Contact us at <a href="mailto:support@dojifunding.com" class="green">support@dojifunding.com</a> or visit our <a href="contact.php" class="green">Contact page</a>.</p>
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:32px auto 0;max-width:120px;opacity:0.5">
+
+    <div style="text-align:center;padding:24px 0">
+        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false" style="color:var(--text3);font-size:13px;display:inline-flex;align-items:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+            Back to top
+        </a>
     </div>
 
 </div>
