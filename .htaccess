@@ -16,11 +16,30 @@
     RewriteRule ^faq/?$ faq.php [L]
 </IfModule>
 
+# ─── Security Headers ───
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
 # ─── Security ───
 # Block access to config files
 <FilesMatch "\.(php)$">
     # Only allow entry point files
 </FilesMatch>
+
+# Block direct access to .env files
+<FilesMatch "^\.env">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block direct access to .git directory
+<IfModule mod_rewrite.c>
+    RewriteRule ^\.git - [F,L]
+</IfModule>
 
 # Block direct access to includes, config, and database
 <IfModule mod_rewrite.c>
@@ -45,4 +64,4 @@
 </IfModule>
 
 # ─── Error pages ───
-ErrorDocument 404 /index.php
+ErrorDocument 404 /404.php

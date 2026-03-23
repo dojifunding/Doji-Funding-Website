@@ -1,18 +1,40 @@
 <?php
 /**
  * Doji Funding — Database Configuration
- * 
+ *
  * MySQL connection for InfinityFree hosting.
- * Update credentials from your InfinityFree Control Panel → MySQL Databases.
+ * Supports .env file for credentials (no Composer required).
+ * Falls back to hardcoded defaults if .env is not present.
  */
 
 // ══════════════════════════════════════════
-//  ⚠️  UPDATE THESE WITH YOUR INFINITYFREE CREDENTIALS
+//  Load .env if it exists (simple parser, no Composer needed)
 // ══════════════════════════════════════════
-define('DB_HOST', 'sql123.infinityfree.com');   // Your MySQL host (from control panel)
-define('DB_NAME', 'if0_XXXXXXX_doji');          // Your database name
-define('DB_USER', 'if0_XXXXXXX');               // Your database username
-define('DB_PASS', 'your_password_here');         // Your database password
+$__envFile = __DIR__ . '/../.env';
+if (file_exists($__envFile)) {
+    $__lines = file($__envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($__lines as $__line) {
+        $__line = trim($__line);
+        // Skip comments
+        if ($__line === '' || $__line[0] === '#') {
+            continue;
+        }
+        if (strpos($__line, '=') !== false) {
+            list($__key, $__val) = array_map('trim', explode('=', $__line, 2));
+            $_ENV[$__key] = $__val;
+        }
+    }
+    unset($__lines, $__line, $__key, $__val);
+}
+unset($__envFile);
+
+// ══════════════════════════════════════════
+//  Database credentials (.env values override defaults)
+// ══════════════════════════════════════════
+define('DB_HOST', $_ENV['DB_HOST'] ?? 'sql123.infinityfree.com');   // Your MySQL host
+define('DB_NAME', $_ENV['DB_NAME'] ?? 'if0_XXXXXXX_doji');          // Your database name
+define('DB_USER', $_ENV['DB_USER'] ?? 'if0_XXXXXXX');               // Your database username
+define('DB_PASS', $_ENV['DB_PASS'] ?? 'your_password_here');         // Your database password
 
 // ══════════════════════════════════════════
 

@@ -1,167 +1,183 @@
-# Doji Funding — Website Frontend
+# Doji Funding
 
-> **Trade Your Way. Get Funded.** — First 100% customizable prop firm.
+**Trade Your Way. Get Funded.** -- The first 100% customizable prop trading firm.
 
-## 📁 Project Structure
+Doji Funding is a full-featured website for a proprietary trading firm, built with PHP, vanilla JavaScript, and CSS. It includes a challenge configurator, user dashboard, authentication system, KYC submission, affiliate program, and comprehensive informational pages.
+
+## Tech Stack
+
+| Layer     | Technology                |
+|-----------|---------------------------|
+| Backend   | PHP 7.4+                  |
+| Frontend  | Vanilla JavaScript (ES6)  |
+| Styling   | CSS3 (custom properties)  |
+| Database  | MySQL                     |
+| Fonts     | Google Fonts CDN          |
+| Server    | Apache (mod_rewrite)      |
+
+No build tools, no Node.js, no npm -- pure PHP and vanilla JS.
+
+## Features
+
+- **Challenge Configurator** -- interactive pricing calculator with sliders, toggles, and promo codes
+- **User Authentication** -- registration, login, logout, and password management
+- **User Dashboard** -- account overview with profile and password update
+- **KYC Submission** -- identity verification flow
+- **Affiliate Program** -- referral tracking page
+- **Competitions** -- trading competition listings
+- **SEO System** -- per-page meta tags, JSON-LD schema markup, and an on-page SEO debug overlay
+- **FAQ System** -- category-based accordion with FAQPage schema
+- **Informational Pages** -- About, Platforms, Symbols, Scaling, Rules, Privacy Policy, Terms, Refund Policy, Contact
+- **Custom 404 Page** -- branded error page
+- **Apache Optimization** -- clean URLs, GZIP compression, browser caching, security headers
+
+## Project Structure
 
 ```
 doji-funding/
-│
-├── index.php                  # Entry: Homepage
-├── challenges.php             # Entry: Challenges + Configurator
-├── faq.php                    # Entry: FAQ
-├── .htaccess                  # Apache rewrites, caching, security
+├── index.php                   # Homepage entry point
+├── challenges.php              # Challenge configurator
+├── dashboard.php               # User dashboard
+├── about.php                   # About page
+├── affiliates.php              # Affiliate program
+├── competitions.php            # Competitions
+├── contact.php                 # Contact page
+├── faq.php                     # FAQ
+├── platforms.php               # Trading platforms
+├── symbols.php                 # Tradeable symbols
+├── scaling.php                 # Scaling plan
+├── rules.php                   # Trading rules
+├── privacy.php                 # Privacy policy
+├── terms.php                   # Terms of service
+├── refund.php                  # Refund policy
+├── 404.php                     # Custom 404 page
+├── .htaccess                   # Apache config, rewrites, security
 ├── .gitignore
-├── README.md
 │
-├── config/                    # ⚙️  Server-side configuration (PHP)
-│   ├── app.php                #   Global constants (site name, URL, stats)
-│   ├── pricing.php            #   Pricing tables, promo codes, adjustment rules
-│   ├── faq.php                #   FAQ categories & Q/A data
-│   └── seo.php                #   Per-page SEO metadata & schema markup
+├── config/                     # Server-side configuration
+│   ├── app.php                 #   Global constants (site name, URL, stats)
+│   ├── database.php            #   Database connection settings
+│   ├── pricing.php             #   Pricing tables, promo codes, adjustments
+│   ├── presets.php              #   Challenge presets
+│   ├── faq.php                 #   FAQ categories and Q&A data
+│   └── seo.php                 #   Per-page SEO metadata and schema
 │
-├── includes/                  # 🧩 Shared PHP components
-│   ├── header.php             #   <head>, meta tags, CSS imports, <body>
-│   ├── nav.php                #   Sticky navigation bar
-│   └── footer.php             #   Footer, SEO overlay container, JS imports
+├── includes/                   # Shared PHP components
+│   ├── header.php              #   HTML head, meta tags, CSS imports
+│   ├── nav.php                 #   Sticky navigation bar
+│   ├── footer.php              #   Footer, JS imports, config injection
+│   ├── icons.php               #   SVG icon definitions
+│   ├── modals.php              #   Modal dialog components
+│   ├── auth.php                #   Authentication helpers
+│   ├── community.php           #   Community section component
+│   └── dashboard-data.php      #   Dashboard data helpers
 │
-├── pages/                     # 📄 Page-specific content (PHP templates)
-│   ├── home.php               #   Hero, trust bar, steps, cards, stats, CTA
-│   ├── challenges.php         #   Configurator HTML structure
-│   └── faq.php                #   FAQ categories & accordion structure
+├── pages/                      # Page-specific content templates
+│   ├── home.php
+│   ├── challenges.php
+│   ├── dashboard.php
+│   ├── faq.php
+│   └── ...                     #   One template per page
 │
-└── assets/                    # 🎨 Frontend assets
-    ├── css/
-    │   ├── main.css           #   Global: variables, reset, nav, footer, layout
-    │   ├── configurator.css   #   Configurator: sliders, toggles, pricing
-    │   └── faq.css            #   FAQ: categories, accordions
-    │
-    └── js/
-        ├── app.js             #   Global: SEO toggle & overlay
-        ├── configurator.js    #   Full configurator: pricing calc, UI, events
-        └── faq.js             #   FAQ: category tabs, accordion toggle
+├── api/                        # Backend API endpoints
+│   ├── login.php
+│   ├── logout.php
+│   ├── register.php
+│   ├── submit-kyc.php
+│   ├── update-password.php
+│   └── update-profile.php
+│
+├── database/                   # Database schema and migrations
+│   └── schema.sql
+│
+└── assets/                     # Frontend assets
+    ├── css/                    #   Stylesheets (split by module)
+    ├── js/                     #   JavaScript (split by module)
+    └── img/                    #   Images and media
 ```
 
-## 🏗️ Architecture
+## Setup Instructions
+
+### Prerequisites
+
+- PHP 7.4 or higher
+- MySQL 5.7 or higher
+- Apache with `mod_rewrite`, `mod_headers`, `mod_expires`, and `mod_deflate` enabled
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/your-org/doji-funding.git
+   cd doji-funding
+   ```
+
+2. **Configure environment variables**
+
+   Copy the example environment file and fill in your values:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   See the [Environment Variables](#environment-variables) section below.
+
+3. **Create the database**
+
+   ```bash
+   mysql -u your_user -p your_database < database/schema.sql
+   ```
+
+   Apply any migrations in the `database/` directory in order.
+
+4. **Point your web server to the project root**
+
+   **Apache** -- set the `DocumentRoot` to the project directory, or place the files in your `htdocs/` folder. The `.htaccess` file handles URL rewriting, security headers, and caching automatically.
+
+   **Nginx** -- configure equivalent rewrite rules to remove `.php` extensions and block access to `config/`, `includes/`, and `database/` directories.
+
+5. **Visit your site** -- the homepage should load at your configured domain.
+
+## Environment Variables
+
+Create a `.env` file in the project root with the following values:
+
+| Variable      | Description                        |
+|---------------|------------------------------------|
+| `DB_HOST`     | Database host (e.g., `localhost`)  |
+| `DB_NAME`     | Database name                      |
+| `DB_USER`     | Database username                  |
+| `DB_PASS`     | Database password                  |
+| `SITE_URL`    | Full site URL (e.g., `https://dojifunding.com`) |
+
+## Architecture
 
 ### Data Flow
 
 ```
-config/*.php (data)  →  includes/footer.php (injects as JSON)  →  window.DOJI_CONFIG  →  assets/js/*.js
+config/*.php (data)  ->  includes/footer.php (injects as JSON)  ->  window.DOJI_CONFIG  ->  assets/js/*.js
 ```
 
-- **PHP** renders the HTML structure and injects data as `window.DOJI_CONFIG`
-- **JavaScript** handles all interactivity (configurator, FAQ, SEO overlay)
-- **CSS** is split by module with shared variables in `:root`
+- **PHP** renders HTML and injects configuration data as `window.DOJI_CONFIG`
+- **JavaScript** handles all client-side interactivity (configurator, FAQ, dashboard)
+- **CSS** is split by module with shared variables defined in `:root`
 
-### Page Assembly (each entry point)
+### Page Assembly
+
+Each entry-point PHP file follows this pattern:
 
 ```php
-$currentPage = 'challenges';       // 1. Set context
-require 'config/app.php';           // 2. Load configs
+$currentPage = 'challenges';
+require 'config/app.php';
 require 'config/pricing.php';
-require 'config/faq.php';
 require 'config/seo.php';
-require 'includes/header.php';      // 3. HTML head + meta
-require 'includes/nav.php';         // 4. Navigation
-require 'pages/challenges.php';     // 5. Page content
-require 'includes/footer.php';      // 6. Footer + JS
+require 'includes/header.php';
+require 'includes/nav.php';
+require 'pages/challenges.php';
+require 'includes/footer.php';
 ```
 
-## 🚀 Deployment on InfinityFree
+## License
 
-### Quick Deploy
-
-1. Go to **InfinityFree Control Panel** → **Online File Manager**
-2. Navigate to `htdocs/`
-3. Upload the **entire project structure** (all files/folders)
-4. Your site is live at your domain
-
-### Via FTP (FileZilla)
-
-1. Get FTP credentials from InfinityFree Control Panel → **FTP Details**
-2. Connect with FileZilla: Host, Port 21, Username, Password
-3. Upload everything to `/htdocs/`
-4. Done
-
-### URLs
-
-| Page       | URL                              |
-|------------|----------------------------------|
-| Homepage   | `yourdomain.com/`                |
-| Challenges | `yourdomain.com/challenges.php`  |
-| FAQ        | `yourdomain.com/faq.php`         |
-
-With `.htaccess` rewrite enabled:
-- `yourdomain.com/challenges` (no .php needed)
-- `yourdomain.com/faq`
-
-## 🔧 Configuration Guide
-
-### Update pricing (`config/pricing.php`)
-- `$basePrices` — Base price per account size per challenge type
-- `$promoCodes` — Active promo codes with type (percent/fixed) and value
-- Adjustment rules are documented as comments in the file
-
-### Update FAQ (`config/faq.php`)
-- Add/remove categories or Q&A pairs in the `$faqCategories` array
-- Changes appear on both the page and the FAQPage schema
-
-### Update SEO (`config/seo.php`)
-- Per-page: title, meta description, canonical, Open Graph, schema
-- Schema is output as JSON-LD in the `<head>`
-
-### Update site-wide settings (`config/app.php`)
-- `SITE_NAME`, `SITE_URL`, trust metrics, account limits
-- `ASSET_VERSION` — bump this to bust CSS/JS cache after updates
-
-## 🔍 SEO Features
-
-- **Toggle**: Click "SEO ON/OFF" in the nav to see:
-  - Inline badges on H1, H2, H3 headings
-  - Fixed overlay with full page metadata
-  - Schema JSON-LD preview
-  - WordPress SEO checklist
-- **Real meta tags** in `<head>` per page (title, description, canonical, OG)
-- **JSON-LD schema** per page (FinancialService, Product, FAQPage)
-- **Noscript FAQ** for crawlers that don't execute JS
-
-## 👥 Team Workflow
-
-### Adding a new page
-
-1. Create `config/seo.php` entry for the new page
-2. Create `pages/newpage.php` with the content
-3. Create `newpage.php` at root as entry point (copy pattern from `faq.php`)
-4. Add link in `includes/nav.php`
-5. Optionally add `assets/css/newpage.css` and `assets/js/newpage.js`
-
-### CSS conventions
-
-- All colors use CSS variables from `:root` in `main.css`
-- Class naming: `.module-element` (e.g. `.cfg-panel`, `.faq-item`)
-- Font stacks: `'DM Sans'` for UI, `'JetBrains Mono'` for data
-
-### JS conventions
-
-- Modules use IIFE pattern with public API via global objects
-- Configurator exposes `Configurator.setTab()`, `.reset()`, `.applyPromo()`, etc.
-- Config data read from `window.DOJI_CONFIG` (injected by PHP)
-
-## 📋 Tech Stack
-
-| Layer    | Technology           |
-|----------|---------------------|
-| Backend  | PHP 7.4+            |
-| Frontend | Vanilla JS (ES6)    |
-| Styling  | CSS3 (custom props)  |
-| Fonts    | Google Fonts CDN     |
-| Hosting  | InfinityFree (Apache)|
-
-## 📝 Notes
-
-- No Node.js, no build step, no npm — pure PHP + vanilla JS
-- CSS/JS loaded conditionally per page (configurator CSS only on /challenges)
-- All interactivity works without page reload
-- Compatible with PHP 7.4+ (InfinityFree compatible)
-- `.htaccess` blocks direct access to `/config/` and `/includes/`
+All Rights Reserved. This is proprietary software. Unauthorized copying, modification, distribution, or use of this software, in whole or in part, is strictly prohibited without prior written permission from the copyright holder.

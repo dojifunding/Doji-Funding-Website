@@ -20,6 +20,18 @@ error_log
 node_modules/
 package-lock.json
 
+# Claude
+.claude/
+
+# Large binaries
+assets/img/hero-video.mp4
+
+# Database dumps
+*.sql
+
+# Uploads
+uploads/
+
 # Build artifacts
 dist/
 build/

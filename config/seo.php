@@ -188,6 +188,15 @@ $seoMeta = [
         'keywords'  => 'trading dashboard, prop firm dashboard, challenge overview',
         'schema'    => ['@context' => 'https://schema.org', '@type' => 'WebPage', 'name' => 'Dashboard — Doji Funding®'],
     ],
+    '404' => [
+        'title'     => 'Page Not Found | Doji Funding®',
+        'desc'      => 'The page you requested could not be found. Browse our trading challenges or return to the homepage.',
+        'h1'        => 'Page Not Found',
+        'canonical'  => SITE_URL . '/404',
+        'ogType'    => 'website',
+        'keywords'  => '404, page not found, doji funding',
+        'schema'    => ['@context' => 'https://schema.org', '@type' => 'WebPage', 'name' => '404 — Page Not Found — Doji Funding®'],
+    ],
 ];
 
 /**

@@ -55,17 +55,16 @@ html { overflow-x: hidden; }
 @supports (scrollbar-color: auto) {
     html { scrollbar-width: thin; scrollbar-color: #10B981 var(--bg2); }
 }
-body { 
-    background: var(--bg); 
-    color: var(--text); 
-    font-family: var(--font-body); 
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
     min-height: 100vh;
     padding-top: 100px;
-}
-body.promo-closed { padding-top: 64px; }
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
 }
+body.promo-closed { padding-top: 64px; }
 *:not(.price-original) { text-decoration: none !important; -webkit-text-decoration: none !important; }
 a { color: inherit; }
 .mono { font-family: 'JetBrains Mono', monospace; }

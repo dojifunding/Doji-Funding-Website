@@ -60,24 +60,41 @@ const AuthModal = (function() {
         return { text: '✓ Strong password', cls: 'strong' };
     }
 
+    // ─── Email validation helper ───
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
     // ─── Submit Login ───
     async function submitLogin(e) {
         e.preventDefault();
         const form = document.getElementById('loginForm');
         const btn = document.getElementById('loginBtn');
         const err = document.getElementById('loginError');
-        
+
+        // Client-side email validation
+        const emailVal = (form.email ? form.email.value : '').trim();
+        if (!isValidEmail(emailVal)) {
+            err.textContent = 'Please enter a valid email address.';
+            return;
+        }
+
         btn.disabled = true;
         btn.querySelector('.btn-text').style.display = 'none';
         btn.querySelector('.btn-loader').style.display = 'inline';
         err.textContent = '';
+
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
 
         try {
             const data = new FormData(form);
             const res = await fetch('api/login.php', {
                 method: 'POST',
                 body: data,
+                signal: controller.signal,
             });
+            clearTimeout(timeout);
             const json = await res.json();
 
             if (json.success) {
@@ -88,7 +105,12 @@ const AuthModal = (function() {
                 err.textContent = json.error || 'Login failed. Please try again.';
             }
         } catch (error) {
-            err.textContent = 'Connection error. Please try again.';
+            clearTimeout(timeout);
+            if (error.name === 'AbortError') {
+                err.textContent = 'Request timed out. Please check your connection and try again.';
+            } else {
+                err.textContent = 'Unable to reach the server. Please check your internet connection and try again.';
+            }
         } finally {
             btn.disabled = false;
             btn.querySelector('.btn-text').style.display = 'inline';
@@ -104,8 +126,14 @@ const AuthModal = (function() {
         const err = document.getElementById('signupError');
 
         // Client-side validation
+        const emailVal = (form.email ? form.email.value : '').trim();
+        if (!isValidEmail(emailVal)) {
+            err.textContent = 'Please enter a valid email address.';
+            return;
+        }
+
         const password = form.password.value;
-        
+
         if (password.length < 8) {
             err.textContent = 'Password must be at least 8 characters.';
             return;
@@ -120,12 +148,17 @@ const AuthModal = (function() {
         btn.querySelector('.btn-loader').style.display = 'inline';
         err.textContent = '';
 
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
+
         try {
             const data = new FormData(form);
             const res = await fetch('api/register.php', {
                 method: 'POST',
                 body: data,
+                signal: controller.signal,
             });
+            clearTimeout(timeout);
             const json = await res.json();
 
             if (json.success) {
@@ -136,7 +169,12 @@ const AuthModal = (function() {
                 err.textContent = json.error || 'Registration failed. Please try again.';
             }
         } catch (error) {
-            err.textContent = 'Connection error. Please try again.';
+            clearTimeout(timeout);
+            if (error.name === 'AbortError') {
+                err.textContent = 'Request timed out. Please check your connection and try again.';
+            } else {
+                err.textContent = 'Unable to reach the server. Please check your internet connection and try again.';
+            }
         } finally {
             btn.disabled = false;
             btn.querySelector('.btn-text').style.display = 'inline';
@@ -146,9 +184,12 @@ const AuthModal = (function() {
 
     // ─── Logout ───
     async function logout() {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
         try {
-            await fetch('api/logout.php', { method: 'POST' });
-        } catch (e) { /* ignore */ }
+            await fetch('api/logout.php', { method: 'POST', signal: controller.signal });
+        } catch (e) { /* proceed to redirect even on failure */ }
+        clearTimeout(timeout);
         window.location.href = 'index.php';
     }
 

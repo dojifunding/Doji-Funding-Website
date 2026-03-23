@@ -78,7 +78,11 @@
                         <label class="form-label">Message</label>
                         <textarea class="form-input" name="message" rows="5" required placeholder="Describe your question or issue..."></textarea>
                     </div>
-                    <button type="submit" class="btn-primary-lg" style="width:100%">Send Message</button>
+                    <div id="contactError" style="display:none;color:#e74c3c;font-size:13px;margin-bottom:12px"></div>
+                    <button type="submit" class="btn-primary-lg" id="contactBtn" style="width:100%">
+                        <span class="contact-btn-text">Send Message</span>
+                        <span class="contact-btn-loader" style="display:none">Sending&hellip;</span>
+                    </button>
                     <div id="contactSuccess" class="contact-success" style="display:none">
                         <?= icon('check-circle', 14) ?> Message sent successfully! We'll get back to you within 24 hours.
                     </div>
@@ -133,16 +137,61 @@
 <script>
 function submitContactForm(e) {
     e.preventDefault();
-    // Simulate form submission
-    document.getElementById('contactForm').style.opacity = '0.5';
+
+    var form = document.getElementById('contactForm');
+    var btn = document.getElementById('contactBtn');
+    var errEl = document.getElementById('contactError');
+    var successEl = document.getElementById('contactSuccess');
+
+    // Clear previous messages
+    errEl.style.display = 'none';
+    errEl.textContent = '';
+    successEl.style.display = 'none';
+
+    // Client-side validation
+    var name = (form.name.value || '').trim();
+    var email = (form.email.value || '').trim();
+    var subject = form.subject.value;
+    var message = (form.message.value || '').trim();
+    var errors = [];
+
+    if (!name) errors.push('Full Name is required.');
+    if (!email) {
+        errors.push('Email Address is required.');
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errors.push('Please enter a valid email address.');
+    }
+    if (!subject) errors.push('Please select a subject.');
+    if (!message) {
+        errors.push('Message is required.');
+    } else if (message.length < 10) {
+        errors.push('Message must be at least 10 characters.');
+    }
+
+    if (errors.length > 0) {
+        errEl.textContent = errors[0];
+        errEl.style.display = 'block';
+        return;
+    }
+
+    // Disable button and show loading state
+    btn.disabled = true;
+    btn.querySelector('.contact-btn-text').style.display = 'none';
+    btn.querySelector('.contact-btn-loader').style.display = 'inline';
+    form.style.opacity = '0.6';
+
+    // Simulate form submission (no backend endpoint yet)
     setTimeout(function() {
-        document.getElementById('contactForm').style.opacity = '1';
-        document.getElementById('contactSuccess').style.display = 'block';
-        document.getElementById('contactForm').reset();
+        form.style.opacity = '1';
+        btn.disabled = false;
+        btn.querySelector('.contact-btn-text').style.display = 'inline';
+        btn.querySelector('.contact-btn-loader').style.display = 'none';
+        successEl.style.display = 'block';
+        form.reset();
         setTimeout(function() {
-            document.getElementById('contactSuccess').style.display = 'none';
+            successEl.style.display = 'none';
         }, 5000);
-    }, 1000);
+    }, 1500);
 }
 </script>
 
