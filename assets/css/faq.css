@@ -1,0 +1,49 @@
+/**
+ * Doji Funding — FAQ Stylesheet
+ */
+
+.faq-container { max-width: 900px; margin: 0 auto; }
+.faq-cats { display: flex; gap: 6px; margin-bottom: 32px; flex-wrap: wrap; justify-content: center; }
+.faq-cat-btn {
+    padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;
+    font-size: 13px; font-weight: 600; font-family: var(--font-heading);
+    background: var(--bg4); color: var(--text3); transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.faq-cat-btn:hover { background: var(--bg3); color: var(--text2); }
+.faq-cat-btn.active { background: var(--green); color: var(--bg); }
+.faq-cat-btn.active svg { stroke: var(--bg); }
+.faq-cat-btn.active svg path,
+.faq-cat-btn.active svg circle,
+.faq-cat-btn.active svg rect,
+.faq-cat-btn.active svg polyline { stroke: var(--bg); }
+.faq-cat-btn.active svg circle[fill],
+.faq-cat-btn.active svg rect[fill] { fill: var(--bg); }
+.faq-cat-btn.active img { filter: brightness(10) saturate(0); }
+.faq-cat-icon { display: inline-flex; align-items: center; flex-shrink: 0; }
+.faq-doji-logo { display: inline-block; vertical-align: middle; border-radius: 3px; object-fit: contain; }
+
+.faq-section-title {
+    font-size: 20px; text-align: left; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+}
+.faq-section-icon { display: inline-flex; align-items: center; flex-shrink: 0; }
+
+.faq-item { margin-bottom: 8px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); background: var(--bg3); transition: border-color 0.2s; }
+.faq-item.open { border-color: rgba(16,185,129,0.25); }
+.faq-q {
+    width: 100%; padding: 16px 20px; border: none; cursor: pointer;
+    background: transparent; color: var(--text); font-size: 14px; font-weight: 600;
+    font-family: var(--font-heading); text-align: left;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    transition: color 0.2s;
+}
+.faq-q:hover { color: var(--green); }
+.faq-chevron { flex-shrink: 0; color: var(--text3); transition: transform 0.3s ease, color 0.2s; }
+.faq-item.open .faq-chevron { transform: rotate(180deg); color: var(--green); }
+/* Legacy support */
+.faq-q .plus { color: var(--green); font-size: 18px; transition: transform 0.2s; }
+.faq-item.open .faq-q .plus { transform: rotate(45deg); }
+
+.faq-a { display: none; padding: 0 20px 16px; color: var(--text2); font-size: 13px; line-height: 1.7; }
+.faq-item.open .faq-a { display: block; }

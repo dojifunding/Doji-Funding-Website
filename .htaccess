@@ -1,0 +1,48 @@
+# Doji Funding — Apache Configuration
+# Works on InfinityFree and most shared hosting
+
+# ─── Clean URLs (optional — remove .php extensions) ───
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Remove .php extension
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(.+)$ $1.php [L,QSA]
+    
+    # Redirect /challenges to challenges.php etc.
+    RewriteRule ^challenges/?$ challenges.php [L]
+    RewriteRule ^faq/?$ faq.php [L]
+</IfModule>
+
+# ─── Security ───
+# Block access to config files
+<FilesMatch "\.(php)$">
+    # Only allow entry point files
+</FilesMatch>
+
+# Block direct access to includes, config, and database
+<IfModule mod_rewrite.c>
+    RewriteRule ^config/ - [F,L]
+    RewriteRule ^includes/ - [F,L]
+    RewriteRule ^database/ - [F,L]
+</IfModule>
+
+# ─── Caching ───
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+</IfModule>
+
+# ─── GZIP Compression ───
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript
+</IfModule>
+
+# ─── Error pages ───
+ErrorDocument 404 /index.php
