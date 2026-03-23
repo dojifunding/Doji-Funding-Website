@@ -295,3 +295,36 @@
     }
 
 })();
+
+// Scroll-triggered reveal animations
+(function() {
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    function initReveal() {
+        // Select elements to animate
+        var selectors = '.kh-card, .hiw-card, .ac-card-lg, .ac-card-sm, .rule-card, .dc-step-card, .aff-step, .aff-tier, .scale-card, .platform-card, .contact-card, .engage-card, .hero-stat, .pill-bar-item';
+        document.querySelectorAll(selectors).forEach(function(el, i) {
+            el.classList.add('reveal-item');
+            el.style.transitionDelay = (i % 6) * 80 + 'ms';
+            observer.observe(el);
+        });
+        // Animate section headers
+        document.querySelectorAll('.section h2, .page-title').forEach(function(el) {
+            el.classList.add('reveal-fade');
+            observer.observe(el);
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initReveal);
+    } else {
+        initReveal();
+    }
+})();

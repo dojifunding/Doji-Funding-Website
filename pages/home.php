@@ -10,6 +10,7 @@
 <section class="hero">
     <!-- 3D Globe Background -->
     <canvas class="hero-globe" id="heroGlobe"></canvas>
+    <div class="hero-glow" style="top:-200px;left:50%;transform:translateX(-50%)"></div>
     <!-- Overlay -->
     <div class="hero-overlay"></div>
     <!-- Content -->
@@ -49,6 +50,32 @@
             </div>
         </div>
         <div class="hero-right"></div>
+    </div>
+</section>
+
+<!-- TRUST BAR -->
+<section style="background:var(--bg2);border-bottom:1px solid rgba(16,185,129,0.08)">
+    <div class="trust-bar" style="max-width:1200px;margin:0 auto">
+        <div class="trust-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span><strong>Regulated</strong> Gibraltar Entity</span>
+        </div>
+        <div class="trust-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span><strong>4,200+</strong> Funded Traders</span>
+        </div>
+        <div class="trust-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span><strong>$12M+</strong> Paid Out</span>
+        </div>
+        <div class="trust-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span><strong>24h</strong> Guaranteed Payouts</span>
+        </div>
+        <div class="trust-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span><strong>24/7</strong> Support</span>
+        </div>
     </div>
 </section>
 
@@ -101,6 +128,8 @@
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 <!-- HOW IT WORKS — 4 Steps -->
 <section class="section" style="background:var(--bg)">
     <div class="section-inner" style="max-width:1200px;margin:0 auto;text-align:center">
@@ -130,6 +159,8 @@
         </div>
     </div>
 </section>
+
+<div class="section-divider"></div>
 
 <!-- CONFIGURATOR (Home) -->
 <section class="section" style="background:var(--bg2);padding-top:80px;padding-bottom:80px">
@@ -210,6 +241,8 @@
         </div>
     </div>
 </section>
+
+<div class="section-divider"></div>
 
 <!-- ASSET CLASSES BANNER -->
 <section class="section" style="background:var(--bg);padding-top:60px;padding-bottom:60px">
