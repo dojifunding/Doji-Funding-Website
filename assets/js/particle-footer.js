@@ -91,15 +91,15 @@
         ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
     };
 
-    // ─── Text sampling: render text at 2x then downsample for crisp edges ───
+    // ─── Text sampling: render at 3x with letter-spacing for crisp edges ───
     function sampleText() {
         particles = [];
 
         var w = canvas.width / dpr;
         var h = canvas.height / dpr;
 
-        // Render text at 2x resolution for sharper sampling
-        var scale = 2;
+        // Render text at 3x resolution for maximum sharpness
+        var scale = 3;
         var offscreen = document.createElement('canvas');
         var offCtx = offscreen.getContext('2d');
         offscreen.width = w * scale;
@@ -110,10 +110,22 @@
         fontSize = Math.max(fontSize, 28);
 
         offCtx.fillStyle = '#ffffff';
-        offCtx.font = '700 ' + (fontSize * scale) + 'px "Array Wide", Array, Inter, sans-serif';
+        offCtx.font = '700 ' + (fontSize * scale) + 'px "Array Wide", Array, sans-serif';
         offCtx.textAlign = 'center';
         offCtx.textBaseline = 'middle';
-        offCtx.fillText(CONFIG.text, offscreen.width / 2, offscreen.height / 2);
+
+        // Add letter spacing for cleaner character separation
+        var letters = CONFIG.text.split('');
+        var letterSpacing = fontSize * scale * 0.06;
+        var totalWidth = offCtx.measureText(CONFIG.text).width + letterSpacing * (letters.length - 1);
+        var startX = (offscreen.width - totalWidth) / 2;
+        var centerY = offscreen.height / 2;
+
+        var curX = startX;
+        for (var li = 0; li < letters.length; li++) {
+            offCtx.fillText(letters[li], curX + offCtx.measureText(letters[li]).width / 2, centerY);
+            curX += offCtx.measureText(letters[li]).width + letterSpacing;
+        }
 
         // Sample pixels from high-res canvas, map back to display coords
         var imageData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height);
@@ -125,25 +137,25 @@
                 var index = (y * offscreen.width + x) * 4;
                 var alpha = data[index + 3];
 
-                if (alpha > 80) {
+                if (alpha > 100) {
                     // Map back to display coordinates
                     var displayX = x / scale;
                     var displayY = y / scale;
 
-                    // Color variation based on alpha for edge softness
+                    // Color: solid core, softer edges
                     var color;
-                    if (alpha > 200) {
+                    if (alpha > 220) {
                         color = CONFIG.colorPrimary;
-                    } else if (alpha > 140) {
+                    } else if (alpha > 160) {
                         color = CONFIG.colorSecondary;
                     } else {
                         color = CONFIG.colorDim;
                     }
 
                     var p = new Particle(displayX, displayY, color);
-                    // Edge particles slightly smaller for softer look
-                    if (alpha < 160) {
-                        p.size = CONFIG.particleSize * 0.7;
+                    // Edge particles slightly smaller for antialiased feel
+                    if (alpha < 180) {
+                        p.size = CONFIG.particleSize * 0.65;
                     }
                     // Start scattered for entrance animation
                     p.x = displayX + (Math.random() - 0.5) * 300;
@@ -308,11 +320,20 @@
         initVisibility();
     }
 
-    // ─── Boot ───
+    // ─── Boot: wait for Array font to load for crisp rendering ───
+    function boot() {
+        if (document.fonts && document.fonts.load) {
+            document.fonts.load('700 48px "Array Wide"').then(init).catch(init);
+        } else {
+            // Fallback: wait a beat for font to be available
+            setTimeout(init, 300);
+        }
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', boot);
     } else {
-        init();
+        boot();
     }
 
 })();
