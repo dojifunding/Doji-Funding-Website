@@ -1,0 +1,712 @@
+/**
+ * Doji Funding — Visual Polish & UX Layer
+ * v1.0.0
+ *
+ * Enhances: card depth, section transitions, typography,
+ * micro-interactions, page transitions, toast system,
+ * smooth scroll, mobile UX, and modern fintech patterns.
+ *
+ * Loaded AFTER effects.css for highest specificity.
+ */
+
+
+/* ═══════════════════════════════════════════
+   1. PAGE ENTRANCE TRANSITION
+   ═══════════════════════════════════════════ */
+
+@keyframes pageIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+body {
+    animation: pageIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+
+/* ═══════════════════════════════════════════
+   2. ENHANCED CARD DEPTH SYSTEM
+   Layered shadows for realistic depth
+   ═══════════════════════════════════════════ */
+
+/* Base card depth — subtle layered shadow */
+.kh-card,
+.hiw-card,
+.ac-card-lg,
+.ac-card-sm,
+.dc-step-card,
+.engage-card,
+.comp-card,
+.platform-card,
+.rule-card,
+.scale-card,
+.contact-card,
+.stat-card {
+    box-shadow:
+        0 1px 2px rgba(0,0,0,0.2),
+        0 4px 8px rgba(0,0,0,0.12),
+        0 0 0 1px rgba(255,255,255,0.02) inset;
+}
+
+/* Elevated depth on hover — card lifts with realistic shadow spread */
+.kh-card:hover,
+.hiw-card:hover,
+.ac-card-lg:hover,
+.ac-card-sm:hover,
+.dc-step-card:hover,
+.engage-card:hover,
+.comp-card:hover,
+.platform-card:hover,
+.rule-card:hover,
+.scale-card:hover,
+.contact-card:hover,
+.stat-card:hover {
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.15),
+        0 8px 24px rgba(0,0,0,0.2),
+        0 24px 48px rgba(0,0,0,0.12),
+        0 0 0 1px rgba(16,185,129,0.06) inset;
+}
+
+/* Top-edge light catch — simulates overhead lighting */
+.kh-card::before,
+.hiw-card::before,
+.dc-step-card::before,
+.engage-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent 10%,
+        rgba(255,255,255,0.06) 30%,
+        rgba(255,255,255,0.08) 50%,
+        rgba(255,255,255,0.06) 70%,
+        transparent 90%
+    );
+    border-radius: 14px 14px 0 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Cards need relative position for ::before */
+.kh-card,
+.hiw-card,
+.dc-step-card,
+.engage-card {
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* ═══════════════════════════════════════════
+   3. REFINED SECTION DIVIDERS
+   ═══════════════════════════════════════════ */
+
+/* Enhanced gradient divider with center dot */
+.section-divider {
+    position: relative;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent 5%,
+        rgba(16,185,129,0.08) 20%,
+        rgba(16,185,129,0.35) 50%,
+        rgba(16,185,129,0.08) 80%,
+        transparent 95%
+    );
+}
+
+.section-divider::after {
+    content: '';
+    position: absolute;
+    top: -2px; left: 50%; transform: translateX(-50%);
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px rgba(16,185,129,0.4);
+}
+
+/* Subtle section separator between directly adjacent sections (no divider between) */
+.section + .section:not(:first-child)::before {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 2px;
+    margin: -20px auto 20px;
+    background: linear-gradient(90deg, transparent, rgba(16,185,129,0.15), transparent);
+    border-radius: 1px;
+    pointer-events: none;
+}
+
+
+/* ═══════════════════════════════════════════
+   4. TYPOGRAPHY REFINEMENTS
+   ═══════════════════════════════════════════ */
+
+/* Section heading — add subtle text shadow for depth */
+h2 {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Improve section subtitle readability */
+.section-sub,
+.page-subtitle {
+    font-size: 15px;
+    letter-spacing: 0.005em;
+}
+
+/* Trust bar stats — tabular figures for aligned numbers */
+.trust-item strong,
+.metric-val,
+.stat-val,
+.hero-stat strong {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1, 'lnum' 1;
+}
+
+/* Improve body text leading on cards */
+.kh-card p,
+.hiw-card p,
+.ac-card-lg p,
+.ac-card-sm p,
+.dc-step-content p,
+.engage-desc {
+    line-height: 1.75;
+}
+
+
+/* ═══════════════════════════════════════════
+   5. MICRO-INTERACTIONS
+   ═══════════════════════════════════════════ */
+
+/* --- Button press feedback (scale down) --- */
+.btn-primary-lg:active,
+.btn-primary:active,
+.btn-outline:active,
+.purchase-btn:active,
+.engage-btn:active,
+.comp-btn:not(:disabled):active,
+.nav-cta:active {
+    transform: scale(0.96) !important;
+    transition-duration: 80ms !important;
+}
+
+/* --- Nav link hover: smoother underline with glow --- */
+.nav-link::after {
+    background: var(--green);
+    box-shadow: 0 1px 6px rgba(16,185,129,0.3);
+    height: 2px;
+}
+
+/* --- Icon box pulse on card hover --- */
+.kh-card:hover .kh-icon,
+.hiw-card:hover .hiw-num {
+    box-shadow: 0 0 16px rgba(16,185,129,0.2);
+    border-color: rgba(16,185,129,0.3);
+    transition: all 0.3s ease;
+}
+
+/* --- Tag hover glow on asset class cards --- */
+.ac-tags span {
+    transition: all 0.2s ease;
+    cursor: default;
+}
+.ac-tags span:hover {
+    background: rgba(16,185,129,0.12);
+    border-color: rgba(16,185,129,0.25);
+    box-shadow: 0 0 8px rgba(16,185,129,0.15);
+}
+
+/* --- Pill bar item hover --- */
+.pill-bar-item {
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    cursor: default;
+}
+.pill-bar-item:hover {
+    background: rgba(16,185,129,0.06);
+    border-color: rgba(16,185,129,0.15);
+    color: var(--text);
+    transform: translateY(-2px);
+}
+
+/* --- Social icon press --- */
+.social-icon:active {
+    transform: scale(0.9);
+    transition-duration: 80ms;
+}
+
+/* --- Payment icon subtle glow on hover --- */
+.payment-icon:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+
+/* ═══════════════════════════════════════════
+   6. SMOOTH SCROLL BEHAVIOR
+   ═══════════════════════════════════════════ */
+
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+}
+
+
+/* ═══════════════════════════════════════════
+   7. TOAST NOTIFICATION SYSTEM
+   ═══════════════════════════════════════════ */
+
+.doji-toast-container {
+    position: fixed;
+    top: 120px;
+    right: 24px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.doji-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: rgba(14,16,20,0.95);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border2);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04) inset;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    max-width: 360px;
+    animation: toastIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+    font-family: var(--font-body);
+}
+
+.doji-toast.hiding {
+    animation: toastOut 0.25s cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+
+.doji-toast-success { border-color: rgba(16,185,129,0.3); }
+.doji-toast-success .doji-toast-icon { color: var(--green); }
+
+.doji-toast-error { border-color: rgba(255,59,59,0.3); }
+.doji-toast-error .doji-toast-icon { color: var(--red); }
+
+.doji-toast-info { border-color: rgba(74,158,255,0.3); }
+.doji-toast-info .doji-toast-icon { color: var(--blue); }
+
+.doji-toast-icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+}
+
+.doji-toast-close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    padding: 2px;
+    line-height: 1;
+    font-size: 14px;
+    transition: color 0.15s;
+}
+.doji-toast-close:hover { color: var(--text); }
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateX(24px) scale(0.95); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes toastOut {
+    from { opacity: 1; transform: translateX(0) scale(1); }
+    to   { opacity: 0; transform: translateX(24px) scale(0.95); }
+}
+
+@media (max-width: 768px) {
+    .doji-toast-container {
+        top: auto;
+        bottom: 80px;
+        right: 12px;
+        left: 12px;
+    }
+    .doji-toast {
+        max-width: 100%;
+    }
+}
+
+
+/* ═══════════════════════════════════════════
+   8. LOADING STATE FOR BUTTONS
+   ═══════════════════════════════════════════ */
+
+.btn-loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 18px; height: 18px;
+    margin: -9px 0 0 -9px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: btnSpin 0.6s linear infinite;
+}
+
+@keyframes btnSpin {
+    to { transform: rotate(360deg); }
+}
+
+
+/* ═══════════════════════════════════════════
+   9. NAV ENHANCEMENTS
+   ═══════════════════════════════════════════ */
+
+/* Dropdown entry animation — only for centered dropdowns (not lang) */
+.nav-dropdown-wrap .nav-dropdown.open {
+    animation: dropIn 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.lang-dropdown.open {
+    animation: dropInRight 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes dropIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(-8px) scale(0.96); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+@keyframes dropInRight {
+    from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Nav scroll shadow — added by JS */
+.nav.scrolled {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    border-bottom-color: rgba(58,64,72,0.5);
+}
+
+
+/* ═══════════════════════════════════════════
+   10. TRUST BAR ENHANCEMENTS
+   ═══════════════════════════════════════════ */
+
+.trust-bar {
+    position: relative;
+}
+
+.trust-item {
+    transition: all 0.25s ease;
+    padding: 8px 14px;
+    border-radius: 8px;
+}
+
+.trust-item:hover {
+    background: rgba(16,185,129,0.04);
+}
+
+.trust-item:hover strong {
+    color: var(--green);
+    text-shadow: 0 0 16px rgba(16,185,129,0.3);
+}
+
+/* Divider between trust items */
+.trust-item + .trust-item::before {
+    content: '';
+    position: absolute;
+    left: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 16px;
+    background: var(--border);
+}
+.trust-item {
+    position: relative;
+}
+
+
+/* ═══════════════════════════════════════════
+   11. ANIMATED STAT COUNTERS (JS-driven)
+   ═══════════════════════════════════════════ */
+
+.counter-animate {
+    display: inline-block;
+    transition: color 0.3s ease;
+}
+
+.counter-animate.counting {
+    color: var(--green);
+}
+
+
+/* ═══════════════════════════════════════════
+   12. FORM INPUT ENHANCEMENTS
+   ═══════════════════════════════════════════ */
+
+/* Floating label effect for promo/contact inputs */
+.promo-input,
+.engage-email,
+.contact-input,
+.contact-textarea {
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.promo-input:focus,
+.engage-email:focus,
+.contact-input:focus,
+.contact-textarea:focus {
+    border-color: rgba(16,185,129,0.4);
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.08), 0 0 16px rgba(16,185,129,0.06);
+    background: rgba(30,33,40,0.8);
+}
+
+/* Error state for inputs */
+.input-error {
+    border-color: rgba(255,59,59,0.4) !important;
+    box-shadow: 0 0 0 3px rgba(255,59,59,0.08) !important;
+}
+
+/* Success state for inputs */
+.input-success {
+    border-color: rgba(16,185,129,0.4) !important;
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.08) !important;
+}
+
+
+/* ═══════════════════════════════════════════
+   13. MOBILE UX IMPROVEMENTS
+   ═══════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    /* Page entrance: faster on mobile */
+    body { animation-duration: 0.35s; }
+
+    /* Improve touch targets — minimum 44px height */
+    .mobile-menu-link {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+    .mobile-menu-btn {
+        min-height: 48px;
+    }
+
+    /* Better disclaimer layout */
+    .disclaimer-btn {
+        min-height: 44px;
+        font-size: 13px;
+    }
+
+    /* Scroll snap for trust bar on mobile */
+    .trust-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 16px;
+        padding: 16px;
+        scroll-snap-type: x mandatory;
+    }
+    .trust-bar::-webkit-scrollbar { display: none; }
+    .trust-item {
+        flex-shrink: 0;
+        scroll-snap-align: center;
+        white-space: nowrap;
+    }
+    .trust-item + .trust-item::before { display: none; }
+
+    /* Mobile menu: slide-in animation */
+    .mobile-menu.open {
+        animation: mobileMenuIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    /* Sticky bottom CTA for mobile */
+    .mobile-sticky-cta {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        padding: 12px 16px;
+        background: rgba(8,9,11,0.95);
+        backdrop-filter: blur(16px);
+        border-top: 1px solid var(--border);
+        z-index: 800;
+        display: flex;
+        gap: 10px;
+    }
+    .mobile-sticky-cta .btn-primary-lg {
+        flex: 1;
+        text-align: center;
+        padding: 14px 20px;
+    }
+}
+
+@keyframes mobileMenuIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ═══════════════════════════════════════════
+   14. HERO GLOW REFINEMENT
+   ═══════════════════════════════════════════ */
+
+/* More atmospheric hero glow */
+.hero-glow {
+    background: radial-gradient(circle,
+        rgba(16,185,129,0.12) 0%,
+        rgba(16,185,129,0.06) 30%,
+        transparent 65%
+    );
+    filter: blur(20px);
+}
+
+
+/* ═══════════════════════════════════════════
+   15. SKELETON LOADING PLACEHOLDERS
+   ═══════════════════════════════════════════ */
+
+@keyframes shimmerLoad {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton {
+    background: linear-gradient(90deg,
+        var(--bg3) 25%,
+        var(--bg4) 50%,
+        var(--bg3) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmerLoad 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+.skeleton-text { height: 14px; margin-bottom: 8px; }
+.skeleton-text.short { width: 60%; }
+.skeleton-heading { height: 24px; width: 40%; margin-bottom: 12px; }
+.skeleton-card { height: 200px; border-radius: 14px; }
+
+
+/* ═══════════════════════════════════════════
+   16. CTA SECTION ENHANCEMENT
+   ═══════════════════════════════════════════ */
+
+.cta-section h2 {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Pulsing arrow hint on CTA buttons */
+.cta-content .btn-primary-lg {
+    position: relative;
+}
+
+
+/* ═══════════════════════════════════════════
+   17. BADGE & TAG SYSTEM REFINEMENT
+   ═══════════════════════════════════════════ */
+
+/* Hero badge: subtle animation */
+.badge {
+    animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+    backdrop-filter: blur(8px);
+}
+
+/* Coming soon badges: pulsing border */
+.comp-btn:disabled,
+.nav-dropdown-item.disabled {
+    cursor: not-allowed;
+}
+
+
+/* ═══════════════════════════════════════════
+   18. FOOTER REFINEMENTS
+   ═══════════════════════════════════════════ */
+
+/* Footer link hover — directional slide */
+.footer-link {
+    position: relative;
+    display: inline-block;
+}
+
+.footer-link::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0;
+    width: 0; height: 1px;
+    background: var(--green);
+    transition: width 0.25s ease;
+}
+
+.footer-link:hover::after {
+    width: 100%;
+}
+
+/* Payment grid: smoother hover */
+.payment-icon {
+    transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Footer socials: stagger reveal */
+.footer-socials .social-icon:nth-child(1) { transition-delay: 0ms; }
+.footer-socials .social-icon:nth-child(2) { transition-delay: 30ms; }
+.footer-socials .social-icon:nth-child(3) { transition-delay: 60ms; }
+.footer-socials .social-icon:nth-child(4) { transition-delay: 90ms; }
+.footer-socials .social-icon:nth-child(5) { transition-delay: 120ms; }
+.footer-socials .social-icon:nth-child(6) { transition-delay: 150ms; }
+
+
+/* ═══════════════════════════════════════════
+   19. COMPARISON TABLE POLISH
+   ═══════════════════════════════════════════ */
+
+.compare-table tr {
+    transition: background 0.15s ease;
+}
+.compare-table tr:hover td {
+    background: rgba(16,185,129,0.02);
+}
+
+/* Zebra striping */
+.compare-table tr:nth-child(even) td {
+    background: rgba(255,255,255,0.01);
+}
+
+
+/* ═══════════════════════════════════════════
+   20. FAQ ACCORDION ENHANCEMENT
+   ═══════════════════════════════════════════ */
+
+.comp-faq-item {
+    transition: background 0.2s ease;
+}
+
+.comp-faq-item.open {
+    background: rgba(16,185,129,0.02);
+}
+
+
+/* ═══════════════════════════════════════════
+   REDUCED MOTION — strip all new animations
+   ═══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+    body { animation: none; }
+    .nav-dropdown.open { animation: none; }
+    .mobile-menu.open { animation: none; }
+    .doji-toast { animation: none; }
+    .doji-toast.hiding { animation: none; }
+    .badge { animation: none; opacity: 1; }
+    .skeleton { animation: none; }
+    html { scroll-behavior: auto; }
+}

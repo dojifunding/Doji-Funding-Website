@@ -29,7 +29,7 @@
             <div class="hero-stats">
                 <div class="hero-stat">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                    <div><strong>1,000+</strong><span>Trading Instruments</span></div>
+                    <div><strong data-count="1000" data-suffix="+">0</strong><span>Trading Instruments</span></div>
                 </div>
                 <div class="hero-stat">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
@@ -62,11 +62,11 @@
         </div>
         <div class="trust-item">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span><strong>4,200+</strong> Funded Traders</span>
+            <span><strong data-count="4200" data-suffix="+">0</strong> Funded Traders</span>
         </div>
         <div class="trust-item">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            <span><strong>$12M+</strong> Paid Out</span>
+            <span><strong data-count="12" data-prefix="$" data-suffix="M+">0</strong> Paid Out</span>
         </div>
         <div class="trust-item">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>

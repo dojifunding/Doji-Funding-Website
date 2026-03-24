@@ -114,8 +114,8 @@
         }
     } catch(e) {}
 
-    // ─── Disclaimer Banner (reappears after 24h) ───
-    const DISCLAIMER_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours in ms
+    // ─── Disclaimer Banner (reappears after 7 days) ───
+    const DISCLAIMER_COOLDOWN = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 
     window.dismissDisclaimer = function() {
         const banner = document.getElementById('disclaimerBanner');
