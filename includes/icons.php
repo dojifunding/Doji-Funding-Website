@@ -1,27 +1,113 @@
 <?php
 /**
- * Doji Funding — SVG Icon Helpers
- * Replaces emoji with clean inline SVG icons
+ * Doji Funding — Animated Icon Helpers
+ *
+ * Uses @animated-color-icons/lucide-wc web components.
+ * Icons animate on hover via the .al-icon-wrapper class.
+ * CDN: https://cdn.jsdelivr.net/npm/@animated-color-icons/lucide-wc/
  */
 
-function icon($name, $size = 18, $class = '') {
-    $c = $class ? " class=\"$class\"" : '';
-    $icons = [
-        'check' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><polyline points="20 6 9 17 4 12"/></svg>',
-        'check-circle' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><circle cx="12" cy="12" r="10"/><polyline points="9 12 12 15 16 10"/></svg>',
-        'x-circle' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#ff3b3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
-        'target' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
-        'chart' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
-        'trending' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
-        'calendar' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
-        'bot' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/><path d="M9 14h6"/></svg>',
-        'coins' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><circle cx="12" cy="12" r="8"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></svg>',
-        'message' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
-        'diamond' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M2 9h20"/></svg>',
-        'zap' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#ff9f1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
-        'crown' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#ff9f1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><path d="M2 20h20L19 8l-5 5-2-7-2 7-5-5z"/></svg>',
-        'circle-green' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" style="display:inline;vertical-align:-3px"><circle cx="12" cy="12" r="6" fill="#10B981"/></svg>',
-        'info' => '<svg'.$c.' width="'.$size.'" height="'.$size.'" viewBox="0 0 24 24" fill="none" stroke="#4a9eff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+// ─── Icon name → Web Component mapping ───
+// Maps our short names to [lucide-component-name, primary-color, secondary-color]
+function getIconMap(): array {
+    return [
+        'check'        => ['check',               '#10B981', '#0d9488'],
+        'check-circle' => ['circle-check',         '#10B981', '#0d9488'],
+        'x-circle'     => ['circle-x',             '#ff3b3b', '#dc2626'],
+        'target'       => ['target',               '#10B981', '#0d9488'],
+        'chart'        => ['bar-chart-3',           '#10B981', '#0d9488'],
+        'trending'     => ['trending-up',           '#10B981', '#0d9488'],
+        'calendar'     => ['calendar',             '#10B981', '#0d9488'],
+        'bot'          => ['bot',                  '#10B981', '#0d9488'],
+        'coins'        => ['coins',                '#10B981', '#0d9488'],
+        'message'      => ['message-square',        '#10B981', '#0d9488'],
+        'diamond'      => ['diamond',              '#10B981', '#0d9488'],
+        'zap'          => ['zap',                  '#ff9f1a', '#d97706'],
+        'crown'        => ['crown',                '#ff9f1a', '#d97706'],
+        'circle-green' => ['circle',               '#10B981', '#0d9488'],
+        'info'         => ['info',                 '#4a9eff', '#2563eb'],
+        // Missing icons now available
+        'trophy'       => ['trophy',               '#10B981', '#0d9488'],
+        'sliders'      => ['sliders-horizontal',    '#10B981', '#0d9488'],
+        'shield'       => ['shield-check',          '#10B981', '#0d9488'],
+        'eye'          => ['eye',                  '#10B981', '#0d9488'],
     ];
-    return $icons[$name] ?? '';
+}
+
+/**
+ * Render an animated icon web component.
+ *
+ * @param string $name   Icon name (check, chart, zap, etc.)
+ * @param int    $size   Icon size in pixels (default: 18)
+ * @param string $class  Additional CSS class(es)
+ * @return string HTML for the animated icon
+ */
+function icon(string $name, int $size = 18, string $class = ''): string {
+    $map = getIconMap();
+
+    if (!isset($map[$name])) {
+        return '';
+    }
+
+    [$component, $primary, $secondary] = $map[$name];
+
+    $tag = "animated-lucide-{$component}";
+    $cls = 'al-icon-wrapper doji-icon' . ($class ? " {$class}" : '');
+
+    return '<span class="' . $cls . '" style="display:inline-flex;vertical-align:-3px">'
+         . '<' . $tag
+         . ' size="' . $size . '"'
+         . ' primary-color="' . $primary . '"'
+         . ' secondary-color="' . $secondary . '"'
+         . '></' . $tag . '>'
+         . '</span>';
+}
+
+/**
+ * Get all unique Lucide component names used by the icon map.
+ * Used to generate the <script> import tags.
+ */
+function getIconImports(): array {
+    $map = getIconMap();
+    $components = [];
+
+    foreach ($map as $entry) {
+        $component = $entry[0];
+        // Convert kebab-case to PascalCase for the JS import
+        $pascal = str_replace(' ', '', ucwords(str_replace('-', ' ', $component)));
+        $components[$component] = $pascal;
+    }
+
+    return $components;
+}
+
+/**
+ * Render all <script type="module"> tags for used icons.
+ * Call this once in the <head> or before </body>.
+ *
+ * @param array|null $only  Optional list of icon names to load (null = load all)
+ * @return string HTML script tags
+ */
+function iconScripts(?array $only = null): string {
+    $map = getIconMap();
+    $components = [];
+
+    // Collect unique components
+    foreach ($map as $name => $entry) {
+        if ($only !== null && !in_array($name, $only)) {
+            continue;
+        }
+        $component = $entry[0];
+        $pascal = str_replace(' ', '', ucwords(str_replace('-', ' ', $component)));
+        $components[$pascal] = true;
+    }
+
+    $cdn = 'https://cdn.jsdelivr.net/npm/@animated-color-icons/lucide-wc';
+    $html = "<!-- Animated Icons (lucide-wc) -->\n";
+
+    foreach (array_keys($components) as $pascal) {
+        $html .= '<script type="module" src="' . $cdn . '/' . $pascal . '.js"></script>' . "\n";
+    }
+
+    return $html;
 }
