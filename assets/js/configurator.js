@@ -102,12 +102,23 @@ const Configurator = (function() {
         ).join('')}</div>`;
     }
 
-    function makeCheck(id, checked, label, disabled, subtext) {
-        const cls = `check-opt${checked ? ' checked' : ''}${disabled ? ' disabled' : ''}`;
-        return `<label class="${cls}">
-            <input type="checkbox" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''} onchange="Configurator.onCheck('${id}',this.checked)">
-            <span>${label}${subtext ? `<span class="check-subtext">${subtext}</span>` : ''}</span>
-        </label>`;
+    function makeSwitch(id, checked, label, disabled, subtext, icon) {
+        const cls = `switch-row${checked ? ' active' : ''}${disabled ? ' disabled' : ''}`;
+        const iconSvg = icon === 'moon'
+            ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+            : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+        return `<div class="${cls}" onclick="${disabled ? '' : `Configurator.onCheck('${id}',!this.classList.contains('active'))`}">
+            <div class="switch-left">
+                <span class="switch-icon">${iconSvg}</span>
+                <div class="switch-text">
+                    <span class="switch-label">${label}</span>
+                    ${subtext ? `<span class="switch-sub">${subtext}</span>` : ''}
+                </div>
+            </div>
+            <div class="switch-toggle${checked ? ' on' : ''}">
+                <div class="switch-knob"></div>
+            </div>
+        </div>`;
     }
 
     // ═══════════════════════
@@ -176,12 +187,13 @@ const Configurator = (function() {
             ${makeToggle('payout', [{id:'monthly',label:'Monthly'},{id:'biweekly',label:'Bi-Weekly (+$29)'},{id:'weekly',label:'Weekly (+$59)'}], S.payout)}
         </div>`;
 
-        // Holding options
+        // Holding options (toggle switches)
         const onPrice = t === 'onestep' ? 19 : 25;
         const owPrice = t === 'onestep' ? 29 : 39;
-        html += `<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
-            ${makeCheck('overnight', !S.overweek && S.overnight, `Overnight Holding (+$${onPrice})`, S.overweek, S.overweek ? 'Included with Overweek Holding' : '')}
-            ${makeCheck('overweek', S.overweek, `Overweek Holding (+$${owPrice})`, false, 'Includes Overnight Holding')}
+        html += `<div class="switch-section">
+            <div class="switch-section-label">Holding Options</div>
+            ${makeSwitch('overnight', !S.overweek && S.overnight, `Overnight Holding <span class="switch-price">+$${onPrice}</span>`, S.overweek, S.overweek ? 'Included with Overweek Holding' : 'Hold positions through the night', 'moon')}
+            ${makeSwitch('overweek', S.overweek, `Overweek Holding <span class="switch-price">+$${owPrice}</span>`, false, 'Hold through weekends · includes overnight', 'calendar')}
         </div>`;
 
         // Equal loss warning
@@ -769,7 +781,9 @@ const Configurator = (function() {
         updateUI();
     }
 
-    function onCheck(id, checked) {
+    function onCheck(id, val) {
+        // val can be boolean or event — normalize
+        const checked = typeof val === 'boolean' ? val : !!val;
         if (id === 'overnight') {
             S.overnight = checked;
         } else if (id === 'overweek') {
