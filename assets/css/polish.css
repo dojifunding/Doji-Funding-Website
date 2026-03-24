@@ -700,6 +700,83 @@ html {
    REDUCED MOTION — strip all new animations
    ═══════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════
+   14. INTERACTIVE PIXEL PARTICLE FOOTER
+   ═══════════════════════════════════════════ */
+
+.doji-particle-footer {
+    position: relative;
+    width: 100%;
+    background: #050607;
+    overflow: hidden;
+    cursor: default;
+    border-top: 1px solid rgba(16,185,129,0.08);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.doji-particle-canvas {
+    display: block;
+    width: 100%;
+}
+
+
+/* ═══════════════════════════════════════════
+   15. ASCII SCRAMBLE / DECRYPTION EFFECT
+
+   ═══════════════════════════════════════════ */
+
+/* Scramble done marker (no visual change, just state) */
+.scramble-done {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+
+/* ═══════════════════════════════════════════
+   15. ANIMATED ICONS
+   ═══════════════════════════════════════════ */
+
+/* Wrapper aligns web-component icons inline with text */
+.doji-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: -3px;
+    line-height: 0;
+}
+
+/* Make hover trigger bubble up from any parent card/row/item */
+.kh-card:hover .doji-icon,
+.hiw-card:hover .doji-icon,
+.dc-step-card:hover .doji-icon,
+.engage-card:hover .doji-icon,
+.trust-item:hover .doji-icon,
+.hero-stat:hover .doji-icon,
+li:hover > .doji-icon,
+a:hover > .doji-icon,
+.rule-card:hover .doji-icon,
+.feature-item:hover .doji-icon,
+.scaling-card:hover .doji-icon,
+.benefit-card:hover .doji-icon,
+.tier-card:hover .doji-icon,
+.contact-card:hover .doji-icon,
+tr:hover .doji-icon {
+    /* The al-icon-wrapper class on the <span> handles the hover trigger,
+       but we also gently scale the wrapper for extra feedback */
+    transform: scale(1.15);
+    transition: transform 0.2s ease;
+}
+
+.doji-icon {
+    transition: transform 0.2s ease;
+}
+
+
+/* ═══════════════════════════════════════════
+   16. REDUCED MOTION — strip all new animations
+   ═══════════════════════════════════════════ */
+
 @media (prefers-reduced-motion: reduce) {
     body { animation: none; }
     .nav-dropdown.open { animation: none; }
@@ -708,5 +785,7 @@ html {
     .doji-toast.hiding { animation: none; }
     .badge { animation: none; opacity: 1; }
     .skeleton { animation: none; }
+    .doji-icon { transition: none; }
+    .scramble-done { opacity: 1; transform: none; }
     html { scroll-behavior: auto; }
 }

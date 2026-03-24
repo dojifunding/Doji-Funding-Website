@@ -136,25 +136,26 @@
         <h2>How It Works</h2>
         <p class="section-sub" style="text-align:center;color:var(--text2);font-size:16px;margin-bottom:48px">Your path to becoming a funded trader</p>
         <div class="hiw-grid">
-            <div class="hiw-card">
-                <div class="hiw-num">1</div>
-                <h3>Configure your challenge</h3>
-                <p>Select your account size and customize every parameter — profit target, drawdown, split, trading days. 20 sizes from $5K to $200K, starting at just $39.</p>
+            <div class="hiw-card" style="--step-opacity:0.3; --border-top:#022c22; --border-bottom:#064e3b">
+                <div class="hiw-num">01</div>
+                <h3>Choose Plan</h3>
+                <p>Select an account size that matches your risk profile and trading style.</p>
+                <a href="/challenges.php" class="hiw-cta">READY TO START →</a>
             </div>
-            <div class="hiw-card">
-                <div class="hiw-num">2</div>
-                <h3>Complete the evaluation</h3>
-                <p>Trade under your chosen rules with no time limit. Hit your profit target while respecting risk parameters. 1-Step or 2-Step — you decide.</p>
+            <div class="hiw-card" style="--step-opacity:0.5; --border-top:#064e3b; --border-bottom:#047857">
+                <div class="hiw-num">02</div>
+                <h3>Pass Challenge</h3>
+                <p>Demonstrate your edge by hitting the profit target while managing risk.</p>
             </div>
-            <div class="hiw-card">
-                <div class="hiw-num">3</div>
-                <h3>Get funded</h3>
-                <p>Pass the evaluation and receive your simulated funded account. Trade 1,000+ instruments across 8 asset classes with institutional-grade conditions.</p>
+            <div class="hiw-card" style="--step-opacity:0.75; --border-top:#047857; --border-bottom:#10B981">
+                <div class="hiw-num">03</div>
+                <h3>Verify Identity</h3>
+                <p>Fast-track KYC process to ensure institutional compliance and security.</p>
             </div>
-            <div class="hiw-card">
-                <div class="hiw-num">4</div>
-                <h3>Earn your rewards</h3>
-                <p>Request weekly payouts — processed within 24 hours. Keep up to 90% of your profits and cumulate up to $500K in total simulated capital.</p>
+            <div class="hiw-card" style="--step-opacity:1; --border-top:#10B981; --border-bottom:#34d399">
+                <div class="hiw-num">04</div>
+                <h3>Get Funded</h3>
+                <p>Trade live capital and keep up to 90% of your generated profits.</p>
             </div>
         </div>
     </div>

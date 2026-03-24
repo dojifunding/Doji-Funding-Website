@@ -216,5 +216,11 @@ $v = ASSET_VERSION;
 <!-- Polish & UX Enhancements -->
 <script src="assets/js/polish.js?v=<?= $v ?>"></script>
 
+<!-- ASCII Scramble / Decryption Effect -->
+<script src="assets/js/scramble.js?v=<?= $v ?>"></script>
+
+<!-- Interactive Pixel Particle Footer -->
+<script src="assets/js/particle-footer.js?v=<?= $v ?>"></script>
+
 </body>
 </html>
