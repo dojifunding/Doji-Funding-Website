@@ -5,11 +5,55 @@
  * and shared components used across all pages.
  */
 
-/* ═══ Nippo Font (self-hosted) ═══ */
+/* ═══ Nippo Font (body text) ═══ */
 @font-face {
     font-family: 'Nippo';
     src: url('../fonts/Nippo-Variable.woff2') format('woff2');
     font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+}
+
+/* ═══ Array Font (headings) ═══ */
+@font-face {
+    font-family: 'Array';
+    src: url('../fonts/Array-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Array';
+    src: url('../fonts/Array-Semibold.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Array';
+    src: url('../fonts/Array-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Array Wide';
+    src: url('../fonts/Array-Wide.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Array Wide';
+    src: url('../fonts/Array-SemiboldWide.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Array Wide';
+    src: url('../fonts/Array-BoldWide.woff2') format('woff2');
+    font-weight: 700;
     font-display: swap;
     font-style: normal;
 }
@@ -32,7 +76,7 @@
     --red: #ff3b3b;
     --orange: #ff9f1a;
     --blue: #4a9eff;
-    --font-heading: 'Nippo', sans-serif;
+    --font-heading: 'Array Wide', 'Array', sans-serif;
     --font-body: 'Nippo', 'Inter', sans-serif;
 }
 

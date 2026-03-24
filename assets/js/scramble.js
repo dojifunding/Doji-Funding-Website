@@ -10,9 +10,9 @@
     'use strict';
 
     var CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!?<>{}[]=/\\|~^';
-    var SCRAMBLE_ROUNDS = 6;
-    var ROUND_SPEED = 55;
-    var CHAR_STAGGER = 30;
+    var SCRAMBLE_ROUNDS = 7;
+    var ROUND_SPEED = 70;
+    var CHAR_STAGGER = 38;
 
     var SKIP = '[data-no-scramble], .cfg-title, .promo-bar *, .footer-legal *, .doji-toast *, .modal *';
     var processed = new WeakSet();

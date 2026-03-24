@@ -3,6 +3,7 @@
  * 3D particle sphere with mouse/touch repulsion.
  * Particles scatter when cursor approaches the sphere
  * and reassemble when cursor moves away.
+ * Same physics model as the pixel particle footer.
  */
 (function() {
     'use strict';
@@ -16,16 +17,15 @@
     var RADIUS = 1.4, GREEN = 0x10B981;
     var dotCount = 2200;
 
-    // ─── Interaction state ───
+    // ─── Interaction — same physics as particle footer ───
     var raycaster, mouseVec, interactionSphere;
-    var REPULSE_RADIUS = 0.8;       // Radius of repulsion effect in 3D space
-    var REPULSE_FORCE = 0.12;       // How hard particles get pushed
-    var RETURN_SPEED = 0.04;        // How fast particles return to origin
-    var FRICTION = 0.92;            // Velocity damping
+    var REPULSE_RADIUS = 1.2;        // Wide repulsion zone
+    var REPULSE_FORCE = 0.25;        // Strong push (like footer pushForce)
+    var RETURN_SPEED = 0.06;         // Match footer returnSpeed
+    var FRICTION = 0.88;             // Match footer friction
 
     // Per-particle physics arrays
-    var originPositions;     // Float32Array — original sphere positions
-    var velocities;          // Float32Array — vx, vy, vz per particle
+    var velocities;
     var isHovering = false;
     var hitPoint = { x: 0, y: 0, z: 0 };
 
@@ -53,8 +53,8 @@
         raycaster = new THREE.Raycaster();
         mouseVec = new THREE.Vector2(-999, -999);
 
-        // Invisible sphere for raycasting (slightly larger than particle sphere)
-        var sphereGeo = new THREE.SphereGeometry(RADIUS * 1.3, 32, 32);
+        // Invisible sphere for raycasting (larger for easier hover detection)
+        var sphereGeo = new THREE.SphereGeometry(RADIUS * 1.4, 32, 32);
         var sphereMat = new THREE.MeshBasicMaterial({ visible: false });
         interactionSphere = new THREE.Mesh(sphereGeo, sphereMat);
         orbGroup.add(interactionSphere);
@@ -62,7 +62,7 @@
         createOrb();
         createStars();
 
-        // ─── Mouse events ───
+        // ─── Mouse events on canvas ───
         canvas.addEventListener('mousemove', function(e) {
             var rect = canvas.getBoundingClientRect();
             mouseX = (e.clientX / window.innerWidth) * 2 - 1;
@@ -98,7 +98,7 @@
             mouseVec.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
         }
 
-        // Global mouse for rotation (outside canvas)
+        // Global mouse for rotation
         document.addEventListener('mousemove', function(e) {
             mouseX = (e.clientX / window.innerWidth) * 2 - 1;
             mouseY = (e.clientY / window.innerHeight) * 2 - 1;
@@ -134,8 +134,7 @@
             phases[i] = Math.random() * Math.PI * 2;
         }
 
-        // Store original positions for returning
-        originPositions = new Float32Array(positions);
+        // Physics arrays
         velocities = new Float32Array(dotCount * 3); // initialized to 0
 
         var geo = new THREE.BufferGeometry();
@@ -205,7 +204,6 @@
 
         if (intersects.length > 0) {
             isHovering = true;
-            // Convert hit point to orbGroup local space
             var localPoint = orbGroup.worldToLocal(intersects[0].point.clone());
             hitPoint.x = localPoint.x;
             hitPoint.y = localPoint.y;
@@ -215,11 +213,8 @@
         }
     }
 
-    // ─── Update particle physics ───
+    // ─── Update particle physics (footer-style scatter & return) ───
     function updateParticlePhysics(time) {
-        var points = orbGroup.children[1]; // index 1 because 0 is interactionSphere...
-        // Actually interactionSphere was added first, then Points
-        // Let's find the Points object
         var pointsObj = null;
         for (var c = 0; c < orbGroup.children.length; c++) {
             if (orbGroup.children[c].isPoints) { pointsObj = orbGroup.children[c]; break; }
@@ -232,7 +227,7 @@
         for (var i = 0; i < dotCount; i++) {
             var idx = i * 3;
 
-            // Calculate breathing origin
+            // Breathing origin (subtle pulse like resting state)
             var phase = phases[i];
             var breathe = 1 + Math.sin(time * 1.5 + phase) * 0.035;
             var phi = Math.acos(1 - 2 * (i + 0.5) / dotCount);
@@ -247,7 +242,7 @@
             var cy = posAttr.getY(i);
             var cz = posAttr.getZ(i);
 
-            // Repulsion from hit point
+            // Mouse repulsion — same model as footer
             if (isHovering) {
                 var dx = cx - hitPoint.x;
                 var dy = cy - hitPoint.y;
@@ -255,20 +250,20 @@
                 var dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
                 if (dist < REPULSE_RADIUS && dist > 0.001) {
+                    // Force ramps up as particle gets closer to cursor (like footer)
                     var force = (REPULSE_RADIUS - dist) / REPULSE_RADIUS;
-                    force = force * force * REPULSE_FORCE; // Quadratic falloff
-                    velocities[idx]     += (dx / dist) * force;
-                    velocities[idx + 1] += (dy / dist) * force;
-                    velocities[idx + 2] += (dz / dist) * force;
+                    velocities[idx]     += (dx / dist) * force * REPULSE_FORCE;
+                    velocities[idx + 1] += (dy / dist) * force * REPULSE_FORCE;
+                    velocities[idx + 2] += (dz / dist) * force * REPULSE_FORCE;
                 }
             }
 
-            // Return to breathing origin
+            // Return to origin (spring)
             velocities[idx]     += (origX - cx) * RETURN_SPEED;
             velocities[idx + 1] += (origY - cy) * RETURN_SPEED;
             velocities[idx + 2] += (origZ - cz) * RETURN_SPEED;
 
-            // Friction
+            // Friction damping
             velocities[idx]     *= FRICTION;
             velocities[idx + 1] *= FRICTION;
             velocities[idx + 2] *= FRICTION;

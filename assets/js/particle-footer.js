@@ -12,17 +12,17 @@
     // ─── Configuration ───
     var CONFIG = {
         text: 'DOJI FUNDING',
-        fontSizeBase: 72,            // Base font size for sampling text
+        fontSizeBase: 120,           // Base font size for sampling text
         particleSize: 3,             // Pixel particle size
-        particleGap: 5,              // Gap between sampled pixels
-        mouseRadius: 100,            // Interaction radius around cursor
+        particleGap: 4,              // Gap between sampled pixels (tighter = sharper letters)
+        mouseRadius: 120,            // Interaction radius around cursor
         returnSpeed: 0.06,           // How fast particles return (0-1, lower = slower)
         friction: 0.88,              // Velocity damping (0-1, higher = less friction)
         pushForce: 8,                // How hard particles get pushed
         colorPrimary: '#10B981',     // Emerald green
         colorSecondary: '#34d399',   // Light emerald
         colorDim: '#064e3b',         // Dark emerald
-        canvasHeight: 200,           // Canvas height in px
+        canvasHeight: 320,           // Canvas height in px
         bgColor: '#050607'           // Footer bg (slightly darker than page bg)
     };
 
@@ -91,55 +91,75 @@
         ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
     };
 
-    // ─── Text sampling: render text offscreen and extract pixel positions ───
+    // ─── Text sampling: render at 3x with letter-spacing for crisp edges ───
     function sampleText() {
         particles = [];
 
         var w = canvas.width / dpr;
         var h = canvas.height / dpr;
 
-        // Create offscreen canvas for text sampling
+        // Render text at 3x resolution for maximum sharpness
+        var scale = 3;
         var offscreen = document.createElement('canvas');
         var offCtx = offscreen.getContext('2d');
-        offscreen.width = w;
-        offscreen.height = h;
+        offscreen.width = w * scale;
+        offscreen.height = h * scale;
 
         // Determine font size based on canvas width
-        var fontSize = Math.min(CONFIG.fontSizeBase, w / (CONFIG.text.length * 0.58));
-        fontSize = Math.max(fontSize, 24);
+        var fontSize = Math.min(CONFIG.fontSizeBase, w / (CONFIG.text.length * 0.55));
+        fontSize = Math.max(fontSize, 28);
 
         offCtx.fillStyle = '#ffffff';
-        offCtx.font = '800 ' + fontSize + 'px Nippo, Geist, Inter, sans-serif';
+        offCtx.font = '700 ' + (fontSize * scale) + 'px "Array Wide", Array, sans-serif';
         offCtx.textAlign = 'center';
         offCtx.textBaseline = 'middle';
-        offCtx.fillText(CONFIG.text, w / 2, h / 2);
 
-        // Sample pixels
-        var imageData = offCtx.getImageData(0, 0, w, h);
+        // Add letter spacing for cleaner character separation
+        var letters = CONFIG.text.split('');
+        var letterSpacing = fontSize * scale * 0.06;
+        var totalWidth = offCtx.measureText(CONFIG.text).width + letterSpacing * (letters.length - 1);
+        var startX = (offscreen.width - totalWidth) / 2;
+        var centerY = offscreen.height / 2;
+
+        var curX = startX;
+        for (var li = 0; li < letters.length; li++) {
+            offCtx.fillText(letters[li], curX + offCtx.measureText(letters[li]).width / 2, centerY);
+            curX += offCtx.measureText(letters[li]).width + letterSpacing;
+        }
+
+        // Sample pixels from high-res canvas, map back to display coords
+        var imageData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height);
         var data = imageData.data;
-        var gap = CONFIG.particleGap;
+        var sampleGap = CONFIG.particleGap * scale;
 
-        for (var y = 0; y < h; y += gap) {
-            for (var x = 0; x < w; x += gap) {
-                var index = (y * w + x) * 4;
+        for (var y = 0; y < offscreen.height; y += sampleGap) {
+            for (var x = 0; x < offscreen.width; x += sampleGap) {
+                var index = (y * offscreen.width + x) * 4;
                 var alpha = data[index + 3];
 
-                if (alpha > 128) {
-                    // Slight color variation for depth
-                    var brightness = data[index] / 255;
+                if (alpha > 100) {
+                    // Map back to display coordinates
+                    var displayX = x / scale;
+                    var displayY = y / scale;
+
+                    // Color: solid core, softer edges
                     var color;
-                    if (brightness > 0.8) {
+                    if (alpha > 220) {
                         color = CONFIG.colorPrimary;
-                    } else if (brightness > 0.5) {
-                        color = CONFIG.colorPrimary;
+                    } else if (alpha > 160) {
+                        color = CONFIG.colorSecondary;
                     } else {
                         color = CONFIG.colorDim;
                     }
 
-                    var p = new Particle(x, y, color);
+                    var p = new Particle(displayX, displayY, color);
+                    // Edge particles slightly smaller for antialiased feel
+                    if (alpha < 180) {
+                        p.size = CONFIG.particleSize * 0.65;
+                    }
                     // Start scattered for entrance animation
-                    p.x = x + (Math.random() - 0.5) * 300;
-                    p.y = y + (Math.random() - 0.5) * 200;
+                    p.x = displayX + (Math.random() - 0.5) * 300;
+                    p.y = displayY + (Math.random() - 0.5) * 200;
                     particles.push(p);
                 }
             }
@@ -300,11 +320,20 @@
         initVisibility();
     }
 
-    // ─── Boot ───
+    // ─── Boot: wait for Array font to load for crisp rendering ───
+    function boot() {
+        if (document.fonts && document.fonts.load) {
+            document.fonts.load('700 48px "Array Wide"').then(init).catch(init);
+        } else {
+            // Fallback: wait a beat for font to be available
+            setTimeout(init, 300);
+        }
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', boot);
     } else {
-        init();
+        boot();
     }
 
 })();
