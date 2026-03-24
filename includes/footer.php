@@ -213,5 +213,8 @@ $v = ASSET_VERSION;
 <!-- Visual Effects Engine -->
 <script src="assets/js/effects.js?v=<?= $v ?>"></script>
 
+<!-- Polish & UX Enhancements -->
+<script src="assets/js/polish.js?v=<?= $v ?>"></script>
+
 </body>
 </html>
