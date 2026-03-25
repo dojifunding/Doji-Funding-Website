@@ -191,12 +191,7 @@ h2 {
     transition-duration: 80ms !important;
 }
 
-/* --- Nav link hover: smoother underline with glow --- */
-.nav-link::after {
-    background: var(--green);
-    box-shadow: 0 1px 6px rgba(16,185,129,0.3);
-    height: 2px;
-}
+/* --- Nav link hover: square dot indicator (defined in main.css) --- */
 
 /* --- Icon box pulse on card hover --- */
 .kh-card:hover .kh-icon,
@@ -561,11 +556,13 @@ html {
    14. HERO GLOW REFINEMENT
    ═══════════════════════════════════════════ */
 
-/* More atmospheric hero glow */
+/* Enhanced hero glow — large radial emerald halo */
 .hero-glow {
+    width: 900px !important; height: 900px !important;
     background: radial-gradient(circle,
-        rgba(16,185,129,0.12) 0%,
-        rgba(16,185,129,0.06) 30%,
+        rgba(16,185,129,0.18) 0%,
+        rgba(16,185,129,0.09) 25%,
+        rgba(16,185,129,0.04) 50%,
         transparent 65%
     );
     filter: blur(20px);

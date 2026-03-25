@@ -270,7 +270,7 @@
 <div class="section-divider"></div>
 
 <!-- ASSET CLASSES BANNER -->
-<section class="section" style="background:var(--bg);padding-top:60px;padding-bottom:60px">
+<section class="section" style="background:var(--bg);padding-top:100px;padding-bottom:100px">
     <div class="section-inner" style="max-width:1200px;margin:0 auto">
         <h2 style="text-align:center;margin-bottom:8px">Trade 1,000+ Instruments Across <span class="green">8 Asset Classes</span></h2>
         <p class="section-sub" style="text-align:center;color:var(--text2);font-size:15px;margin-bottom:48px">From forex to crypto, indices to futures — everything you need under one roof with institutional-grade conditions.</p>
@@ -443,7 +443,7 @@
 </section>
 
 <!-- BUILT FOR TRADERS — Pill Bar -->
-<section style="padding:48px 32px;background:var(--bg)">
+<section class="section" style="background:var(--bg)">
     <div style="max-width:1200px;margin:0 auto">
         <div class="pill-bar">
             <div class="pill-bar-title">Built for traders,<br>down to the details</div>
