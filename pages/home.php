@@ -461,20 +461,274 @@
     </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-section">
-    <div class="cta-bg-wrap">
-        <img class="cta-bg-img" src="assets/img/cta-bg.png" alt="">
+<!-- TESTIMONIALS -->
+<section class="section" style="background:var(--bg2)">
+    <div class="section-inner">
+        <h2>Trusted by <span class="green">Thousands</span> of Traders</h2>
+        <p class="section-sub">Real feedback from funded traders around the world.</p>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"The configurator is a game-changer. I set my own drawdown limits and profit target — no other prop firm gives you this level of control. Got funded in 12 days."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">M</div>
+                    <div>
+                        <div class="testimonial-name">Marcus T.</div>
+                        <div class="testimonial-role">Forex Trader · $50K Funded</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"Payout came in under 18 hours. I've been with 3 other firms and none of them process this fast. The 90% split on a $100K account is unbeatable."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">S</div>
+                    <div>
+                        <div class="testimonial-name">Sarah K.</div>
+                        <div class="testimonial-role">Indices Trader · $100K Funded</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"Started with a $5K challenge for $39. The Doji Coins reward system keeps me motivated — I've already redeemed a free challenge. Support team is responsive 24/7."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">A</div>
+                    <div>
+                        <div class="testimonial-name">Ahmed R.</div>
+                        <div class="testimonial-role">Crypto Trader · $25K Funded</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="cta-overlay"></div>
-    <div class="cta-content">
-        <h2>Ready to Trade Your Way?</h2>
-        <p style="color:var(--text2);font-size:16px;max-width:480px;margin:0 auto 28px">
-            Join thousands of funded traders. Configure your challenge in under 2 minutes.
+</section>
+
+<!-- SOCIAL PROOF METRICS -->
+<section class="section" style="background:var(--bg);border-top:1px solid rgba(16,185,129,0.08);border-bottom:1px solid rgba(16,185,129,0.08)">
+    <div class="section-inner">
+        <div class="proof-grid">
+            <div class="proof-item">
+                <div class="proof-val" data-count="4200" data-suffix="+">0</div>
+                <div class="proof-label">Funded Traders</div>
+            </div>
+            <div class="proof-item">
+                <div class="proof-val" data-count="12" data-prefix="$" data-suffix="M+">0</div>
+                <div class="proof-label">Total Payouts</div>
+            </div>
+            <div class="proof-item">
+                <div class="proof-val" data-count="150" data-suffix="+">0</div>
+                <div class="proof-label">Countries Served</div>
+            </div>
+            <div class="proof-item">
+                <div class="proof-val" data-count="24" data-suffix="h">0</div>
+                <div class="proof-label">Payout Processing</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TRADING PLATFORMS -->
+<section class="section" style="background:var(--bg2)">
+    <div class="section-inner">
+        <h2>Trade on <span class="green">World-Class</span> Platforms</h2>
+        <p class="section-sub">Professional-grade execution with the platforms you already know and trust.</p>
+        <div class="platforms-row">
+            <div class="platform-card">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                    <line x1="8" y1="21" x2="16" y2="21"/>
+                    <line x1="12" y1="17" x2="12" y2="21"/>
+                    <polyline points="6 10 10 7 14 12 18 8"/>
+                </svg>
+                <div class="platform-name">MetaTrader 5</div>
+                <div class="platform-desc">The industry standard for forex & CFD trading with advanced charting and EAs</div>
+            </div>
+            <div class="platform-card">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="8 12 11 15 16 9"/>
+                    <path d="M12 2v4"/>
+                    <path d="M12 18v4"/>
+                    <path d="M4.93 4.93l2.83 2.83"/>
+                    <path d="M16.24 16.24l2.83 2.83"/>
+                </svg>
+                <div class="platform-name">cTrader</div>
+                <div class="platform-desc">Modern interface with Level II pricing, advanced cBots and copy trading built-in</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- COMPARISON TABLE — Doji vs Competitors -->
+<section class="section" style="background:var(--bg)">
+    <div class="section-inner">
+        <h2>How Doji Funding <span class="green">Compares</span></h2>
+        <p class="section-sub">See why traders choose Doji over other prop firms.</p>
+        <div class="compare-table-wrap">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th class="compare-highlight">Doji Funding</th>
+                        <th>FTMO</th>
+                        <th>MyFundedFX</th>
+                        <th>FundedNext</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Starting Price</td>
+                        <td class="compare-highlight"><span class="compare-val-green">From $39</span></td>
+                        <td><span class="compare-val">$155</span></td>
+                        <td><span class="compare-val">$49</span></td>
+                        <td><span class="compare-val">$32</span></td>
+                    </tr>
+                    <tr>
+                        <td>Profit Split</td>
+                        <td class="compare-highlight"><span class="compare-val-green">Up to 90%</span></td>
+                        <td><span class="compare-val">80%</span></td>
+                        <td><span class="compare-val">80%</span></td>
+                        <td><span class="compare-val">Up to 90%</span></td>
+                    </tr>
+                    <tr>
+                        <td>Custom Parameters</td>
+                        <td class="compare-highlight"><span class="compare-check">✓</span> 700K+ combos</td>
+                        <td><span class="compare-cross">✕</span> Fixed</td>
+                        <td><span class="compare-cross">✕</span> Fixed</td>
+                        <td><span class="compare-cross">✕</span> Limited</td>
+                    </tr>
+                    <tr>
+                        <td>Payout Speed</td>
+                        <td class="compare-highlight"><span class="compare-val-green">24h Guaranteed</span></td>
+                        <td><span class="compare-val">1–3 days</span></td>
+                        <td><span class="compare-val">1–2 days</span></td>
+                        <td><span class="compare-val">1–2 days</span></td>
+                    </tr>
+                    <tr>
+                        <td>News Trading</td>
+                        <td class="compare-highlight"><span class="compare-check">✓</span></td>
+                        <td><span class="compare-cross">✕</span></td>
+                        <td><span class="compare-check">✓</span></td>
+                        <td><span class="compare-check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Time Limit</td>
+                        <td class="compare-highlight"><span class="compare-val-green">None</span></td>
+                        <td><span class="compare-val">30 days</span></td>
+                        <td><span class="compare-val">None</span></td>
+                        <td><span class="compare-val">None</span></td>
+                    </tr>
+                    <tr>
+                        <td>Rewards Program</td>
+                        <td class="compare-highlight"><span class="compare-check">✓</span> Doji Coins™</td>
+                        <td><span class="compare-cross">✕</span></td>
+                        <td><span class="compare-cross">✕</span></td>
+                        <td><span class="compare-cross">✕</span></td>
+                    </tr>
+                    <tr>
+                        <td>Platforms</td>
+                        <td class="compare-highlight"><span class="compare-val-green">MT5 + cTrader</span></td>
+                        <td><span class="compare-val">MT4/MT5</span></td>
+                        <td><span class="compare-val">MT4/MT5</span></td>
+                        <td><span class="compare-val">MT4/MT5</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- QUICK FAQ -->
+<section class="section" style="background:var(--bg2)">
+    <div class="section-inner">
+        <h2>Frequently Asked <span class="green">Questions</span></h2>
+        <p class="section-sub">Everything you need to know before starting your challenge.</p>
+        <div class="home-faq">
+            <div class="home-faq-item">
+                <button class="home-faq-q" onclick="this.parentElement.classList.toggle('open')">
+                    What is Doji Funding?
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="home-faq-a">
+                    <p>Doji Funding is a proprietary trading firm that provides funded accounts to talented traders. Pass our evaluation challenge and trade with our capital — keeping up to 90% of the profits you generate. We support MetaTrader 5 and cTrader with 1,000+ instruments across 8 asset classes.</p>
+                </div>
+            </div>
+            <div class="home-faq-item">
+                <button class="home-faq-q" onclick="this.parentElement.classList.toggle('open')">
+                    How much does it cost to start?
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="home-faq-a">
+                    <p>Challenge accounts start from just $39 for a $5K account. We offer 20 different account sizes up to $100K, with the ability to scale to $500K total capital. Use our configurator to customize your exact parameters and see the price in real time.</p>
+                </div>
+            </div>
+            <div class="home-faq-item">
+                <button class="home-faq-q" onclick="this.parentElement.classList.toggle('open')">
+                    How fast are payouts processed?
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="home-faq-a">
+                    <p>All payouts are processed within 24 hours — guaranteed. We offer weekly payout cycles so you never wait long for your rewards. Payments are sent via bank transfer, crypto, or your preferred method.</p>
+                </div>
+            </div>
+            <div class="home-faq-item">
+                <button class="home-faq-q" onclick="this.parentElement.classList.toggle('open')">
+                    Is there a time limit to pass the challenge?
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="home-faq-a">
+                    <p>No. Doji Funding has no time limit on the challenge phase. Take as long as you need to reach your profit target while respecting the drawdown rules. Trade at your own pace with zero pressure.</p>
+                </div>
+            </div>
+            <div class="home-faq-item">
+                <button class="home-faq-q" onclick="this.parentElement.classList.toggle('open')">
+                    What are Doji Coins™?
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="home-faq-a">
+                    <p>Doji Coins™ are our loyalty rewards. Every trade you execute earns coins based on volume. Redeem them for free challenges, boosted profit splits, reduced fees, and exclusive perks. Your trading activity is always rewarded — win or lose.</p>
+                </div>
+            </div>
+            <div class="home-faq-item">
+                <button class="home-faq-q" onclick="this.parentElement.classList.toggle('open')">
+                    Can I trade during news events?
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <div class="home-faq-a">
+                    <p>Yes. News trading is fully allowed on Doji Funding. Trade NFP, FOMC, CPI, and any other high-impact events freely. We believe if there's opportunity in the markets, you should be able to take it.</p>
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center;margin-top:32px">
+            <a href="faq.php" style="color:var(--green);font-size:14px;font-weight:600;text-decoration:none">View all FAQs →</a>
+        </div>
+    </div>
+</section>
+
+<!-- ENHANCED CTA -->
+<section class="cta-enhanced">
+    <div class="cta-enhanced-inner">
+        <h2>Start Trading <span class="green">Your Way</span></h2>
+        <p class="section-sub" style="margin:0 auto 40px">
+            Join 4,200+ funded traders worldwide. Configure your challenge in under 2 minutes and start your journey to consistent profitability.
         </p>
-        <a style="text-decoration:none" class="btn-primary-lg" href="challenges.php">Get Started — From $39</a>
-        <div class="seo-only" style="margin-top:12px">
-            <span class="seo-tag">CTA with price anchor</span>
+        <div class="cta-btn-row">
+            <a style="text-decoration:none" class="btn-primary-lg" href="challenges.php">Get Started — From $39</a>
+            <a style="text-decoration:none" class="btn-outline" href="challenges.php#configurator">Configure Your Challenge</a>
+        </div>
+        <div class="cta-price-anchor">
+            <span>Accounts from <strong>$39</strong></span>
+            <span>·</span>
+            <span>Up to <strong>90% profit split</strong></span>
+            <span>·</span>
+            <span><strong>No time limit</strong></span>
+        </div>
+        <div class="cta-guarantee">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Regulated entity · 24h guaranteed payouts · 24/7 support
         </div>
     </div>
 </section>
