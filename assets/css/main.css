@@ -2049,6 +2049,8 @@ input, textarea { cursor: text; }
     display: flex; align-items: center; gap: 48px; padding: 0;
     white-space: nowrap; will-change: transform;
     animation: marquee-scroll 30s linear infinite;
+    flex-wrap: nowrap !important;
+    width: max-content;
 }
 .trust-bar:hover { animation-play-state: paused; }
 @keyframes marquee-scroll {
