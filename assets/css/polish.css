@@ -42,6 +42,7 @@ body {
 .scale-card,
 .contact-card,
 .stat-card {
+    box-shadow:
         0 1px 2px rgba(0,0,0,0.2),
         0 4px 8px rgba(0,0,0,0.12),
         0 0 0 1px rgba(255,255,255,0.02) inset;
@@ -60,6 +61,7 @@ body {
 .scale-card:hover,
 .contact-card:hover,
 .stat-card:hover {
+    box-shadow:
         0 2px 4px rgba(0,0,0,0.15),
         0 8px 24px rgba(0,0,0,0.2),
         0 24px 48px rgba(0,0,0,0.12),

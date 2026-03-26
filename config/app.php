@@ -12,12 +12,12 @@ define('SITE_TAGLINE', 'Trade Your Way. Get Funded.');
 define('SITE_YEAR', '2026');
 
 // Version (for cache busting CSS/JS/images)
-define('ASSET_VERSION', '410');
+define('ASSET_VERSION', '420');
 
 // Branding
 define('BRAND_COLOR_GREEN', '#10B981');
 define('BRAND_COLOR_BG', '#08090b');
-define('LOGO_FILE', 'assets/img/logo.png?v=' . ASSET_VERSION);
+define('LOGO_FILE', 'assets/img/logo.svg?v=' . ASSET_VERSION);
 
 // Social / Trust metrics (update regularly)
 define('STAT_FUNDED_TRADERS', '4,200+');
