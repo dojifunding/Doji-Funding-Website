@@ -342,10 +342,10 @@
                     <div class="dc-coin">
                         <div class="dc-coin-ring"></div>
                         <div class="dc-coin-ring dc-coin-ring-2"></div>
-                        <img src="<?= LOGO_FILE ?>" alt="Doji Coin" class="dc-coin-logo">
+                        <img src="<?= DOJI_COIN_FILE ?>" alt="Doji Coin" class="dc-coin-logo">
                     </div>
                     <div class="dc-coin-badge">
-                        <img src="<?= LOGO_FILE ?>" alt="" class="dc-coin-badge-icon">
+                        <img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-coin-badge-icon">
                         <span class="dc-coin-badge-val">5,300</span>
                     </div>
                 </div>
@@ -391,16 +391,16 @@
                 <div class="dc-step-visual">
                     <div class="dc-earn-visual">
                         <div class="dc-earn-coin dc-earn-coin-1">
-                            <img src="<?= LOGO_FILE ?>" alt="" class="dc-earn-coin-img">
+                            <img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-earn-coin-img">
                         </div>
                         <div class="dc-earn-coin dc-earn-coin-2">
-                            <img src="<?= LOGO_FILE ?>" alt="" class="dc-earn-coin-img">
+                            <img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-earn-coin-img">
                         </div>
                         <div class="dc-earn-coin dc-earn-coin-3">
-                            <img src="<?= LOGO_FILE ?>" alt="" class="dc-earn-coin-img">
+                            <img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-earn-coin-img">
                         </div>
                         <div class="dc-earn-counter">
-                            <img src="<?= LOGO_FILE ?>" alt="" style="width:16px;height:16px;border-radius:4px">
+                            <img src="<?= DOJI_COIN_FILE ?>" alt="" style="width:16px;height:16px;border-radius:4px">
                             <span>5,300</span>
                         </div>
                     </div>
@@ -427,7 +427,7 @@
                         </div>
                         <div class="dc-spend-cost">
                             <span>3,200</span>
-                            <img src="<?= LOGO_FILE ?>" alt="" style="width:14px;height:14px;border-radius:3px">
+                            <img src="<?= DOJI_COIN_FILE ?>" alt="" style="width:14px;height:14px;border-radius:3px">
                         </div>
                     </div>
                 </div>
