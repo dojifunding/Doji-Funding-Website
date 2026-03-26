@@ -298,6 +298,13 @@ a { color: inherit; }
     opacity: 0; visibility: hidden; pointer-events: none;
     transition: opacity 0.25s ease, visibility 0.25s ease;
 }
+/* Invisible hover bridge between trigger and dropdown */
+.nav-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -12px; left: 0; right: 0;
+    height: 12px;
+}
 .nav-dropdown.open,
 .nav-dropdown-wrap:hover .nav-dropdown { opacity: 1; visibility: visible; pointer-events: auto; }
 .nav-dropdown-item {
@@ -2237,6 +2244,7 @@ textarea.form-input { resize: vertical; min-height: 100px; }
 
 /* ═══ Section Divider ═══ */
 .section-divider {
+    position: relative;
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(16,185,129,0.3), rgba(16,185,129,0.5), rgba(16,185,129,0.3), transparent);
 }
