@@ -2,7 +2,7 @@
  * Doji Funding — Dot-Matrix Footer (Cotool style)
  * v4.0.0
  *
- * Renders "DOJI" as large flat dot-matrix circles.
+ * Renders "DOJI" as large flat dot-matrix squares.
  * Big dots, wide spacing, fewer particles = silky smooth.
  * Mouse/touch scatter effect with spring return.
  */
@@ -79,11 +79,10 @@
             py = this.oy;
         }
 
-        // Flat circle — switch color when scattered
-        ctx.beginPath();
-        ctx.arc(px, py, CONFIG.dotRadius, 0, 6.2832);
+        // Flat square — switch color when scattered
+        var r = CONFIG.dotRadius;
         ctx.fillStyle = dist2 > 200 ? COLOR_SCATTER : COLOR_REST;
-        ctx.fill();
+        ctx.fillRect(px - r, py - r, r * 2, r * 2);
     };
 
     // ─── Text sampling ───
