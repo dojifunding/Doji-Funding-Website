@@ -5,7 +5,7 @@
 .faq-container { max-width: 900px; margin: 0 auto; }
 .faq-cats { display: flex; gap: 6px; margin-bottom: 32px; flex-wrap: wrap; justify-content: center; }
 .faq-cat-btn {
-    padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;
+    padding: 8px 16px; border-radius: var(--radius-sm); border: none; cursor: pointer;
     font-size: 13px; font-weight: 600; font-family: var(--font-heading);
     background: var(--bg4); color: var(--text3); transition: all 0.2s;
     display: inline-flex; align-items: center; gap: 6px;
@@ -29,7 +29,7 @@
 }
 .faq-section-icon { display: inline-flex; align-items: center; flex-shrink: 0; }
 
-.faq-item { margin-bottom: 8px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); background: var(--bg3); transition: border-color 0.2s; }
+.faq-item { margin-bottom: 8px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); background: var(--bg3); transition: border-color 0.2s; }
 .faq-item.open { border-color: rgba(16,185,129,0.25); }
 .faq-q {
     width: 100%; padding: 16px 20px; border: none; cursor: pointer;

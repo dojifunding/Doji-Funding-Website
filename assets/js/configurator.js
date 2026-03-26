@@ -286,7 +286,7 @@ const Configurator = (function() {
             return '$' + Math.round(size * pct / 100).toLocaleString();
         }
 
-        // Render summary
+        // Render summary with Evaluation / Funded tabs
         const grid = document.getElementById('summaryGrid');
         if (grid) {
             let html = '';
@@ -302,7 +302,23 @@ const Configurator = (function() {
                 </div>
             </div>`;
 
-            // ── Target + Risk metric cards ──
+            // ── Phase tabs: Evaluation / Funded ──
+            const activeTab = grid.dataset.activeTab || 'evaluation';
+            html += `<div class="summary-phase-tabs">
+                <button class="summary-phase-tab${activeTab === 'evaluation' ? ' active' : ''}" data-phase="evaluation">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    Evaluation
+                </button>
+                <button class="summary-phase-tab${activeTab === 'funded' ? ' active' : ''}" data-phase="funded">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    Funded
+                </button>
+            </div>`;
+
+            // ── EVALUATION PANEL ──
+            html += `<div class="summary-phase-panel${activeTab === 'evaluation' ? ' active' : ''}" data-panel="evaluation">`;
+
+            // Target + Risk metric cards
             if (t === 'onestep') {
                 html += `<div class="summary-cards cols-3">
                     <div class="summary-card">
@@ -352,23 +368,75 @@ const Configurator = (function() {
                 </div>`;
             }
 
-            // ── Detail rows ──
-            const details = [
-                ['Profit Split', S.split + '%'],
+            // Evaluation detail rows
+            const evalDetails = [
                 ['Min Trading Days', S.days + ' days'],
-                ['Consistency Rule', S.consistency + '%'],
-                ['Payout', S.payout === 'monthly' ? 'Monthly' : S.payout === 'biweekly' ? 'Bi-Weekly' : 'Weekly'],
+                ['Time Limit', 'None'],
+                ['News Trading', 'Allowed'],
             ];
             if (S.overnight || S.overweek) {
-                details.push(['Add-Ons', S.overweek ? 'Overweek + Overnight' : 'Overnight']);
+                evalDetails.push(['Add-Ons', S.overweek ? 'Overweek + Overnight' : 'Overnight']);
             }
             html += `<div class="summary-details">
-                ${details.map(([l, v]) =>
+                ${evalDetails.map(([l, v]) =>
                     `<div class="summary-detail-row"><span class="lbl">${l}</span><span class="val">${v}</span></div>`
                 ).join('')}
             </div>`;
+            html += `</div>`; // end evaluation panel
+
+            // ── FUNDED PANEL ──
+            html += `<div class="summary-phase-panel${activeTab === 'funded' ? ' active' : ''}" data-panel="funded">`;
+
+            // Funded metric cards
+            html += `<div class="summary-cards cols-3">
+                <div class="summary-card">
+                    <div class="summary-card-label">Profit Split</div>
+                    <div class="summary-card-pct">${S.split}%</div>
+                    <div class="summary-card-dollar">Up to 90%</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-label">Daily Loss</div>
+                    <div class="summary-card-pct">${S.daily}%</div>
+                    <div class="summary-card-dollar">${dv(S.daily)}</div>
+                    <div class="summary-card-tag">${S.dailyType}</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-label">Max Loss</div>
+                    <div class="summary-card-pct">${S.max}%</div>
+                    <div class="summary-card-dollar">${dv(S.max)}</div>
+                    <div class="summary-card-tag">${S.maxType}</div>
+                </div>
+            </div>`;
+
+            // Funded detail rows
+            const payoutLabel = S.payout === 'monthly' ? 'Monthly' : S.payout === 'biweekly' ? 'Bi-Weekly' : 'Weekly';
+            const fundedDetails = [
+                ['Payout Frequency', payoutLabel],
+                ['Payout Speed', '24h Guaranteed'],
+                ['Consistency Rule', S.consistency + '%'],
+                ['Scaling', 'Eligible'],
+                ['Doji Coins™', 'Earn on every trade'],
+            ];
+            html += `<div class="summary-details">
+                ${fundedDetails.map(([l, v]) =>
+                    `<div class="summary-detail-row"><span class="lbl">${l}</span><span class="val">${v}</span></div>`
+                ).join('')}
+            </div>`;
+            html += `</div>`; // end funded panel
 
             grid.innerHTML = html;
+
+            // ── Attach tab click listeners ──
+            grid.querySelectorAll('.summary-phase-tab').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    const phase = this.dataset.phase;
+                    grid.dataset.activeTab = phase;
+                    grid.querySelectorAll('.summary-phase-tab').forEach(function(t) { t.classList.remove('active'); });
+                    grid.querySelectorAll('.summary-phase-panel').forEach(function(p) { p.classList.remove('active'); });
+                    this.classList.add('active');
+                    grid.querySelector('[data-panel="' + phase + '"]').classList.add('active');
+                });
+            });
         }
 
         // Render price
