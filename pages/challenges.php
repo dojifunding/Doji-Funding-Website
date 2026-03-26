@@ -23,22 +23,40 @@
 
 <!-- TRUST BAR -->
 <section style="background:var(--bg2);border-bottom:1px solid rgba(16,185,129,0.08)">
-    <div class="trust-bar" style="max-width:1200px;margin:0 auto">
-        <div class="trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            <span><strong>700K+</strong> Configurations</span>
-        </div>
-        <div class="trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-            <span><strong>Up to 90%</strong> Profit Split</span>
-        </div>
-        <div class="trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span><strong>24h</strong> Payouts</span>
-        </div>
-        <div class="trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span><strong>No</strong> Time Limit</span>
+    <div class="trust-bar-wrap" style="max-width:1200px;margin:0 auto">
+        <div class="trust-bar">
+            <?php for ($i = 0; $i < 2; $i++): ?>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span><strong>700K+</strong> Configurations</span>
+            </div>
+            <div class="trust-sep"></div>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                <span><strong>Up to 90%</strong> Profit Split</span>
+            </div>
+            <div class="trust-sep"></div>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span><strong>24h</strong> Payouts</span>
+            </div>
+            <div class="trust-sep"></div>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span><strong>No</strong> Time Limit</span>
+            </div>
+            <div class="trust-sep"></div>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span><strong>Regulated</strong> Gibraltar Entity</span>
+            </div>
+            <div class="trust-sep"></div>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                <span><strong>4,200+</strong> Funded Traders</span>
+            </div>
+            <div class="trust-sep"></div>
+            <?php endfor; ?>
         </div>
     </div>
 </section>
