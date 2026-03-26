@@ -1,38 +1,31 @@
 /**
- * Doji Funding — Interactive Dot-Matrix Footer
- * v3.0.0
+ * Doji Funding — Dot-Matrix Footer (Cotool style)
+ * v4.0.0
  *
- * Renders "DOJI FUNDING" as large 3D sphere dots on a canvas.
- * Inspired by Cotool-style dot-matrix footer.
- * Few particles, big dots, clean look, low CPU usage.
- * Dots scatter on mouse/touch and reassemble smoothly.
+ * Renders "DOJI" as large flat dot-matrix circles.
+ * Big dots, wide spacing, fewer particles = silky smooth.
+ * Mouse/touch scatter effect with spring return.
  */
 (function () {
     'use strict';
 
     // ─── Configuration ───
     var CONFIG = {
-        text: 'DOJI FUNDING',
-        fontSizeBase: 120,           // Fits "DOJI FUNDING" within any desktop viewport
-        dotRadius: 6,                // Big visible dots (like the reference)
-        dotGap: 14,                  // Large gap = fewer dots = great performance
-        mouseRadius: 150,            // Interaction radius
-        returnSpeed: 0.08,           // Smooth spring return
-        friction: 0.85,              // Velocity damping
-        pushForce: 12,               // Strong push for satisfying interaction
-        canvasHeight: 360,           // Canvas height desktop
-        alphaThreshold: 80,          // Only solid parts of the font
-        sampleScale: 2,              // 2x is enough with large gaps
-        letterSpacingFactor: 0.06,   // Letter spacing
-        fontWeight: 700              // Bold Array Wide
+        text: 'DOJI',
+        dotRadius: 6.5,
+        dotGap: 14,
+        mouseRadius: 120,
+        returnSpeed: 0.07,
+        friction: 0.86,
+        pushForce: 10,
+        canvasHeight: 320,
+        alphaThreshold: 60,
+        sampleScale: 4
     };
 
-    // ─── Precomputed colors ───
-    // Emerald 3D sphere: highlight → core → shadow
-    var COLOR_HIGHLIGHT = '#6ee7b7';  // Top-left highlight
-    var COLOR_CORE = '#10B981';       // Main fill
-    var COLOR_SHADOW = '#065f46';     // Bottom-right shadow
-    var COLOR_SCATTER = '#34d399';    // When scattered
+    // ─── Colors ───
+    var COLOR_REST = 'rgba(255, 255, 255, 0.75)';
+    var COLOR_SCATTER = 'rgba(16, 185, 129, 0.9)';
 
     // ─── State ───
     var canvas, ctx;
@@ -41,14 +34,13 @@
     var animId = null;
     var visible = false;
     var dpr = 1;
-    var sphereGradientCache = null;
 
     // ─── Particle ───
     function Dot(x, y) {
         this.ox = x;
         this.oy = y;
-        this.x = x;
-        this.y = y;
+        this.x = x + (Math.random() - 0.5) * 400;
+        this.y = y + (Math.random() - 0.5) * 300;
         this.vx = 0;
         this.vy = 0;
     }
@@ -60,11 +52,10 @@
         var r2 = CONFIG.mouseRadius * CONFIG.mouseRadius;
 
         if (d2 < r2 && mouse.active) {
-            var d = Math.sqrt(d2);
+            var d = Math.sqrt(d2) || 1;
             var f = (CONFIG.mouseRadius - d) / CONFIG.mouseRadius;
-            var a = Math.atan2(dy, dx);
-            this.vx += Math.cos(a) * f * CONFIG.pushForce;
-            this.vy += Math.sin(a) * f * CONFIG.pushForce;
+            this.vx += (dx / d) * f * CONFIG.pushForce;
+            this.vy += (dy / d) * f * CONFIG.pushForce;
         }
 
         this.vx += (this.ox - this.x) * CONFIG.returnSpeed;
@@ -78,38 +69,20 @@
     Dot.prototype.draw = function () {
         var dx = this.x - this.ox;
         var dy = this.y - this.oy;
-        var d2 = dx * dx + dy * dy;
-        var r = CONFIG.dotRadius;
+        var dist2 = dx * dx + dy * dy;
         var px = this.x;
         var py = this.y;
 
-        // Snap when at rest
-        if (d2 < 0.5) {
+        // Snap when nearly at rest
+        if (dist2 < 0.25) {
             px = this.ox;
             py = this.oy;
         }
 
-        // 3D sphere gradient — cached for performance
-        var grad = ctx.createRadialGradient(
-            px - r * 0.3, py - r * 0.3, r * 0.1,
-            px, py, r
-        );
-
-        if (d2 > 400) {
-            // Far scattered — bright
-            grad.addColorStop(0, '#a7f3d0');
-            grad.addColorStop(0.5, COLOR_SCATTER);
-            grad.addColorStop(1, COLOR_SHADOW);
-        } else {
-            // Normal / at rest — emerald 3D sphere
-            grad.addColorStop(0, COLOR_HIGHLIGHT);
-            grad.addColorStop(0.4, COLOR_CORE);
-            grad.addColorStop(1, COLOR_SHADOW);
-        }
-
+        // Flat circle — switch color when scattered
         ctx.beginPath();
-        ctx.arc(px, py, r, 0, 6.2832);
-        ctx.fillStyle = grad;
+        ctx.arc(px, py, CONFIG.dotRadius, 0, 6.2832);
+        ctx.fillStyle = dist2 > 200 ? COLOR_SCATTER : COLOR_REST;
         ctx.fill();
     };
 
@@ -119,85 +92,108 @@
 
         var w = canvas.width / dpr;
         var h = canvas.height / dpr;
-
         var scale = CONFIG.sampleScale;
+
         var off = document.createElement('canvas');
         var oc = off.getContext('2d');
         off.width = w * scale;
         off.height = h * scale;
 
-        // Auto-fit: start with base size, measure actual text width, shrink to fit 85% of canvas
+        // Use bold Inter/system font — no Array Wide dependency
+        var fontFamily = '"Inter", "Helvetica Neue", Arial, sans-serif';
+        var fontWeight = 900;
+
+        // Start with a large font, auto-shrink to fit 80% of canvas width
         var targetWidth = off.width * 0.85;
-        var fs = Math.min(CONFIG.fontSizeBase, w * 0.08); // Initial guess
-        var sfs = fs * scale;
+        var fontSize = Math.min(320, w * 0.28) * scale;
 
-        oc.font = CONFIG.fontWeight + ' ' + sfs + 'px "Array Wide", "Array", sans-serif';
+        oc.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
 
-        // Measure actual width with letter spacing
-        var letters = CONFIG.text.split('');
-        var sp = sfs * CONFIG.letterSpacingFactor;
-        var measuredWidth = 0;
-        for (var mi = 0; mi < letters.length; mi++) {
-            measuredWidth += oc.measureText(letters[mi]).width;
+        // Measure and adjust
+        var measured = oc.measureText(CONFIG.text).width;
+        if (measured > targetWidth) {
+            fontSize = Math.floor(fontSize * (targetWidth / measured));
         }
-        measuredWidth += sp * (letters.length - 1);
+        fontSize = Math.max(fontSize, 40 * scale);
 
-        // Scale font to fit target width
-        if (measuredWidth > targetWidth) {
-            var ratio = targetWidth / measuredWidth;
-            sfs = Math.floor(sfs * ratio);
-            fs = sfs / scale;
-        }
-        sfs = Math.max(sfs, 20 * scale);
+        // Apply letter spacing manually for wide look
+        var letterSpacing = fontSize * 0.15;
 
         oc.fillStyle = '#fff';
-        oc.font = CONFIG.fontWeight + ' ' + sfs + 'px "Array Wide", "Array", sans-serif';
-        oc.textAlign = 'center';
+        oc.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
+        oc.textAlign = 'left';
         oc.textBaseline = 'middle';
 
-        // Thicken strokes: 5-pass rendering
-        var centerY = off.height / 2;
-        var offsets = [[0,0], [-1,0], [1,0], [0,-1], [0,1]];
-        for (var t = 0; t < offsets.length; t++) {
-            drawSpacedText(oc, off.width, centerY + offsets[t][1] * scale, sfs, offsets[t][0] * scale);
+        // Calculate total text width with letter spacing
+        var letters = CONFIG.text.split('');
+        var widths = [];
+        var totalW = 0;
+        for (var i = 0; i < letters.length; i++) {
+            var lw = oc.measureText(letters[i]).width;
+            widths.push(lw);
+            totalW += lw;
+        }
+        totalW += letterSpacing * (letters.length - 1);
+
+        // Re-check fit with spacing
+        if (totalW > targetWidth) {
+            var ratio = targetWidth / totalW;
+            fontSize = Math.floor(fontSize * ratio);
+            letterSpacing = fontSize * 0.12;
+            oc.font = fontWeight + ' ' + fontSize + 'px ' + fontFamily;
+            widths = [];
+            totalW = 0;
+            for (var ri = 0; ri < letters.length; ri++) {
+                var rw = oc.measureText(letters[ri]).width;
+                widths.push(rw);
+                totalW += rw;
+            }
+            totalW += letterSpacing * (letters.length - 1);
         }
 
-        // Sample
+        // Draw text with stroke + multi-pass fill for maximum coverage (zero holes)
+        var centerY = off.height / 2;
+
+        // First: thick stroke to fill all edges
+        oc.strokeStyle = '#fff';
+        oc.lineWidth = scale * 4;
+        oc.lineJoin = 'round';
+        var baseCx = (off.width - totalW) / 2;
+        var strokCx = baseCx;
+        for (var si = 0; si < letters.length; si++) {
+            oc.strokeText(letters[si], strokCx, centerY);
+            strokCx += widths[si] + letterSpacing;
+        }
+
+        // Then: 9-pass fill on top
+        var s2 = scale;
+        var offsets = [
+            [0, 0],
+            [-s2, 0], [s2, 0], [0, -s2], [0, s2],
+            [-s2, -s2], [s2, -s2], [-s2, s2], [s2, s2]
+        ];
+
+        for (var p = 0; p < offsets.length; p++) {
+            var cx = baseCx + offsets[p][0];
+            var cy = centerY + offsets[p][1];
+            for (var j = 0; j < letters.length; j++) {
+                oc.fillText(letters[j], cx, cy);
+                cx += widths[j] + letterSpacing;
+            }
+        }
+
+        // Sample pixels at grid intervals
         var img = oc.getImageData(0, 0, off.width, off.height);
         var data = img.data;
         var gap = CONFIG.dotGap * scale;
 
-        for (var y = 0; y < off.height; y += gap) {
-            for (var x = 0; x < off.width; x += gap) {
-                var idx = (Math.round(y) * off.width + Math.round(x)) * 4;
+        for (var sy = 0; sy < off.height; sy += gap) {
+            for (var sx = 0; sx < off.width; sx += gap) {
+                var idx = (Math.round(sy) * off.width + Math.round(sx)) * 4;
                 if (data[idx + 3] > CONFIG.alphaThreshold) {
-                    var dispX = x / scale;
-                    var dispY = y / scale;
-                    var dot = new Dot(dispX, dispY);
-                    // Entrance scatter
-                    dot.x = dispX + (Math.random() - 0.5) * 300;
-                    dot.y = dispY + (Math.random() - 0.5) * 200;
-                    particles.push(dot);
+                    particles.push(new Dot(sx / scale, sy / scale));
                 }
             }
-        }
-    }
-
-    function drawSpacedText(oc, cw, cy, sfs, ox) {
-        var letters = CONFIG.text.split('');
-        var sp = sfs * CONFIG.letterSpacingFactor;
-        var widths = [];
-        var total = 0;
-        for (var i = 0; i < letters.length; i++) {
-            var lw = oc.measureText(letters[i]).width;
-            widths.push(lw);
-            total += lw;
-        }
-        total += sp * (letters.length - 1);
-        var cx = (cw - total) / 2 + ox;
-        for (var j = 0; j < letters.length; j++) {
-            oc.fillText(letters[j], cx + widths[j] / 2, cy);
-            cx += widths[j] + sp;
         }
     }
 
@@ -238,10 +234,10 @@
         if (!canvas) return;
         var w = canvas.parentElement.offsetWidth;
         var h = CONFIG.canvasHeight;
-        if (w < 600) h = 200;
-        else if (w < 900) h = 260;
+        if (w < 600) h = 180;
+        else if (w < 900) h = 240;
 
-        dpr = window.devicePixelRatio || 1;
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
         canvas.width = w * dpr;
         canvas.height = h * dpr;
         canvas.style.width = w + 'px';
@@ -278,7 +274,7 @@
             rt = setTimeout(resize, 200);
         }, { passive: true });
 
-        // Visibility observer — only animate when in viewport
+        // Only animate when visible
         new IntersectionObserver(function (entries) {
             entries.forEach(function (e) {
                 visible = e.isIntersecting;
@@ -288,11 +284,10 @@
     }
 
     function boot() {
-        if (document.fonts && document.fonts.load) {
-            document.fonts.load('700 48px "Array Wide"').then(function () {
+        // Wait for Inter font to be ready
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(function () {
                 setTimeout(init, 50);
-            }).catch(function () {
-                setTimeout(init, 200);
             });
         } else {
             setTimeout(init, 500);
