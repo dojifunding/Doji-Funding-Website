@@ -17,8 +17,13 @@
     <div class="hero-split">
         <div class="hero-left">
             <div class="badge">100% Customizable Prop Firm</div>
-            <h1>
-                Trade Your Way.<br><span class="green">Get Funded.</span>
+            <h1
+                data-weight-wave
+                data-ww-base-weight="300"
+                data-ww-hover-weight="850"
+                data-ww-radius="5"
+            >
+                Trade Your <span class="green text-loop-word" id="heroLoopWord" data-no-ww>Way</span>.<br><span class="green">Get Funded.</span>
                 <span class="seo-tag">H1</span>
             </h1>
             <p class="subtitle">
@@ -52,6 +57,8 @@
         <div class="hero-right"></div>
     </div>
 </section>
+
+<div class="section-divider"></div>
 
 <!-- TRUST BAR — Infinite Marquee -->
 <section style="background:var(--bg2);border-bottom:1px solid rgba(16,185,129,0.08)">
@@ -102,6 +109,8 @@
         </div>
     </div>
 </section>
+
+<div class="section-divider"></div>
 
 <!-- KEY HIGHLIGHTS — FundedNext style -->
 <section class="section" style="background:var(--bg2);padding-top:80px;padding-bottom:80px">
@@ -321,6 +330,8 @@
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 <!-- DOJI COINS LOYALTY PROGRAM -->
 <section class="section" style="background:var(--bg2);overflow:hidden">
     <div class="section-inner" style="max-width:1100px;margin:0 auto">
@@ -442,6 +453,8 @@
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 <!-- BUILT FOR TRADERS — Pill Bar -->
 <section class="section" style="background:var(--bg)">
     <div style="max-width:1200px;margin:0 auto">
@@ -460,6 +473,8 @@
         </div>
     </div>
 </section>
+
+<div class="section-divider"></div>
 
 <!-- TESTIMONIALS -->
 <section class="section" style="background:var(--bg2)">
@@ -504,6 +519,8 @@
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 <!-- SOCIAL PROOF METRICS -->
 <section class="section" style="background:var(--bg);border-top:1px solid rgba(16,185,129,0.08);border-bottom:1px solid rgba(16,185,129,0.08)">
     <div class="section-inner">
@@ -527,6 +544,8 @@
         </div>
     </div>
 </section>
+
+<div class="section-divider"></div>
 
 <!-- TRADING PLATFORMS -->
 <section class="section" style="background:var(--bg2)">
@@ -559,6 +578,8 @@
         </div>
     </div>
 </section>
+
+<div class="section-divider"></div>
 
 <!-- COMPARISON TABLE — Doji vs Competitors -->
 <section class="section" style="background:var(--bg)">

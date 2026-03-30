@@ -60,13 +60,13 @@
 
 /* ═══ CSS Variables ═══ */
 :root {
-    --bg: #08090b;
-    --bg2: #0e1014;
-    --bg3: #16181d;
-    --bg4: #1e2128;
-    --border: #3a4048;
-    --border2: #4a5058;
-    --border3: #5a6068;
+    --bg: #0a0a0a;
+    --bg2: #0a0a0a;
+    --bg3: #0d0d0d;
+    --bg4: #111111;
+    --border: #1e1e1e;
+    --border2: #2a2a2a;
+    --border3: #363636;
     --green: #10B981;
     --green-glow: rgba(16,185,129,0.20);
     --green-dim: rgba(16,185,129,0.09);
@@ -76,9 +76,9 @@
     --red: #ff3b3b;
     --orange: #ff9f1a;
     --blue: #4a9eff;
-    --font-heading: 'Inter', sans-serif;
-    --font-body: 'Inter', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --font-heading: 'Chivo Mono', monospace;
+    --font-body: 'Chivo Mono', monospace;
+    --font-mono: 'Chivo Mono', monospace;
 
     /* ═══ Square Design System (Oxide/TensorStax/Altius inspired) ═══ */
     --radius-none: 0px;
@@ -86,7 +86,7 @@
     --radius-sm: 2px;
     --radius-md: 3px;
     --radius-lg: 4px;
-    --radius-pill: 100px;
+    --radius-pill: 4px;
     --radius-circle: 50%;
 
     /* Borders */
@@ -123,6 +123,28 @@ html { overflow-x: hidden; }
 @supports (scrollbar-color: auto) {
     html { scrollbar-width: thin; scrollbar-color: #10B981 var(--bg2); }
 }
+/* ═══ Animated Grain + Scanlines (rig.ai style) ═══ */
+.noise {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 9999;
+    opacity: 0.08; filter: url(#grainy);
+}
+.scanlines {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent, transparent 2px,
+        rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none; z-index: 9998;
+}
+.rgb-fringe {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: linear-gradient(90deg, #e5332a05, #2b4fff04, #e5332a05);
+    background-size: 3px 100%;
+    pointer-events: none; z-index: 10000;
+}
+
 body {
     background: var(--bg);
     color: var(--text);
@@ -190,7 +212,7 @@ a { color: inherit; }
 /* ═══ Navigation ═══ */
 .nav {
     position: fixed; top: 36px; left: 0; right: 0; z-index: 900;
-    background: rgba(8,9,11,0.94); backdrop-filter: blur(20px);
+    background: rgba(10,10,10,0.94); backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
     padding: 0 32px; height: 64px;
     transition: top 0.3s ease;
@@ -556,6 +578,7 @@ h1 { font-size: clamp(42px, 5.5vw, 60px); font-weight: 700; line-height: 1.08; m
 
 /* ═══ How It Works ═══ */
 .hiw-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+
 .hiw-card {
     position: relative;
     background: rgba(14,16,20,0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-sm);
@@ -592,6 +615,14 @@ h1 { font-size: clamp(42px, 5.5vw, 60px); font-weight: 700; line-height: 1.08; m
     color: var(--text3); text-decoration: none; transition: color 0.2s ease;
 }
 .hiw-cta:hover { color: var(--green); }
+.hiw-voxel {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    pointer-events: none;
+    z-index: 2;
+    display: block;
+}
 
 /* ═══ Pill Bar ═══ */
 .pill-bar {
@@ -866,6 +897,30 @@ h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #ffffff; font
     border-color: #4752C4 !important;
 }
 
+/* ═══ Text Loop ═══ */
+.text-loop-section {
+    padding: 100px 32px;
+    text-align: center;
+    background: var(--bg);
+    border-top: 1px solid rgba(16,185,129,0.08);
+}
+.text-loop-headline {
+    font-family: 'Nippo', sans-serif;
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin: 0;
+}
+.text-loop-word {
+    display: inline-block;
+    min-width: 4ch;
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0);
+}
+
 /* ═══ Stats ═══ */
 .stat-card { padding: 28px; background: var(--bg2); border-radius: var(--radius-sm); border: 1px solid var(--border); transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
 .stat-card:hover { border-color: rgba(16,185,129,0.15);  transform: translateY(-4px);  }
@@ -895,7 +950,7 @@ h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #ffffff; font
 .proof-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 .proof-item { text-align: center; padding: 32px 16px; }
 .proof-val {
-    font-family: var(--font-heading); font-size: 48px; font-weight: 800;
+    font-family: 'Array', var(--font-heading); font-size: 48px; font-weight: 800;
     color: var(--green); letter-spacing: -0.03em; line-height: 1;
     margin-bottom: 8px; text-shadow: 0 0 30px var(--green-glow);
 }
@@ -1046,9 +1101,45 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 6
 .footer-brand { font-weight: 700; font-size: 16px; margin-bottom: 12px; }
 .footer-desc { color: var(--text3); font-size: 13px; line-height: 1.7; max-width: 280px; }
 .footer-col-title { color: var(--text); font-weight: 700; font-size: 13px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+/* Desktop: links always visible, chevron hidden */
+.footer-accordion-chevron { display: none; }
+.footer-col-links { display: flex; flex-direction: column; gap: 0; padding-top: 4px; }
+.footer-col-links .footer-link { display: block; width: 100%; }
+@media (max-width: 768px) {
+    .footer-accordion-chevron { display: block; }
+}
 .footer-link { display: block; color: var(--text2); font-size: 13px; margin-bottom: 8px; cursor: pointer; }
 .footer-link:hover { color: #ffffff; }
-/* Footer Payment Methods */
+/* Payment Logo Carousel */
+.pc-wrap {
+    max-width: 1200px; margin: 28px auto 0; padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: center; align-items: center; gap: 10px;
+    flex-wrap: nowrap;
+}
+.pc-col {
+    position: relative;
+    width: 52px; height: 34px;
+    overflow: hidden; flex-shrink: 0;
+}
+.pc-logo {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
+    padding: 4px;
+    transition: border-color 0.2s;
+}
+.pc-logo:hover { border-color: var(--border2); background: var(--bg4); }
+.pc-logo img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+@media (max-width: 480px) {
+    .pc-col { width: 44px; height: 30px; }
+    .pc-wrap { gap: 6px; }
+}
+
+/* Footer Payment Methods (legacy — kept for reference) */
 .footer-payments {
     max-width: 1200px; margin: 28px auto 0; padding-top: 24px;
     border-top: 1px solid var(--border); text-align: center;
@@ -1922,11 +2013,32 @@ textarea.form-input { resize: vertical; min-height: 100px; }
     .engage-grid { grid-template-columns: 1fr; }
 
     /* Footer */
-    .footer-grid { grid-template-columns: 1fr; gap: 28px; text-align: center; }
+    .footer-grid { grid-template-columns: 1fr; gap: 0; text-align: left; }
+    .footer-grid > div:first-child { padding-bottom: 28px; border-bottom: 1px solid var(--border); margin-bottom: 4px; text-align: center; }
     .footer-desc { max-width: none; margin: 0 auto; }
     .footer-socials { justify-content: center; }
     .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
     footer { padding: 36px 20px 24px; }
+
+    /* Footer accordion */
+    .footer-col-btn {
+        display: flex; justify-content: space-between; align-items: center;
+        cursor: pointer; padding: 14px 0; margin-bottom: 0;
+        border-bottom: 1px solid var(--border);
+        user-select: none; -webkit-tap-highlight-color: transparent;
+    }
+    .footer-col-btn:active { opacity: 0.7; }
+    .footer-accordion-chevron {
+        flex-shrink: 0; color: var(--text3);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .footer-col-btn.open .footer-accordion-chevron { transform: rotate(180deg); }
+    .footer-col-links {
+        max-height: 0; overflow: hidden;
+        transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .footer-col-links.open { max-height: 400px; }
+    .footer-col-links .footer-link { padding: 8px 0; margin-bottom: 0; display: block; }
 
     /* Social icons: force size */
     .social-icon { width: 34px; height: 34px; min-width: 34px; max-width: 34px; flex-shrink: 0; }

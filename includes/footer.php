@@ -60,26 +60,41 @@ $v = ASSET_VERSION;
             </div>
         </div>
         <div>
-            <div class="footer-col-title">Challenges</div>
-            <a style="text-decoration:none" class="footer-link" href="challenges.php">1 Step Challenge</a>
-            <a style="text-decoration:none" class="footer-link" href="challenges.php">2 Step Challenge</a>
-            <a style="text-decoration:none" class="footer-link" href="#">Instant Funding</a>
-            <a style="text-decoration:none" class="footer-link" href="challenges.php">Pricing</a>
+            <div class="footer-col-title footer-col-btn" role="button" aria-expanded="false">
+                Challenges
+                <svg class="footer-accordion-chevron" viewBox="0 0 10 6" width="10" height="10" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="footer-col-links">
+                <a style="text-decoration:none" class="footer-link" href="challenges.php">1 Step Challenge</a>
+                <a style="text-decoration:none" class="footer-link" href="challenges.php">2 Step Challenge</a>
+                <a style="text-decoration:none" class="footer-link" href="#">Instant Funding</a>
+                <a style="text-decoration:none" class="footer-link" href="challenges.php">Pricing</a>
+            </div>
         </div>
         <div>
-            <div class="footer-col-title">Resources</div>
-            <a style="text-decoration:none" class="footer-link" href="faq.php">FAQ</a>
-            <a style="text-decoration:none" class="footer-link" href="rules.php">Trading Rules</a>
-            <a style="text-decoration:none" class="footer-link" href="symbols.php">Symbols List</a>
+            <div class="footer-col-title footer-col-btn" role="button" aria-expanded="false">
+                Resources
+                <svg class="footer-accordion-chevron" viewBox="0 0 10 6" width="10" height="10" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="footer-col-links">
+                <a style="text-decoration:none" class="footer-link" href="faq.php">FAQ</a>
+                <a style="text-decoration:none" class="footer-link" href="rules.php">Trading Rules</a>
+                <a style="text-decoration:none" class="footer-link" href="symbols.php">Symbols List</a>
+            </div>
         </div>
         <div>
-            <div class="footer-col-title">Company</div>
-            <a style="text-decoration:none" class="footer-link" href="about.php">About Us</a>
-            <a style="text-decoration:none" class="footer-link" href="contact.php">Contact</a>
-            <a style="text-decoration:none" class="footer-link" href="affiliates.php">Affiliate Program</a>
-            <a style="text-decoration:none" class="footer-link" href="terms.php">Terms &amp; Conditions</a>
-            <a style="text-decoration:none" class="footer-link" href="privacy.php">Privacy Policy</a>
-            <a style="text-decoration:none" class="footer-link" href="refund.php">Refund Policy</a>
+            <div class="footer-col-title footer-col-btn" role="button" aria-expanded="false">
+                Company
+                <svg class="footer-accordion-chevron" viewBox="0 0 10 6" width="10" height="10" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="footer-col-links">
+                <a style="text-decoration:none" class="footer-link" href="about.php">About Us</a>
+                <a style="text-decoration:none" class="footer-link" href="contact.php">Contact</a>
+                <a style="text-decoration:none" class="footer-link" href="affiliates.php">Affiliate Program</a>
+                <a style="text-decoration:none" class="footer-link" href="terms.php">Terms &amp; Conditions</a>
+                <a style="text-decoration:none" class="footer-link" href="privacy.php">Privacy Policy</a>
+                <a style="text-decoration:none" class="footer-link" href="refund.php">Refund Policy</a>
+            </div>
         </div>
     </div>
 
@@ -144,30 +159,8 @@ $v = ASSET_VERSION;
         </div>
     </div>
 
-    <!-- Payment Methods -->
-    <div class="footer-payments">
-        <div class="footer-payments-label">Accepted Payment Methods</div>
-        <div class="footer-payments-grid">
-            <!-- Cards -->
-            <a class="payment-icon" href="faq.php#billing" title="Visa"><img src="assets/img/payments/visa.svg" alt="Visa" height="28"></a>
-            <a class="payment-icon" href="faq.php#billing" title="Mastercard"><img src="assets/img/payments/mastercard.svg" alt="Mastercard" height="28"></a>
-            <a class="payment-icon" href="faq.php#billing" title="Apple Pay"><img src="assets/img/payments/apple.svg" alt="Apple Pay" height="28"></a>
-            <a class="payment-icon" href="faq.php#billing" title="Google Pay"><img src="assets/img/payments/google-pay.svg" alt="Google Pay" height="28"></a>
-            <a class="payment-icon" href="faq.php#billing" title="Alipay"><img src="assets/img/payments/alipay.svg" alt="Alipay" height="28"></a>
-            <a class="payment-icon" href="faq.php#billing" title="American Express"><img src="assets/img/payments/amex.svg" alt="American Express" height="28"></a>
-            <span class="payment-more">+ more</span>
-            <!-- Divider -->
-            <div class="payment-divider"></div>
-            <!-- Crypto -->
-            <a class="payment-icon" href="faq.php#billing" title="Bitcoin (BTC)"><img src="assets/img/payments/bitcoin-btc-logo.svg" alt="Bitcoin" height="24"></a>
-            <a class="payment-icon" href="faq.php#billing" title="Ethereum (ETH)"><img src="assets/img/payments/ethereum-eth-logo.svg" alt="Ethereum" height="24"></a>
-            <a class="payment-icon" href="faq.php#billing" title="Tether (USDT)"><img src="assets/img/payments/tether-usdt-logo.svg" alt="Tether USDT" height="24"></a>
-            <a class="payment-icon" href="faq.php#billing" title="USD Coin (USDC)"><img src="assets/img/payments/usd-coin-usdc-logo.svg" alt="USDC" height="24"></a>
-            <a class="payment-icon" href="faq.php#billing" title="Litecoin (LTC)"><img src="assets/img/payments/litecoin-ltc-logo.svg" alt="Litecoin" height="24"></a>
-            <a class="payment-icon" href="faq.php#billing" title="Solana (SOL)"><img src="assets/img/payments/solana-sol-logo.svg" alt="Solana" height="24"></a>
-            <span class="payment-more">+ more</span>
-        </div>
-    </div>
+    <!-- Payment Logo Carousel -->
+    <div class="pc-wrap" id="paymentCarousel"></div>
 
     <div class="footer-bottom">
         <span class="footer-copy">&copy; <?= SITE_YEAR ?> <?= SITE_NAME ?>. A brand of Volatys Dynamics LTD. All rights reserved.</span>
@@ -196,6 +189,8 @@ $v = ASSET_VERSION;
 <?php endif; ?>
 <?php if ($currentPage === 'home'): ?>
 <script src="assets/js/globe.js?v=<?= $v ?>"></script>
+<script src="assets/js/hiw-voxel.js?v=<?= $v ?>"></script>
+<script src="assets/js/weight-wave.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 <?php if ($currentPage === 'affiliates'): ?>
 <script src="assets/js/circuit.js?v=<?= $v ?>"></script>
@@ -216,11 +211,28 @@ $v = ASSET_VERSION;
 <!-- Polish & UX Enhancements -->
 <script src="assets/js/polish.js?v=<?= $v ?>"></script>
 
-<!-- ASCII Scramble / Decryption Effect -->
-<script src="assets/js/scramble.js?v=<?= $v ?>"></script>
+<!-- Stacking Words — scroll-scrubbed word reveal -->
+<script src="assets/js/stacking-words.js?v=<?= $v ?>"></script>
+
+<!-- Text Loop — cycling headline words -->
+<script src="assets/js/text-loop.js?v=<?= $v ?>"></script>
+
+<!-- Payment Logo Carousel -->
+<script src="assets/js/payment-carousel.js?v=<?= $v ?>"></script>
 
 <!-- Interactive Pixel Particle Footer -->
 <script src="assets/js/particle-footer.js?v=<?= $v ?>"></script>
+
+<!-- Animated Grain Overlays (rig.ai style) -->
+<svg width="0" height="0" aria-hidden="true" style="display:none">
+  <filter id="grainy" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.4" numOctaves="4" stitchTiles="stitch" seed="0"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1 0 0 0 0"/>
+  </filter>
+</svg>
+<div class="noise" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="rgb-fringe" aria-hidden="true"></div>
 
 </body>
 </html>

@@ -143,7 +143,7 @@
         geo.userData = { phases: phases };
 
         var mat = new THREE.PointsMaterial({
-            color: GREEN, size: 0.032, transparent: true, opacity: 0.85,
+            color: GREEN, size: 0.032, transparent: true, opacity: 0.18,
             blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true
         });
 
@@ -168,7 +168,7 @@
         geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
         starsGroup = new THREE.Points(geo, new THREE.PointsMaterial({
-            color: 0xffffff, size: 0.05, transparent: true, opacity: 0.8,
+            color: 0xffffff, size: 0.05, transparent: true, opacity: 0.12,
             blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true
         }));
         starsGroup.userData = { baseSizes: sizes.slice() };
@@ -188,7 +188,7 @@
         var gGeo = new THREE.BufferGeometry();
         gGeo.setAttribute('position', new THREE.BufferAttribute(gPos, 3));
         var fp = new THREE.Points(gGeo, new THREE.PointsMaterial({
-            color: GREEN, size: 0.03, transparent: true, opacity: 0.3,
+            color: GREEN, size: 0.03, transparent: true, opacity: 0.08,
             blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true
         }));
         fp.name = 'floatingParticles';

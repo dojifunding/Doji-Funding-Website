@@ -21,6 +21,8 @@
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 <!-- TRUST BAR -->
 <section style="background:var(--bg2);border-bottom:1px solid rgba(16,185,129,0.08)">
     <div class="trust-bar-wrap" style="max-width:1200px;margin:0 auto">
