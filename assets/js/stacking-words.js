@@ -170,6 +170,17 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
 
+    // IntersectionObserver — ensures animation fires on mobile momentum scroll
+    // where scroll events are sparse. Fires updateAll() as each element
+    // enters/exits the extended root margin window.
+    if (typeof IntersectionObserver !== 'undefined') {
+      var io = new IntersectionObserver(function () {
+        requestAnimationFrame(updateAll);
+      }, { rootMargin: '0px 0px -10% 0px', threshold: [0, 0.1, 0.5, 1] });
+
+      components.forEach(function (comp) { io.observe(comp.el); });
+    }
+
     // Run once for elements already in view
     updateAll();
   }

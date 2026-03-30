@@ -36,9 +36,9 @@
 .slider-track { position: relative; height: 16px; display: flex; align-items: center; }
 .slider-bg { position: absolute; left: 0; right: 0; height: 4px; border-radius: 2px; background: var(--border); }
 .slider-fill { position: absolute; left: 0; height: 4px; border-radius: 2px; background: linear-gradient(90deg, rgba(16,185,129,0.37), var(--green)); will-change: width; }
-.slider-thumb { position: absolute; transform: translateX(-50%); width: 18px; height: 18px; border-radius: 50%; background: url('../img/slider-thumb.png') center/cover no-repeat; box-shadow: 0 0 10px var(--green-glow), 0 2px 6px rgba(0,0,0,0.5); pointer-events: none; z-index: 2; will-change: left; }
+.slider-thumb { position: absolute; transform: translateX(-50%); width: 14px; height: 14px; border-radius: 2px; background: var(--bg); border: 2px solid var(--green); box-shadow: 0 0 8px var(--green-glow); pointer-events: none; z-index: 2; will-change: left; }
 .slider-input { position: absolute; left: 0; right: 0; width: 100%; height: 16px; opacity: 0; cursor: pointer; z-index: 3; margin: 0; touch-action: none; }
-.slider-ticks { display: flex; justify-content: space-between; margin-top: 3px; font-size: 10px; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+.slider-ticks { display: flex; justify-content: space-between; margin-top: 3px; font-size: 10px; color: var(--text3); font-family: 'Chivo Mono', monospace; }
 
 /* ═══ Toggle Group ═══ */
 .toggle-group { display: flex; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); }

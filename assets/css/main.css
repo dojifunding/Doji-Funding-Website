@@ -1585,151 +1585,82 @@ body.menu-open { overflow: hidden; }
 .tag-exotic { background: rgba(255,159,26,0.08); color: var(--orange); border: 1px solid rgba(255,159,26,0.15); }
 
 /* ═══ Doji Coins Loyalty Program ═══ */
-.dc-header { display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; }
-.dc-header-left { max-width: 560px; }
 .dc-badge {
-    display: inline-block; padding: 4px 14px; border-radius: var(--radius-sm);
-    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
-    letter-spacing: 0.1em; color: var(--green); background: rgba(16,185,129,0.08);
-    border: 1px solid rgba(16,185,129,0.15); margin-bottom: 16px;
+    display: inline-block; padding: 4px 12px; border-radius: var(--radius-sm);
+    font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--green);
+    background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2);
+    margin-bottom: 16px;
 }
+.dc-hero { text-align: center; max-width: 640px; margin: 0 auto 56px; }
 .dc-title { font-size: 32px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
-.dc-subtitle { font-size: 15px; color: var(--text2); line-height: 1.7; margin-bottom: 24px; }
-.dc-cta-row { display: flex; align-items: center; gap: 16px; }
-.dc-learn-more { font-size: 14px; font-weight: 600; color: var(--text2); text-decoration: none; transition: color 0.2s; }
-.dc-learn-more:hover { color: var(--green); }
+.dc-subtitle { font-size: 15px; color: var(--text2); line-height: 1.7; }
 
-/* Coin visual */
-.dc-coin-wrap { position: relative; width: 200px; height: 200px; }
-.dc-coin { position: relative; width: 160px; height: 160px; margin: 20px auto 0; }
-.dc-coin-ring {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    border-radius: 50%; border: 2px solid rgba(16,185,129,0.15);
-    animation: dcPulse 3s ease-in-out infinite;
-}
-.dc-coin-ring-2 {
-    top: -10px; left: -10px; width: calc(100% + 20px); height: calc(100% + 20px);
-    border-color: rgba(16,185,129,0.07);
-    animation-delay: 1s;
-}
-.dc-coin-logo {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 80px; height: 80px; border-radius: var(--radius-sm); object-fit: contain;
-    filter: drop-shadow(0 0 20px rgba(16,185,129,0.2));
-}
-.dc-coin-badge {
-    position: absolute; bottom: 0; right: -10px;
-    display: flex; align-items: center; gap: 6px;
-    background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-sm);
-    padding: 6px 14px 6px 8px;
-}
-.dc-coin-badge-icon { width: 20px; height: 20px; border-radius: var(--radius-sm); object-fit: contain; }
-.dc-coin-badge-val { font-family: 'Inter', sans-serif; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 16px; color: var(--green); }
+/* Body: 2-column */
+.dc-body { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
 
-@keyframes dcPulse {
-    0%, 100% { transform: scale(1); opacity: 0.6; }
-    50% { transform: scale(1.06); opacity: 1; }
-}
-
-/* Steps: Trade → Earn → Spend */
-.dc-steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-.dc-step-card {
+/* Terminal card */
+.dc-terminal {
     background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm);
-    padding: 24px; position: relative; overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    padding: 28px; display: flex; flex-direction: column; gap: 20px;
 }
-.dc-step-card:hover { border-color: rgba(16,185,129,0.2);  transform: translateY(-3px);  }
-
-.dc-step-visual { height: 180px; margin-bottom: 20px; position: relative; }
-.dc-step-content h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-.dc-step-content p { font-size: 13px; color: var(--text2); line-height: 1.7; }
-.dc-step-arrow {
-    display: none; /* Hidden on cards layout, could be used for inline layout */
+.dc-terminal-top { display: flex; justify-content: space-between; align-items: center; }
+.dc-terminal-label {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase;
 }
-
-/* Step 1: Trade — Chart mockup */
-.dc-step-mockup {
-    background: var(--bg4); border: 1px solid var(--border); border-radius: var(--radius-sm);
-    padding: 14px; height: 100%; position: relative; overflow: hidden;
-}
-.dc-mockup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.dc-mockup-pair { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text2); }
-.dc-mockup-price { font-family: 'Inter', sans-serif; font-variant-numeric: tabular-nums; font-size: 16px; font-weight: 700; color: var(--text); }
-.dc-mockup-chart { width: 100%; height: 70px; }
-.dc-mockup-float {
-    position: absolute; bottom: 12px; right: 12px;
-    background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-sm);
-    padding: 8px 12px; display: flex; flex-direction: column; gap: 1px;
-}
-.dc-mockup-float-pair { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text3); }
-.dc-mockup-float-price { font-family: 'Inter', sans-serif; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 700; color: var(--text); }
-.dc-mockup-float-pct { font-size: 10px; font-weight: 600; }
-
-/* Step 2: Earn — Coins animation */
-.dc-earn-visual {
-    height: 100%; display: flex; align-items: center; justify-content: center; position: relative;
-}
-.dc-earn-coin {
-    position: absolute; border-radius: 50%; overflow: hidden;
-}
-.dc-earn-coin-1 { width: 80px; height: 80px; top: 20px; left: 50%; transform: translateX(-50%); animation: dcFloat1 4s ease-in-out infinite; z-index: 3; }
-.dc-earn-coin-2 { width: 48px; height: 48px; top: 60px; left: 15%; animation: dcFloat2 5s ease-in-out infinite; z-index: 2; opacity: 0.7; }
-.dc-earn-coin-3 { width: 36px; height: 36px; top: 40px; right: 15%; animation: dcFloat3 4.5s ease-in-out infinite; z-index: 1; opacity: 0.5; }
-.dc-earn-coin-img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
-.dc-earn-counter {
-    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-    display: flex; align-items: center; gap: 8px;
-    background: var(--bg4); border: 1px solid var(--border2); border-radius: var(--radius-sm);
-    padding: 8px 16px 8px 10px;
-}
-.dc-earn-counter span { font-family: 'Inter', sans-serif; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 18px; color: var(--green); }
-
-@keyframes dcFloat1 { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-10px); } }
-@keyframes dcFloat2 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-@keyframes dcFloat3 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-
-/* Step 3: Spend — Reward cards */
-.dc-spend-visual {
-    height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    position: relative; gap: 10px;
-}
-.dc-spend-card-main {
-    background: var(--bg4); border: 1px solid rgba(16,185,129,0.2); border-radius: var(--radius-sm);
-    padding: 18px 28px; text-align: center; position: relative;
-}
-.dc-spend-check {
-    position: absolute; top: -8px; left: -8px;
-    width: 24px; height: 24px; border-radius: 50%;
-    background: var(--green); color: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700;
-}
-.dc-spend-text { font-size: 16px; font-weight: 700; color: var(--text); }
-.dc-spend-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
-.dc-spend-card-float {
-    position: absolute; top: 14px; right: 14px;
-    background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-sm);
-    padding: 6px 10px; display: flex; flex-direction: column; gap: 2px;
-}
-.dc-spend-tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; font-weight: 700; color: var(--green); letter-spacing: 0.06em; }
-.dc-spend-float-text { font-size: 12px; font-weight: 700; color: var(--text); }
-.dc-spend-cost {
+.dc-terminal-status {
     display: flex; align-items: center; gap: 6px;
-    font-family: 'Inter', sans-serif; font-variant-numeric: tabular-nums;
-    font-weight: 700; font-size: 16px; color: var(--text2);
+    font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+    color: var(--green); letter-spacing: 0.08em;
 }
+.dc-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green); animation: dcDotPulse 2s ease-in-out infinite;
+}
+@keyframes dcDotPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.dc-terminal-balance { display: flex; align-items: baseline; gap: 8px; }
+.dc-terminal-coin { width: 28px; height: 28px; border-radius: var(--radius-sm); object-fit: contain; align-self: center; }
+.dc-terminal-amount {
+    font-family: 'Array', sans-serif; font-variant-numeric: tabular-nums;
+    font-size: 52px; font-weight: 700; line-height: 1; color: var(--text);
+}
+.dc-terminal-unit {
+    font-family: var(--font-mono); font-size: 14px; font-weight: 700;
+    color: var(--text3); align-self: center;
+}
+.dc-bar-labels {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--text3); font-family: var(--font-mono);
+}
+.dc-bar { height: 3px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.dc-bar-fill { height: 100%; background: var(--green); border-radius: 2px; }
+.dc-rate-rows { display: flex; flex-direction: column; }
+.dc-rate-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--text2);
+}
+.dc-rate-row .green { font-family: var(--font-mono); font-size: 12px; font-weight: 700; }
+.dc-start-btn { width: 100%; text-align: center; justify-content: center; }
 
-/* Earning rates bar */
-.dc-rates {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+/* Rewards grid */
+.dc-rewards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.dc-reward-card {
     background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm);
-    padding: 20px;
+    padding: 20px; display: flex; flex-direction: column; gap: 10px;
+    transition: border-color 0.25s, transform 0.25s;
 }
-.dc-rate { text-align: center; padding: 8px; }
-.dc-rate-icon { font-size: 24px; margin-bottom: 6px; }
-.dc-rate-val { font-family: 'Inter', sans-serif; font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 800; color: var(--green); }
-.dc-rate-val small { font-size: 12px; font-weight: 600; color: var(--text3); }
-.dc-rate-desc { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.dc-reward-card:hover { border-color: rgba(16,185,129,0.25); transform: translateY(-2px); }
+.dc-reward-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.dc-reward-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.dc-reward-cost {
+    display: flex; align-items: center; gap: 4px; flex-shrink: 0;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    color: var(--green); white-space: nowrap;
+}
+.dc-reward-icon { width: 13px; height: 13px; border-radius: 3px; object-fit: contain; }
+.dc-reward-desc { font-size: 12px; color: var(--text3); line-height: 1.6; }
 
 /* ═══ Trading Rules Page ═══ */
 .rule-tabs {
@@ -1948,12 +1879,8 @@ textarea.form-input { resize: vertical; min-height: 100px; }
     .scale-arrow { display: none; }
     .scale-step { min-width: 100px; padding: 14px 16px; }
     /* Doji Coins */
-    .dc-header { grid-template-columns: 1fr; text-align: center; }
-    .dc-header-left { max-width: 100%; }
-    .dc-cta-row { justify-content: center; }
-    .dc-coin-wrap { margin: 0 auto; }
-    .dc-steps { grid-template-columns: 1fr; }
-    .dc-rates { grid-template-columns: repeat(2, 1fr); }
+    .dc-body { grid-template-columns: 1fr; }
+    .dc-hero { max-width: 100%; }
 }
 
 /* ═══ Responsive: Mobile (≤768px) ═══ */
@@ -2219,12 +2146,8 @@ textarea.form-input { resize: vertical; min-height: 100px; }
     .level-item { flex-direction: column; text-align: center; }
     /* Doji Coins mobile */
     .dc-title { font-size: 24px; }
-    .dc-cta-row { flex-direction: column; align-items: stretch; }
-    .dc-rates { grid-template-columns: 1fr 1fr; }
-    .dc-coin-wrap { width: 160px; height: 160px; }
-    .dc-coin { width: 120px; height: 120px; }
-    .dc-coin-logo { width: 56px; height: 56px; border-radius: var(--radius-sm); }
-    .dc-header-visual { display: none; }
+    .dc-rewards { grid-template-columns: 1fr; }
+    .dc-terminal-amount { font-size: 40px; }
 }
 
 /* ═══ Responsive: Small Mobile (≤480px) ═══ */

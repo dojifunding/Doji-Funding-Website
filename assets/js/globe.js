@@ -285,11 +285,11 @@
     function animate() {
         requestAnimationFrame(animate);
         var time = Date.now() * 0.001;
-        var slowTime = time * 0.15;
+        var slowTime = time * 0.05;
 
         // Mouse rotation
-        targetRotY += (mouseX * 0.6 - targetRotY) * 0.03;
-        targetRotX += (mouseY * 0.3 - targetRotX) * 0.03;
+        targetRotY += (mouseX * 0.25 - targetRotY) * 0.015;
+        targetRotX += (mouseY * 0.12 - targetRotX) * 0.015;
 
         if (orbGroup) {
             orbGroup.rotation.y = slowTime + targetRotY;
