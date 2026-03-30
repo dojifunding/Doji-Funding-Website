@@ -336,120 +336,74 @@
 <section class="section" style="background:var(--bg2);overflow:hidden">
     <div class="section-inner" style="max-width:1100px;margin:0 auto">
 
-        <!-- Header -->
-        <div class="dc-header">
-            <div class="dc-header-left">
-                <div class="dc-badge">LOYALTY PROGRAM</div>
-                <h2 class="dc-title">Earn <span class="green">Doji Coins</span>™ Every Time You Trade</h2>
-                <p class="dc-subtitle">Every trade you take — win or lose — earns you Doji Coins™. Accumulate rewards and spend them on free challenges, boosted splits, and exclusive perks. Your dedication is always rewarded.</p>
-                <div class="dc-cta-row">
-                    <a href="challenges.php" style="text-decoration:none" class="btn-primary-lg">Get Funded →</a>
-                    <a href="faq.php#doji-coins" class="dc-learn-more">Learn more</a>
-                </div>
-            </div>
-            <div class="dc-header-visual">
-                <!-- Animated Doji Coin visual -->
-                <div class="dc-coin-wrap">
-                    <div class="dc-coin">
-                        <div class="dc-coin-ring"></div>
-                        <div class="dc-coin-ring dc-coin-ring-2"></div>
-                        <img src="<?= DOJI_COIN_FILE ?>" alt="Doji Coin" class="dc-coin-logo">
-                    </div>
-                    <div class="dc-coin-badge">
-                        <img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-coin-badge-icon">
-                        <span class="dc-coin-badge-val">5,300</span>
-                    </div>
-                </div>
-            </div>
+        <!-- Centered Header -->
+        <div class="dc-hero">
+            <div class="dc-badge">DOJI COINS™</div>
+            <h2 class="dc-title">Trade More. Earn More. <span class="green">Unlock More.</span></h2>
+            <p class="dc-subtitle">Every lot you trade — on your evaluation or funded account — builds your Doji Coins™ balance. No expiry. No conditions. Just rewards that reflect how hard you work.</p>
         </div>
 
-        <div style="height:48px"></div>
+        <!-- Terminal + Rewards -->
+        <div class="dc-body">
 
-        <!-- 3 Steps: Trade → Earn → Spend -->
-        <div class="dc-steps">
-
-            <!-- STEP 1: Trade -->
-            <div class="dc-step-card">
-                <div class="dc-step-visual">
-                    <div class="dc-step-mockup">
-                        <!-- Mini chart mockup -->
-                        <div class="dc-mockup-header">
-                            <span class="dc-mockup-pair">EUR/USD</span>
-                            <span class="dc-mockup-price">1.0847</span>
-                        </div>
-                        <svg viewBox="0 0 200 80" class="dc-mockup-chart">
-                            <path d="M0 60 L20 52 L40 55 L60 40 L80 35 L100 42 L120 28 L140 22 L160 30 L180 15 L200 10" stroke="#10B981" stroke-width="2" fill="none" stroke-linecap="round"/>
-                            <path d="M0 60 L20 52 L40 55 L60 40 L80 35 L100 42 L120 28 L140 22 L160 30 L180 15 L200 10 L200 80 L0 80 Z" fill="url(#dcChartFill)" opacity="0.3"/>
-                            <defs><linearGradient id="dcChartFill" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse"><stop stop-color="#10B981"/><stop offset="1" stop-color="#10B981" stop-opacity="0"/></linearGradient></defs>
-                        </svg>
-                        <!-- Floating second pair -->
-                        <div class="dc-mockup-float">
-                            <span class="dc-mockup-float-pair">BTC/USD</span>
-                            <span class="dc-mockup-float-price">$65,000</span>
-                            <span class="dc-mockup-float-pct green">+0.25%</span>
-                        </div>
-                    </div>
+            <!-- Live Balance Terminal -->
+            <div class="dc-terminal">
+                <div class="dc-terminal-top">
+                    <span class="dc-terminal-label">LIVE BALANCE</span>
+                    <span class="dc-terminal-status"><span class="dc-dot"></span>ACTIVE</span>
                 </div>
-                <div class="dc-step-arrow">»</div>
-                <div class="dc-step-content">
-                    <h3>Trade</h3>
-                    <p>Every trade you execute on your evaluation or funded account earns Doji Coins™. Both phases of the challenge participate in the rewards program.</p>
+                <div class="dc-terminal-balance">
+                    <img src="<?= DOJI_COIN_FILE ?>" alt="Doji Coin" class="dc-terminal-coin">
+                    <span class="dc-terminal-amount">5,300</span>
+                    <span class="dc-terminal-unit">DC</span>
                 </div>
+                <div class="dc-bar-labels">
+                    <span>Next reward: Free Challenge</span>
+                    <span class="green">3,200 / 5,000 DC</span>
+                </div>
+                <div class="dc-bar"><div class="dc-bar-fill" style="width:64%"></div></div>
+                <div class="dc-rate-rows">
+                    <div class="dc-rate-row"><span>1 standard lot traded</span><span class="green">+10 DC</span></div>
+                    <div class="dc-rate-row"><span>Challenge evaluation</span><span class="green">Earns coins</span></div>
+                    <div class="dc-rate-row"><span>Funded account</span><span class="green">Earns coins</span></div>
+                    <div class="dc-rate-row"><span>Coins expiry</span><span class="green">Never</span></div>
+                </div>
+                <a href="challenges.php" style="text-decoration:none" class="btn-primary-lg dc-start-btn">Start Earning →</a>
             </div>
 
-            <!-- STEP 2: Earn -->
-            <div class="dc-step-card">
-                <div class="dc-step-visual">
-                    <div class="dc-earn-visual">
-                        <div class="dc-earn-coin dc-earn-coin-1">
-                            <img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-earn-coin-img">
-                        </div>
-                        <div class="dc-earn-coin dc-earn-coin-2">
-                            <img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-earn-coin-img">
-                        </div>
-                        <div class="dc-earn-coin dc-earn-coin-3">
-                            <img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-earn-coin-img">
-                        </div>
-                        <div class="dc-earn-counter">
-                            <img src="<?= DOJI_COIN_FILE ?>" alt="" style="width:16px;height:16px;border-radius:4px">
-                            <span>5,300</span>
-                        </div>
+            <!-- Reward Store -->
+            <div class="dc-rewards">
+                <div class="dc-reward-card">
+                    <div class="dc-reward-top">
+                        <span class="dc-reward-name">Free Challenge</span>
+                        <span class="dc-reward-cost"><img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-reward-icon"> 5,000</span>
                     </div>
+                    <p class="dc-reward-desc">Skip the entry fee entirely. Redeem coins for a full evaluation — same rules, zero cost.</p>
                 </div>
-                <div class="dc-step-arrow">»</div>
-                <div class="dc-step-content">
-                    <h3>Earn</h3>
-                    <p>As you navigate your trading journey, Doji Coins™ accumulate based on the volume (lots) you trade. Track your balance in real-time on your dashboard.</p>
-                </div>
-            </div>
-
-            <!-- STEP 3: Spend -->
-            <div class="dc-step-card">
-                <div class="dc-step-visual">
-                    <div class="dc-spend-visual">
-                        <div class="dc-spend-card-main">
-                            <div class="dc-spend-check"><?= icon("check", 14) ?></div>
-                            <div class="dc-spend-text">Free Challenge</div>
-                            <div class="dc-spend-sub">Redeem with Doji Coins™</div>
-                        </div>
-                        <div class="dc-spend-card-float">
-                            <span class="dc-spend-tag">Perk</span>
-                            <span class="dc-spend-float-text">+5% Split Boost</span>
-                        </div>
-                        <div class="dc-spend-cost">
-                            <span>3,200</span>
-                            <img src="<?= DOJI_COIN_FILE ?>" alt="" style="width:14px;height:14px;border-radius:3px">
-                        </div>
+                <div class="dc-reward-card">
+                    <div class="dc-reward-top">
+                        <span class="dc-reward-name">+5% Split Boost</span>
+                        <span class="dc-reward-cost"><img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-reward-icon"> 2,500</span>
                     </div>
+                    <p class="dc-reward-desc">Raise your profit share on the next funded cycle. Stack multiple boosts for compounding gains.</p>
                 </div>
-                <div class="dc-step-content">
-                    <h3>Spend</h3>
-                    <p>Use your Doji Coins™ on trading perks: free challenges, boosted profit splits, reduced fees, or exclusive merchandise. Your loyalty pays off.</p>
+                <div class="dc-reward-card">
+                    <div class="dc-reward-top">
+                        <span class="dc-reward-name">Fee Reduction</span>
+                        <span class="dc-reward-cost"><img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-reward-icon"> 1,500</span>
+                    </div>
+                    <p class="dc-reward-desc">Trim your challenge fee by up to 30%. The more volume you trade, the cheaper your next challenge gets.</p>
+                </div>
+                <div class="dc-reward-card">
+                    <div class="dc-reward-top">
+                        <span class="dc-reward-name">Exclusive Merch</span>
+                        <span class="dc-reward-cost"><img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-reward-icon"> 3,000</span>
+                    </div>
+                    <p class="dc-reward-desc">Limited Doji Funding drops — gear made for traders, refreshed every quarter. Coins only.</p>
                 </div>
             </div>
 
         </div>
-
     </div>
 </section>
 

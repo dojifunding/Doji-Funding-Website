@@ -185,18 +185,43 @@
     // ── Init ──────────────────────────────────────────────────────────────────
 
     function init() {
+        const renderers = [];
+
         document.querySelectorAll('.hiw-card').forEach((card, i) => {
             if (i >= CONFIGS.length) return;
 
             const canvas = document.createElement('canvas');
             canvas.className = 'hiw-voxel';
-
             card.appendChild(canvas);
 
             const renderer = createRenderer(canvas, CONFIGS[i]);
-            card.addEventListener('mouseenter', () => renderer.enter());
+            renderers.push({ card, renderer });
+
+            card.addEventListener('mouseenter', () => {
+                renderers.forEach(r => r.renderer.leave());
+                renderer.enter();
+            });
             card.addEventListener('mouseleave', () => renderer.leave());
         });
+
+        // Single shared observer: mobile only (no hover available)
+        const isMobile = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+        if (isMobile && typeof IntersectionObserver !== 'undefined') {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const match = renderers.find(r => r.card === entry.target);
+                    if (!match) return;
+                    if (entry.isIntersecting) {
+                        renderers.forEach(r => r.renderer.leave());
+                        match.renderer.enter();
+                    } else {
+                        match.renderer.leave();
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            renderers.forEach(r => io.observe(r.card));
+        }
     }
 
     if (document.readyState === 'loading') {

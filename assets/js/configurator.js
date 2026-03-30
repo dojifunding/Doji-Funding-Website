@@ -414,7 +414,6 @@ const Configurator = (function() {
                 ['Payout Frequency', payoutLabel],
                 ['Payout Speed', '24h Guaranteed'],
                 ['Consistency Rule', S.consistency + '%'],
-                ['Scaling', 'Eligible'],
                 ['Doji Coins™', 'Earn on every trade'],
             ];
             html += `<div class="summary-details">
@@ -648,12 +647,6 @@ const Configurator = (function() {
                     <div class="obj-reward-val">${S.split}%</div>
                     <div class="obj-reward-sub">Reward Split</div>
                     <div style="margin-top:8px;font-size:11px;color:var(--text3)">${payoutDesc}<br>Minimum Reward: <strong>${minPay}</strong></div>
-                </div>
-                <div class="obj-reward-card">
-                    <div class="obj-reward-label">SCALING</div>
-                    <div class="obj-reward-val">${is2 ? '10×' : '5×'}</div>
-                    <div class="obj-reward-sub">Max Scaling</div>
-                    <div style="margin-top:8px;font-size:11px;color:var(--text3)">Grow to $${(size * (is2 ? 10 : 5)).toLocaleString()}</div>
                 </div>
                 <div class="obj-reward-card">
                     <div class="obj-reward-label">STARTING CAPITAL</div>
