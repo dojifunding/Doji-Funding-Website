@@ -17,8 +17,13 @@
     <div class="hero-split">
         <div class="hero-left">
             <div class="badge">100% Customizable Prop Firm</div>
-            <h1>
-                Trade Your Way.<br><span class="green">Get Funded.</span>
+            <h1
+                data-weight-wave
+                data-ww-base-weight="300"
+                data-ww-hover-weight="850"
+                data-ww-radius="5"
+            >
+                Trade Your <span class="green text-loop-word" id="heroLoopWord" data-no-ww>Way</span>.<br><span class="green">Get Funded.</span>
                 <span class="seo-tag">H1</span>
             </h1>
             <p class="subtitle">
