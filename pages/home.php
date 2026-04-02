@@ -23,7 +23,7 @@
                 data-ww-hover-weight="850"
                 data-ww-radius="5"
             >
-                Trade Your <span class="green text-loop-word" id="heroLoopWord" data-no-ww>Way</span>.<br><span class="green">Get Funded.</span>
+                Trade Your <span class="green text-loop-word" id="heroLoopWord" data-no-ww>Way</span><br><span class="green">Get Funded.</span>
                 <span class="seo-tag">H1</span>
             </h1>
             <p class="subtitle">
@@ -216,6 +216,52 @@
                 2 Step
                 <div class="type-tab-sub">Classic</div>
             </button>
+        </div>
+
+        <!-- ═══ MODE PICKER (pre-configurator) ═══ -->
+        <div class="mode-strip" id="modeStrip">
+            <div class="mode-strip-label">Quick Setup</div>
+            <div class="mode-cards">
+
+                <button class="mode-card" data-mode="cheap" onclick="Configurator.applyMode('cheap')">
+                    <span class="mode-tag">BUDGET</span>
+                    <span class="mode-name">Cheap</span>
+                    <span class="mode-desc">Lowest entry price</span>
+                </button>
+
+                <button class="mode-card" data-mode="po" onclick="Configurator.applyMode('po')">
+                    <span class="mode-tag">POWER</span>
+                    <span class="mode-name">Pro</span>
+                    <span class="mode-desc">Max split &amp; freedom</span>
+                </button>
+
+                <button class="mode-card" data-mode="beginner" onclick="Configurator.applyMode('beginner')">
+                    <span class="mode-tag">EASY</span>
+                    <span class="mode-name">Beginner</span>
+                    <span class="mode-desc">Forgiving rules</span>
+                </button>
+
+                <button class="mode-card mode-affiliate" data-mode="affiliate" id="modeAffiliate" onclick="Configurator.applyMode('affiliate')">
+                    <span class="mode-tag">AFFILIATE</span>
+                    <span class="mode-name">Affiliate</span>
+                    <span class="mode-desc mode-desc-locked">Unlocks with sales</span>
+                    <span class="mode-lock">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </span>
+                </button>
+
+                <div class="mode-card mode-card-competitor" data-mode="competitor" onclick="Configurator.applyMode('competitor')">
+                    <span class="mode-tag">COMPARE</span>
+                    <span class="mode-name">Competitor</span>
+                    <span class="mode-desc">Load a rival preset</span>
+                    <div class="mode-competitor-drop" onclick="event.stopPropagation()">
+                        <select class="preset-select" id="presetSelect" onchange="this.classList.toggle('has-value',!!this.value);if(this.value){Configurator.loadPreset(this.value)}">
+                            <option value="">Compare with other firms...</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <!-- CONFIGURATOR LAYOUT -->
@@ -518,14 +564,7 @@
                 <div class="platform-desc">The industry standard for forex & CFD trading with advanced charting and EAs</div>
             </div>
             <div class="platform-card">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <polyline points="8 12 11 15 16 9"/>
-                    <path d="M12 2v4"/>
-                    <path d="M12 18v4"/>
-                    <path d="M4.93 4.93l2.83 2.83"/>
-                    <path d="M16.24 16.24l2.83 2.83"/>
-                </svg>
+                <img src="assets/img/ctrader-logo.svg" alt="cTrader" class="platform-logo-img" width="120" height="43">
                 <div class="platform-name">cTrader</div>
                 <div class="platform-desc">Modern interface with Level II pricing, advanced cBots and copy trading built-in</div>
             </div>

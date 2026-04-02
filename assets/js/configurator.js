@@ -29,7 +29,7 @@ const Configurator = (function() {
         daily: 5, max: 8,
         split: 80, days: 5, consistency: 30,
         dailyType: 'intraday', maxType: 'intraday',
-        platform: 'mt5', payout: 'monthly',
+        platform: 'ctrader', payout: 'monthly',
         overnight: false, overweek: false,
         activePromo: null,
     };
@@ -177,8 +177,11 @@ const Configurator = (function() {
 
         // Platform
         html += `<div style="margin-bottom:14px">
-            <div class="slider-header"><span class="slider-label">Trading Platform</span><span class="slider-val">${S.platform === 'mt5' ? 'MetaTrader 5' : 'cTrader'}</span></div>
-            ${makeToggle('platform', [{id:'mt5',label:'MetaTrader 5'},{id:'ctrader',label:'cTrader'}], S.platform)}
+            <div class="slider-header"><span class="slider-label">Trading Platform</span><span class="slider-val">cTrader</span></div>
+            <div class="toggle-group">
+                <button class="toggle-btn toggle-btn-disabled" disabled title="MetaTrader 5 coming soon">MetaTrader 5 <span class="toggle-soon">SOON</span></button>
+                <button class="toggle-btn active" onclick="Configurator.onToggle('platform','ctrader')">cTrader</button>
+            </div>
         </div>`;
 
         // Payout Frequency
@@ -812,6 +815,7 @@ const Configurator = (function() {
      * Full rebuild to handle constraint cascading, warning boxes, etc.
      */
     function onSliderDone(id, val) {
+        setActiveMode(null);
         val = parseFloat(val);
         switch (id) {
             case 'sizeIdx':     S.sizeIdx = val; break;
@@ -829,6 +833,7 @@ const Configurator = (function() {
     }
 
     function onToggle(id, val) {
+        setActiveMode(null);
         switch (id) {
             case 'dailyType': S.dailyType = val; break;
             case 'maxType':   S.maxType = val; break;
@@ -843,6 +848,7 @@ const Configurator = (function() {
     }
 
     function onCheck(id, val) {
+        setActiveMode(null);
         // val can be boolean or event — normalize
         const checked = typeof val === 'boolean' ? val : !!val;
         if (id === 'overnight') {
@@ -856,6 +862,45 @@ const Configurator = (function() {
     }
 
     // ═══════════════════════
+    //  MODE HELPERS
+    // ═══════════════════════
+
+    function setActiveMode(modeId) {
+        document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+        if (modeId) {
+            const card = document.querySelector(`.mode-card[data-mode="${modeId}"]`);
+            if (card) card.classList.add('active');
+        }
+    }
+
+    const MODES = {
+        cheap: {
+            target: 5,  target1: 6,  target2: 4,
+            daily: 3,   max: 6,      split: 60,  days: 5,  consistency: 30,
+            dailyType: 'intraday', maxType: 'intraday',
+            platform: 'ctrader', payout: 'monthly', overnight: false, overweek: false,
+        },
+        po: {
+            target: 10, target1: 8, target2: 5,
+            daily: 8,   max: 12,    split: 90,  days: 5,  consistency: 20,
+            dailyType: 'static', maxType: 'static',
+            platform: 'ctrader', payout: 'weekly', overnight: true, overweek: false,
+        },
+        beginner: {
+            target: 8,  target1: 6,  target2: 4,
+            daily: 3,   max: 6,      split: 80,  days: 7,  consistency: 40,
+            dailyType: 'intraday', maxType: 'intraday',
+            platform: 'ctrader', payout: 'monthly', overnight: false, overweek: false,
+        },
+        affiliate: {
+            target: 8,  target1: 7,  target2: 4,
+            daily: 5,   max: 10,     split: 85,  days: 5,  consistency: 25,
+            dailyType: 'intraday', maxType: 'intraday',
+            platform: 'ctrader', payout: 'monthly', overnight: false, overweek: false,
+        },
+    };
+
+    // ═══════════════════════
     //  PUBLIC API
     // ═══════════════════════
 
@@ -866,6 +911,7 @@ const Configurator = (function() {
         onCheck,
 
         setTab(t) {
+            setActiveMode(null);
             S.tab = t;
             document.getElementById('tab-onestep').classList.toggle('active', t === 'onestep');
             document.getElementById('tab-twostep').classList.toggle('active', t === 'twostep');
@@ -881,7 +927,7 @@ const Configurator = (function() {
                 S.target1 = 8; S.target2 = 5; S.daily = 5; S.max = 10; S.split = 80; S.days = 10; S.consistency = 30;
             }
             S.dailyType = 'intraday'; S.maxType = 'intraday';
-            S.platform = 'mt5'; S.payout = 'monthly';
+            S.platform = 'ctrader'; S.payout = 'monthly';
             S.overnight = false; S.overweek = false; S.activePromo = null;
             document.getElementById('promoInput').value = '';
             document.getElementById('promoMsg').innerHTML = '';
@@ -894,10 +940,11 @@ const Configurator = (function() {
         },
 
         reset() {
+            setActiveMode(null);
             if (S.tab === 'onestep') { S.target = 10; S.daily = 5; S.max = 8; S.split = 80; S.days = 5; }
             else { S.target1 = 8; S.target2 = 5; S.daily = 5; S.max = 10; S.split = 80; S.days = 10; }
             S.consistency = 30; S.dailyType = 'intraday'; S.maxType = 'intraday';
-            S.platform = 'mt5'; S.payout = 'monthly';
+            S.platform = 'ctrader'; S.payout = 'monthly';
             S.overnight = false; S.overweek = false;
             S.activePromo = null; S.sizeIdx = 9;
             document.getElementById('promoInput').value = '';
@@ -1003,6 +1050,29 @@ const Configurator = (function() {
             updateUI();
         },
 
+        applyMode(modeId) {
+            if (modeId === 'affiliate') {
+                const sales = window.DOJI_CONFIG?.user?.affiliateSales || 0;
+                const threshold = window.DOJI_CONFIG?.affiliate?.unlockAt || 5;
+                if (sales < threshold) return;
+            }
+
+            if (modeId === 'competitor') {
+                const card = document.querySelector('.mode-card[data-mode="competitor"]');
+                const isOpen = card?.classList.contains('active');
+                setActiveMode(isOpen ? null : 'competitor');
+                return;
+            }
+
+            const cfg = MODES[modeId];
+            if (!cfg) return;
+
+            Object.assign(S, cfg);
+            buildSliders();
+            updateUI();
+            setActiveMode(modeId);
+        },
+
         // Initialize on page load — restore from URL if shared link
         init() {
             const params = new URLSearchParams(window.location.search);
@@ -1035,7 +1105,7 @@ const Configurator = (function() {
 
                 // ── Restore toggles ──
                 const dlMap = { i: 'intraday', e: 'eod', s: 'static' };
-                const plMap = { m: 'mt5', c: 'ctrader' };
+                const plMap = { m: 'mt5', c: 'ctrader' }; // mt5 kept for legacy URL compat
                 const payMap = { m: 'monthly', b: 'biweekly', w: 'weekly' };
 
                 if (params.has('dl')) S.dailyType = dlMap[params.get('dl')] || 'intraday';
@@ -1082,6 +1152,36 @@ const Configurator = (function() {
 
             buildSliders();
             updateUI();
+
+            // ── Populate preset select from DOJI_CONFIG ──
+            const presets = window.DOJI_CONFIG?.presets;
+            const sel = document.getElementById('presetSelect');
+            if (sel && presets) {
+                presets.forEach(function(group) {
+                    if (!group.presets?.length) return;
+                    const og = document.createElement('optgroup');
+                    og.label = group.group;
+                    group.presets.forEach(function(p) {
+                        const opt = document.createElement('option');
+                        opt.value = p.id;
+                        opt.textContent = p.name;
+                        if (p.note) opt.dataset.note = p.note;
+                        og.appendChild(opt);
+                    });
+                    sel.appendChild(og);
+                });
+            }
+
+            // ── Affiliate mode unlock state ──
+            const affiliateCard = document.getElementById('modeAffiliate');
+            if (affiliateCard) {
+                const sales = window.DOJI_CONFIG?.user?.affiliateSales || 0;
+                const threshold = window.DOJI_CONFIG?.affiliate?.unlockAt || 5;
+                const unlocked = sales >= threshold;
+                affiliateCard.classList.toggle('mode-locked', !unlocked);
+                const descEl = affiliateCard.querySelector('.mode-desc-locked');
+                if (descEl) descEl.textContent = unlocked ? 'Exclusive config' : `Unlock at ${threshold} sales`;
+            }
         },
     };
 

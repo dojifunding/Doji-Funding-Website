@@ -9,6 +9,7 @@
 $v = ASSET_VERSION;
 ?>
 
+<?php if ($currentPage !== 'dashboard'): ?>
 <!-- Disclaimer Banner (sticky bottom, dismissable) -->
 <div class="disclaimer-banner" id="disclaimerBanner">
     <div class="disclaimer-content">
@@ -168,6 +169,8 @@ $v = ASSET_VERSION;
     </div>
 </footer>
 
+<?php endif; ?>
+
 <!-- JavaScript -->
 <script>
     // Inject server-side data for JS modules
@@ -177,7 +180,7 @@ $v = ASSET_VERSION;
         pricing: <?= getPricingJson() ?>,
         faq: <?= getFaqJson() ?>,
         seo: <?= getSeoJson() ?>,
-        <?php if ($currentPage === 'challenges' && function_exists('getPresetsJson')): ?>
+        <?php if (($currentPage === 'challenges' || $currentPage === 'home') && function_exists('getPresetsJson')): ?>
         presets: <?= getPresetsJson() ?>,
         <?php endif; ?>
     };
@@ -220,8 +223,10 @@ $v = ASSET_VERSION;
 <!-- Payment Logo Carousel -->
 <script src="assets/js/payment-carousel.js?v=<?= $v ?>"></script>
 
+<?php if ($currentPage !== 'dashboard'): ?>
 <!-- Interactive Pixel Particle Footer -->
 <script src="assets/js/particle-footer.js?v=<?= $v ?>"></script>
+<?php endif; ?>
 
 <!-- Animated Grain Overlays (rig.ai style) -->
 <svg width="0" height="0" aria-hidden="true" style="display:none">

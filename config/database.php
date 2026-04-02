@@ -31,10 +31,10 @@ unset($__envFile);
 // ══════════════════════════════════════════
 //  Database credentials (.env values override defaults)
 // ══════════════════════════════════════════
-define('DB_HOST', $_ENV['DB_HOST'] ?? 'sql123.infinityfree.com');   // Your MySQL host
-define('DB_NAME', $_ENV['DB_NAME'] ?? 'if0_XXXXXXX_doji');          // Your database name
-define('DB_USER', $_ENV['DB_USER'] ?? 'if0_XXXXXXX');               // Your database username
-define('DB_PASS', $_ENV['DB_PASS'] ?? 'your_password_here');         // Your database password
+define('DB_HOST', $_ENV['DB_HOST'] ?? 'sql104.infinityfree.com');   // Your MySQL host
+define('DB_NAME', $_ENV['DB_NAME'] ?? 'if0_41197205_dojifunding');          // Your database name
+define('DB_USER', $_ENV['DB_USER'] ?? 'if0_41197205');               // Your database username
+define('DB_PASS', $_ENV['DB_PASS'] ?? '9ECz5NjmHOk');         // Your database password
 
 // ══════════════════════════════════════════
 

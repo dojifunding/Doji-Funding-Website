@@ -12,7 +12,7 @@ Doji Funding is a full-featured website for a proprietary trading firm, built wi
 | Frontend  | Vanilla JavaScript (ES6)          |
 | Styling   | CSS3 (custom properties)          |
 | Database  | MySQL                             |
-| Fonts     | Chivo Mono, Array, Nippo Variable |
+| Fonts     | Chivo Mono, Doto, Nippo Variable  |
 | Server    | Apache (mod_rewrite)              |
 
 No build tools, no Node.js, no npm -- pure PHP and vanilla JS.
@@ -33,11 +33,15 @@ No build tools, no Node.js, no npm -- pure PHP and vanilla JS.
 
 ## Visual Design
 
-Inspired by [rig.ai](https://rig.ai/) -- minimal, square, dark aesthetic:
+Nothing OS design system — Swiss typography, OLED black, emerald green accent:
 
-- **Background** -- unified `#0a0a0a` across all sections with animated SVG grain overlay (feTurbulence), horizontal scanlines, and RGB fringe
-- **Typography** -- Chivo Mono for all UI text, Array/Array Wide for numbers and stats, Nippo Variable for hover effects
-- **Square design system** -- `border-radius` capped at 4px throughout, including buttons and form elements
+- **Background** — pure OLED `#000000` across all sections; no grain, no scanlines
+- **Typography** — Chivo Mono for all UI text and labels; Nippo Variable for hero H1 and text loop headlines; Doto (dot-matrix) for key metrics, stats, and prices
+- **Accent** — emerald green `#10B981` as the single brand accent; red `#D71921` reserved exclusively for error states (failed, rejected, not submitted)
+- **Border system** — 1px borders at `#1A1A1A` / `#333333`; no shadows, no blur
+- **Buttons** — pill shape (border-radius 999px) for CTAs; 2px radius for technical/secondary elements
+- **Dashboard** — fixed sidebar + topbar layout with dot-grid motif, segmented progress bars, Space Mono instrument-panel labels
+- **Nothing site override** — `assets/css/nothing-site.css` loaded last, overrides `main.css` / `effects.css` / `polish.css` without touching PHP structure
 
 ## Motion & Interactivity
 

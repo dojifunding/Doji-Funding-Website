@@ -966,6 +966,8 @@ h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #ffffff; font
 .platform-card:hover { border-color: rgba(16,185,129,0.15);  transform: translateY(-4px);  }
 .platform-logo { height: 48px; opacity: 0.9; transition: opacity 0.3s; }
 .platform-card:hover .platform-logo { opacity: 1; }
+.platform-logo-img { height: 43px; width: auto; opacity: 0.85; transition: opacity 0.3s; object-fit: contain; }
+.platform-card:hover .platform-logo-img { opacity: 1; }
 .platform-name { font-size: 18px; font-weight: 700; color: var(--text); font-family: var(--font-heading); }
 .platform-desc { font-size: 13px; color: var(--text3); text-align: center; max-width: 200px; }
 

@@ -7,13 +7,13 @@
  * Targets:  #textLoopWord  (footer headline)
  *           #heroLoopWord  (hero H1, home page only)
  *
- * Words cycle: Way → Freedom → Setup → Rules → Edge → Terms → Style → Pace
+ * Words cycle: Way → Setup → Rules → Edge → Terms → Style → Pace
  * Interval: 2200ms  |  Transition: 450ms blur + Y
  */
 (function () {
   'use strict';
 
-  var WORDS    = ['Way', 'Freedom', 'Setup', 'Rules', 'Edge', 'Terms', 'Style', 'Pace'];
+  var WORDS    = ['Way', 'Setup', 'Rules', 'Edge', 'Terms', 'Style', 'Pace'];
   var INTERVAL = 2200;
   var DURATION = 450;
 
