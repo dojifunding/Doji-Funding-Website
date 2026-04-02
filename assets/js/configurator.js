@@ -29,7 +29,7 @@ const Configurator = (function() {
         daily: 5, max: 8,
         split: 80, days: 5, consistency: 30,
         dailyType: 'intraday', maxType: 'intraday',
-        platform: 'mt5', payout: 'monthly',
+        platform: 'ctrader', payout: 'monthly',
         overnight: false, overweek: false,
         activePromo: null,
     };
@@ -102,12 +102,23 @@ const Configurator = (function() {
         ).join('')}</div>`;
     }
 
-    function makeCheck(id, checked, label, disabled, subtext) {
-        const cls = `check-opt${checked ? ' checked' : ''}${disabled ? ' disabled' : ''}`;
-        return `<label class="${cls}">
-            <input type="checkbox" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''} onchange="Configurator.onCheck('${id}',this.checked)">
-            <span>${label}${subtext ? `<span class="check-subtext">${subtext}</span>` : ''}</span>
-        </label>`;
+    function makeSwitch(id, checked, label, disabled, subtext, icon) {
+        const cls = `switch-row${checked ? ' active' : ''}${disabled ? ' disabled' : ''}`;
+        const iconSvg = icon === 'moon'
+            ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+            : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+        return `<div class="${cls}" onclick="${disabled ? '' : `Configurator.onCheck('${id}',!this.classList.contains('active'))`}">
+            <div class="switch-left">
+                <span class="switch-icon">${iconSvg}</span>
+                <div class="switch-text">
+                    <span class="switch-label">${label}</span>
+                    ${subtext ? `<span class="switch-sub">${subtext}</span>` : ''}
+                </div>
+            </div>
+            <div class="switch-toggle${checked ? ' on' : ''}">
+                <div class="switch-knob"></div>
+            </div>
+        </div>`;
     }
 
     // ═══════════════════════
@@ -166,8 +177,11 @@ const Configurator = (function() {
 
         // Platform
         html += `<div style="margin-bottom:14px">
-            <div class="slider-header"><span class="slider-label">Trading Platform</span><span class="slider-val">${S.platform === 'mt5' ? 'MetaTrader 5' : 'cTrader'}</span></div>
-            ${makeToggle('platform', [{id:'mt5',label:'MetaTrader 5'},{id:'ctrader',label:'cTrader'}], S.platform)}
+            <div class="slider-header"><span class="slider-label">Trading Platform</span><span class="slider-val">cTrader</span></div>
+            <div class="toggle-group">
+                <button class="toggle-btn toggle-btn-disabled" disabled title="MetaTrader 5 coming soon">MetaTrader 5 <span class="toggle-soon">SOON</span></button>
+                <button class="toggle-btn active" onclick="Configurator.onToggle('platform','ctrader')">cTrader</button>
+            </div>
         </div>`;
 
         // Payout Frequency
@@ -176,12 +190,13 @@ const Configurator = (function() {
             ${makeToggle('payout', [{id:'monthly',label:'Monthly'},{id:'biweekly',label:'Bi-Weekly (+$29)'},{id:'weekly',label:'Weekly (+$59)'}], S.payout)}
         </div>`;
 
-        // Holding options
+        // Holding options (toggle switches)
         const onPrice = t === 'onestep' ? 19 : 25;
         const owPrice = t === 'onestep' ? 29 : 39;
-        html += `<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
-            ${makeCheck('overnight', !S.overweek && S.overnight, `Overnight Holding (+$${onPrice})`, S.overweek, S.overweek ? 'Included with Overweek Holding' : '')}
-            ${makeCheck('overweek', S.overweek, `Overweek Holding (+$${owPrice})`, false, 'Includes Overnight Holding')}
+        html += `<div class="switch-section">
+            <div class="switch-section-label">Holding Options</div>
+            ${makeSwitch('overnight', !S.overweek && S.overnight, `Overnight Holding <span class="switch-price">+$${onPrice}</span>`, S.overweek, S.overweek ? 'Included with Overweek Holding' : 'Hold positions through the night', 'moon')}
+            ${makeSwitch('overweek', S.overweek, `Overweek Holding <span class="switch-price">+$${owPrice}</span>`, false, 'Hold through weekends · includes overnight', 'calendar')}
         </div>`;
 
         // Equal loss warning
@@ -274,7 +289,7 @@ const Configurator = (function() {
             return '$' + Math.round(size * pct / 100).toLocaleString();
         }
 
-        // Render summary
+        // Render summary with Evaluation / Funded tabs
         const grid = document.getElementById('summaryGrid');
         if (grid) {
             let html = '';
@@ -290,7 +305,23 @@ const Configurator = (function() {
                 </div>
             </div>`;
 
-            // ── Target + Risk metric cards ──
+            // ── Phase tabs: Evaluation / Funded ──
+            const activeTab = grid.dataset.activeTab || 'evaluation';
+            html += `<div class="summary-phase-tabs">
+                <button class="summary-phase-tab${activeTab === 'evaluation' ? ' active' : ''}" data-phase="evaluation">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    Evaluation
+                </button>
+                <button class="summary-phase-tab${activeTab === 'funded' ? ' active' : ''}" data-phase="funded">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    Funded
+                </button>
+            </div>`;
+
+            // ── EVALUATION PANEL ──
+            html += `<div class="summary-phase-panel${activeTab === 'evaluation' ? ' active' : ''}" data-panel="evaluation">`;
+
+            // Target + Risk metric cards
             if (t === 'onestep') {
                 html += `<div class="summary-cards cols-3">
                     <div class="summary-card">
@@ -340,23 +371,74 @@ const Configurator = (function() {
                 </div>`;
             }
 
-            // ── Detail rows ──
-            const details = [
-                ['Profit Split', S.split + '%'],
+            // Evaluation detail rows
+            const evalDetails = [
                 ['Min Trading Days', S.days + ' days'],
-                ['Consistency Rule', S.consistency + '%'],
-                ['Payout', S.payout === 'monthly' ? 'Monthly' : S.payout === 'biweekly' ? 'Bi-Weekly' : 'Weekly'],
+                ['Time Limit', 'None'],
+                ['News Trading', 'Allowed'],
             ];
             if (S.overnight || S.overweek) {
-                details.push(['Add-Ons', S.overweek ? 'Overweek + Overnight' : 'Overnight']);
+                evalDetails.push(['Add-Ons', S.overweek ? 'Overweek + Overnight' : 'Overnight']);
             }
             html += `<div class="summary-details">
-                ${details.map(([l, v]) =>
+                ${evalDetails.map(([l, v]) =>
                     `<div class="summary-detail-row"><span class="lbl">${l}</span><span class="val">${v}</span></div>`
                 ).join('')}
             </div>`;
+            html += `</div>`; // end evaluation panel
+
+            // ── FUNDED PANEL ──
+            html += `<div class="summary-phase-panel${activeTab === 'funded' ? ' active' : ''}" data-panel="funded">`;
+
+            // Funded metric cards
+            html += `<div class="summary-cards cols-3">
+                <div class="summary-card">
+                    <div class="summary-card-label">Profit Split</div>
+                    <div class="summary-card-pct">${S.split}%</div>
+                    <div class="summary-card-dollar">Up to 90%</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-label">Daily Loss</div>
+                    <div class="summary-card-pct">${S.daily}%</div>
+                    <div class="summary-card-dollar">${dv(S.daily)}</div>
+                    <div class="summary-card-tag">${S.dailyType}</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-label">Max Loss</div>
+                    <div class="summary-card-pct">${S.max}%</div>
+                    <div class="summary-card-dollar">${dv(S.max)}</div>
+                    <div class="summary-card-tag">${S.maxType}</div>
+                </div>
+            </div>`;
+
+            // Funded detail rows
+            const payoutLabel = S.payout === 'monthly' ? 'Monthly' : S.payout === 'biweekly' ? 'Bi-Weekly' : 'Weekly';
+            const fundedDetails = [
+                ['Payout Frequency', payoutLabel],
+                ['Payout Speed', '24h Guaranteed'],
+                ['Consistency Rule', S.consistency + '%'],
+                ['Doji Coins™', 'Earn on every trade'],
+            ];
+            html += `<div class="summary-details">
+                ${fundedDetails.map(([l, v]) =>
+                    `<div class="summary-detail-row"><span class="lbl">${l}</span><span class="val">${v}</span></div>`
+                ).join('')}
+            </div>`;
+            html += `</div>`; // end funded panel
 
             grid.innerHTML = html;
+
+            // ── Attach tab click listeners ──
+            grid.querySelectorAll('.summary-phase-tab').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    const phase = this.dataset.phase;
+                    grid.dataset.activeTab = phase;
+                    grid.querySelectorAll('.summary-phase-tab').forEach(function(t) { t.classList.remove('active'); });
+                    grid.querySelectorAll('.summary-phase-panel').forEach(function(p) { p.classList.remove('active'); });
+                    this.classList.add('active');
+                    grid.querySelector('[data-panel="' + phase + '"]').classList.add('active');
+                });
+            });
         }
 
         // Render price
@@ -570,12 +652,6 @@ const Configurator = (function() {
                     <div style="margin-top:8px;font-size:11px;color:var(--text3)">${payoutDesc}<br>Minimum Reward: <strong>${minPay}</strong></div>
                 </div>
                 <div class="obj-reward-card">
-                    <div class="obj-reward-label">SCALING</div>
-                    <div class="obj-reward-val">${is2 ? '10×' : '5×'}</div>
-                    <div class="obj-reward-sub">Max Scaling</div>
-                    <div style="margin-top:8px;font-size:11px;color:var(--text3)">Grow to $${(size * (is2 ? 10 : 5)).toLocaleString()}</div>
-                </div>
-                <div class="obj-reward-card">
                     <div class="obj-reward-label">STARTING CAPITAL</div>
                     <div class="obj-reward-val">$${size.toLocaleString()}</div>
                     <div class="obj-reward-sub">Account Size</div>
@@ -739,6 +815,7 @@ const Configurator = (function() {
      * Full rebuild to handle constraint cascading, warning boxes, etc.
      */
     function onSliderDone(id, val) {
+        setActiveMode(null);
         val = parseFloat(val);
         switch (id) {
             case 'sizeIdx':     S.sizeIdx = val; break;
@@ -756,6 +833,7 @@ const Configurator = (function() {
     }
 
     function onToggle(id, val) {
+        setActiveMode(null);
         switch (id) {
             case 'dailyType': S.dailyType = val; break;
             case 'maxType':   S.maxType = val; break;
@@ -769,7 +847,10 @@ const Configurator = (function() {
         updateUI();
     }
 
-    function onCheck(id, checked) {
+    function onCheck(id, val) {
+        setActiveMode(null);
+        // val can be boolean or event — normalize
+        const checked = typeof val === 'boolean' ? val : !!val;
         if (id === 'overnight') {
             S.overnight = checked;
         } else if (id === 'overweek') {
@@ -779,6 +860,45 @@ const Configurator = (function() {
         buildSliders();
         updateUI();
     }
+
+    // ═══════════════════════
+    //  MODE HELPERS
+    // ═══════════════════════
+
+    function setActiveMode(modeId) {
+        document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+        if (modeId) {
+            const card = document.querySelector(`.mode-card[data-mode="${modeId}"]`);
+            if (card) card.classList.add('active');
+        }
+    }
+
+    const MODES = {
+        cheap: {
+            target: 5,  target1: 6,  target2: 4,
+            daily: 3,   max: 6,      split: 60,  days: 5,  consistency: 30,
+            dailyType: 'intraday', maxType: 'intraday',
+            platform: 'ctrader', payout: 'monthly', overnight: false, overweek: false,
+        },
+        po: {
+            target: 10, target1: 8, target2: 5,
+            daily: 8,   max: 12,    split: 90,  days: 5,  consistency: 20,
+            dailyType: 'static', maxType: 'static',
+            platform: 'ctrader', payout: 'weekly', overnight: true, overweek: false,
+        },
+        beginner: {
+            target: 8,  target1: 6,  target2: 4,
+            daily: 3,   max: 6,      split: 80,  days: 7,  consistency: 40,
+            dailyType: 'intraday', maxType: 'intraday',
+            platform: 'ctrader', payout: 'monthly', overnight: false, overweek: false,
+        },
+        affiliate: {
+            target: 8,  target1: 7,  target2: 4,
+            daily: 5,   max: 10,     split: 85,  days: 5,  consistency: 25,
+            dailyType: 'intraday', maxType: 'intraday',
+            platform: 'ctrader', payout: 'monthly', overnight: false, overweek: false,
+        },
+    };
 
     // ═══════════════════════
     //  PUBLIC API
@@ -791,6 +911,7 @@ const Configurator = (function() {
         onCheck,
 
         setTab(t) {
+            setActiveMode(null);
             S.tab = t;
             document.getElementById('tab-onestep').classList.toggle('active', t === 'onestep');
             document.getElementById('tab-twostep').classList.toggle('active', t === 'twostep');
@@ -806,7 +927,7 @@ const Configurator = (function() {
                 S.target1 = 8; S.target2 = 5; S.daily = 5; S.max = 10; S.split = 80; S.days = 10; S.consistency = 30;
             }
             S.dailyType = 'intraday'; S.maxType = 'intraday';
-            S.platform = 'mt5'; S.payout = 'monthly';
+            S.platform = 'ctrader'; S.payout = 'monthly';
             S.overnight = false; S.overweek = false; S.activePromo = null;
             document.getElementById('promoInput').value = '';
             document.getElementById('promoMsg').innerHTML = '';
@@ -819,10 +940,11 @@ const Configurator = (function() {
         },
 
         reset() {
+            setActiveMode(null);
             if (S.tab === 'onestep') { S.target = 10; S.daily = 5; S.max = 8; S.split = 80; S.days = 5; }
             else { S.target1 = 8; S.target2 = 5; S.daily = 5; S.max = 10; S.split = 80; S.days = 10; }
             S.consistency = 30; S.dailyType = 'intraday'; S.maxType = 'intraday';
-            S.platform = 'mt5'; S.payout = 'monthly';
+            S.platform = 'ctrader'; S.payout = 'monthly';
             S.overnight = false; S.overweek = false;
             S.activePromo = null; S.sizeIdx = 9;
             document.getElementById('promoInput').value = '';
@@ -928,6 +1050,29 @@ const Configurator = (function() {
             updateUI();
         },
 
+        applyMode(modeId) {
+            if (modeId === 'affiliate') {
+                const sales = window.DOJI_CONFIG?.user?.affiliateSales || 0;
+                const threshold = window.DOJI_CONFIG?.affiliate?.unlockAt || 5;
+                if (sales < threshold) return;
+            }
+
+            if (modeId === 'competitor') {
+                const card = document.querySelector('.mode-card[data-mode="competitor"]');
+                const isOpen = card?.classList.contains('active');
+                setActiveMode(isOpen ? null : 'competitor');
+                return;
+            }
+
+            const cfg = MODES[modeId];
+            if (!cfg) return;
+
+            Object.assign(S, cfg);
+            buildSliders();
+            updateUI();
+            setActiveMode(modeId);
+        },
+
         // Initialize on page load — restore from URL if shared link
         init() {
             const params = new URLSearchParams(window.location.search);
@@ -960,7 +1105,7 @@ const Configurator = (function() {
 
                 // ── Restore toggles ──
                 const dlMap = { i: 'intraday', e: 'eod', s: 'static' };
-                const plMap = { m: 'mt5', c: 'ctrader' };
+                const plMap = { m: 'mt5', c: 'ctrader' }; // mt5 kept for legacy URL compat
                 const payMap = { m: 'monthly', b: 'biweekly', w: 'weekly' };
 
                 if (params.has('dl')) S.dailyType = dlMap[params.get('dl')] || 'intraday';
@@ -1007,6 +1152,36 @@ const Configurator = (function() {
 
             buildSliders();
             updateUI();
+
+            // ── Populate preset select from DOJI_CONFIG ──
+            const presets = window.DOJI_CONFIG?.presets;
+            const sel = document.getElementById('presetSelect');
+            if (sel && presets) {
+                presets.forEach(function(group) {
+                    if (!group.presets?.length) return;
+                    const og = document.createElement('optgroup');
+                    og.label = group.group;
+                    group.presets.forEach(function(p) {
+                        const opt = document.createElement('option');
+                        opt.value = p.id;
+                        opt.textContent = p.name;
+                        if (p.note) opt.dataset.note = p.note;
+                        og.appendChild(opt);
+                    });
+                    sel.appendChild(og);
+                });
+            }
+
+            // ── Affiliate mode unlock state ──
+            const affiliateCard = document.getElementById('modeAffiliate');
+            if (affiliateCard) {
+                const sales = window.DOJI_CONFIG?.user?.affiliateSales || 0;
+                const threshold = window.DOJI_CONFIG?.affiliate?.unlockAt || 5;
+                const unlocked = sales >= threshold;
+                affiliateCard.classList.toggle('mode-locked', !unlocked);
+                const descEl = affiliateCard.querySelector('.mode-desc-locked');
+                if (descEl) descEl.textContent = unlocked ? 'Exclusive config' : `Unlock at ${threshold} sales`;
+            }
         },
     };
 

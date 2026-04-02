@@ -6,14 +6,14 @@ Doji Funding is a full-featured website for a proprietary trading firm, built wi
 
 ## Tech Stack
 
-| Layer     | Technology                |
-|-----------|---------------------------|
-| Backend   | PHP 7.4+                  |
-| Frontend  | Vanilla JavaScript (ES6)  |
-| Styling   | CSS3 (custom properties)  |
-| Database  | MySQL                     |
-| Fonts     | Google Fonts CDN          |
-| Server    | Apache (mod_rewrite)      |
+| Layer     | Technology                        |
+|-----------|-----------------------------------|
+| Backend   | PHP 7.4+                          |
+| Frontend  | Vanilla JavaScript (ES6)          |
+| Styling   | CSS3 (custom properties)          |
+| Database  | MySQL                             |
+| Fonts     | Chivo Mono, Doto, Nippo Variable  |
+| Server    | Apache (mod_rewrite)              |
 
 No build tools, no Node.js, no npm -- pure PHP and vanilla JS.
 
@@ -27,9 +27,35 @@ No build tools, no Node.js, no npm -- pure PHP and vanilla JS.
 - **Competitions** -- trading competition listings
 - **SEO System** -- per-page meta tags, JSON-LD schema markup, and an on-page SEO debug overlay
 - **FAQ System** -- category-based accordion with FAQPage schema
-- **Informational Pages** -- About, Platforms, Symbols, Scaling, Rules, Privacy Policy, Terms, Refund Policy, Contact
+- **Informational Pages** -- About, Platforms, Symbols, Rules, Privacy Policy, Terms, Refund Policy, Contact
 - **Custom 404 Page** -- branded error page
 - **Apache Optimization** -- clean URLs, GZIP compression, browser caching, security headers
+
+## Visual Design
+
+Nothing OS design system — Swiss typography, OLED black, emerald green accent:
+
+- **Background** — pure OLED `#000000` across all sections; no grain, no scanlines
+- **Typography** — Chivo Mono for all UI text and labels; Nippo Variable for hero H1 and text loop headlines; Doto (dot-matrix) for key metrics, stats, and prices
+- **Accent** — emerald green `#10B981` as the single brand accent; red `#D71921` reserved exclusively for error states (failed, rejected, not submitted)
+- **Border system** — 1px borders at `#1A1A1A` / `#333333`; no shadows, no blur
+- **Buttons** — pill shape (border-radius 999px) for CTAs; 2px radius for technical/secondary elements
+- **Dashboard** — fixed sidebar + topbar layout with dot-grid motif, segmented progress bars, Space Mono instrument-panel labels
+- **Nothing site override** — `assets/css/nothing-site.css` loaded last, overrides `main.css` / `effects.css` / `polish.css` without touching PHP structure
+
+## Motion & Interactivity
+
+All animations are vanilla JS reimplementations (no GSAP, no Svelte, no animation libraries):
+
+| Effect | File | Description |
+|--------|------|-------------|
+| WeightWave | `assets/js/weight-wave.js` | Per-character font-weight animation on hover (Nippo Variable, wght axis 100–900) |
+| Stacking Words | `assets/js/stacking-words.js` | Scroll-scrubbed word reveal on all section headings, IntersectionObserver fallback for mobile |
+| Text Loop | `assets/js/text-loop.js` | Blur + Y-axis word cycling on hero H1 and footer headline |
+| Payment Carousel | `assets/js/payment-carousel.js` | 6-column logo carousel with staggered vertical fade transitions |
+| Hero Globe | `assets/js/globe.js` | Three.js particle sphere with mouse repulsion, reduced opacity for blended look |
+| HIW Voxels | `assets/js/hiw-voxel.js` | Canvas 2D voxel shapes on How It Works cards; hover on desktop, IntersectionObserver on mobile only |
+| Particle Footer | `assets/js/particle-footer.js` | DOJI dot-matrix canvas with mouse scatter physics |
 
 ## Project Structure
 

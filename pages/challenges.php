@@ -21,24 +21,44 @@
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 <!-- TRUST BAR -->
 <section style="background:var(--bg2);border-bottom:1px solid rgba(16,185,129,0.08)">
-    <div class="trust-bar" style="max-width:1200px;margin:0 auto">
-        <div class="trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            <span><strong>700K+</strong> Configurations</span>
-        </div>
-        <div class="trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-            <span><strong>Up to 90%</strong> Profit Split</span>
-        </div>
-        <div class="trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span><strong>24h</strong> Payouts</span>
-        </div>
-        <div class="trust-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span><strong>No</strong> Time Limit</span>
+    <div class="trust-bar-wrap" style="max-width:1200px;margin:0 auto">
+        <div class="trust-bar">
+            <?php for ($i = 0; $i < 2; $i++): ?>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span><strong>700K+</strong> Configurations</span>
+            </div>
+            <div class="trust-sep"></div>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                <span><strong>Up to 90%</strong> Profit Split</span>
+            </div>
+            <div class="trust-sep"></div>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span><strong>24h</strong> Payouts</span>
+            </div>
+            <div class="trust-sep"></div>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span><strong>No</strong> Time Limit</span>
+            </div>
+            <div class="trust-sep"></div>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span><strong>Regulated</strong> Gibraltar Entity</span>
+            </div>
+            <div class="trust-sep"></div>
+            <div class="trust-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                <span><strong>4,200+</strong> Funded Traders</span>
+            </div>
+            <div class="trust-sep"></div>
+            <?php endfor; ?>
         </div>
     </div>
 </section>
@@ -64,6 +84,52 @@
             </button>
         </div>
 
+        <!-- ═══ MODE PICKER (pre-configurator) ═══ -->
+        <div class="mode-strip" id="modeStrip">
+            <div class="mode-strip-label">Quick Setup</div>
+            <div class="mode-cards">
+
+                <button class="mode-card" data-mode="cheap" onclick="Configurator.applyMode('cheap')">
+                    <span class="mode-tag">BUDGET</span>
+                    <span class="mode-name">Cheap</span>
+                    <span class="mode-desc">Lowest entry price</span>
+                </button>
+
+                <button class="mode-card" data-mode="po" onclick="Configurator.applyMode('po')">
+                    <span class="mode-tag">POWER</span>
+                    <span class="mode-name">Pro</span>
+                    <span class="mode-desc">Max split &amp; freedom</span>
+                </button>
+
+                <button class="mode-card" data-mode="beginner" onclick="Configurator.applyMode('beginner')">
+                    <span class="mode-tag">EASY</span>
+                    <span class="mode-name">Beginner</span>
+                    <span class="mode-desc">Forgiving rules</span>
+                </button>
+
+                <button class="mode-card mode-affiliate" data-mode="affiliate" id="modeAffiliate" onclick="Configurator.applyMode('affiliate')">
+                    <span class="mode-tag">AFFILIATE</span>
+                    <span class="mode-name">Affiliate</span>
+                    <span class="mode-desc mode-desc-locked">Unlocks with sales</span>
+                    <span class="mode-lock">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </span>
+                </button>
+
+                <div class="mode-card mode-card-competitor" data-mode="competitor" onclick="Configurator.applyMode('competitor')">
+                    <span class="mode-tag">COMPARE</span>
+                    <span class="mode-name">Competitor</span>
+                    <span class="mode-desc">Load a rival preset</span>
+                    <div class="mode-competitor-drop" onclick="event.stopPropagation()">
+                        <select class="preset-select" id="presetSelect" onchange="this.classList.toggle('has-value',!!this.value);if(this.value){Configurator.loadPreset(this.value)}">
+                            <option value="">Compare with other firms...</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <!-- ═══ CONFIGURATOR LAYOUT ═══ -->
         <div class="cfg-layout">
 
@@ -85,28 +151,6 @@
                     ↺ Reset to Defaults
                 </button>
 
-                <!-- Preset Picker (Challenges page only) -->
-                <div class="preset-picker">
-                    <div class="preset-label">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                        Load a Preset
-                    </div>
-                    <select class="preset-select" id="presetSelect" onchange="this.classList.toggle('has-value',!!this.value);if(this.value){Configurator.loadPreset(this.value)}">
-                        <option value="">Compare with other prop firms...</option>
-                        <?php if (function_exists('getPresetsJson')): ?>
-                        <?php foreach ($challengePresets as $group): ?>
-                        <?php if (!empty($group['presets'])): ?>
-                        <optgroup label="<?= htmlspecialchars($group['group']) ?>">
-                            <?php foreach ($group['presets'] as $p): ?>
-                            <option value="<?= $p['id'] ?>" data-note="<?= htmlspecialchars($p['note']) ?>"><?= htmlspecialchars($p['name']) ?></option>
-                            <?php endforeach; ?>
-                        </optgroup>
-                        <?php endif; ?>
-                        <?php endforeach; ?>
-                        <?php endif; ?>
-                    </select>
-                    <div class="preset-hint">Load a competitor's config to compare pricing instantly</div>
-                </div>
             </div>
 
             <!-- RIGHT PANEL: Summary + Price -->

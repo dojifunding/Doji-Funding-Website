@@ -37,6 +37,7 @@ if (!isset($languages[$currentLang])) $currentLang = 'en';
     </div>
 </div>
 
+<?php if ($currentPage !== 'dashboard'): ?>
 <nav class="nav">
     <div class="nav-inner">
     <div class="nav-left">
@@ -219,3 +220,4 @@ if (!isset($languages[$currentLang])) $currentLang = 'en';
         <?php endif; ?>
     </div>
 </div>
+<?php endif; ?>

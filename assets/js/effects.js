@@ -33,6 +33,11 @@
     function autoTagScrollElements() {
         // Tag common page elements that should animate on scroll
         var selectors = [
+            '.kh-card',
+            '.hiw-card',
+            '.ac-card-lg',
+            '.ac-card-sm',
+            '.dc-step-card',
             '.rule-card',
             '.scale-card',
             '.scale-step',
@@ -57,13 +62,13 @@
             document.querySelectorAll(sel).forEach(function(el, i) {
                 if (!el.classList.contains('scroll-reveal')) {
                     el.classList.add('scroll-reveal');
-                    el.style.transitionDelay = (i * 0.06) + 's';
+                    el.style.transitionDelay = (i * 0.1) + 's';
                 }
             });
         });
 
         // Tag grids for stagger effect
-        document.querySelectorAll('.symbol-grid, .scale-progression, .aff-stats, .contact-social-grid').forEach(function(el) {
+        document.querySelectorAll('.symbol-grid, .scale-progression, .aff-stats, .contact-social-grid, .kh-grid, .hiw-grid, .ac-top, .ac-bottom').forEach(function(el) {
             if (!el.classList.contains('stagger-children')) {
                 el.classList.add('stagger-children');
             }

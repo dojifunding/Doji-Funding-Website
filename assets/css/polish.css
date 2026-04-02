@@ -84,7 +84,7 @@ body {
         rgba(255,255,255,0.06) 70%,
         transparent 90%
     );
-    border-radius: 14px 14px 0 0;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
     pointer-events: none;
     z-index: 1;
 }
@@ -121,9 +121,8 @@ body {
     position: absolute;
     top: -2px; left: 50%; transform: translateX(-50%);
     width: 5px; height: 5px;
-    border-radius: 50%;
+    border-radius: 0;
     background: var(--green);
-    box-shadow: 0 0 8px rgba(16,185,129,0.4);
 }
 
 /* Subtle section separator between directly adjacent sections (no divider between) */
@@ -191,17 +190,11 @@ h2 {
     transition-duration: 80ms !important;
 }
 
-/* --- Nav link hover: smoother underline with glow --- */
-.nav-link::after {
-    background: var(--green);
-    box-shadow: 0 1px 6px rgba(16,185,129,0.3);
-    height: 2px;
-}
+/* --- Nav link hover: square dot indicator (defined in main.css) --- */
 
 /* --- Icon box pulse on card hover --- */
 .kh-card:hover .kh-icon,
 .hiw-card:hover .hiw-num {
-    box-shadow: 0 0 16px rgba(16,185,129,0.2);
     border-color: rgba(16,185,129,0.3);
     transition: all 0.3s ease;
 }
@@ -214,7 +207,6 @@ h2 {
 .ac-tags span:hover {
     background: rgba(16,185,129,0.12);
     border-color: rgba(16,185,129,0.25);
-    box-shadow: 0 0 8px rgba(16,185,129,0.15);
 }
 
 /* --- Pill bar item hover --- */
@@ -237,7 +229,6 @@ h2 {
 
 /* --- Payment icon subtle glow on hover --- */
 .payment-icon:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 
@@ -275,11 +266,10 @@ html {
     align-items: center;
     gap: 10px;
     padding: 12px 20px;
-    border-radius: 12px;
+    border-radius: var(--radius-sm);
     background: rgba(14,16,20,0.95);
     backdrop-filter: blur(16px);
     border: 1px solid var(--border2);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04) inset;
     font-size: 13px;
     font-weight: 500;
     color: var(--text);
@@ -393,7 +383,6 @@ html {
 
 /* Nav scroll shadow — added by JS */
 .nav.scrolled {
-    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
     border-bottom-color: rgba(58,64,72,0.5);
 }
 
@@ -409,7 +398,7 @@ html {
 .trust-item {
     transition: all 0.25s ease;
     padding: 8px 14px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
 }
 
 .trust-item:hover {
@@ -468,20 +457,17 @@ html {
 .contact-input:focus,
 .contact-textarea:focus {
     border-color: rgba(16,185,129,0.4);
-    box-shadow: 0 0 0 3px rgba(16,185,129,0.08), 0 0 16px rgba(16,185,129,0.06);
     background: rgba(30,33,40,0.8);
 }
 
 /* Error state for inputs */
 .input-error {
     border-color: rgba(255,59,59,0.4) !important;
-    box-shadow: 0 0 0 3px rgba(255,59,59,0.08) !important;
 }
 
 /* Success state for inputs */
 .input-success {
     border-color: rgba(16,185,129,0.4) !important;
-    box-shadow: 0 0 0 3px rgba(16,185,129,0.08) !important;
 }
 
 
@@ -561,11 +547,13 @@ html {
    14. HERO GLOW REFINEMENT
    ═══════════════════════════════════════════ */
 
-/* More atmospheric hero glow */
+/* Enhanced hero glow — large radial emerald halo */
 .hero-glow {
+    width: 900px !important; height: 900px !important;
     background: radial-gradient(circle,
-        rgba(16,185,129,0.12) 0%,
-        rgba(16,185,129,0.06) 30%,
+        rgba(16,185,129,0.18) 0%,
+        rgba(16,185,129,0.09) 25%,
+        rgba(16,185,129,0.04) 50%,
         transparent 65%
     );
     filter: blur(20px);
@@ -589,13 +577,13 @@ html {
     );
     background-size: 200% 100%;
     animation: shimmerLoad 1.5s ease-in-out infinite;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
 }
 
 .skeleton-text { height: 14px; margin-bottom: 8px; }
 .skeleton-text.short { width: 60%; }
 .skeleton-heading { height: 24px; width: 40%; margin-bottom: 12px; }
-.skeleton-card { height: 200px; border-radius: 14px; }
+.skeleton-card { height: 200px; border-radius: var(--radius-sm); }
 
 
 /* ═══════════════════════════════════════════
@@ -700,6 +688,83 @@ html {
    REDUCED MOTION — strip all new animations
    ═══════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════
+   14. INTERACTIVE PIXEL PARTICLE FOOTER
+   ═══════════════════════════════════════════ */
+
+.doji-particle-footer {
+    position: relative;
+    width: 100%;
+    background: #050607;
+    overflow: hidden;
+    cursor: default;
+    border-top: 1px solid rgba(16,185,129,0.08);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.doji-particle-canvas {
+    display: block;
+    width: 100%;
+}
+
+
+/* ═══════════════════════════════════════════
+   15. ASCII SCRAMBLE / DECRYPTION EFFECT
+
+   ═══════════════════════════════════════════ */
+
+/* Scramble done marker (no visual change, just state) */
+.scramble-done {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+
+/* ═══════════════════════════════════════════
+   15. ANIMATED ICONS
+   ═══════════════════════════════════════════ */
+
+/* Wrapper aligns web-component icons inline with text */
+.doji-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: -3px;
+    line-height: 0;
+}
+
+/* Make hover trigger bubble up from any parent card/row/item */
+.kh-card:hover .doji-icon,
+.hiw-card:hover .doji-icon,
+.dc-step-card:hover .doji-icon,
+.engage-card:hover .doji-icon,
+.trust-item:hover .doji-icon,
+.hero-stat:hover .doji-icon,
+li:hover > .doji-icon,
+a:hover > .doji-icon,
+.rule-card:hover .doji-icon,
+.feature-item:hover .doji-icon,
+.scaling-card:hover .doji-icon,
+.benefit-card:hover .doji-icon,
+.tier-card:hover .doji-icon,
+.contact-card:hover .doji-icon,
+tr:hover .doji-icon {
+    /* The al-icon-wrapper class on the <span> handles the hover trigger,
+       but we also gently scale the wrapper for extra feedback */
+    transform: scale(1.15);
+    transition: transform 0.2s ease;
+}
+
+.doji-icon {
+    transition: transform 0.2s ease;
+}
+
+
+/* ═══════════════════════════════════════════
+   16. REDUCED MOTION — strip all new animations
+   ═══════════════════════════════════════════ */
+
 @media (prefers-reduced-motion: reduce) {
     body { animation: none; }
     .nav-dropdown.open { animation: none; }
@@ -708,5 +773,7 @@ html {
     .doji-toast.hiding { animation: none; }
     .badge { animation: none; opacity: 1; }
     .skeleton { animation: none; }
+    .doji-icon { transition: none; }
+    .scramble-done { opacity: 1; transform: none; }
     html { scroll-behavior: auto; }
 }

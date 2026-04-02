@@ -99,8 +99,7 @@ const AuthModal = (function() {
 
             if (json.success) {
                 close();
-                // Reload to update nav state
-                window.location.reload();
+                window.location.href = 'dashboard.php';
             } else {
                 err.textContent = json.error || 'Login failed. Please try again.';
             }
@@ -163,8 +162,7 @@ const AuthModal = (function() {
 
             if (json.success) {
                 close();
-                // Auto-login after signup — reload to update nav
-                window.location.reload();
+                window.location.href = 'dashboard.php';
             } else {
                 err.textContent = json.error || 'Registration failed. Please try again.';
             }

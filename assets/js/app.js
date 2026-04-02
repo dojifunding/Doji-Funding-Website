@@ -244,6 +244,32 @@ function subscribeNewsletter() {
     } catch(e) {}
 }
 
+// ─── Footer Accordion (mobile only) ─────────────────────────────────────────
+(function () {
+    function initFooterAccordion() {
+        document.querySelectorAll('.footer-col-btn').forEach(function (btn) {
+            var links = btn.nextElementSibling;
+            if (!links || !links.classList.contains('footer-col-links')) return;
+
+            btn.addEventListener('click', function () {
+                // Only active below 769px
+                if (window.innerWidth > 768) return;
+
+                var isOpen = btn.classList.contains('open');
+                btn.classList.toggle('open', !isOpen);
+                btn.setAttribute('aria-expanded', String(!isOpen));
+                links.classList.toggle('open', !isOpen);
+            });
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFooterAccordion);
+    } else {
+        initFooterAccordion();
+    }
+})();
+
 function toggleDisclaimerMore() {
     var more = document.getElementById('disclaimerMore');
     var btn = document.getElementById('disclaimerToggle');

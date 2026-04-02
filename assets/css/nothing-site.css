@@ -1,0 +1,696 @@
+/**
+ * Doji Funding — Nothing OS Site Override
+ * Swiss typography · OLED black · Emerald green accent · No grain
+ *
+ * Strategy: loaded LAST — overrides main.css / effects.css / polish.css
+ * Removing [data-theme="light"] forces dark mode regardless of localStorage.
+ *
+ * Fonts: Doto (display/metrics) · Chivo Mono (UI + labels)
+ */
+
+/* ═══════════════════════════════════════════════════════
+   1. KILL GRAIN / NOISE / SCANLINES
+══════════════════════════════════════════════════════════ */
+body::before       { opacity: 0 !important; animation: none !important; content: none !important; }
+.noise             { display: none !important; }
+.scanlines         { display: none !important; }
+.rgb-fringe        { display: none !important; }
+.hero-grid         { display: none !important; }
+.hero::before      { display: none !important; }
+.cta-enhanced::before { display: none !important; }
+
+/* ═══════════════════════════════════════════════════════
+   2. DESIGN TOKENS — OLED black + emerald green
+   No [data-theme="light"] block = dark mode forced always.
+══════════════════════════════════════════════════════════ */
+:root {
+    /* OLED palette */
+    --bg:              #000000;
+    --bg2:             #050505;
+    --bg3:             #0D0D0D;
+    --bg4:             #141414;
+
+    /* Borders */
+    --border:          #1A1A1A;
+    --border2:         #222222;
+    --border3:         #333333;
+    --border-subtle:   1px solid rgba(255,255,255,0.05);
+    --border-default:  1px solid rgba(255,255,255,0.08);
+    --border-strong:   1px solid rgba(255,255,255,0.12);
+    --border-accent:   1px solid rgba(16,185,129,0.30);
+
+    /* Text */
+    --text:            #E8E8E8;
+    --text2:           #AAAAAA;
+    --text3:           #666666;
+
+    /* Emerald green — keep brand identity */
+    --green:           #10B981;
+    --green-glow:      rgba(16,185,129,0.20);
+    --green-dim:       rgba(16,185,129,0.08);
+
+    /* Status colors */
+    --red:             #E53E3E;
+    --orange:          #D4A843;
+    --blue:            #5E7FD4;
+
+    /* Nothing fonts */
+    --font-heading:    'Chivo Mono', monospace;
+    --font-body:       'Chivo Mono', monospace;
+    --font-mono:       'Chivo Mono', monospace;
+    --font-dot:        'Doto', 'Chivo Mono', monospace;
+
+    /* Nothing border-radius */
+    --radius-none:     0px;
+    --radius-xs:       0px;
+    --radius-sm:       2px;
+    --radius-md:       4px;
+    --radius-lg:       4px;
+    --radius-pill:     999px;
+    --radius-circle:   50%;
+}
+
+/* ═══════════════════════════════════════════════════════
+   3. BASE — Typography & Body
+══════════════════════════════════════════════════════════ */
+html, body {
+    font-family: 'Chivo Mono', monospace !important;
+    background: #000000 !important;
+    color: #E8E8E8 !important;
+    -webkit-font-smoothing: antialiased !important;
+}
+
+h1 {
+    font-family: 'Nippo', sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.03em !important;
+    color: #FFFFFF !important;
+}
+h2 {
+    font-family: 'Chivo Mono', monospace !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.025em !important;
+    color: #FFFFFF !important;
+}
+h3 {
+    font-family: 'Chivo Mono', monospace !important;
+    font-weight: 600 !important;
+    color: #FFFFFF !important;
+}
+
+/* Dot-matrix display font for key numbers */
+.stat-val,
+.proof-val,
+.metric-val,
+.ch-price,
+.step-num {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+}
+
+/* Mono labels */
+.section-label,
+.badge,
+.ch-badge,
+.hiw-num,
+.metric-label,
+.stat-lbl,
+.proof-label,
+.footer-col-title,
+.nav-link,
+.mobile-menu-section,
+.wm-tag,
+.wm-title,
+.mobile-soon,
+.promo-badge {
+    font-family: 'Chivo Mono', monospace !important;
+    letter-spacing: 0.06em !important;
+}
+
+.text-loop-headline {
+    font-family: 'Nippo', sans-serif !important;
+    font-weight: 700 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   4. SECTION BACKGROUNDS — Pure OLED
+══════════════════════════════════════════════════════════ */
+section,
+.section,
+.hero,
+.metrics-bar,
+.cta-section,
+.cta-enhanced,
+.text-loop-section,
+footer,
+.pill-bar {
+    background: #000000 !important;
+}
+
+.kh-card,
+.hiw-card,
+.ac-card-lg,
+.ac-card-sm,
+.step-card,
+.ch-card,
+.stat-card,
+.testimonial-card,
+.engage-card,
+.platform-card,
+.compare-table,
+.contact-card,
+.contact-form-wrap {
+    background: #0D0D0D !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border-radius: 2px !important;
+    border-color: #1A1A1A !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   5. DOT-GRID MOTIF
+══════════════════════════════════════════════════════════ */
+.metrics-bar {
+    background-image: radial-gradient(circle, #161616 0.75px, transparent 0.75px) !important;
+    background-size: 16px 16px !important;
+    background-color: #000000 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   6. PROMO BANNER
+══════════════════════════════════════════════════════════ */
+.promo-banner {
+    background: #000000 !important;
+    border-bottom: 1px solid #1A1A1A !important;
+}
+.promo-badge {
+    background: #10B981 !important;
+    color: #000000 !important;
+    border-radius: 2px !important;
+    font-family: 'Chivo Mono', monospace !important;
+    letter-spacing: 0.08em !important;
+}
+.promo-banner-code {
+    background: #10B981 !important;
+    color: #000000 !important;
+    border-radius: 2px !important;
+    font-family: 'Chivo Mono', monospace !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   7. NAVIGATION
+══════════════════════════════════════════════════════════ */
+.nav {
+    background: rgba(0,0,0,0.97) !important;
+    backdrop-filter: blur(0px) !important;
+    -webkit-backdrop-filter: blur(0px) !important;
+    border-bottom: 1px solid #1A1A1A !important;
+}
+
+.logo-text {
+    font-family: 'Chivo Mono', monospace !important;
+    letter-spacing: 0.08em !important;
+    color: #E8E8E8 !important;
+}
+
+.nav-link {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.08em !important;
+    color: #666666 !important;
+}
+.nav-link:hover { color: #E8E8E8 !important; background: transparent !important; }
+.nav-link.active { color: #10B981 !important; }
+.nav-link::after { background: #10B981 !important; }
+
+.nav-dashboard {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    color: #666666 !important;
+}
+.nav-dashboard:hover { color: #E8E8E8 !important; }
+
+/* Challenge CTA */
+.btn-primary.nav-cta,
+button.btn-primary.nav-cta {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    color: #10B981 !important;
+    border: 1px solid #10B981 !important;
+    padding: 7px 20px !important;
+}
+.btn-primary.nav-cta:hover,
+button.btn-primary.nav-cta:hover {
+    background: #10B981 !important;
+    color: #000000 !important;
+    transform: none !important;
+}
+
+.nav-user-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    border-color: #1A1A1A !important;
+    border-radius: 999px !important;
+}
+.nav-user-btn:hover { border-color: #10B981 !important; color: #10B981 !important; }
+.nav-avatar {
+    background: rgba(16,185,129,0.08) !important;
+    border-color: rgba(16,185,129,0.2) !important;
+    color: #10B981 !important;
+}
+
+.nav-dropdown {
+    background: #000000 !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+    backdrop-filter: none !important;
+}
+.nav-dropdown-item:hover {
+    background: rgba(16,185,129,0.06) !important;
+    color: #10B981 !important;
+}
+.nav-dropdown-item:hover .nav-dropdown-sub { color: rgba(16,185,129,0.6) !important; }
+.nav-dropdown-sep { background: #1A1A1A !important; }
+
+.lang-btn { border-color: #1A1A1A !important; border-radius: 2px !important; }
+.lang-option:hover { background: rgba(16,185,129,0.06) !important; color: #10B981 !important; }
+.lang-option.active { background: rgba(16,185,129,0.06) !important; color: #10B981 !important; }
+
+.mobile-menu {
+    background: #000000 !important;
+    border-bottom: 1px solid #1A1A1A !important;
+}
+.mobile-menu-link:hover,
+.mobile-menu-link.active { color: #10B981 !important; }
+.mobile-lang-item:hover,
+.mobile-lang-item.active { background: rgba(16,185,129,0.06) !important; color: #10B981 !important; }
+.mobile-menu-btn.primary {
+    background: #10B981 !important;
+    border-color: #10B981 !important;
+    color: #000000 !important;
+    border-radius: 999px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   8. BUTTONS — Pill CTAs
+══════════════════════════════════════════════════════════ */
+.btn-primary {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.08em !important;
+    border-radius: 999px !important;
+    background: #10B981 !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+.btn-primary:hover { background: #0EA572 !important; transform: none !important; }
+
+.btn-primary-lg {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.08em !important;
+    border-radius: 999px !important;
+    background: #10B981 !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+.btn-primary-lg:hover { background: #0EA572 !important; transform: none !important; }
+
+.btn-outline {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.08em !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    color: #AAAAAA !important;
+    border: 1px solid #333333 !important;
+    box-shadow: none !important;
+}
+.btn-outline:hover {
+    border-color: rgba(16,185,129,0.5) !important;
+    color: #10B981 !important;
+    background: rgba(16,185,129,0.06) !important;
+    transform: none !important;
+}
+
+.btn-outline-lg {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.08em !important;
+    border-radius: 999px !important;
+    border-color: #333333 !important;
+}
+.btn-outline-lg:hover { border-color: #10B981 !important; color: #10B981 !important; }
+
+/* ═══════════════════════════════════════════════════════
+   9. HERO — Dot-grid background
+══════════════════════════════════════════════════════════ */
+.hero { background: #000000 !important; position: relative !important; }
+
+.hero::after {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+    background-image: radial-gradient(circle, #111111 0.75px, transparent 0.75px) !important;
+    background-size: 20px 20px !important;
+}
+.hero-split, .hero-content { z-index: 2 !important; position: relative !important; }
+
+.badge {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    letter-spacing: 0.12em !important;
+    border-color: rgba(16,185,129,0.35) !important;
+    color: #10B981 !important;
+    background: transparent !important;
+    border-radius: 2px !important;
+}
+
+.hero-stat {
+    background: transparent !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+}
+.hero-stat strong { font-family: 'Chivo Mono', monospace !important; color: #E8E8E8 !important; }
+.hero-stat span { color: #666666 !important; font-family: 'Chivo Mono', monospace !important; font-size: 10px !important; }
+
+.trust-item { font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; }
+.trust-sep { background: #1A1A1A !important; }
+
+/* ═══════════════════════════════════════════════════════
+   10. SECTION LABELS / PAGE TITLES
+══════════════════════════════════════════════════════════ */
+.section-label { color: #10B981 !important; }
+.page-title {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    color: #FFFFFF !important;
+}
+.page-subtitle { color: #AAAAAA !important; }
+.section-sub { color: #AAAAAA !important; }
+.subtitle { color: #AAAAAA !important; }
+
+/* ═══════════════════════════════════════════════════════
+   11. METRICS BAR — Dot-matrix display numbers
+══════════════════════════════════════════════════════════ */
+.metric-val {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    font-size: 40px !important;
+    color: #FFFFFF !important;
+    letter-spacing: 0.02em !important;
+}
+.metric-item:hover .metric-val { color: #10B981 !important; text-shadow: none !important; }
+.metric-item::after { background: #10B981 !important; }
+.metric-item:hover { background: transparent !important; }
+.metric-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    color: #666666 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   12. HOW IT WORKS
+══════════════════════════════════════════════════════════ */
+.hiw-card { transition: border-color 0.2s, background 0.2s !important; }
+.hiw-card:hover { border-color: rgba(16,185,129,0.35) !important; background: #141414 !important; transform: none !important; }
+.hiw-num {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    font-size: 48px !important;
+    color: rgba(16,185,129,0.75) !important;
+}
+.hiw-card:hover .hiw-num { color: #10B981 !important; }
+.hiw-card p { color: #666666 !important; }
+.hiw-cta:hover { color: #10B981 !important; }
+
+/* ═══════════════════════════════════════════════════════
+   13. KEY HIGHLIGHTS
+══════════════════════════════════════════════════════════ */
+.kh-card:hover { border-color: rgba(16,185,129,0.2) !important; transform: none !important; }
+.kh-icon { border-radius: 2px !important; }
+
+/* ═══════════════════════════════════════════════════════
+   14. CHALLENGE CARDS
+══════════════════════════════════════════════════════════ */
+.ch-card:hover { transform: none !important; border-color: rgba(16,185,129,0.2) !important; }
+.ch-card.featured { border-color: rgba(16,185,129,0.3) !important; }
+.ch-price {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+}
+.ch-badge { font-family: 'Chivo Mono', monospace !important; border-radius: 2px !important; }
+.ch-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    letter-spacing: 0.08em !important;
+    border-radius: 999px !important;
+}
+.ch-btn-primary { background: #10B981 !important; color: #000000 !important; }
+.ch-btn-outline { border-color: #1A1A1A !important; }
+.ch-btn-outline:hover { border-color: #10B981 !important; color: #10B981 !important; }
+
+/* ═══════════════════════════════════════════════════════
+   15. STEP CARDS
+══════════════════════════════════════════════════════════ */
+.step-card:hover { transform: none !important; border-color: rgba(16,185,129,0.2) !important; }
+.step-num {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    color: #1A1A1A !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   16. SOCIAL PROOF / STATS
+══════════════════════════════════════════════════════════ */
+.proof-val {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    color: #10B981 !important;
+    text-shadow: none !important;
+}
+.proof-label { color: #666666 !important; }
+.stat-val {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    text-shadow: none !important;
+}
+.stat-card:hover { transform: none !important; border-color: rgba(16,185,129,0.15) !important; }
+.stat-lbl { font-family: 'Chivo Mono', monospace !important; }
+
+/* ═══════════════════════════════════════════════════════
+   17. TESTIMONIALS
+══════════════════════════════════════════════════════════ */
+.testimonial-card:hover { transform: none !important; border-color: rgba(16,185,129,0.15) !important; }
+.testimonial-stars { letter-spacing: 2px; }
+.testimonial-text { font-family: 'Chivo Mono', monospace !important; }
+
+/* ═══════════════════════════════════════════════════════
+   18. ASSET CLASS CARDS
+══════════════════════════════════════════════════════════ */
+.ac-card-lg:hover,
+.ac-card-sm:hover { transform: none !important; border-color: rgba(16,185,129,0.2) !important; }
+.ac-tags span {
+    font-family: 'Chivo Mono', monospace !important;
+    border-radius: 2px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   19. ACCORDION (WM STYLE) & FAQ
+══════════════════════════════════════════════════════════ */
+.wm-item:hover { background: #050505 !important; }
+.wm-item.active { background: #050505 !important; }
+.wm-tag { font-family: 'Chivo Mono', monospace !important; font-size: 10px !important; }
+.wm-title { font-family: 'Chivo Mono', monospace !important; font-size: 14px !important; }
+.wm-desc { font-family: 'Chivo Mono', monospace !important; }
+
+.home-faq-q { font-family: 'Chivo Mono', monospace !important; font-weight: 600 !important; }
+.home-faq-item { border-bottom-color: #1A1A1A !important; }
+.home-faq-a p { font-family: 'Chivo Mono', monospace !important; color: #AAAAAA !important; }
+
+/* ═══════════════════════════════════════════════════════
+   20. PILL BAR
+══════════════════════════════════════════════════════════ */
+.pill-bar {
+    border-color: #1A1A1A !important;
+    border-radius: 2px !important;
+    background: #000000 !important;
+}
+.pill-bar-item {
+    border-color: #1A1A1A !important;
+    border-radius: 2px !important;
+    background: #0D0D0D !important;
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   21. ENGAGE CARDS
+══════════════════════════════════════════════════════════ */
+.engage-card { border-radius: 2px !important; }
+.engage-card:hover { transform: none !important; border-color: rgba(16,185,129,0.2) !important; }
+.engage-icon { border-radius: 2px !important; }
+.engage-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    border-radius: 999px !important;
+    border-color: #1A1A1A !important;
+    background: transparent !important;
+}
+.engage-btn:hover {
+    border-color: rgba(16,185,129,0.3) !important;
+    background: rgba(16,185,129,0.06) !important;
+}
+.engage-email { border-color: #1A1A1A !important; background: #0D0D0D !important; }
+.engage-email:focus { border-color: rgba(16,185,129,0.3) !important; }
+
+/* ═══════════════════════════════════════════════════════
+   22. COMPARE TABLE
+══════════════════════════════════════════════════════════ */
+.compare-table thead th { font-family: 'Chivo Mono', monospace !important; }
+
+/* ═══════════════════════════════════════════════════════
+   23. PLATFORMS
+══════════════════════════════════════════════════════════ */
+.platform-card:hover { transform: none !important; border-color: rgba(16,185,129,0.15) !important; }
+
+/* ═══════════════════════════════════════════════════════
+   24. TEXT LOOP SECTION
+══════════════════════════════════════════════════════════ */
+.text-loop-section { border-top-color: #1A1A1A !important; }
+.text-loop-headline {
+    font-family: 'Nippo', sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.03em !important;
+    color: #FFFFFF !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   25. CTA SECTIONS
+══════════════════════════════════════════════════════════ */
+.cta-guarantee {
+    border-radius: 2px !important;
+}
+.cta-section { border-color: #1A1A1A !important; }
+
+/* ═══════════════════════════════════════════════════════
+   26. FOOTER
+══════════════════════════════════════════════════════════ */
+footer {
+    background: #000000 !important;
+    border-top: 1px solid #1A1A1A !important;
+}
+.footer-brand { font-family: 'Chivo Mono', monospace !important; letter-spacing: 0.06em !important; }
+.footer-col-title {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    letter-spacing: 0.12em !important;
+    color: #666666 !important;
+}
+.footer-link { font-family: 'Chivo Mono', monospace !important; font-size: 13px !important; }
+.footer-copy,
+.footer-seo { font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; }
+.footer-bottom { border-top-color: #1A1A1A !important; }
+.footer-payments,
+.pc-wrap { border-top-color: #1A1A1A !important; }
+.footer-disclaimer { border-top-color: #1A1A1A !important; }
+.disclaimer-toggle { border-color: #1A1A1A !important; font-family: 'Chivo Mono', monospace !important; border-radius: 2px !important; }
+
+.social-icon {
+    background: transparent !important;
+    border-color: #1A1A1A !important;
+    border-radius: 2px !important;
+}
+.social-icon:hover {
+    transform: none !important;
+}
+
+.pc-logo,
+.payment-icon { border-color: #1A1A1A !important; border-radius: 2px !important; }
+.pc-logo:hover,
+.payment-icon:hover { transform: none !important; }
+
+/* ═══════════════════════════════════════════════════════
+   27. DISCLAIMER BANNER
+══════════════════════════════════════════════════════════ */
+.disclaimer-banner {
+    background: rgba(0,0,0,0.98) !important;
+    backdrop-filter: none !important;
+    border-top-color: #1A1A1A !important;
+}
+.disclaimer-text { font-family: 'Chivo Mono', monospace !important; color: #555555 !important; }
+.disclaimer-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    border-radius: 999px !important;
+    padding: 8px 20px !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   28. FORMS
+══════════════════════════════════════════════════════════ */
+.form-input {
+    font-family: 'Chivo Mono', monospace !important;
+    background: #0D0D0D !important;
+    border-color: #1A1A1A !important;
+    border-radius: 2px !important;
+    color: #E8E8E8 !important;
+}
+.form-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.05em !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   29. MISC
+══════════════════════════════════════════════════════════ */
+.tip-icon { background: #141414 !important; border-radius: 50% !important; font-family: 'Chivo Mono', monospace !important; }
+.tip-popup { background: #0D0D0D !important; border-color: #1A1A1A !important; border-radius: 2px !important; }
+
+/* Scrollbar */
+.doji-sb-thumb { background: linear-gradient(180deg, #10B981, #059669) !important; }
+.doji-sb-track.hover .doji-sb-thumb,
+.doji-sb-track.dragging .doji-sb-thumb { background: linear-gradient(180deg, #34d399, #10B981) !important; }
+@supports (scrollbar-color: auto) {
+    html { scrollbar-color: #10B981 #000000 !important; }
+}
+
+/* Section dividers */
+.section-divider {
+    height: 1px !important;
+    background: #1A1A1A !important;
+    border: none !important;
+    margin: 0 !important;
+}
+
+/* Doji Coin terminal amount — same Doto as proof-val */
+.dc-terminal-amount {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+}
+
+/* Configurator accent sync */
+.cfg-tab.active,
+.type-tab.active {
+    background: #10B981 !important;
+    color: #000000 !important;
+    border-color: #10B981 !important;
+}
+.cfg-price {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    color: #FFFFFF !important;
+}
