@@ -53,6 +53,40 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                 <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
                 <span>Payouts</span>
             </button>
+
+            <div class="dash-nav-sep"></div>
+
+            <button class="dash-nav-item" data-tab="statistics">
+                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+                <span>Statistics</span>
+            </button>
+            <button class="dash-nav-item" data-tab="competitions">
+                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M6 9H3.5a1.5 1.5 0 010-3H6"/><path d="M18 9h2.5a1.5 1.5 0 000-3H18"/><path d="M6 6h12v5a6 6 0 01-12 0V6z"/><path d="M12 17v4"/><path d="M8 21h8"/></svg>
+                <span>Competitions</span>
+            </button>
+            <button class="dash-nav-item" data-tab="leaderboard">
+                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><rect x="2" y="14" width="6" height="8" rx="1"/><rect x="9" y="9" width="6" height="13" rx="1"/><rect x="16" y="11" width="6" height="11" rx="1"/></svg>
+                <span>Leaderboard</span>
+            </button>
+            <button class="dash-nav-item" data-tab="certificates">
+                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+                <span>Certificates</span>
+            </button>
+            <button class="dash-nav-item" data-tab="calendar">
+                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span>Calendar</span>
+            </button>
+            <button class="dash-nav-item" data-tab="affiliate">
+                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                <span>Affiliate</span>
+            </button>
+            <button class="dash-nav-item" data-tab="testimonials">
+                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <span>Testimonials</span>
+            </button>
+
+            <div class="dash-nav-sep"></div>
+
             <div class="dash-nav-group" id="navGroupProfile">
                 <button class="dash-nav-item" data-tab="settings" id="navProfile">
                     <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -79,6 +113,10 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
             <button class="dash-theme-switch" id="dashThemeSwitch" onclick="Dashboard.toggleTheme()" title="Toggle theme">
                 <svg id="dashThemeIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></svg>
             </button>
+            <a href="https://discord.gg/kNUqAqCppU" target="_blank" rel="noopener" class="dash-discord-btn" title="Join Doji Funding Discord">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 00-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 00-5.487 0 12.36 12.36 0 00-.617-1.23A.077.077 0 008.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 00-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 00.031.055 20.03 20.03 0 005.993 2.98.078.078 0 00.084-.026 13.83 13.83 0 001.226-1.963.074.074 0 00-.041-.104 13.201 13.201 0 01-1.872-.878.075.075 0 01-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 01.078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 01.079.009c.12.098.245.195.372.288a.075.075 0 01-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 00-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 00.084.028 19.963 19.963 0 006.002-2.981.076.076 0 00.032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 00-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+                <span>Discord</span>
+            </a>
             <a href="index.php" class="dash-back-link">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
                 dojifunding.com
@@ -651,6 +689,76 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
 
                     </div><!-- .dash-profile-right -->
                 </div><!-- .dash-profile-layout -->
+            </div>
+
+            <!-- ══ TAB: STATISTICS ══ -->
+            <div class="dash-tab" id="tab-statistics">
+                <div class="dash-coming-soon">
+                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+                    <div class="dash-cs-title">STATISTICS</div>
+                    <div class="dash-cs-status">[ COMING SOON ]</div>
+                    <div class="dash-cs-desc">Advanced performance analytics, trade history, drawdown charts, win rate, and risk score for all your funded accounts.</div>
+                </div>
+            </div>
+
+            <!-- ══ TAB: COMPETITIONS ══ -->
+            <div class="dash-tab" id="tab-competitions">
+                <div class="dash-coming-soon">
+                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><path d="M6 9H3.5a1.5 1.5 0 010-3H6"/><path d="M18 9h2.5a1.5 1.5 0 000-3H18"/><path d="M6 6h12v5a6 6 0 01-12 0V6z"/><path d="M12 17v4"/><path d="M8 21h8"/></svg>
+                    <div class="dash-cs-title">COMPETITIONS</div>
+                    <div class="dash-cs-status">[ COMING SOON ]</div>
+                    <div class="dash-cs-desc">Monthly trading competitions with real cash prizes. Compete against traders worldwide and climb the global ranking.</div>
+                </div>
+            </div>
+
+            <!-- ══ TAB: LEADERBOARD ══ -->
+            <div class="dash-tab" id="tab-leaderboard">
+                <div class="dash-coming-soon">
+                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><rect x="2" y="14" width="6" height="8" rx="1"/><rect x="9" y="9" width="6" height="13" rx="1"/><rect x="16" y="11" width="6" height="11" rx="1"/></svg>
+                    <div class="dash-cs-title">LEADERBOARD</div>
+                    <div class="dash-cs-status">[ COMING SOON ]</div>
+                    <div class="dash-cs-desc">Global trader rankings by profit, consistency score, and payout volume. Updated in real time.</div>
+                </div>
+            </div>
+
+            <!-- ══ TAB: CERTIFICATES ══ -->
+            <div class="dash-tab" id="tab-certificates">
+                <div class="dash-coming-soon">
+                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+                    <div class="dash-cs-title">CERTIFICATES</div>
+                    <div class="dash-cs-status">[ COMING SOON ]</div>
+                    <div class="dash-cs-desc">Download your official funded trader certificates, challenge completion diplomas, and milestone badges.</div>
+                </div>
+            </div>
+
+            <!-- ══ TAB: CALENDAR ══ -->
+            <div class="dash-tab" id="tab-calendar">
+                <div class="dash-coming-soon">
+                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <div class="dash-cs-title">CALENDAR</div>
+                    <div class="dash-cs-status">[ COMING SOON ]</div>
+                    <div class="dash-cs-desc">Economic events, payout schedule, competition dates, and your personal trading milestones — all in one view.</div>
+                </div>
+            </div>
+
+            <!-- ══ TAB: AFFILIATE ══ -->
+            <div class="dash-tab" id="tab-affiliate">
+                <div class="dash-coming-soon">
+                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    <div class="dash-cs-title">AFFILIATE</div>
+                    <div class="dash-cs-status">[ COMING SOON ]</div>
+                    <div class="dash-cs-desc">Your referral link, commission tracking, conversion stats, and payout requests — all from your affiliate dashboard.</div>
+                </div>
+            </div>
+
+            <!-- ══ TAB: TESTIMONIALS ══ -->
+            <div class="dash-tab" id="tab-testimonials">
+                <div class="dash-coming-soon">
+                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <div class="dash-cs-title">TESTIMONIALS</div>
+                    <div class="dash-cs-status">[ COMING SOON ]</div>
+                    <div class="dash-cs-desc">Share your trading journey and read success stories from the Doji Funding community. Your review matters.</div>
+                </div>
             </div>
 
         </main>

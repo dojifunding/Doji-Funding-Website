@@ -198,6 +198,14 @@ nav.nav, .mobile-menu { display: none !important; }
 .dash-nav-sub-item:hover { color: var(--text-sec); }
 .dash-nav-sub-item.active { color: var(--text-disp); border-left-color: var(--border-vis); }
 
+/* Nav separator */
+.dash-nav-sep {
+    height: 1px;
+    background: var(--border);
+    margin: 6px 16px;
+    flex-shrink: 0;
+}
+
 /* Sidebar foot */
 .dash-sidebar-foot {
     padding: var(--s8) var(--s16) var(--s16);
@@ -216,6 +224,30 @@ nav.nav, .mobile-menu { display: none !important; }
     transition: color 0.12s;
 }
 .dash-theme-switch:hover { color: var(--text-sec); }
+
+/* Discord button */
+.dash-discord-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dis);
+    text-decoration: none;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.dash-discord-btn:hover {
+    color: #5865F2;
+    border-color: rgba(88,101,242,0.4);
+    background: rgba(88,101,242,0.06);
+}
+.dash-discord-btn svg { flex-shrink: 0; transition: color 0.15s; }
+
 .dash-back-link {
     display: flex; align-items: center; gap: var(--s4);
     font-family: var(--f-mono);
@@ -303,6 +335,40 @@ nav.nav, .mobile-menu { display: none !important; }
 
 .dash-tab { display: none; }
 .dash-tab.active { display: block; }
+
+/* Coming Soon state — instrument-panel style */
+.dash-coming-soon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 320px;
+    text-align: center;
+    padding: 48px 24px;
+}
+.dash-cs-icon { display: block; margin-bottom: 4px; }
+.dash-cs-title {
+    font-family: var(--f-dot);
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--text-pri);
+    letter-spacing: 0.04em;
+}
+.dash-cs-status {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+}
+.dash-cs-desc {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    color: var(--text-sec);
+    max-width: 400px;
+    line-height: 1.7;
+}
 
 /* Tab actions */
 .dash-tab-actions {
