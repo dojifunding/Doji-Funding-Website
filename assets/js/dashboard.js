@@ -7,10 +7,17 @@ const Dashboard = (function() {
 
     // ─── Tab titles ───
     const TAB_TITLES = {
-        overview:   'DASHBOARD',
-        challenges: 'MY CHALLENGES',
-        payouts:    'PAYOUTS',
-        settings:   'PROFILE',
+        overview:     'DASHBOARD',
+        challenges:   'MY CHALLENGES',
+        payouts:      'PAYOUTS',
+        statistics:   'STATISTICS',
+        competitions: 'COMPETITIONS',
+        leaderboard:  'LEADERBOARD',
+        certificates: 'CERTIFICATES',
+        calendar:     'CALENDAR',
+        affiliate:    'AFFILIATE',
+        testimonials: 'TESTIMONIALS',
+        settings:     'PROFILE',
     };
 
     // ─── Profile sub-section titles ───
