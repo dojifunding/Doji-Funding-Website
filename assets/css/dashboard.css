@@ -17,9 +17,9 @@
     --black:          #000000;
     --surface:        #111111;
     --surface-raised: #1A1A1A;
-    --border:         #1E1E1E;
+    --border:         #222222;
     --border-vis:     #333333;
-    --text-dis:       #555555;
+    --text-dis:       #666666;
     --text-sec:       #999999;
     --text-pri:       #E8E8E8;
     --text-disp:      #FFFFFF;
@@ -260,6 +260,7 @@ nav.nav, .mobile-menu { display: none !important; }
     font-family: var(--f-mono);
     font-size: 11px;
     letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--text-pri);
 }
 .dash-topbar-logout {

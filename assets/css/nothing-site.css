@@ -27,11 +27,11 @@ body::before       { opacity: 0 !important; animation: none !important; content:
     /* OLED palette */
     --bg:              #000000;
     --bg2:             #050505;
-    --bg3:             #0D0D0D;
+    --bg3:             #111111;
     --bg4:             #141414;
 
     /* Borders */
-    --border:          #1A1A1A;
+    --border:          #222222;
     --border2:         #222222;
     --border3:         #333333;
     --border-subtle:   1px solid rgba(255,255,255,0.05);
@@ -41,7 +41,7 @@ body::before       { opacity: 0 !important; animation: none !important; content:
 
     /* Text */
     --text:            #E8E8E8;
-    --text2:           #AAAAAA;
+    --text2:           #999999;
     --text3:           #666666;
 
     /* Emerald green — keep brand identity */
@@ -159,12 +159,12 @@ footer,
 .compare-table,
 .contact-card,
 .contact-form-wrap {
-    background: #0D0D0D !important;
+    background: #111111 !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     box-shadow: none !important;
     border-radius: 2px !important;
-    border-color: #1A1A1A !important;
+    border-color: #222222 !important;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -181,7 +181,7 @@ footer,
 ══════════════════════════════════════════════════════════ */
 .promo-banner {
     background: #000000 !important;
-    border-bottom: 1px solid #1A1A1A !important;
+    border-bottom: 1px solid #222222 !important;
 }
 .promo-badge {
     background: #10B981 !important;
@@ -204,7 +204,7 @@ footer,
     background: rgba(0,0,0,0.97) !important;
     backdrop-filter: blur(0px) !important;
     -webkit-backdrop-filter: blur(0px) !important;
-    border-bottom: 1px solid #1A1A1A !important;
+    border-bottom: 1px solid #222222 !important;
 }
 
 .logo-text {
@@ -254,7 +254,7 @@ button.btn-primary.nav-cta:hover {
 .nav-user-btn {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 11px !important;
-    border-color: #1A1A1A !important;
+    border-color: #222222 !important;
     border-radius: 999px !important;
 }
 .nav-user-btn:hover { border-color: #10B981 !important; color: #10B981 !important; }
@@ -266,7 +266,7 @@ button.btn-primary.nav-cta:hover {
 
 .nav-dropdown {
     background: #000000 !important;
-    border: 1px solid #1A1A1A !important;
+    border: 1px solid #222222 !important;
     border-radius: 2px !important;
     backdrop-filter: none !important;
 }
@@ -277,13 +277,13 @@ button.btn-primary.nav-cta:hover {
 .nav-dropdown-item:hover .nav-dropdown-sub { color: rgba(16,185,129,0.6) !important; }
 .nav-dropdown-sep { background: #1A1A1A !important; }
 
-.lang-btn { border-color: #1A1A1A !important; border-radius: 2px !important; }
+.lang-btn { border-color: #222222 !important; border-radius: 2px !important; }
 .lang-option:hover { background: rgba(16,185,129,0.06) !important; color: #10B981 !important; }
 .lang-option.active { background: rgba(16,185,129,0.06) !important; color: #10B981 !important; }
 
 .mobile-menu {
     background: #000000 !important;
-    border-bottom: 1px solid #1A1A1A !important;
+    border-bottom: 1px solid #222222 !important;
 }
 .mobile-menu-link:hover,
 .mobile-menu-link.active { color: #10B981 !important; }
@@ -329,7 +329,7 @@ button.btn-primary.nav-cta:hover {
     letter-spacing: 0.08em !important;
     border-radius: 999px !important;
     background: transparent !important;
-    color: #AAAAAA !important;
+    color: #999999 !important;
     border: 1px solid #333333 !important;
     box-shadow: none !important;
 }
@@ -360,7 +360,7 @@ button.btn-primary.nav-cta:hover {
     inset: 0 !important;
     z-index: 0 !important;
     pointer-events: none !important;
-    background-image: radial-gradient(circle, #111111 0.75px, transparent 0.75px) !important;
+    background-image: radial-gradient(circle, #1A1A1A 0.75px, transparent 0.75px) !important;
     background-size: 20px 20px !important;
 }
 .hero-split, .hero-content { z-index: 2 !important; position: relative !important; }
@@ -377,15 +377,16 @@ button.btn-primary.nav-cta:hover {
 
 .hero-stat {
     background: transparent !important;
-    border: 1px solid #1A1A1A !important;
+    border: 1px solid #222222 !important;
     border-radius: 2px !important;
     box-shadow: none !important;
 }
 .hero-stat strong { font-family: 'Chivo Mono', monospace !important; color: #E8E8E8 !important; }
 .hero-stat span { color: #666666 !important; font-family: 'Chivo Mono', monospace !important; font-size: 10px !important; }
 
-.trust-item { font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; }
-.trust-sep { background: #1A1A1A !important; }
+.trust-item { font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; color: #999999 !important; }
+.trust-item strong { color: #FFFFFF !important; font-weight: 700 !important; }
+.trust-sep { background: #222222 !important; }
 
 /* ═══════════════════════════════════════════════════════
    10. SECTION LABELS / PAGE TITLES
@@ -396,9 +397,9 @@ button.btn-primary.nav-cta:hover {
     font-weight: 400 !important;
     color: #FFFFFF !important;
 }
-.page-subtitle { color: #AAAAAA !important; }
-.section-sub { color: #AAAAAA !important; }
-.subtitle { color: #AAAAAA !important; }
+.page-subtitle { color: #999999 !important; }
+.section-sub { color: #999999 !important; }
+.subtitle { color: #999999 !important; }
 
 /* ═══════════════════════════════════════════════════════
    11. METRICS BAR — Dot-matrix display numbers
@@ -431,7 +432,7 @@ button.btn-primary.nav-cta:hover {
     color: rgba(16,185,129,0.75) !important;
 }
 .hiw-card:hover .hiw-num { color: #10B981 !important; }
-.hiw-card p { color: #666666 !important; }
+.hiw-card p { color: #999999 !important; }
 .hiw-cta:hover { color: #10B981 !important; }
 
 /* ═══════════════════════════════════════════════════════
@@ -457,7 +458,7 @@ button.btn-primary.nav-cta:hover {
     border-radius: 999px !important;
 }
 .ch-btn-primary { background: #10B981 !important; color: #000000 !important; }
-.ch-btn-outline { border-color: #1A1A1A !important; }
+.ch-btn-outline { border-color: #222222 !important; }
 .ch-btn-outline:hover { border-color: #10B981 !important; color: #10B981 !important; }
 
 /* ═══════════════════════════════════════════════════════
@@ -478,14 +479,25 @@ button.btn-primary.nav-cta:hover {
     color: #10B981 !important;
     text-shadow: none !important;
 }
-.proof-label { color: #666666 !important; }
+.proof-label {
+    color: #999999 !important;
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+}
 .stat-val {
     font-family: 'Doto', 'Chivo Mono', monospace !important;
     font-weight: 400 !important;
     text-shadow: none !important;
 }
 .stat-card:hover { transform: none !important; border-color: rgba(16,185,129,0.15) !important; }
-.stat-lbl { font-family: 'Chivo Mono', monospace !important; }
+.stat-lbl {
+    font-family: 'Chivo Mono', monospace !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #999999 !important;
+}
 
 /* ═══════════════════════════════════════════════════════
    17. TESTIMONIALS
@@ -515,20 +527,20 @@ button.btn-primary.nav-cta:hover {
 
 .home-faq-q { font-family: 'Chivo Mono', monospace !important; font-weight: 600 !important; }
 .home-faq-item { border-bottom-color: #1A1A1A !important; }
-.home-faq-a p { font-family: 'Chivo Mono', monospace !important; color: #AAAAAA !important; }
+.home-faq-a p { font-family: 'Chivo Mono', monospace !important; color: #999999 !important; }
 
 /* ═══════════════════════════════════════════════════════
    20. PILL BAR
 ══════════════════════════════════════════════════════════ */
 .pill-bar {
-    border-color: #1A1A1A !important;
+    border-color: #222222 !important;
     border-radius: 2px !important;
     background: #000000 !important;
 }
 .pill-bar-item {
-    border-color: #1A1A1A !important;
+    border-color: #222222 !important;
     border-radius: 2px !important;
-    background: #0D0D0D !important;
+    background: #111111 !important;
     font-family: 'Chivo Mono', monospace !important;
     font-size: 11px !important;
 }
@@ -544,14 +556,14 @@ button.btn-primary.nav-cta:hover {
     font-size: 11px !important;
     letter-spacing: 0.06em !important;
     border-radius: 999px !important;
-    border-color: #1A1A1A !important;
+    border-color: #222222 !important;
     background: transparent !important;
 }
 .engage-btn:hover {
     border-color: rgba(16,185,129,0.3) !important;
     background: rgba(16,185,129,0.06) !important;
 }
-.engage-email { border-color: #1A1A1A !important; background: #0D0D0D !important; }
+.engage-email { border-color: #222222 !important; background: #111111 !important; }
 .engage-email:focus { border-color: rgba(16,185,129,0.3) !important; }
 
 /* ═══════════════════════════════════════════════════════
@@ -581,14 +593,14 @@ button.btn-primary.nav-cta:hover {
 .cta-guarantee {
     border-radius: 2px !important;
 }
-.cta-section { border-color: #1A1A1A !important; }
+.cta-section { border-color: #222222 !important; }
 
 /* ═══════════════════════════════════════════════════════
    26. FOOTER
 ══════════════════════════════════════════════════════════ */
 footer {
     background: #000000 !important;
-    border-top: 1px solid #1A1A1A !important;
+    border-top: 1px solid #222222 !important;
 }
 .footer-brand { font-family: 'Chivo Mono', monospace !important; letter-spacing: 0.06em !important; }
 .footer-col-title {
@@ -604,11 +616,11 @@ footer {
 .footer-payments,
 .pc-wrap { border-top-color: #1A1A1A !important; }
 .footer-disclaimer { border-top-color: #1A1A1A !important; }
-.disclaimer-toggle { border-color: #1A1A1A !important; font-family: 'Chivo Mono', monospace !important; border-radius: 2px !important; }
+.disclaimer-toggle { border-color: #222222 !important; font-family: 'Chivo Mono', monospace !important; border-radius: 2px !important; }
 
 .social-icon {
     background: transparent !important;
-    border-color: #1A1A1A !important;
+    border-color: #222222 !important;
     border-radius: 2px !important;
 }
 .social-icon:hover {
@@ -616,7 +628,7 @@ footer {
 }
 
 .pc-logo,
-.payment-icon { border-color: #1A1A1A !important; border-radius: 2px !important; }
+.payment-icon { border-color: #222222 !important; border-radius: 2px !important; }
 .pc-logo:hover,
 .payment-icon:hover { transform: none !important; }
 
@@ -644,8 +656,8 @@ footer {
 ══════════════════════════════════════════════════════════ */
 .form-input {
     font-family: 'Chivo Mono', monospace !important;
-    background: #0D0D0D !important;
-    border-color: #1A1A1A !important;
+    background: #111111 !important;
+    border-color: #222222 !important;
     border-radius: 2px !important;
     color: #E8E8E8 !important;
 }
@@ -659,7 +671,7 @@ footer {
    29. MISC
 ══════════════════════════════════════════════════════════ */
 .tip-icon { background: #141414 !important; border-radius: 50% !important; font-family: 'Chivo Mono', monospace !important; }
-.tip-popup { background: #0D0D0D !important; border-color: #1A1A1A !important; border-radius: 2px !important; }
+.tip-popup { background: #111111 !important; border-color: #222222 !important; border-radius: 2px !important; }
 
 /* Scrollbar */
 .doji-sb-thumb { background: linear-gradient(180deg, #10B981, #059669) !important; }
@@ -694,3 +706,86 @@ footer {
     font-family: 'Doto', 'Chivo Mono', monospace !important;
     color: #FFFFFF !important;
 }
+
+/* ═══════════════════════════════════════════════════════
+   NOTHING OS SPEC — Final polish pass
+   Three-layer hierarchy · Instrument labels · Data display
+══════════════════════════════════════════════════════════ */
+
+/* Section label — always ALL CAPS, tertiary */
+.section-label {
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    font-size: 11px !important;
+    font-family: 'Chivo Mono', monospace !important;
+}
+
+/* H2 headings — display layer, never ALL CAPS */
+h2 { text-transform: none !important; }
+h3 { text-transform: none !important; }
+
+/* Doji Coin unit label — instrument panel treatment */
+.dc-terminal-unit {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #999999 !important;
+}
+
+/* Metric unit suffix (e.g. "+" or "$") — same as secondary */
+.metric-unit,
+.proof-unit {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 14px !important;
+    color: #999999 !important;
+    text-transform: uppercase !important;
+}
+
+/* Challenge card feature list — secondary body */
+.ch-feature { color: #999999 !important; font-size: 13px !important; }
+.ch-feature svg { stroke: #10B981 !important; opacity: 0.8; }
+
+/* Step card description — secondary body */
+.step-desc { color: #999999 !important; }
+
+/* Section subtitle — secondary body (NOT disabled) */
+.section-sub { color: #999999 !important; }
+.subtitle { color: #999999 !important; }
+.page-subtitle { color: #999999 !important; }
+
+/* KH card body text */
+.kh-card p { color: #999999 !important; }
+
+/* Platform card — secondary */
+.platform-desc { color: #999999 !important; }
+.platform-name { color: #FFFFFF !important; }
+
+/* Testimonial role */
+.testimonial-role { color: #666666 !important; font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; text-transform: uppercase !important; letter-spacing: 0.06em !important; }
+.testimonial-name { color: #E8E8E8 !important; }
+
+/* Nothing inline status — error/success/info in bracket form */
+.dash-form-msg,
+.engage-nl-msg { font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; letter-spacing: 0.06em !important; }
+
+/* Nav dropdown label hierarchy */
+.nav-dropdown-label { color: #E8E8E8 !important; }
+.nav-dropdown-sub { color: #666666 !important; }
+
+/* Metric bar border */
+.metrics-bar { border-top: 1px solid #222222 !important; border-bottom: 1px solid #222222 !important; }
+
+/* Footer social hover — use inherited accent */
+.social-icon:hover svg { stroke: currentColor; }
+
+/* Nothing: active row in tables = left 2px accent bar */
+.compare-table tbody tr:hover td { background: #111111 !important; }
+
+/* FAQ answer — body secondary */
+.home-faq-a p { color: #999999 !important; }
+
+/* Engage card title — display layer */
+.engage-title { color: #FFFFFF !important; }
+.engage-desc { color: #999999 !important; }
+.engage-label { color: #999999 !important; font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; text-transform: uppercase !important; letter-spacing: 0.08em !important; }
