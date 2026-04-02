@@ -789,3 +789,1114 @@ h3 { text-transform: none !important; }
 .engage-title { color: #FFFFFF !important; }
 .engage-desc { color: #999999 !important; }
 .engage-label { color: #999999 !important; font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; text-transform: uppercase !important; letter-spacing: 0.08em !important; }
+
+/* ═══════════════════════════════════════════════════════
+   30. MODALS & OVERLAYS
+══════════════════════════════════════════════════════════ */
+.modal-overlay {
+    background: rgba(0,0,0,0.92) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+.modal {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+}
+.modal-close {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #666666 !important;
+    background: transparent !important;
+    border: none !important;
+}
+.modal-close:hover { color: #E8E8E8 !important; }
+.modal-title {
+    font-family: 'Chivo Mono', monospace !important;
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+    letter-spacing: -0.02em !important;
+}
+.modal-sub {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+}
+.modal-footer {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #666666 !important;
+    font-size: 12px !important;
+    border-top: 1px solid #1A1A1A !important;
+}
+.modal-link { color: #10B981 !important; }
+.modal-link:hover { color: #10B981 !important; text-decoration: underline !important; }
+.modal-logo-fallback {
+    background: rgba(16,185,129,0.08) !important;
+    border: 1px solid rgba(16,185,129,0.2) !important;
+    color: #10B981 !important;
+    font-family: 'Chivo Mono', monospace !important;
+    border-radius: 2px !important;
+}
+
+/* Google button */
+.google-btn {
+    background: #1A1A1A !important;
+    border: 1px solid #333333 !important;
+    border-radius: 2px !important;
+    color: #E8E8E8 !important;
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    letter-spacing: 0.04em !important;
+    box-shadow: none !important;
+}
+.google-btn:hover {
+    border-color: #444444 !important;
+    background: #222222 !important;
+    transform: none !important;
+}
+.google-separator {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #444444 !important;
+    font-size: 11px !important;
+}
+.google-separator::before,
+.google-separator::after { background: #222222 !important; }
+
+/* Form elements in modals */
+.form-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.05em !important;
+    color: #999999 !important;
+    text-transform: uppercase !important;
+}
+.form-input,
+.form-select {
+    font-family: 'Chivo Mono', monospace !important;
+    background: #0A0A0A !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #E8E8E8 !important;
+    box-shadow: none !important;
+}
+.form-input:focus,
+.form-select:focus {
+    border-color: rgba(16,185,129,0.4) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+.form-input::placeholder { color: #444444 !important; }
+.form-input-wrap { position: relative !important; }
+.eye-toggle {
+    background: transparent !important;
+    border: none !important;
+    color: #666666 !important;
+}
+.eye-toggle:hover { color: #E8E8E8 !important; }
+
+.form-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    letter-spacing: 0.08em !important;
+    border-radius: 999px !important;
+    background: #10B981 !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+.form-btn:hover { background: #0EA572 !important; transform: none !important; }
+
+.form-error,
+#loginError,
+#signupError {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    color: #D71921 !important;
+    letter-spacing: 0.04em !important;
+}
+.form-req { color: #10B981 !important; }
+.form-hint,
+#passwordStrength {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    color: #666666 !important;
+}
+.form-check {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    color: #999999 !important;
+}
+.form-check input[type="checkbox"] { accent-color: #10B981 !important; }
+
+/* ═══════════════════════════════════════════════════════
+   31. USER DROPDOWN
+══════════════════════════════════════════════════════════ */
+.user-dropdown {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+}
+.dropdown-header { border-bottom: 1px solid #1A1A1A !important; }
+.dropdown-avatar {
+    background: rgba(16,185,129,0.08) !important;
+    border: 1px solid rgba(16,185,129,0.2) !important;
+    color: #10B981 !important;
+    font-family: 'Chivo Mono', monospace !important;
+    border-radius: 50% !important;
+}
+.dropdown-name {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #E8E8E8 !important;
+    font-size: 13px !important;
+}
+.dropdown-email {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #666666 !important;
+    font-size: 11px !important;
+}
+.dropdown-sep { background: #1A1A1A !important; border: none !important; }
+.dropdown-item {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+    font-size: 12px !important;
+    letter-spacing: 0.04em !important;
+    border-radius: 0 !important;
+}
+.dropdown-item:hover {
+    background: rgba(16,185,129,0.06) !important;
+    color: #10B981 !important;
+}
+.dropdown-logout:hover { color: #D71921 !important; background: rgba(215,25,33,0.06) !important; }
+
+/* ═══════════════════════════════════════════════════════
+   32. CONFIGURATOR — Type Tabs + Mode Strip
+══════════════════════════════════════════════════════════ */
+.type-tabs {
+    gap: 8px !important;
+    border-bottom: 1px solid #1A1A1A !important;
+}
+.type-tab {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    letter-spacing: 0.05em !important;
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #666666 !important;
+    box-shadow: none !important;
+    transition: border-color 0.15s, color 0.15s !important;
+}
+.type-tab:hover:not(.disabled):not(.active) {
+    border-color: #333333 !important;
+    color: #E8E8E8 !important;
+    background: #141414 !important;
+}
+/* .type-tab.active already handled in section 29 */
+.type-tab.disabled {
+    background: #0A0A0A !important;
+    border-color: #1A1A1A !important;
+    color: #333333 !important;
+    cursor: not-allowed !important;
+    opacity: 1 !important;
+}
+.type-tab-sub {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 9px !important;
+    color: #444444 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+}
+.type-tab.active .type-tab-sub { color: rgba(0,0,0,0.6) !important; }
+
+/* Mode strip */
+.mode-strip {
+    background: #000000 !important;
+    border-bottom: 1px solid #1A1A1A !important;
+    padding-bottom: 20px !important;
+}
+.mode-strip-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #666666 !important;
+    margin-bottom: 12px !important;
+}
+.mode-card {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+    transition: border-color 0.15s, background 0.15s !important;
+}
+.mode-card:hover:not(.mode-affiliate) {
+    border-color: rgba(16,185,129,0.35) !important;
+    background: #141414 !important;
+}
+.mode-card.active,
+.mode-card[data-active="true"] {
+    border-color: #10B981 !important;
+    background: rgba(16,185,129,0.05) !important;
+}
+.mode-tag {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 9px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #10B981 !important;
+}
+.mode-name {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 14px !important;
+    color: #E8E8E8 !important;
+}
+.mode-desc {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    color: #666666 !important;
+}
+.mode-affiliate { opacity: 0.5 !important; cursor: not-allowed !important; }
+.mode-lock { color: #555555 !important; }
+.mode-card-competitor { cursor: pointer !important; }
+.preset-select {
+    font-family: 'Chivo Mono', monospace !important;
+    background: #0A0A0A !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #E8E8E8 !important;
+    font-size: 11px !important;
+}
+.preset-select:focus { border-color: rgba(16,185,129,0.4) !important; outline: none !important; }
+
+/* ═══════════════════════════════════════════════════════
+   33. CONFIGURATOR — Panels, Summary, Price, Purchase
+══════════════════════════════════════════════════════════ */
+.cfg-panel {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+}
+.cfg-header { border-bottom: 1px solid #1A1A1A !important; }
+.cfg-title {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #FFFFFF !important;
+    letter-spacing: -0.02em !important;
+}
+.cfg-badge {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 9px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #10B981 !important;
+    border: 1px solid rgba(16,185,129,0.3) !important;
+    background: transparent !important;
+    border-radius: 2px !important;
+}
+
+/* Summary box */
+.summary-box {
+    background: #0A0A0A !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+}
+.summary-title {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #666666 !important;
+    border-bottom: 1px solid #1A1A1A !important;
+}
+.summary-grid { gap: 0 !important; }
+.summary-row,
+.summary-item {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    border-bottom: 1px solid #0F0F0F !important;
+}
+.summary-key,
+.summary-label { color: #666666 !important; }
+.summary-val,
+.summary-value { color: #E8E8E8 !important; }
+
+/* Price box */
+.price-box {
+    background: #000000 !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+}
+.price-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #666666 !important;
+}
+.price-val,
+#priceVal {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    color: #FFFFFF !important;
+    text-shadow: none !important;
+}
+.price-original { color: #555555 !important; text-decoration: line-through !important; }
+.price-discounted { color: #10B981 !important; }
+
+/* Promo row */
+.promo-input {
+    font-family: 'Chivo Mono', monospace !important;
+    background: #0A0A0A !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #E8E8E8 !important;
+    font-size: 12px !important;
+}
+.promo-input:focus { border-color: rgba(16,185,129,0.4) !important; outline: none !important; box-shadow: none !important; }
+.promo-input::placeholder { color: #444444 !important; }
+.promo-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    background: transparent !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #999999 !important;
+}
+.promo-btn:hover { border-color: rgba(16,185,129,0.4) !important; color: #10B981 !important; }
+#promoMsg {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.04em !important;
+}
+
+/* Share button */
+.share-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    background: transparent !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #666666 !important;
+    box-shadow: none !important;
+}
+.share-btn:hover { border-color: #333333 !important; color: #E8E8E8 !important; }
+#shareMsg { font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; color: #10B981 !important; }
+
+/* Purchase button */
+.purchase-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 13px !important;
+    letter-spacing: 0.06em !important;
+    border-radius: 999px !important;
+    background: #10B981 !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+.purchase-btn:hover { background: #0EA572 !important; transform: none !important; }
+
+/* Reset button */
+.reset-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    background: transparent !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+    color: #555555 !important;
+}
+.reset-btn:hover { border-color: #333333 !important; color: #999999 !important; }
+
+/* Note boxes */
+.note-box {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    background: rgba(16,185,129,0.04) !important;
+    border-left: 2px solid rgba(16,185,129,0.3) !important;
+    border-radius: 2px !important;
+    color: #999999 !important;
+}
+.note-box strong { color: #10B981 !important; }
+.note-box.note-disclaimer {
+    background: rgba(255,255,255,0.02) !important;
+    border-left: 2px solid #222222 !important;
+    color: #555555 !important;
+}
+.disclaimer-link { color: #10B981 !important; }
+
+/* Cfg sliders */
+.cfg-slider-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    color: #999999 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+}
+.cfg-slider-val {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    color: #10B981 !important;
+}
+input[type="range"] {
+    accent-color: #10B981 !important;
+}
+.cfg-toggle-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    color: #999999 !important;
+}
+.cfg-row { border-bottom: 1px solid #0F0F0F !important; }
+
+/* Objectives section — obj-card-num */
+.obj-card-num {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    color: #10B981 !important;
+}
+.obj-card-num.funded { color: #10B981 !important; }
+
+/* ═══════════════════════════════════════════════════════
+   34. TRADING OBJECTIVES
+══════════════════════════════════════════════════════════ */
+.obj-card {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+}
+.obj-card-header { border-bottom: 1px solid #1A1A1A !important; }
+.obj-card-title {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+}
+.obj-card-sub {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+    font-size: 13px !important;
+}
+.obj-section-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    font-weight: 600 !important;
+}
+.obj-limit-card {
+    background: #0A0A0A !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+    cursor: pointer !important;
+    transition: border-color 0.15s !important;
+}
+.obj-limit-card:hover { border-color: #222222 !important; }
+.obj-limit-name {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #E8E8E8 !important;
+    font-size: 13px !important;
+}
+.obj-limit-desc {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #555555 !important;
+    font-size: 11px !important;
+}
+.obj-limit-val {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+}
+.obj-chart-popover {
+    background: #141414 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+}
+.obj-chart-title {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #E8E8E8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+}
+.obj-chart-desc {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    color: #666666 !important;
+}
+.obj-guidelines { font-family: 'Chivo Mono', monospace !important; color: #999999 !important; font-size: 13px !important; }
+.obj-tags span,
+.obj-tag {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    border-radius: 2px !important;
+}
+.obj-target-box {
+    background: #0A0A0A !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+}
+.obj-target-row {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 13px !important;
+    border-bottom: 1px solid #0F0F0F !important;
+}
+.obj-target-label { color: #666666 !important; }
+.obj-target-val { color: #10B981 !important; font-family: 'Doto', 'Chivo Mono', monospace !important; }
+.obj-rewards {
+    background: #0A0A0A !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+}
+.obj-flow {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    color: #666666 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   35. SYMBOLS PAGE
+══════════════════════════════════════════════════════════ */
+.symbol-tabs {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    border-bottom: 1px solid #1A1A1A !important;
+    padding-bottom: 16px !important;
+}
+.symbol-tab {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    letter-spacing: 0.04em !important;
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #666666 !important;
+    box-shadow: none !important;
+    transition: border-color 0.15s, color 0.15s !important;
+}
+.symbol-tab:hover { border-color: #333333 !important; color: #E8E8E8 !important; }
+.symbol-tab.active {
+    color: #10B981 !important;
+    border-color: rgba(16,185,129,0.3) !important;
+    background: rgba(16,185,129,0.05) !important;
+}
+.symbol-tab-count {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    color: #10B981 !important;
+    opacity: 0.8;
+}
+.symbol-item {
+    background: #111111 !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+    transition: border-color 0.15s !important;
+}
+.symbol-item:hover { border-color: rgba(16,185,129,0.2) !important; }
+.symbol-item.major { border-color: rgba(16,185,129,0.15) !important; }
+.symbol-name {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #E8E8E8 !important;
+    font-size: 13px !important;
+}
+.symbol-desc {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #666666 !important;
+    font-size: 11px !important;
+}
+.symbol-tag {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 9px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    border-radius: 2px !important;
+}
+.tag-major { color: #10B981 !important; background: rgba(16,185,129,0.08) !important; }
+.tag-minor { color: #999999 !important; background: rgba(255,255,255,0.04) !important; }
+.tag-exotic { color: #D4A843 !important; background: rgba(212,168,67,0.08) !important; }
+
+/* ═══════════════════════════════════════════════════════
+   36. RULES PAGE
+══════════════════════════════════════════════════════════ */
+.rule-tabs {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-bottom: 24px !important;
+}
+.rule-tab {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    letter-spacing: 0.04em !important;
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #666666 !important;
+    box-shadow: none !important;
+    transition: border-color 0.15s, color 0.15s !important;
+}
+.rule-tab:hover { border-color: #333333 !important; color: #E8E8E8 !important; }
+.rule-tab.active {
+    color: #10B981 !important;
+    border-color: rgba(16,185,129,0.3) !important;
+    background: rgba(16,185,129,0.04) !important;
+}
+.rule-card-title {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: #FFFFFF !important;
+    border-bottom: 1px solid #1A1A1A !important;
+    padding-bottom: 12px !important;
+    margin-bottom: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+.rule-detail {
+    border-left: 2px solid #222222 !important;
+    padding-left: 12px !important;
+    margin-bottom: 12px !important;
+}
+.rule-dt {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #10B981 !important;
+    font-weight: 600 !important;
+}
+.rule-dd {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 13px !important;
+    color: #999999 !important;
+    line-height: 1.6 !important;
+}
+.rule-highlight {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 13px !important;
+    background: rgba(16,185,129,0.05) !important;
+    border-left: 2px solid #10B981 !important;
+    border-radius: 2px !important;
+    color: #E8E8E8 !important;
+    padding: 12px 16px !important;
+}
+.rule-grid { gap: 12px !important; }
+.rule-mini {
+    background: #0A0A0A !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+    text-align: center !important;
+    padding: 12px !important;
+}
+.rule-mini-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #666666 !important;
+}
+.rule-mini-val {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    font-size: 28px !important;
+    color: #FFFFFF !important;
+}
+.rule-mini-desc {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    color: #555555 !important;
+}
+.rule-list { display: flex !important; flex-direction: column !important; gap: 8px !important; }
+.rule-list-item {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 13px !important;
+    color: #999999 !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+}
+.rule-list-item.allowed { color: #10B981 !important; }
+.rule-list-item.forbidden { color: #D71921 !important; }
+.rule-list-item.info { color: #5E7FD4 !important; }
+
+/* ═══════════════════════════════════════════════════════
+   37. SCALING PAGE
+══════════════════════════════════════════════════════════ */
+.scale-progression {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+}
+.scale-step {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    text-align: center !important;
+    box-shadow: none !important;
+    transition: border-color 0.15s !important;
+}
+.scale-step.active-step {
+    border-color: rgba(16,185,129,0.35) !important;
+    background: #141414 !important;
+}
+.scale-icon svg { stroke: #10B981 !important; }
+.scale-level {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #666666 !important;
+}
+.scale-size {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    font-size: 24px !important;
+    color: #FFFFFF !important;
+}
+.scale-desc {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    color: #666666 !important;
+}
+.scale-arrow { color: #333333 !important; font-size: 20px !important; }
+.scale-cards { display: flex !important; gap: 16px !important; flex-wrap: wrap !important; }
+.scale-card {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+    flex: 1 1 200px !important;
+}
+.scale-card.featured { border-color: rgba(16,185,129,0.25) !important; }
+.scale-card-badge {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 9px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    border-radius: 2px !important;
+}
+.scale-card-multiplier {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    font-size: 48px !important;
+    color: #FFFFFF !important;
+}
+.scale-card-sub {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    color: #999999 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+}
+.scale-card-details { border-top: 1px solid #1A1A1A !important; }
+.scale-card-row {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    border-bottom: 1px solid #0F0F0F !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 8px 0 !important;
+}
+.scale-card-row span:first-child { color: #666666 !important; }
+.scale-card-row span:last-child { color: #E8E8E8 !important; }
+
+/* Trader level timeline */
+.level-timeline { display: flex !important; flex-direction: column !important; gap: 0 !important; }
+.level-item {
+    display: flex !important;
+    gap: 16px !important;
+    border-left: 2px solid #1A1A1A !important;
+    padding: 0 0 24px 20px !important;
+    position: relative !important;
+}
+.level-badge {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 50% !important;
+    flex-shrink: 0 !important;
+}
+.level-name {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #E8E8E8 !important;
+}
+.level-duration {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #666666 !important;
+}
+.level-desc {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 13px !important;
+    color: #999999 !important;
+    line-height: 1.6 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   38. AFFILIATES PAGE
+══════════════════════════════════════════════════════════ */
+.aff-stats {
+    display: flex !important;
+    gap: 16px !important;
+    flex-wrap: wrap !important;
+}
+.aff-stat {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    text-align: center !important;
+    flex: 1 1 120px !important;
+    box-shadow: none !important;
+}
+.aff-stat-val {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    font-size: 28px !important;
+    color: #FFFFFF !important;
+}
+.aff-stat-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #666666 !important;
+}
+.aff-steps { display: flex !important; flex-direction: column !important; gap: 0 !important; }
+.aff-step {
+    display: flex !important;
+    gap: 16px !important;
+    border-left: 2px solid #1A1A1A !important;
+    padding-bottom: 24px !important;
+    position: relative !important;
+}
+.aff-step-num {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    font-size: 28px !important;
+    color: rgba(16,185,129,0.5) !important;
+    flex-shrink: 0 !important;
+    width: 40px !important;
+    text-align: center !important;
+}
+.aff-step-content h3 {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #E8E8E8 !important;
+    font-size: 15px !important;
+}
+.aff-step-content p {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+    font-size: 13px !important;
+    line-height: 1.7 !important;
+}
+.aff-tiers { display: flex !important; gap: 16px !important; flex-wrap: wrap !important; }
+.aff-tier {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+    flex: 1 1 160px !important;
+}
+.aff-tier.featured { border-color: rgba(16,185,129,0.3) !important; }
+.aff-tier-name {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #666666 !important;
+}
+.aff-tier-rate {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    font-size: 40px !important;
+    color: #FFFFFF !important;
+}
+.aff-tier-desc {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    color: #999999 !important;
+}
+.aff-tier-example {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    color: #555555 !important;
+    border-top: 1px solid #1A1A1A !important;
+    padding-top: 8px !important;
+    margin-top: 8px !important;
+}
+.aff-tier-example strong { color: #10B981 !important; }
+
+/* ═══════════════════════════════════════════════════════
+   39. FAQ PAGE (full-page accordion)
+══════════════════════════════════════════════════════════ */
+.faq-container { font-family: 'Chivo Mono', monospace !important; }
+.faq-cats {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-bottom: 32px !important;
+}
+.faq-cat,
+button.faq-cat {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    letter-spacing: 0.04em !important;
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #666666 !important;
+    box-shadow: none !important;
+    transition: border-color 0.15s, color 0.15s !important;
+    cursor: pointer !important;
+}
+.faq-cat:hover { border-color: #333333 !important; color: #E8E8E8 !important; }
+.faq-cat.active {
+    color: #10B981 !important;
+    border-color: rgba(16,185,129,0.3) !important;
+    background: rgba(16,185,129,0.05) !important;
+}
+.faq-category h2 {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 14px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #666666 !important;
+    border-bottom: 1px solid #1A1A1A !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 4px !important;
+}
+.faq-item {
+    border-bottom: 1px solid #1A1A1A !important;
+    background: transparent !important;
+}
+.faq-item:hover { background: rgba(255,255,255,0.01) !important; }
+.faq-q,
+.faq-item h3 {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #E8E8E8 !important;
+    cursor: pointer !important;
+    letter-spacing: -0.01em !important;
+}
+.faq-a,
+.faq-item p {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 13px !important;
+    color: #999999 !important;
+    line-height: 1.7 !important;
+}
+.faq-icon { color: #10B981 !important; }
+.faq-item.open .faq-icon { color: #10B981 !important; }
+
+/* ═══════════════════════════════════════════════════════
+   40. CONTACT PAGE
+══════════════════════════════════════════════════════════ */
+.contact-card h3 {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #FFFFFF !important;
+    font-size: 14px !important;
+}
+.contact-card p {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+}
+.contact-card-icon svg { stroke: #10B981 !important; }
+.contact-link {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #10B981 !important;
+    font-size: 13px !important;
+    text-decoration: none !important;
+}
+.contact-link:hover { text-decoration: underline !important; }
+.contact-meta {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    color: #555555 !important;
+}
+.contact-form-wrap h3 {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #FFFFFF !important;
+    font-size: 15px !important;
+}
+textarea.form-input { resize: vertical !important; }
+
+/* ═══════════════════════════════════════════════════════
+   41. COMPETITIONS PAGE
+══════════════════════════════════════════════════════════ */
+.comp-card {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+}
+.comp-card:hover { border-color: rgba(16,185,129,0.2) !important; transform: none !important; }
+.comp-card-title {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #FFFFFF !important;
+}
+.comp-card-desc {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+}
+.comp-prize,
+.comp-val {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    color: #FFFFFF !important;
+}
+.comp-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #666666 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   42. ABOUT + LEGAL PAGES — rule-card / policy
+══════════════════════════════════════════════════════════ */
+.rule-card p {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+    font-size: 14px !important;
+    line-height: 1.7 !important;
+}
+.rule-card strong { color: #E8E8E8 !important; }
+
+/* Legal pages (privacy, terms, refund) */
+.policy-section,
+.legal-section { font-family: 'Chivo Mono', monospace !important; }
+.policy-section h2,
+.legal-section h2 {
+    color: #FFFFFF !important;
+    border-bottom: 1px solid #1A1A1A !important;
+    padding-bottom: 8px !important;
+}
+.policy-section p,
+.legal-section p,
+.policy-section li,
+.legal-section li {
+    color: #999999 !important;
+    font-size: 14px !important;
+    line-height: 1.8 !important;
+}
+.policy-section a,
+.legal-section a { color: #10B981 !important; }
+.policy-section strong,
+.legal-section strong { color: #E8E8E8 !important; }
