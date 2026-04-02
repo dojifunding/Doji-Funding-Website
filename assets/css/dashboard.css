@@ -146,7 +146,7 @@ nav.nav, .mobile-menu { display: none !important; }
     font-weight: 400;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--text-dis);
+    color: var(--text-sec);
     background: none;
     border: none;
     cursor: pointer;
@@ -156,7 +156,7 @@ nav.nav, .mobile-menu { display: none !important; }
     position: relative;
     white-space: nowrap;
 }
-.dash-nav-item:hover { color: var(--text-sec); background: rgba(255,255,255,0.02); }
+.dash-nav-item:hover { color: var(--text-pri); background: rgba(255,255,255,0.02); }
 .dash-nav-item.active { color: var(--text-disp); }
 .dash-nav-item.active::before {
     content: '';
@@ -165,7 +165,7 @@ nav.nav, .mobile-menu { display: none !important; }
     width: 2px;
     background: var(--accent);
 }
-.dash-nav-icon { flex-shrink: 0; opacity: 0.4; }
+.dash-nav-icon { flex-shrink: 0; opacity: 0.55; }
 .dash-nav-item.active .dash-nav-icon { opacity: 0.9; }
 .dash-nav-badge {
     margin-left: auto;
@@ -354,6 +354,7 @@ nav.nav, .mobile-menu { display: none !important; }
     font-weight: 400;
     color: var(--text-pri);
     letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 .dash-cs-status {
     font-family: var(--f-mono);
