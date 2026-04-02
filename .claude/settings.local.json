@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.fundingpips.com)",
+      "WebFetch(domain:ftmo.com)",
+      "WebFetch(domain:www.e8markets.com)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"prop trading fintech dark mode professional\" --design-system -p \"Doji Funding\")",
+      "Bash(export PATH=\"/usr/local/gh/bin:$PATH\")",
+      "Bash(gh api:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Read(//c/Users/Phidias Research/Desktop/everything-claude-code/**)",
+      "Bash(npm install:*)",
+      "Bash(node scripts/install-apply.js php --dry-run)",
+      "Bash(node scripts/install-apply.js php)",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"fintech prop trading dark glassmorphism emerald\" --design-system -p \"Doji Funding\")",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"fintech prop trading dark glassmorphism emerald\" --design-system -p \"Doji Funding\")",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"animation loading hover micro-interaction\" --domain ux)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"animation loading hover micro-interaction\" --domain ux)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"glassmorphism dark mode card depth\" --domain style)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"fintech trading crypto dark\" --domain color)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where php:*)",
+      "Read(//c/xampp/php/**)",
+      "Read(//c/wamp64/bin/php/php8.2.0/**)",
+      "Read(//c/laragon/bin/**)",
+      "Read(//c/php/**)"
+    ]
+  }
+}
