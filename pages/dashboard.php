@@ -217,7 +217,7 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
 
                     <div class="dash-sc dash-sc-local" id="sc-local">
                         <div class="dash-sc-top">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span class="dash-sc-dot"></span>
                             <span class="dash-sc-city" id="scLocalCity">My Time</span>
                         </div>
                         <div class="dash-sc-time" id="scLocalTime">—</div>
