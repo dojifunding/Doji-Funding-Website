@@ -397,6 +397,7 @@ button.btn-primary.nav-cta:hover {
     font-weight: 400 !important;
     color: #FFFFFF !important;
 }
+.page-title .green { color: #10B981 !important; }
 .page-subtitle { color: #999999 !important; }
 .section-sub { color: #999999 !important; }
 .subtitle { color: #999999 !important; }
