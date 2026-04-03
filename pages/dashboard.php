@@ -325,12 +325,14 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                 return cur >= o || cur < c;
             }
 
-            function secsTo(utcH, utcM, utcS, targetH, forward) {
-                var cur  = utcH*3600 + utcM*60 + utcS;
-                var diff = targetH*3600 - cur;
-                if (forward && diff <= 0) diff += 86400;
-                if (!forward && diff >= 0) diff -= 86400;
-                return Math.abs(diff);
+            /* Returns seconds until the next occurrence of targetUTCHour:00:00 */
+            function secsTo(targetUTCHour) {
+                var now    = new Date();
+                var target = new Date(now);
+                target.setUTCHours(targetUTCHour, 0, 0, 0);
+                var diff = Math.round((target - now) / 1000);
+                if (diff <= 0) diff += 86400;   // already passed today → tomorrow
+                return diff;
             }
 
             function fmt(now, zone) {
@@ -361,12 +363,12 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                         card.classList.add('open'); card.classList.remove('closed');
                         stateDot.className = 'dash-sc-state-dot open';
                         stateTxt.textContent = 'OPEN';
-                        countdown.textContent = 'Closes in ' + fmtCountdown(secsTo(utcH, utcM, utcS, closeH, true));
+                        countdown.textContent = 'Closes in ' + fmtCountdown(secsTo(closeH));
                     } else {
                         card.classList.remove('open'); card.classList.add('closed');
                         stateDot.className = 'dash-sc-state-dot closed';
                         stateTxt.textContent = 'CLOSED';
-                        countdown.textContent = 'Opens in ' + fmtCountdown(secsTo(utcH, utcM, utcS, openH, true));
+                        countdown.textContent = 'Opens in ' + fmtCountdown(secsTo(openH));
                     }
                 });
 
