@@ -490,6 +490,50 @@ nav.nav, .mobile-menu { display: none !important; }
     border-top: 1px solid var(--border);
     padding-top: 4px;
     margin-top: 2px;
+    white-space: nowrap;
+}
+
+/* ─── Topbar allocation widget ─── */
+.dash-topbar-alloc {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 28px;
+    border-right: 1px solid var(--border);
+}
+.dash-alloc-label {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--text-dis);
+    text-transform: uppercase;
+}
+.dash-alloc-val {
+    font-family: var(--f-dot);
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--text-disp);
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+.dash-alloc-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dash-alloc-pnl,
+.dash-alloc-pct {
+    font-family: var(--f-dot);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+.dash-alloc-pnl.pos, .dash-alloc-pct.pos { color: var(--accent); }
+.dash-alloc-pnl.neg, .dash-alloc-pct.neg { color: #D71921; }
+.dash-alloc-pct {
+    font-size: 12px;
+    opacity: 0.85;
 }
 
 /* ═══════════════════════════════════════════════════════

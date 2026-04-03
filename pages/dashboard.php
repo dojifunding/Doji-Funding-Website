@@ -21,6 +21,15 @@ $kycLabels  = ['none' => 'Not Submitted', 'pending' => 'Under Review', 'approved
 $kycStatus  = $profile['kyc_status'] ?? 'none';
 $kycClass   = ['none' => 'kyc-none', 'pending' => 'kyc-pending', 'approved' => 'kyc-approved', 'rejected' => 'kyc-rejected'];
 $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1));
+
+// ── Topbar: total allocation across all active accounts ──
+$topbar_allocation = 0;
+$topbar_pnl        = 0;
+foreach (($overview['active_list'] ?? []) as $_ch) {
+    $topbar_allocation += $_ch['account_size'] ?? 0;
+    $topbar_pnl        += $_ch['total_profit'] ?? 0;
+}
+$topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) * 100 : 0;
 ?>
 
 <div class="dash">
@@ -151,8 +160,23 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                 </button>
             </div>
 
-            <!-- RIGHT — market session cards -->
+            <!-- RIGHT — allocation widget + market session cards -->
             <div class="dash-topbar-right">
+
+                <!-- Total Allocation widget -->
+                <div class="dash-topbar-alloc">
+                    <div class="dash-alloc-label">TOTAL ALLOCATION</div>
+                    <div class="dash-alloc-val"><?= formatMoney($topbar_allocation) ?></div>
+                    <div class="dash-alloc-row">
+                        <span class="dash-alloc-pnl <?= $topbar_pnl >= 0 ? 'pos' : 'neg' ?>">
+                            <?= $topbar_pnl >= 0 ? '+' : '' ?><?= formatMoney($topbar_pnl) ?>
+                        </span>
+                        <span class="dash-alloc-pct <?= $topbar_perf_pct >= 0 ? 'pos' : 'neg' ?>">
+                            <?= $topbar_perf_pct >= 0 ? '+' : '' ?><?= number_format($topbar_perf_pct, 2) ?>%
+                        </span>
+                    </div>
+                </div>
+
                 <div class="dash-sessions" id="dashSessions">
 
                     <div class="dash-sc" id="sc-sydney" data-local-open="8" data-local-close="17" data-zone="Australia/Sydney">
