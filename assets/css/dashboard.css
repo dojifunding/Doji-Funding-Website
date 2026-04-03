@@ -461,7 +461,8 @@ nav.nav, .mobile-menu { display: none !important; }
     text-transform: uppercase;
 }
 .dash-sc.open  .dash-sc-state-txt { color: var(--accent); }
-.dash-sc.closed .dash-sc-state-txt { color: var(--text-dis); }
+.dash-sc.closed .dash-sc-state-txt,
+.dash-sc-state-txt.closed          { color: #D71921 !important; }
 
 /* Countdown */
 .dash-sc-countdown {

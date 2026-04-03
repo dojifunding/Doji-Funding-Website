@@ -155,7 +155,7 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
             <div class="dash-topbar-right">
                 <div class="dash-sessions" id="dashSessions">
 
-                    <div class="dash-sc" id="sc-sydney" data-utc-open="22" data-utc-close="7" data-zone="Australia/Sydney" data-hours="22:00–07:00 UTC">
+                    <div class="dash-sc" id="sc-sydney" data-local-open="8" data-local-close="17" data-zone="Australia/Sydney">
                         <div class="dash-sc-top">
                             <span class="dash-sc-dot"></span>
                             <span class="dash-sc-city">Sydney</span>
@@ -167,10 +167,10 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                             <span class="dash-sc-state-txt"></span>
                         </div>
                         <div class="dash-sc-countdown"></div>
-                        <div class="dash-sc-hours">22:00 – 07:00 local</div>
+                        <div class="dash-sc-hours"></div>
                     </div>
 
-                    <div class="dash-sc" id="sc-tokyo" data-utc-open="0" data-utc-close="9" data-zone="Asia/Tokyo" data-hours="09:00–18:00 UTC">
+                    <div class="dash-sc" id="sc-tokyo" data-local-open="9" data-local-close="18" data-zone="Asia/Tokyo">
                         <div class="dash-sc-top">
                             <span class="dash-sc-dot"></span>
                             <span class="dash-sc-city">Tokyo</span>
@@ -182,10 +182,10 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                             <span class="dash-sc-state-txt"></span>
                         </div>
                         <div class="dash-sc-countdown"></div>
-                        <div class="dash-sc-hours">09:00 – 18:00 local</div>
+                        <div class="dash-sc-hours"></div>
                     </div>
 
-                    <div class="dash-sc" id="sc-london" data-utc-open="8" data-utc-close="17" data-zone="Europe/London" data-hours="08:00–17:00 UTC">
+                    <div class="dash-sc" id="sc-london" data-local-open="8" data-local-close="17" data-zone="Europe/London">
                         <div class="dash-sc-top">
                             <span class="dash-sc-dot"></span>
                             <span class="dash-sc-city">London</span>
@@ -197,10 +197,10 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                             <span class="dash-sc-state-txt"></span>
                         </div>
                         <div class="dash-sc-countdown"></div>
-                        <div class="dash-sc-hours">08:00 – 17:00 local</div>
+                        <div class="dash-sc-hours"></div>
                     </div>
 
-                    <div class="dash-sc" id="sc-newyork" data-utc-open="13" data-utc-close="22" data-zone="America/New_York" data-hours="08:00–17:00 local">
+                    <div class="dash-sc" id="sc-newyork" data-local-open="8" data-local-close="17" data-zone="America/New_York">
                         <div class="dash-sc-top">
                             <span class="dash-sc-dot"></span>
                             <span class="dash-sc-city">New York</span>
@@ -212,7 +212,7 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                             <span class="dash-sc-state-txt"></span>
                         </div>
                         <div class="dash-sc-countdown"></div>
-                        <div class="dash-sc-hours">08:00 – 17:00 local</div>
+                        <div class="dash-sc-hours"></div>
                     </div>
 
                     <div class="dash-sc dash-sc-local" id="sc-local">
@@ -331,7 +331,7 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                 var target = new Date(now);
                 target.setUTCHours(targetUTCHour, 0, 0, 0);
                 var diff = Math.round((target - now) / 1000);
-                if (diff <= 0) diff += 86400;   // already passed today → tomorrow
+                if (diff <= 0) diff += 86400;
                 return diff;
             }
 
@@ -341,10 +341,46 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                 }).format(now);
             }
 
+            /* ── DST-aware: local hour → UTC hour for a given timezone ── */
+            function localHourToUTC(localHour, zone) {
+                var now = new Date();
+                // Get current UTC offset: format the same instant in zone vs UTC and diff
+                var fmtH = function(d, tz) {
+                    return parseInt(new Intl.DateTimeFormat('en-GB', {
+                        timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false
+                    }).format(d).split(':')[0]);
+                };
+                var localNow = fmtH(now, zone);
+                var utcNow   = fmtH(now, 'UTC');
+                var offset   = localNow - utcNow;
+                if (offset > 12)  offset -= 24;
+                if (offset < -12) offset += 24;
+                return ((localHour - offset) % 24 + 24) % 24;
+            }
+
+            /* ── Format hour as "HH:00" ── */
+            function fmtHour(h) { return String(h).padStart(2,'0') + ':00'; }
+
+            /* ── Init: compute DST-correct UTC hours + render local labels ── */
+            function initSessionCards() {
+                document.querySelectorAll('.dash-sc:not(.dash-sc-local)').forEach(function(card) {
+                    var zone      = card.dataset.zone;
+                    var localOpen = parseInt(card.dataset.localOpen);
+                    var localClose= parseInt(card.dataset.localClose);
+                    // Compute DST-correct UTC hours and store for tick()
+                    card.dataset.utcOpen  = localHourToUTC(localOpen, zone);
+                    card.dataset.utcClose = localHourToUTC(localClose, zone);
+                    // Render local opening hours label
+                    var hoursEl = card.querySelector('.dash-sc-hours');
+                    if (hoursEl) hoursEl.textContent = fmtHour(localOpen) + ' – ' + fmtHour(localClose) + ' local';
+                });
+            }
+            initSessionCards();
+
             /* ── Main tick ── */
             function tick() {
                 var now  = new Date();
-                var utcH = now.getUTCHours(), utcM = now.getUTCMinutes(), utcS = now.getUTCSeconds();
+                var utcH = now.getUTCHours(), utcM = now.getUTCMinutes();
 
                 /* Market session cards */
                 document.querySelectorAll('.dash-sc:not(.dash-sc-local)').forEach(function(card) {
@@ -363,11 +399,13 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                         card.classList.add('open'); card.classList.remove('closed');
                         stateDot.className = 'dash-sc-state-dot open';
                         stateTxt.textContent = 'OPEN';
+                        stateTxt.className   = 'dash-sc-state-txt';
                         countdown.textContent = 'Closes in ' + fmtCountdown(secsTo(closeH));
                     } else {
                         card.classList.remove('open'); card.classList.add('closed');
                         stateDot.className = 'dash-sc-state-dot closed';
                         stateTxt.textContent = 'CLOSED';
+                        stateTxt.className   = 'dash-sc-state-txt closed';
                         countdown.textContent = 'Opens in ' + fmtCountdown(secsTo(openH));
                     }
                 });
