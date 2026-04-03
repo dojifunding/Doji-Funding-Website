@@ -238,7 +238,7 @@ button.btn-primary.nav-cta {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 11px !important;
     letter-spacing: 0.06em !important;
-    border-radius: 999px !important;
+    border-radius: 2px !important;
     background: transparent !important;
     color: #10B981 !important;
     border: 1px solid #10B981 !important;
@@ -255,7 +255,7 @@ button.btn-primary.nav-cta:hover {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 11px !important;
     border-color: #222222 !important;
-    border-radius: 999px !important;
+    border-radius: 2px !important;
 }
 .nav-user-btn:hover { border-color: #10B981 !important; color: #10B981 !important; }
 .nav-avatar {
@@ -293,7 +293,7 @@ button.btn-primary.nav-cta:hover {
     background: #10B981 !important;
     border-color: #10B981 !important;
     color: #000000 !important;
-    border-radius: 999px !important;
+    border-radius: 2px !important;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -303,7 +303,7 @@ button.btn-primary.nav-cta:hover {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 11px !important;
     letter-spacing: 0.08em !important;
-    border-radius: 999px !important;
+    border-radius: 2px !important;
     background: #10B981 !important;
     color: #000000 !important;
     border: none !important;
@@ -315,7 +315,7 @@ button.btn-primary.nav-cta:hover {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 11px !important;
     letter-spacing: 0.08em !important;
-    border-radius: 999px !important;
+    border-radius: 2px !important;
     background: #10B981 !important;
     color: #000000 !important;
     border: none !important;
@@ -327,7 +327,7 @@ button.btn-primary.nav-cta:hover {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 11px !important;
     letter-spacing: 0.08em !important;
-    border-radius: 999px !important;
+    border-radius: 2px !important;
     background: transparent !important;
     color: #999999 !important;
     border: 1px solid #333333 !important;
@@ -344,7 +344,7 @@ button.btn-primary.nav-cta:hover {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 11px !important;
     letter-spacing: 0.08em !important;
-    border-radius: 999px !important;
+    border-radius: 2px !important;
     border-color: #333333 !important;
 }
 .btn-outline-lg:hover { border-color: #10B981 !important; color: #10B981 !important; }
@@ -455,7 +455,7 @@ button.btn-primary.nav-cta:hover {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 10px !important;
     letter-spacing: 0.08em !important;
-    border-radius: 999px !important;
+    border-radius: 2px !important;
 }
 .ch-btn-primary { background: #10B981 !important; color: #000000 !important; }
 .ch-btn-outline { border-color: #222222 !important; }
@@ -555,7 +555,7 @@ button.btn-primary.nav-cta:hover {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 11px !important;
     letter-spacing: 0.06em !important;
-    border-radius: 999px !important;
+    border-radius: 2px !important;
     border-color: #222222 !important;
     background: transparent !important;
 }
@@ -645,7 +645,7 @@ footer {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 11px !important;
     letter-spacing: 0.06em !important;
-    border-radius: 999px !important;
+    border-radius: 2px !important;
     padding: 8px 20px !important;
     cursor: pointer !important;
     transition: all 0.2s !important;
@@ -897,7 +897,7 @@ h3 { text-transform: none !important; }
     font-family: 'Chivo Mono', monospace !important;
     font-size: 12px !important;
     letter-spacing: 0.08em !important;
-    border-radius: 999px !important;
+    border-radius: 2px !important;
     background: #10B981 !important;
     color: #000000 !important;
     border: none !important;
@@ -1189,7 +1189,7 @@ h3 { text-transform: none !important; }
     font-family: 'Chivo Mono', monospace !important;
     font-size: 13px !important;
     letter-spacing: 0.06em !important;
-    border-radius: 999px !important;
+    border-radius: 2px !important;
     background: #10B981 !important;
     color: #000000 !important;
     border: none !important;

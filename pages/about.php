@@ -169,29 +169,29 @@
     <div class="section-divider"></div>
 
     <!-- STATS BAR -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;text-align:center;padding:40px 24px;background:var(--bg3);border:1px solid var(--border);border-radius:16px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;text-align:center;padding:40px 24px;background:var(--bg3);border:1px solid var(--border);border-radius:2px">
         <div>
-            <div style="font-size:32px;font-weight:800;color:var(--green)">700K+</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:4px">Possible Configurations</div>
+            <div style="font-family:'Doto','Chivo Mono',monospace;font-size:36px;font-weight:400;color:var(--green)">700K+</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:0.08em">Possible Configurations</div>
         </div>
         <div>
-            <div style="font-size:32px;font-weight:800;color:var(--green)">1,000+</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:4px">Trading Instruments</div>
+            <div style="font-family:'Doto','Chivo Mono',monospace;font-size:36px;font-weight:400;color:var(--green)">1,000+</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:0.08em">Trading Instruments</div>
         </div>
         <div>
-            <div style="font-size:32px;font-weight:800;color:var(--green)">24h</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:4px">Payout Processing</div>
+            <div style="font-family:'Doto','Chivo Mono',monospace;font-size:36px;font-weight:400;color:var(--green)">24h</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:0.08em">Payout Processing</div>
         </div>
         <div>
-            <div style="font-size:32px;font-weight:800;color:var(--green)">90%</div>
-            <div style="font-size:13px;color:var(--text3);margin-top:4px">Max Profit Split</div>
+            <div style="font-family:'Doto','Chivo Mono',monospace;font-size:36px;font-weight:400;color:var(--green)">90%</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:0.08em">Max Profit Split</div>
         </div>
     </div>
 
     <div class="section-divider"></div>
 
     <!-- CTA -->
-    <div style="text-align:center;padding:48px 24px;background:var(--bg3);border:1px solid var(--border);border-radius:16px">
+    <div style="text-align:center;padding:48px 24px;background:var(--bg3);border:1px solid var(--border);border-radius:2px">
         <h2 style="font-size:24px;margin-bottom:12px">Ready to Trade <span class="green">Your Way</span>?</h2>
         <p style="color:var(--text3);font-size:15px;max-width:480px;margin:0 auto 24px;line-height:1.7">
             Configure your challenge in minutes. Choose your parameters, prove your skills, and get funded — all on your terms.
