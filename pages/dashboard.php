@@ -215,6 +215,17 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                         <div class="dash-sc-hours">08:00 – 17:00 local</div>
                     </div>
 
+                    <div class="dash-sc dash-sc-local" id="sc-local">
+                        <div class="dash-sc-top">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span class="dash-sc-city" id="scLocalCity">My Time</span>
+                        </div>
+                        <div class="dash-sc-time" id="scLocalTime">—</div>
+                        <div class="dash-sc-timelabel">Your Time Zone</div>
+                        <div class="dash-sc-tz-name" id="scLocalTz"></div>
+                        <div class="dash-sc-hours" id="scLocalTzLabel" style="cursor:pointer;color:var(--accent);opacity:0.7" onclick="Dashboard.switchTab('settings')">Set in Profile ›</div>
+                    </div>
+
                 </div>
             </div>
 
@@ -223,78 +234,181 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
         <!-- Market session clock script -->
         <script>
         (function() {
-            function pad(n) { return String(n).padStart(2,'0'); }
+            /* ── Country → IANA timezone map ── */
+            var COUNTRY_TZ = {
+                'AF':'Asia/Kabul','AL':'Europe/Tirane','DZ':'Africa/Algiers','AR':'America/Argentina/Buenos_Aires',
+                'AU':'Australia/Sydney','AT':'Europe/Vienna','BE':'Europe/Brussels','BR':'America/Sao_Paulo',
+                'BG':'Europe/Sofia','CA':'America/Toronto','CL':'America/Santiago','CN':'Asia/Shanghai',
+                'CO':'America/Bogota','HR':'Europe/Zagreb','CZ':'Europe/Prague','DK':'Europe/Copenhagen',
+                'EG':'Africa/Cairo','FI':'Europe/Helsinki','FR':'Europe/Paris','DE':'Europe/Berlin',
+                'GH':'Africa/Accra','GR':'Europe/Athens','HK':'Asia/Hong_Kong','HU':'Europe/Budapest',
+                'IN':'Asia/Kolkata','ID':'Asia/Jakarta','IE':'Europe/Dublin','IL':'Asia/Jerusalem',
+                'IT':'Europe/Rome','JP':'Asia/Tokyo','JO':'Asia/Amman','KE':'Africa/Nairobi',
+                'KW':'Asia/Kuwait','LB':'Asia/Beirut','MY':'Asia/Kuala_Lumpur','MX':'America/Mexico_City',
+                'MA':'Africa/Casablanca','NL':'Europe/Amsterdam','NZ':'Pacific/Auckland','NG':'Africa/Lagos',
+                'NO':'Europe/Oslo','PK':'Asia/Karachi','PE':'America/Lima','PH':'Asia/Manila',
+                'PL':'Europe/Warsaw','PT':'Europe/Lisbon','QA':'Asia/Qatar','RO':'Europe/Bucharest',
+                'RU':'Europe/Moscow','SA':'Asia/Riyadh','SG':'Asia/Singapore','ZA':'Africa/Johannesburg',
+                'KR':'Asia/Seoul','ES':'Europe/Madrid','SE':'Europe/Stockholm','CH':'Europe/Zurich',
+                'TW':'Asia/Taipei','TH':'Asia/Bangkok','TN':'Africa/Tunis','TR':'Europe/Istanbul',
+                'UA':'Europe/Kiev','AE':'Asia/Dubai','GB':'Europe/London','US':'America/New_York',
+                'VN':'Asia/Ho_Chi_Minh','VE':'America/Caracas','PK':'Asia/Karachi','BD':'Asia/Dhaka',
+                'LK':'Asia/Colombo','NP':'Asia/Kathmandu','MM':'Asia/Rangoon','KZ':'Asia/Almaty',
+                'UZ':'Asia/Tashkent','YE':'Asia/Aden','IQ':'Asia/Baghdad','IR':'Asia/Tehran',
+                'BH':'Asia/Bahrain','OM':'Asia/Muscat','AO':'Africa/Luanda','CI':'Africa/Abidjan',
+                'TZ':'Africa/Dar_es_Salaam','UG':'Africa/Kampala','ZM':'Africa/Lusaka','ZW':'Africa/Harare',
+                'LY':'Africa/Tripoli','SD':'Africa/Khartoum','ET':'Africa/Addis_Ababa',
+                'FJ':'Pacific/Fiji','GU':'Pacific/Guam','HI':'Pacific/Honolulu'
+            };
 
+            /* ── Read/write user timezone from localStorage ── */
+            function getUserTz() {
+                return localStorage.getItem('doji_tz') || Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+            }
+
+            function setUserTz(tz) {
+                localStorage.setItem('doji_tz', tz);
+                updateLocalCard();
+            }
+
+            /* ── Auto-set timezone from country code (2-letter ISO) ── */
+            window.DojiTz = {
+                setFromCountry: function(code) {
+                    var tz = COUNTRY_TZ[code.toUpperCase()];
+                    if (tz) { setUserTz(tz); return tz; }
+                    return null;
+                },
+                set: setUserTz,
+                get: getUserTz
+            };
+
+            /* ── Pre-fill timezone select if on profile page ── */
+            function prefillTzSelect() {
+                var sel = document.getElementById('profileTimezone');
+                if (!sel) return;
+                var saved = getUserTz();
+                for (var i = 0; i < sel.options.length; i++) {
+                    if (sel.options[i].value === saved) { sel.selectedIndex = i; break; }
+                }
+                sel.addEventListener('change', function() {
+                    if (this.value) setUserTz(this.value);
+                });
+            }
+            prefillTzSelect();
+
+            /* ── Local card update ── */
+            function updateLocalCard() {
+                var tz    = getUserTz();
+                var label = tz.split('/').pop().replace(/_/g,' ');
+                var city  = document.getElementById('scLocalCity');
+                var tzEl  = document.getElementById('scLocalTz');
+                var hint  = document.getElementById('scLocalTzLabel');
+                if (city) city.textContent = label;
+                if (tzEl) tzEl.textContent = tz;
+                if (hint) {
+                    var hasTz = !!localStorage.getItem('doji_tz');
+                    hint.textContent = hasTz ? tz : 'Set in Profile ›';
+                    hint.style.color = hasTz ? 'var(--text-dis)' : 'var(--accent)';
+                }
+            }
+            updateLocalCard();
+
+            /* ── Clock helpers ── */
             function fmtCountdown(secs) {
                 var h = Math.floor(secs/3600), m = Math.floor((secs%3600)/60);
                 return (h > 0 ? h+'h ' : '') + m+'m';
             }
 
             function isOpen(utcH, utcM, openH, closeH) {
-                var cur = utcH * 60 + utcM;
-                var o   = openH  * 60;
-                var c   = closeH * 60;
-                if (o < c) return cur >= o && cur < c;       // same day
-                return cur >= o || cur < c;                   // spans midnight
+                var cur = utcH*60 + utcM, o = openH*60, c = closeH*60;
+                if (o < c) return cur >= o && cur < c;
+                return cur >= o || cur < c;
             }
 
-            function secsToOpen(utcH, utcM, utcS, openH) {
-                var cur = utcH*3600 + utcM*60 + utcS;
-                var o   = openH * 3600;
-                var diff = o - cur;
-                if (diff <= 0) diff += 86400;
-                return diff;
+            function secsTo(utcH, utcM, utcS, targetH, forward) {
+                var cur  = utcH*3600 + utcM*60 + utcS;
+                var diff = targetH*3600 - cur;
+                if (forward && diff <= 0) diff += 86400;
+                if (!forward && diff >= 0) diff -= 86400;
+                return Math.abs(diff);
             }
 
-            function secsToClose(utcH, utcM, utcS, closeH) {
-                var cur = utcH*3600 + utcM*60 + utcS;
-                var c   = closeH * 3600;
-                var diff = c - cur;
-                if (diff <= 0) diff += 86400;
-                return diff;
+            function fmt(now, zone) {
+                return new Intl.DateTimeFormat('en-GB', {
+                    timeZone: zone, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false
+                }).format(now);
             }
 
+            /* ── Main tick ── */
             function tick() {
-                var now = new Date();
+                var now  = new Date();
                 var utcH = now.getUTCHours(), utcM = now.getUTCMinutes(), utcS = now.getUTCSeconds();
 
-                document.querySelectorAll('.dash-sc').forEach(function(card) {
-                    var zone    = card.dataset.zone;
-                    var openH   = parseInt(card.dataset.utcOpen);
-                    var closeH  = parseInt(card.dataset.utcClose);
-                    var open    = isOpen(utcH, utcM, openH, closeH);
+                /* Market session cards */
+                document.querySelectorAll('.dash-sc:not(.dash-sc-local)').forEach(function(card) {
+                    var zone   = card.dataset.zone;
+                    var openH  = parseInt(card.dataset.utcOpen);
+                    var closeH = parseInt(card.dataset.utcClose);
+                    var open   = isOpen(utcH, utcM, openH, closeH);
 
-                    // Local time
-                    var local = new Intl.DateTimeFormat('en-GB', {
-                        timeZone: zone, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: false
-                    }).format(now);
-                    card.querySelector('.dash-sc-time').textContent = local;
+                    card.querySelector('.dash-sc-time').textContent = fmt(now, zone);
 
-                    // State
                     var stateTxt  = card.querySelector('.dash-sc-state-txt');
                     var stateDot  = card.querySelector('.dash-sc-state-dot');
                     var countdown = card.querySelector('.dash-sc-countdown');
 
                     if (open) {
-                        card.classList.add('open');
-                        card.classList.remove('closed');
+                        card.classList.add('open'); card.classList.remove('closed');
                         stateDot.className = 'dash-sc-state-dot open';
                         stateTxt.textContent = 'OPEN';
-                        var rem = secsToClose(utcH, utcM, utcS, closeH);
-                        countdown.textContent = 'Closes in ' + fmtCountdown(rem);
+                        countdown.textContent = 'Closes in ' + fmtCountdown(secsTo(utcH, utcM, utcS, closeH, true));
                     } else {
-                        card.classList.remove('open');
-                        card.classList.add('closed');
+                        card.classList.remove('open'); card.classList.add('closed');
                         stateDot.className = 'dash-sc-state-dot closed';
                         stateTxt.textContent = 'CLOSED';
-                        var rem = secsToOpen(utcH, utcM, utcS, openH);
-                        countdown.textContent = 'Opens in ' + fmtCountdown(rem);
+                        countdown.textContent = 'Opens in ' + fmtCountdown(secsTo(utcH, utcM, utcS, openH, true));
                     }
                 });
+
+                /* Local card */
+                var localTimeEl = document.getElementById('scLocalTime');
+                if (localTimeEl) {
+                    try { localTimeEl.textContent = fmt(now, getUserTz()); }
+                    catch(e) { localTimeEl.textContent = '—'; }
+                }
             }
 
             tick();
             setInterval(tick, 1000);
+        })();
+        </script>
+
+        <!-- Auto-map country → timezone on signup form -->
+        <script>
+        (function() {
+            /* Hook into signup country select (if modal exists) */
+            function hookSignup() {
+                var sel = document.getElementById('signupCountry');
+                if (!sel) return;
+                sel.addEventListener('change', function() {
+                    if (this.value && window.DojiTz) {
+                        var tz = window.DojiTz.setFromCountry(this.value);
+                        /* Also pre-fill profile timezone select if open */
+                        var pSel = document.getElementById('profileTimezone');
+                        if (pSel && tz) {
+                            for (var i=0; i<pSel.options.length; i++) {
+                                if (pSel.options[i].value === tz) { pSel.selectedIndex=i; break; }
+                            }
+                        }
+                    }
+                });
+            }
+            /* Wait for modal to be in DOM */
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', hookSignup);
+            } else {
+                hookSignup();
+            }
         })();
         </script>
 
@@ -552,6 +666,112 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                                         <div class="dash-form-group">
                                             <label>Region / State</label>
                                             <input type="text" name="region" value="<?= htmlspecialchars($profile['region'] ?? '') ?>" class="dash-input">
+                                        </div>
+                                    </div>
+                                    <div class="dash-form-row">
+                                        <div class="dash-form-group" style="grid-column:1/-1">
+                                            <label>Preferred Time Zone</label>
+                                            <select name="timezone" id="profileTimezone" class="dash-input">
+                                                <option value="">— Select your time zone —</option>
+                                                <optgroup label="UTC">
+                                                    <option value="UTC">UTC — Coordinated Universal Time</option>
+                                                </optgroup>
+                                                <optgroup label="Americas">
+                                                    <option value="America/Anchorage">America/Anchorage — AKST/AKDT</option>
+                                                    <option value="America/Los_Angeles">America/Los_Angeles — PST/PDT</option>
+                                                    <option value="America/Denver">America/Denver — MST/MDT</option>
+                                                    <option value="America/Phoenix">America/Phoenix — MST</option>
+                                                    <option value="America/Chicago">America/Chicago — CST/CDT</option>
+                                                    <option value="America/New_York">America/New_York — EST/EDT</option>
+                                                    <option value="America/Halifax">America/Halifax — AST/ADT</option>
+                                                    <option value="America/St_Johns">America/St_Johns — NST/NDT</option>
+                                                    <option value="America/Sao_Paulo">America/Sao_Paulo — BRT</option>
+                                                    <option value="America/Argentina/Buenos_Aires">America/Buenos_Aires — ART</option>
+                                                    <option value="America/Santiago">America/Santiago — CLT</option>
+                                                    <option value="America/Bogota">America/Bogota — COT</option>
+                                                    <option value="America/Lima">America/Lima — PET</option>
+                                                    <option value="America/Caracas">America/Caracas — VET</option>
+                                                    <option value="America/Mexico_City">America/Mexico_City — CST/CDT</option>
+                                                    <option value="America/Toronto">America/Toronto — EST/EDT</option>
+                                                    <option value="America/Vancouver">America/Vancouver — PST/PDT</option>
+                                                </optgroup>
+                                                <optgroup label="Europe">
+                                                    <option value="Europe/London">Europe/London — GMT/BST</option>
+                                                    <option value="Europe/Lisbon">Europe/Lisbon — WET/WEST</option>
+                                                    <option value="Europe/Paris">Europe/Paris — CET/CEST</option>
+                                                    <option value="Europe/Berlin">Europe/Berlin — CET/CEST</option>
+                                                    <option value="Europe/Madrid">Europe/Madrid — CET/CEST</option>
+                                                    <option value="Europe/Rome">Europe/Rome — CET/CEST</option>
+                                                    <option value="Europe/Amsterdam">Europe/Amsterdam — CET/CEST</option>
+                                                    <option value="Europe/Brussels">Europe/Brussels — CET/CEST</option>
+                                                    <option value="Europe/Zurich">Europe/Zurich — CET/CEST</option>
+                                                    <option value="Europe/Stockholm">Europe/Stockholm — CET/CEST</option>
+                                                    <option value="Europe/Oslo">Europe/Oslo — CET/CEST</option>
+                                                    <option value="Europe/Copenhagen">Europe/Copenhagen — CET/CEST</option>
+                                                    <option value="Europe/Helsinki">Europe/Helsinki — EET/EEST</option>
+                                                    <option value="Europe/Warsaw">Europe/Warsaw — CET/CEST</option>
+                                                    <option value="Europe/Prague">Europe/Prague — CET/CEST</option>
+                                                    <option value="Europe/Budapest">Europe/Budapest — CET/CEST</option>
+                                                    <option value="Europe/Athens">Europe/Athens — EET/EEST</option>
+                                                    <option value="Europe/Bucharest">Europe/Bucharest — EET/EEST</option>
+                                                    <option value="Europe/Kiev">Europe/Kiev — EET/EEST</option>
+                                                    <option value="Europe/Moscow">Europe/Moscow — MSK</option>
+                                                    <option value="Europe/Istanbul">Europe/Istanbul — TRT</option>
+                                                </optgroup>
+                                                <optgroup label="Africa">
+                                                    <option value="Africa/Casablanca">Africa/Casablanca — WET</option>
+                                                    <option value="Africa/Lagos">Africa/Lagos — WAT</option>
+                                                    <option value="Africa/Cairo">Africa/Cairo — EET</option>
+                                                    <option value="Africa/Nairobi">Africa/Nairobi — EAT</option>
+                                                    <option value="Africa/Johannesburg">Africa/Johannesburg — SAST</option>
+                                                </optgroup>
+                                                <optgroup label="Middle East">
+                                                    <option value="Asia/Dubai">Asia/Dubai — GST</option>
+                                                    <option value="Asia/Riyadh">Asia/Riyadh — AST</option>
+                                                    <option value="Asia/Qatar">Asia/Qatar — AST</option>
+                                                    <option value="Asia/Kuwait">Asia/Kuwait — AST</option>
+                                                    <option value="Asia/Bahrain">Asia/Bahrain — AST</option>
+                                                    <option value="Asia/Tehran">Asia/Tehran — IRST</option>
+                                                    <option value="Asia/Beirut">Asia/Beirut — EET/EEST</option>
+                                                    <option value="Asia/Jerusalem">Asia/Jerusalem — IST/IDT</option>
+                                                </optgroup>
+                                                <optgroup label="Asia">
+                                                    <option value="Asia/Karachi">Asia/Karachi — PKT</option>
+                                                    <option value="Asia/Kolkata">Asia/Kolkata — IST</option>
+                                                    <option value="Asia/Colombo">Asia/Colombo — IST</option>
+                                                    <option value="Asia/Dhaka">Asia/Dhaka — BST</option>
+                                                    <option value="Asia/Kathmandu">Asia/Kathmandu — NPT</option>
+                                                    <option value="Asia/Almaty">Asia/Almaty — ALMT</option>
+                                                    <option value="Asia/Tashkent">Asia/Tashkent — UZT</option>
+                                                    <option value="Asia/Rangoon">Asia/Rangoon — MMT</option>
+                                                    <option value="Asia/Bangkok">Asia/Bangkok — ICT</option>
+                                                    <option value="Asia/Ho_Chi_Minh">Asia/Ho_Chi_Minh — ICT</option>
+                                                    <option value="Asia/Jakarta">Asia/Jakarta — WIB</option>
+                                                    <option value="Asia/Shanghai">Asia/Shanghai — CST</option>
+                                                    <option value="Asia/Hong_Kong">Asia/Hong_Kong — HKT</option>
+                                                    <option value="Asia/Singapore">Asia/Singapore — SGT</option>
+                                                    <option value="Asia/Taipei">Asia/Taipei — CST</option>
+                                                    <option value="Asia/Kuala_Lumpur">Asia/Kuala_Lumpur — MYT</option>
+                                                    <option value="Asia/Manila">Asia/Manila — PST</option>
+                                                    <option value="Asia/Seoul">Asia/Seoul — KST</option>
+                                                    <option value="Asia/Tokyo">Asia/Tokyo — JST</option>
+                                                    <option value="Asia/Yakutsk">Asia/Yakutsk — YAKT</option>
+                                                    <option value="Asia/Vladivostok">Asia/Vladivostok — VLAT</option>
+                                                </optgroup>
+                                                <optgroup label="Pacific &amp; Oceania">
+                                                    <option value="Australia/Perth">Australia/Perth — AWST</option>
+                                                    <option value="Australia/Darwin">Australia/Darwin — ACST</option>
+                                                    <option value="Australia/Adelaide">Australia/Adelaide — ACST/ACDT</option>
+                                                    <option value="Australia/Brisbane">Australia/Brisbane — AEST</option>
+                                                    <option value="Australia/Sydney">Australia/Sydney — AEST/AEDT</option>
+                                                    <option value="Australia/Melbourne">Australia/Melbourne — AEST/AEDT</option>
+                                                    <option value="Pacific/Auckland">Pacific/Auckland — NZST/NZDT</option>
+                                                    <option value="Pacific/Fiji">Pacific/Fiji — FJT</option>
+                                                    <option value="Pacific/Honolulu">Pacific/Honolulu — HST</option>
+                                                    <option value="Pacific/Guam">Pacific/Guam — ChST</option>
+                                                </optgroup>
+                                            </select>
+                                            <span class="dash-form-hint">Used for your local clock in the topbar. Auto-detected from your country if not set.</span>
                                         </div>
                                     </div>
                                     <div id="profileMsg" class="dash-form-msg"></div>
