@@ -8,7 +8,8 @@ const Dashboard = (function() {
     // ─── Tab titles ───
     const TAB_TITLES = {
         overview:     'DASHBOARD',
-        challenges:   'MY CHALLENGES',
+        challenges:   'CHALLENGES',
+        configurator: 'CONFIGURATOR',
         payouts:      'PAYOUTS',
         statistics:   'STATISTICS',
         competitions: 'COMPETITIONS',

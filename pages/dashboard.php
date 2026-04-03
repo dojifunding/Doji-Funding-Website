@@ -44,10 +44,14 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
             </button>
             <button class="dash-nav-item" data-tab="challenges">
                 <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                <span>My Challenges</span>
+                <span>Challenges</span>
                 <?php if (($overview['active_challenges'] ?? 0) > 0): ?>
                 <span class="dash-nav-badge"><?= $overview['active_challenges'] ?></span>
                 <?php endif; ?>
+            </button>
+            <button class="dash-nav-item" data-tab="configurator">
+                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M20 12h2M2 12h2M12 20v2M12 2v2"/></svg>
+                <span>Configurator</span>
             </button>
             <button class="dash-nav-item" data-tab="payouts">
                 <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
@@ -685,6 +689,16 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
 
                     </div><!-- .dash-profile-right -->
                 </div><!-- .dash-profile-layout -->
+            </div>
+
+            <!-- ══ TAB: CONFIGURATOR ══ -->
+            <div class="dash-tab" id="tab-configurator">
+                <div class="dash-coming-soon">
+                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M20 12h2M2 12h2M12 20v2M12 2v2"/></svg>
+                    <div class="dash-cs-title">CONFIGURATOR</div>
+                    <div class="dash-cs-status">[ COMING SOON ]</div>
+                    <div class="dash-cs-desc">Configure and purchase your challenge directly from the dashboard — account size, rules, profit split, and more.</div>
+                </div>
             </div>
 
             <!-- ══ TAB: STATISTICS ══ -->
