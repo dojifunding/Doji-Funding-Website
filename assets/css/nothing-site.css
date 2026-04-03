@@ -215,10 +215,10 @@ footer,
 
 .nav-link {
     font-family: 'Chivo Mono', monospace !important;
-    font-size: 11px !important;
+    font-size: 13px !important;
     font-weight: 400 !important;
-    letter-spacing: 0.08em !important;
-    color: #666666 !important;
+    letter-spacing: 0.06em !important;
+    color: #999999 !important;
 }
 .nav-link:hover { color: #E8E8E8 !important; background: transparent !important; }
 .nav-link.active { color: #10B981 !important; }
