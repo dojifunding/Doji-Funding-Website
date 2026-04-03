@@ -343,14 +343,46 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                 return (h > 0 ? h+'h ' : '') + m+'m';
             }
 
-            function isOpen(utcH, utcM, openH, closeH) {
-                var cur = utcH*60 + utcM, o = openH*60, c = closeH*60;
-                if (o < c) return cur >= o && cur < c;
-                return cur >= o || cur < c;
+            /* ── Weekend-aware open/close detection ──
+               Forex week: Sunday 22:00 UTC (Sydney opens) → Friday 22:00 UTC (NY closes)
+               Cross-midnight sessions (Sydney): open=22 > close=7
+               TODO: extend with holiday calendar API once broker feed is chosen */
+            function isSessionOpen(now, openUTC, closeUTC) {
+                var d    = now.getUTCDay(); // 0=Sun … 6=Sat
+                var cur  = now.getUTCHours() * 60 + now.getUTCMinutes();
+                var o    = openUTC * 60, c = closeUTC * 60;
+                var xmid = o > c; // cross-midnight (e.g. Sydney 22–07)
+
+                if (d === 6) return false; // Saturday: always closed
+                // Sunday: only cross-midnight sessions open (Sydney at 22:00 UTC)
+                if (d === 0) return xmid && cur >= o;
+                // Friday: cross-midnight sessions do NOT reopen at 22:00 (would run into Saturday)
+                if (d === 5 && xmid && cur >= o) return false;
+                return xmid ? (cur >= o || cur < c) : (cur >= o && cur < c);
             }
 
-            /* Returns seconds until the next occurrence of targetUTCHour:00:00 */
-            function secsTo(targetUTCHour) {
+            /* Seconds until the session's next valid open (skips weekend days) */
+            function secsToNextOpen(targetHour, crossMidnight) {
+                var now = new Date();
+                var candidate = new Date(Date.UTC(
+                    now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), targetHour, 0, 0, 0
+                ));
+                if (candidate <= now) candidate.setUTCDate(candidate.getUTCDate() + 1);
+                for (var i = 0; i < 8; i++) {
+                    var day = candidate.getUTCDay();
+                    // Cross-midnight (Sydney): opens Mon–Thu evenings + Sunday 22:00; not Friday
+                    // Regular sessions: opens Mon–Fri
+                    var ok = crossMidnight
+                        ? (day === 0 || (day >= 1 && day <= 4))
+                        : (day >= 1 && day <= 5);
+                    if (ok) return Math.round((candidate - now) / 1000);
+                    candidate.setUTCDate(candidate.getUTCDate() + 1);
+                }
+                return 86400;
+            }
+
+            /* Seconds until close (session is open, always same or next calendar day) */
+            function secsToClose(targetUTCHour) {
                 var now    = new Date();
                 var target = new Date(now);
                 target.setUTCHours(targetUTCHour, 0, 0, 0);
@@ -411,7 +443,8 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                     var zone   = card.dataset.zone;
                     var openH  = parseInt(card.dataset.utcOpen);
                     var closeH = parseInt(card.dataset.utcClose);
-                    var open   = isOpen(utcH, utcM, openH, closeH);
+                    var xmid   = openH > closeH;
+                    var open   = isSessionOpen(now, openH, closeH);
 
                     card.querySelector('.dash-sc-time').textContent = fmt(now, zone);
 
@@ -424,13 +457,13 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                         stateDot.className = 'dash-sc-state-dot open';
                         stateTxt.textContent = 'OPEN';
                         stateTxt.className   = 'dash-sc-state-txt';
-                        countdown.textContent = 'Closes in ' + fmtCountdown(secsTo(closeH));
+                        countdown.textContent = 'Closes in ' + fmtCountdown(secsToClose(closeH));
                     } else {
                         card.classList.remove('open'); card.classList.add('closed');
                         stateDot.className = 'dash-sc-state-dot closed';
                         stateTxt.textContent = 'CLOSED';
                         stateTxt.className   = 'dash-sc-state-txt closed';
-                        countdown.textContent = 'Opens in ' + fmtCountdown(secsTo(openH));
+                        countdown.textContent = 'Opens in ' + fmtCountdown(secsToNextOpen(openH, xmid));
                     }
                 });
 
