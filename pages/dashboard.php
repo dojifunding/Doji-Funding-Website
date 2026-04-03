@@ -54,8 +54,6 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                 <span>Payouts</span>
             </button>
 
-            <div class="dash-nav-sep"></div>
-
             <button class="dash-nav-item" data-tab="statistics">
                 <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
                 <span>Statistics</span>
@@ -84,8 +82,6 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
                 <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 <span>Testimonials</span>
             </button>
-
-            <div class="dash-nav-sep"></div>
 
             <div class="dash-nav-group" id="navGroupProfile">
                 <button class="dash-nav-item" data-tab="settings" id="navProfile">
