@@ -399,15 +399,7 @@ nav.nav, .mobile-menu { display: none !important; }
     align-items: center;
     gap: 6px;
 }
-.dash-sc-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--border-vis);
-    flex-shrink: 0;
-}
-.dash-sc.open  .dash-sc-dot { background: var(--accent); box-shadow: 0 0 6px rgba(16,185,129,0.6); }
-.dash-sc.closed .dash-sc-dot { background: var(--text-dis); }
+.dash-sc-dot { display: none; }
 
 .dash-sc-city {
     font-family: var(--f-mono);
@@ -452,7 +444,7 @@ nav.nav, .mobile-menu { display: none !important; }
     flex-shrink: 0;
 }
 .dash-sc-state-dot.open   { background: var(--accent); }
-.dash-sc-state-dot.closed { background: var(--text-dis); }
+.dash-sc-state-dot.closed { background: #D71921; }
 
 .dash-sc-state-txt {
     font-family: var(--f-mono);
