@@ -169,24 +169,26 @@
     <div class="section-divider"></div>
 
     <!-- STATS BAR -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;text-align:center;padding:40px 24px;background:var(--bg3);border:1px solid var(--border);border-radius:2px">
-        <div>
-            <div style="font-family:'Doto','Chivo Mono',monospace;font-size:36px;font-weight:400;color:var(--green)">700K+</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:0.08em">Possible Configurations</div>
+    <section class="section" style="background:var(--bg);border-top:1px solid rgba(16,185,129,0.08);border-bottom:1px solid rgba(16,185,129,0.08);padding:0">
+        <div class="proof-grid">
+            <div class="proof-item">
+                <div class="proof-val" data-count="700" data-suffix="K+">0</div>
+                <div class="proof-label">Possible Configurations</div>
+            </div>
+            <div class="proof-item">
+                <div class="proof-val" data-count="1000" data-suffix="+">0</div>
+                <div class="proof-label">Trading Instruments</div>
+            </div>
+            <div class="proof-item">
+                <div class="proof-val" data-count="24" data-suffix="h">0</div>
+                <div class="proof-label">Payout Processing</div>
+            </div>
+            <div class="proof-item">
+                <div class="proof-val" data-count="90" data-suffix="%">0</div>
+                <div class="proof-label">Max Profit Split</div>
+            </div>
         </div>
-        <div>
-            <div style="font-family:'Doto','Chivo Mono',monospace;font-size:36px;font-weight:400;color:var(--green)">1,000+</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:0.08em">Trading Instruments</div>
-        </div>
-        <div>
-            <div style="font-family:'Doto','Chivo Mono',monospace;font-size:36px;font-weight:400;color:var(--green)">24h</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:0.08em">Payout Processing</div>
-        </div>
-        <div>
-            <div style="font-family:'Doto','Chivo Mono',monospace;font-size:36px;font-weight:400;color:var(--green)">90%</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:0.08em">Max Profit Split</div>
-        </div>
-    </div>
+    </section>
 
     <div class="section-divider"></div>
 
