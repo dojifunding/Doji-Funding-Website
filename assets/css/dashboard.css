@@ -361,7 +361,8 @@ nav.nav, .mobile-menu { display: none !important; }
 }
 
 .dash-sessions {
-    flex: 1;
+    margin-left: auto;
+    flex: 0 0 auto;
     display: flex;
     align-items: stretch;
 }
@@ -390,8 +391,20 @@ nav.nav, .mobile-menu { display: none !important; }
 }
 .dash-sc.open + .dash-sc { border-left-color: rgba(16,185,129,0.15); }
 
-/* Closed state */
-.dash-sc.closed { background: var(--surface); }
+/* Closed state — red tint */
+.dash-sc.closed {
+    background: rgba(215,25,33,0.06);
+    border-color: rgba(215,25,33,0.25);
+}
+.dash-sc.closed + .dash-sc { border-left-color: rgba(215,25,33,0.15); }
+
+/* Local time card — always black, no tint */
+.dash-sc.dash-sc-local,
+.dash-sc.dash-sc-local.open,
+.dash-sc.dash-sc-local.closed {
+    background: transparent !important;
+    border-color: var(--border) !important;
+}
 
 /* Top row — dot + city */
 .dash-sc-top {
