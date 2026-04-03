@@ -117,10 +117,10 @@ nav.nav, .mobile-menu { display: none !important; }
     background: var(--black);
 }
 .dash-logo-link  { display: flex; align-items: center; gap: var(--s8); text-decoration: none; }
-.dash-logo-img   { height: 18px; width: 18px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.9; }
+.dash-logo-img   { height: 26px; width: 26px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.9; }
 .dash-logo-brand {
     font-family: var(--f-mono);
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.14em;
     color: var(--text-disp);
@@ -273,7 +273,7 @@ nav.nav, .mobile-menu { display: none !important; }
 /* ═══════════════════════════════════════════════════════
    TOPBAR  — instrument-panel with market sessions
 ═══════════════════════════════════════════════════════ */
-:root { --topbar-h: 96px; }
+:root { --topbar-h: 120px; }
 
 .dash-topbar {
     flex-shrink: 0;
@@ -372,15 +372,16 @@ nav.nav, .mobile-menu { display: none !important; }
     flex-direction: column;
     justify-content: center;
     gap: 2px;
-    padding: 10px 20px;
+    padding: 14px 24px;
+    border: none;
     border-left: 1px solid var(--border);
     border-radius: 0;
     background: var(--surface);
-    transition: border-color 0.2s, background 0.2s;
+    transition: background 0.2s;
     position: relative;
     min-width: 0;
 }
-.dash-sc:last-child { border-right: none; }
+.dash-sc:last-child { border-left: 1px solid var(--border); }
 
 /* Open state — green tint like screenshot */
 .dash-sc.open {
