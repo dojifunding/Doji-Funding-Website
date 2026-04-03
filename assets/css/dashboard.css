@@ -485,8 +485,6 @@ nav.nav, .mobile-menu { display: none !important; }
     font-size: 9px;
     color: var(--text-dis);
     letter-spacing: 0.04em;
-    border-top: 1px solid var(--border);
-    padding-top: 4px;
     margin-top: 2px;
     white-space: nowrap;
 }
