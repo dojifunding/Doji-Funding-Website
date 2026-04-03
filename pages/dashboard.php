@@ -131,13 +131,164 @@ $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_
 
         <!-- ─── TOPBAR ─── -->
         <header class="dash-topbar">
+
+            <!-- LEFT — user + logout + new challenge -->
             <div class="dash-topbar-left">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span class="dash-topbar-username"><?= htmlspecialchars(strtolower($user['first_name'] . $user['last_name'])) ?></span>
                 <button class="dash-topbar-logout" onclick="AuthModal.logout()">Log out</button>
+                <button class="dash-topbar-new-challenge" onclick="Dashboard.switchTab('configurator')">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    New Challenge
+                </button>
             </div>
-            <div class="dash-topbar-right"></div>
+
+            <!-- RIGHT — market session cards -->
+            <div class="dash-topbar-right">
+                <div class="dash-sessions" id="dashSessions">
+
+                    <div class="dash-sc" id="sc-sydney" data-utc-open="22" data-utc-close="7" data-zone="Australia/Sydney" data-hours="22:00–07:00 UTC">
+                        <div class="dash-sc-top">
+                            <span class="dash-sc-dot"></span>
+                            <span class="dash-sc-city">Sydney</span>
+                        </div>
+                        <div class="dash-sc-time"></div>
+                        <div class="dash-sc-timelabel">Local Time</div>
+                        <div class="dash-sc-status">
+                            <span class="dash-sc-state-dot"></span>
+                            <span class="dash-sc-state-txt"></span>
+                        </div>
+                        <div class="dash-sc-countdown"></div>
+                        <div class="dash-sc-hours">22:00 – 07:00 local</div>
+                    </div>
+
+                    <div class="dash-sc" id="sc-tokyo" data-utc-open="0" data-utc-close="9" data-zone="Asia/Tokyo" data-hours="09:00–18:00 UTC">
+                        <div class="dash-sc-top">
+                            <span class="dash-sc-dot"></span>
+                            <span class="dash-sc-city">Tokyo</span>
+                        </div>
+                        <div class="dash-sc-time"></div>
+                        <div class="dash-sc-timelabel">Local Time</div>
+                        <div class="dash-sc-status">
+                            <span class="dash-sc-state-dot"></span>
+                            <span class="dash-sc-state-txt"></span>
+                        </div>
+                        <div class="dash-sc-countdown"></div>
+                        <div class="dash-sc-hours">09:00 – 18:00 local</div>
+                    </div>
+
+                    <div class="dash-sc" id="sc-london" data-utc-open="8" data-utc-close="17" data-zone="Europe/London" data-hours="08:00–17:00 UTC">
+                        <div class="dash-sc-top">
+                            <span class="dash-sc-dot"></span>
+                            <span class="dash-sc-city">London</span>
+                        </div>
+                        <div class="dash-sc-time"></div>
+                        <div class="dash-sc-timelabel">Local Time</div>
+                        <div class="dash-sc-status">
+                            <span class="dash-sc-state-dot"></span>
+                            <span class="dash-sc-state-txt"></span>
+                        </div>
+                        <div class="dash-sc-countdown"></div>
+                        <div class="dash-sc-hours">08:00 – 17:00 local</div>
+                    </div>
+
+                    <div class="dash-sc" id="sc-newyork" data-utc-open="13" data-utc-close="22" data-zone="America/New_York" data-hours="08:00–17:00 local">
+                        <div class="dash-sc-top">
+                            <span class="dash-sc-dot"></span>
+                            <span class="dash-sc-city">New York</span>
+                        </div>
+                        <div class="dash-sc-time"></div>
+                        <div class="dash-sc-timelabel">Local Time</div>
+                        <div class="dash-sc-status">
+                            <span class="dash-sc-state-dot"></span>
+                            <span class="dash-sc-state-txt"></span>
+                        </div>
+                        <div class="dash-sc-countdown"></div>
+                        <div class="dash-sc-hours">08:00 – 17:00 local</div>
+                    </div>
+
+                </div>
+            </div>
+
         </header>
+
+        <!-- Market session clock script -->
+        <script>
+        (function() {
+            function pad(n) { return String(n).padStart(2,'0'); }
+
+            function fmtCountdown(secs) {
+                var h = Math.floor(secs/3600), m = Math.floor((secs%3600)/60);
+                return (h > 0 ? h+'h ' : '') + m+'m';
+            }
+
+            function isOpen(utcH, utcM, openH, closeH) {
+                var cur = utcH * 60 + utcM;
+                var o   = openH  * 60;
+                var c   = closeH * 60;
+                if (o < c) return cur >= o && cur < c;       // same day
+                return cur >= o || cur < c;                   // spans midnight
+            }
+
+            function secsToOpen(utcH, utcM, utcS, openH) {
+                var cur = utcH*3600 + utcM*60 + utcS;
+                var o   = openH * 3600;
+                var diff = o - cur;
+                if (diff <= 0) diff += 86400;
+                return diff;
+            }
+
+            function secsToClose(utcH, utcM, utcS, closeH) {
+                var cur = utcH*3600 + utcM*60 + utcS;
+                var c   = closeH * 3600;
+                var diff = c - cur;
+                if (diff <= 0) diff += 86400;
+                return diff;
+            }
+
+            function tick() {
+                var now = new Date();
+                var utcH = now.getUTCHours(), utcM = now.getUTCMinutes(), utcS = now.getUTCSeconds();
+
+                document.querySelectorAll('.dash-sc').forEach(function(card) {
+                    var zone    = card.dataset.zone;
+                    var openH   = parseInt(card.dataset.utcOpen);
+                    var closeH  = parseInt(card.dataset.utcClose);
+                    var open    = isOpen(utcH, utcM, openH, closeH);
+
+                    // Local time
+                    var local = new Intl.DateTimeFormat('en-GB', {
+                        timeZone: zone, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: false
+                    }).format(now);
+                    card.querySelector('.dash-sc-time').textContent = local;
+
+                    // State
+                    var stateTxt  = card.querySelector('.dash-sc-state-txt');
+                    var stateDot  = card.querySelector('.dash-sc-state-dot');
+                    var countdown = card.querySelector('.dash-sc-countdown');
+
+                    if (open) {
+                        card.classList.add('open');
+                        card.classList.remove('closed');
+                        stateDot.className = 'dash-sc-state-dot open';
+                        stateTxt.textContent = 'OPEN';
+                        var rem = secsToClose(utcH, utcM, utcS, closeH);
+                        countdown.textContent = 'Closes in ' + fmtCountdown(rem);
+                    } else {
+                        card.classList.remove('open');
+                        card.classList.add('closed');
+                        stateDot.className = 'dash-sc-state-dot closed';
+                        stateTxt.textContent = 'CLOSED';
+                        var rem = secsToOpen(utcH, utcM, utcS, openH);
+                        countdown.textContent = 'Opens in ' + fmtCountdown(rem);
+                    }
+                });
+            }
+
+            tick();
+            setInterval(tick, 1000);
+        })();
+        </script>
 
 
         <main class="dash-main">
