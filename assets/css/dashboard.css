@@ -284,12 +284,13 @@ nav.nav, .mobile-menu { display: none !important; }
     align-items: stretch;
     padding: 0;
     gap: 0;
+    position: relative;
+    overflow: hidden;
 }
 .dash-topbar-left {
     display: flex; align-items: center; gap: var(--s8);
     flex-shrink: 0;
     padding: 0 var(--s16);
-    border-right: 1px solid var(--border);
 }
 .dash-topbar-left > svg { opacity: 0.3; color: var(--text-sec); }
 .dash-topbar-username {
@@ -357,12 +358,13 @@ nav.nav, .mobile-menu { display: none !important; }
     flex: 1;
     display: flex;
     align-items: stretch;
-    overflow: hidden;
 }
 
 .dash-sessions {
-    margin-left: auto;
-    flex: 0 0 auto;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
     display: flex;
     align-items: stretch;
 }
