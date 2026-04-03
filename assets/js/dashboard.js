@@ -18,6 +18,7 @@ const Dashboard = (function() {
         calendar:     'CALENDAR',
         affiliate:    'AFFILIATE',
         testimonials: 'TESTIMONIALS',
+        support:      'SUPPORT',
         settings:     'PROFILE',
     };
 

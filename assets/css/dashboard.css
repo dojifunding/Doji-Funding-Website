@@ -281,14 +281,15 @@ nav.nav, .mobile-menu { display: none !important; }
     background: var(--black);
     border-bottom: 1px solid var(--border-vis);
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 var(--s24);
-    gap: var(--s16);
+    align-items: stretch;
+    padding: 0;
+    gap: 0;
 }
 .dash-topbar-left {
     display: flex; align-items: center; gap: var(--s8);
     flex-shrink: 0;
+    padding: 0 var(--s16);
+    border-right: 1px solid var(--border);
 }
 .dash-topbar-left > svg { opacity: 0.3; color: var(--text-sec); }
 .dash-topbar-username {
@@ -332,32 +333,54 @@ nav.nav, .mobile-menu { display: none !important; }
 .dash-topbar-new-challenge:hover { background: var(--accent); color: #000000; }
 .dash-topbar-new-challenge svg { flex-shrink: 0; }
 
-/* ─── Market session cards ─── */
-.dash-topbar-right { display: flex; align-items: center; }
+.dash-topbar-support {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 2px;
+    border: 1px solid var(--border-vis);
+    background: transparent;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-sec);
+    cursor: pointer;
+    transition: all 0.12s;
+}
+.dash-topbar-support:hover { color: var(--text-disp); border-color: var(--text-sec); }
+.dash-topbar-support svg { flex-shrink: 0; opacity: 0.6; }
 
-.dash-sessions {
+/* ─── Market session cards ─── */
+.dash-topbar-right {
+    flex: 1;
     display: flex;
     align-items: stretch;
-    gap: 0;
-    height: 72px;
+    overflow: hidden;
+}
+
+.dash-sessions {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
 }
 
 .dash-sc {
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 2px;
-    padding: 10px 16px;
-    min-width: 148px;
-    border: 1px solid var(--border);
-    border-right: none;
+    padding: 10px 20px;
+    border-left: 1px solid var(--border);
     border-radius: 0;
     background: var(--surface);
     transition: border-color 0.2s, background 0.2s;
     position: relative;
+    min-width: 0;
 }
-.dash-sc:first-child { border-radius: 2px 0 0 2px; }
-.dash-sc:last-child  { border-right: 1px solid var(--border); border-radius: 0 2px 2px 0; }
+.dash-sc:last-child { border-right: none; }
 
 /* Open state — green tint like screenshot */
 .dash-sc.open {
