@@ -214,6 +214,7 @@ $v = ASSET_VERSION;
 <!-- Polish & UX Enhancements -->
 <script src="assets/js/polish.js?v=<?= $v ?>"></script>
 
+<?php if ($currentPage !== 'dashboard'): ?>
 <!-- Stacking Words — scroll-scrubbed word reveal -->
 <script src="assets/js/stacking-words.js?v=<?= $v ?>"></script>
 
@@ -223,7 +224,6 @@ $v = ASSET_VERSION;
 <!-- Payment Logo Carousel -->
 <script src="assets/js/payment-carousel.js?v=<?= $v ?>"></script>
 
-<?php if ($currentPage !== 'dashboard'): ?>
 <!-- Interactive Pixel Particle Footer -->
 <script src="assets/js/particle-footer.js?v=<?= $v ?>"></script>
 <?php endif; ?>

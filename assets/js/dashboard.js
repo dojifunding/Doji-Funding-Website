@@ -288,6 +288,29 @@ const Dashboard = (function() {
         applyTheme(saved);
     }
 
+    // ─── Time-aware greeting ───
+    function initGreeting() {
+        var titleEl = document.getElementById('dashPageTitle');
+        if (!titleEl || !titleEl.parentNode) return;
+        var h = new Date().getHours();
+        var salut = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+        var nameEl = document.querySelector('.dropdown-name');
+        var first = nameEl ? nameEl.textContent.trim().split(' ')[0] : '';
+        var el = document.createElement('p');
+        el.className = 'dash-greeting';
+        el.id = 'dashGreeting';
+        el.textContent = salut + (first ? ', ' + first : '') + '.';
+        titleEl.parentNode.insertBefore(el, titleEl.nextSibling);
+    }
+
+    // ─── Console easter egg ───
+    function initConsoleEgg() {
+        if (typeof console === 'undefined') return;
+        console.log('%c DOJI FUNDING ', 'background:#10B981;color:#000;font-family:monospace;font-size:14px;font-weight:700;padding:3px 8px;letter-spacing:0.08em;');
+        console.log('%cYou opened the console. We like the curious ones.', 'color:#10B981;font-family:monospace;font-size:12px;');
+        console.log('%cBuilding something serious. hello@dojifunding.com', 'color:#555;font-family:monospace;font-size:11px;');
+    }
+
     // ─── Init ───
     function init() {
         // Sidebar nav clicks
@@ -380,6 +403,10 @@ const Dashboard = (function() {
 
         // Init theme
         initTheme();
+
+        // Delight
+        initGreeting();
+        initConsoleEgg();
 
         // ─── Promo banner height → CSS var (fixes overlap) ───
         (function() {
