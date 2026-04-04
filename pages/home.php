@@ -31,20 +31,22 @@
                 Accounts from $5K to $100K on MetaTrader 5 &amp; cTrader. Up to $500K total capital. Starting at just $39.
                 <span class="seo-tag">Above fold keywords</span>
             </p>
-            <div class="hero-proof">
-                <div class="hero-proof-item">
-                    <div class="hero-proof-num">$12M<span class="green">+</span></div>
-                    <div class="hero-proof-label">Paid to Traders</div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <div><strong data-count="1000" data-suffix="+">0</strong><span>Trading Instruments</span></div>
                 </div>
-                <div class="hero-proof-sep"></div>
-                <div class="hero-proof-item">
-                    <div class="hero-proof-num" data-count="4200" data-suffix="+">0</div>
-                    <div class="hero-proof-label">Funded Traders</div>
+                <div class="hero-stat">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    <div><strong>Up to 90%</strong><span>Profit Split</span></div>
                 </div>
-                <div class="hero-proof-sep"></div>
-                <div class="hero-proof-item">
-                    <div class="hero-proof-num">90<span class="green">%</span></div>
-                    <div class="hero-proof-label">Max Profit Split</div>
+                <div class="hero-stat">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <div><strong>24h Payouts</strong><span>Guaranteed Processing</span></div>
+                </div>
+                <div class="hero-stat">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <div><strong>No Time Limit</strong><span>Challenge Phase</span></div>
                 </div>
             </div>
             <div class="cta-row">
@@ -64,42 +66,42 @@
         <div class="trust-bar">
             <?php for ($i = 0; $i < 2; $i++): ?>
             <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 <span><strong>Regulated</strong> Gibraltar Entity</span>
             </div>
             <div class="trust-sep"></div>
             <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 <span><strong>4,200+</strong> Funded Traders</span>
             </div>
             <div class="trust-sep"></div>
             <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                 <span><strong>$12M+</strong> Paid Out</span>
             </div>
             <div class="trust-sep"></div>
             <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <span><strong>24h</strong> Guaranteed Payouts</span>
             </div>
             <div class="trust-sep"></div>
             <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 <span><strong>24/7</strong> Support</span>
             </div>
             <div class="trust-sep"></div>
             <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
                 <span><strong>Up to 90%</strong> Profit Split</span>
             </div>
             <div class="trust-sep"></div>
             <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                 <span><strong>MT5 & cTrader</strong> Platforms</span>
             </div>
             <div class="trust-sep"></div>
             <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 <span><strong>150+</strong> Countries</span>
             </div>
             <div class="trust-sep"></div>
@@ -124,30 +126,35 @@
                 </div>
             </div>
             <div class="kh-grid">
-                <div class="kh-card kh-card-hero">
-                    <div class="kh-hero-stat">700K<span class="green">+</span></div>
-                    <h3>Configurations</h3>
+                <div class="kh-card">
+                    <div class="kh-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                    <h3>700K+ Configurations</h3>
                     <p>The most advanced configurator in prop trading. Customize every parameter — from profit target to drawdown type. Built for beginners and pros alike.</p>
                 </div>
                 <div class="kh-card">
+                    <div class="kh-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
                     <h3>24h Guaranteed Payouts</h3>
-                    <p>Request your payout and receive it within 24 hours — guaranteed. Weekly cycles so you never wait long.</p>
+                    <p>Request your payout and receive it within 24 hours — guaranteed. Weekly payout cycles so you never wait long for your rewards.</p>
                 </div>
                 <div class="kh-card">
+                    <div class="kh-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
                     <h3>News Trading Allowed</h3>
-                    <p>Trade high-impact events freely. NFP, FOMC, CPI — if there's opportunity, you can take it.</p>
+                    <p>Trade high-impact events freely. If there's opportunity in the markets during NFP, FOMC or CPI — you should be able to take it.</p>
                 </div>
                 <div class="kh-card">
-                    <h3>Institutional Spreads</h3>
-                    <p>Spreads from 0.0 pips and leverage up to 1:100. Tier-1 liquidity for professional-grade execution.</p>
+                    <div class="kh-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+                    <h3>Institutional Spreads & Leverage</h3>
+                    <p>Spreads from 0.0 pips and leverage up to 1:100. Powered by Tier-1 liquidity providers for professional-grade execution on every trade.</p>
                 </div>
                 <div class="kh-card">
+                    <div class="kh-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
                     <h3>Challenge Reset</h3>
-                    <p>Breached a rule? Reset your account and restart. One setback shouldn't end your path.</p>
+                    <p>Breached a rule? Reset your account and restart your trading journey. One setback shouldn't end your path — get back on track quickly.</p>
                 </div>
                 <div class="kh-card">
+                    <div class="kh-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
                     <h3>Monthly Competitions</h3>
-                    <p>Compete, win prizes, earn Doji Coins™, and climb the leaderboards every month.</p>
+                    <p>Compete against other traders in free and paid competitions. Win prizes, earn Doji Coins™, and climb the leaderboards every month.</p>
                 </div>
             </div>
         </div>
@@ -189,49 +196,131 @@
 
 <div class="section-divider"></div>
 
-<!-- CHALLENGE TEASER (Home) -->
+<!-- CONFIGURATOR (Home) -->
 <section class="section" style="background:var(--bg2);padding-top:80px;padding-bottom:80px">
-    <div class="section-inner" style="max-width:860px;margin:0 auto">
-        <h2 style="text-align:center;margin-bottom:8px">Configure Your <span class="green">Challenge</span></h2>
-        <p class="section-sub" style="text-align:center;color:var(--text2);font-size:16px;margin-bottom:40px">Pick your account size — see your starting price instantly.</p>
+    <div class="section-inner">
+        <h2 style="text-align:center;margin-bottom:10px">Configure Your <span class="green">Challenge</span></h2>
+        <p class="section-sub" style="text-align:center;color:var(--text2);font-size:16px;margin-bottom:44px">Customize every parameter. See your price in real time.</p>
 
-        <!-- Type toggle -->
-        <div class="teaser-type">
-            <button class="teaser-type-btn active" data-type="onestep">1 STEP<span class="teaser-type-sub">Fast Track</span></button>
-            <button class="teaser-type-btn" data-type="twostep">2 STEP<span class="teaser-type-sub">Classic</span></button>
+        <!-- CHALLENGE TYPE TABS -->
+        <div class="type-tabs">
+            <button class="type-tab disabled" disabled>
+                Instant Funding
+                <div class="type-tab-sub">Coming Soon</div>
+            </button>
+            <button class="type-tab active" id="tab-onestep" onclick="Configurator.setTab('onestep')">
+                1 Step
+                <div class="type-tab-sub">Fast Track</div>
+            </button>
+            <button class="type-tab" id="tab-twostep" onclick="Configurator.setTab('twostep')">
+                2 Step
+                <div class="type-tab-sub">Classic</div>
+            </button>
         </div>
 
-        <!-- Size pills -->
-        <div class="teaser-sizes">
-            <?php
-            $teaserSizes = [5000 => '$5K', 10000 => '$10K', 25000 => '$25K', 50000 => '$50K', 100000 => '$100K'];
-            foreach ($teaserSizes as $sz => $label): ?>
-            <button class="teaser-size-btn<?= $sz === 10000 ? ' active' : '' ?>" data-size="<?= $sz ?>"><?= $label ?></button>
-            <?php endforeach; ?>
+        <!-- ═══ MODE PICKER (pre-configurator) ═══ -->
+        <div class="mode-strip" id="modeStrip">
+            <div class="mode-strip-label">Quick Setup</div>
+            <div class="mode-cards">
+
+                <button class="mode-card" data-mode="cheap" onclick="Configurator.applyMode('cheap')">
+                    <span class="mode-tag">BUDGET</span>
+                    <span class="mode-name">Cheap</span>
+                    <span class="mode-desc">Lowest entry price</span>
+                </button>
+
+                <button class="mode-card" data-mode="po" onclick="Configurator.applyMode('po')">
+                    <span class="mode-tag">POWER</span>
+                    <span class="mode-name">Pro</span>
+                    <span class="mode-desc">Max split &amp; freedom</span>
+                </button>
+
+                <button class="mode-card" data-mode="beginner" onclick="Configurator.applyMode('beginner')">
+                    <span class="mode-tag">EASY</span>
+                    <span class="mode-name">Beginner</span>
+                    <span class="mode-desc">Forgiving rules</span>
+                </button>
+
+                <button class="mode-card mode-affiliate" data-mode="affiliate" id="modeAffiliate" onclick="Configurator.applyMode('affiliate')">
+                    <span class="mode-tag">AFFILIATE</span>
+                    <span class="mode-name">Affiliate</span>
+                    <span class="mode-desc mode-desc-locked">Unlocks with sales</span>
+                    <span class="mode-lock">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </span>
+                </button>
+
+                <div class="mode-card mode-card-competitor" data-mode="competitor" onclick="Configurator.applyMode('competitor')">
+                    <span class="mode-tag">COMPARE</span>
+                    <span class="mode-name">Competitor</span>
+                    <span class="mode-desc">Load a rival preset</span>
+                    <div class="mode-competitor-drop" onclick="event.stopPropagation()">
+                        <select class="preset-select" id="presetSelect" onchange="this.classList.toggle('has-value',!!this.value);if(this.value){Configurator.loadPreset(this.value)}">
+                            <option value="">Compare with other firms...</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
-        <!-- Live price -->
-        <div class="teaser-price-row">
-            <div class="teaser-price-label">Starting from</div>
-            <div class="teaser-price-val" id="teaserPrice">$<?= $basePrices['onestep'][10000] ?></div>
-            <div class="teaser-price-note">Base price · configure every parameter on the next page</div>
-        </div>
+        <!-- CONFIGURATOR LAYOUT -->
+        <div class="cfg-layout">
 
-        <!-- CTA -->
-        <div style="text-align:center;margin-top:36px">
-            <a href="challenges.php" class="btn-primary-lg" style="text-decoration:none">Customize Every Parameter →</a>
+            <!-- LEFT: Parameters -->
+            <div class="cfg-panel">
+                <div class="cfg-header">
+                    <h2 class="cfg-title">Challenge Configurator</h2>
+                    <span class="cfg-badge" id="cfgBadge">FAST TRACK</span>
+                </div>
+                <div id="slidersContainer"></div>
+                <button class="reset-btn" onclick="Configurator.reset()">↺ Reset to Defaults</button>
+            </div>
+
+            <!-- RIGHT: Summary + Price -->
+            <div class="cfg-panel">
+                <div class="cfg-header">
+                    <h2 class="cfg-title">Your Configuration</h2>
+                </div>
+
+                <div class="summary-box">
+                    <div class="summary-title">Configuration Summary</div>
+                    <div class="summary-grid" id="summaryGrid"></div>
+                </div>
+
+                <div class="price-box">
+                    <div class="price-label">Total Price</div>
+                    <div id="priceDisplay">
+                        <div class="price-val" id="priceVal">$249</div>
+                    </div>
+                </div>
+
+                <div class="promo-row">
+                    <input class="promo-input" id="promoInput" placeholder="Enter promo code" 
+                           onkeydown="if(event.key==='Enter')Configurator.applyPromo()">
+                    <button class="promo-btn" id="promoBtn" onclick="Configurator.applyPromo()">Apply</button>
+                </div>
+                <div id="promoMsg"></div>
+
+                <button class="share-btn" onclick="Configurator.share()">🔗 Share Configuration</button>
+                <div id="shareMsg"></div>
+
+                <button class="purchase-btn" id="purchaseBtn" onclick="Configurator.purchase()">
+                    Purchase Challenge — $249
+                </button>
+
+                <div class="note-box" id="noteBox">
+                    <strong class="green">Note:</strong> 
+                    Consistency Rule and Payout Frequency apply to Funded accounts only.
+                </div>
+
+                <div class="note-box note-disclaimer">
+                    Doji Funding® is a simulated trading platform designed for performance evaluation and skill development. No real capital is deployed or at risk. Program fees provide access to our simulation and assessment tools. Performance-based payouts are discretionary and subject to compliance with all program rules and Doji Funding®'s <a href="terms.php" class="disclaimer-link">Terms&nbsp;of&nbsp;Service</a>.
+                </div>
+            </div>
         </div>
     </div>
 </section>
-<script>
-(function(){
-    var prices=<?= json_encode(['onestep'=>array_intersect_key($basePrices['onestep'],array_flip([5000,10000,25000,50000,100000])),'twostep'=>array_intersect_key($basePrices['twostep'],array_flip([5000,10000,25000,50000,100000]))]) ?>;
-    var t='onestep',s=10000;
-    function upd(){document.getElementById('teaserPrice').textContent='$'+prices[t][s];}
-    document.querySelectorAll('.teaser-type-btn').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.teaser-type-btn').forEach(function(x){x.classList.remove('active')});this.classList.add('active');t=this.dataset.type;upd();});});
-    document.querySelectorAll('.teaser-size-btn').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.teaser-size-btn').forEach(function(x){x.classList.remove('active')});this.classList.add('active');s=parseInt(this.dataset.size);upd();});});
-})();
-</script>
 
 <div class="section-divider"></div>
 
@@ -244,13 +333,13 @@
         <!-- Top 2 large cards -->
         <div class="ac-top">
             <div class="ac-card-lg">
-                <div class="ac-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                <div class="ac-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
                 <h3>Indices & Shares</h3>
                 <p>DAX, Dow Jones, NASDAQ, S&P 500, Apple, Microsoft, Adidas, SAP and 800+ more. Trade CFDs on stocks and global indices under top conditions with raw spreads.</p>
                 <div class="ac-tags"><span>DE40</span><span>USTEC</span><span>US500</span><span>DJ30</span><span>AAPL</span><span>MSFT</span><span>SAPG</span><span>800+</span></div>
             </div>
             <div class="ac-card-lg">
-                <div class="ac-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+                <div class="ac-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
                 <h3>Forex</h3>
                 <p>Access 60+ currency pairs including majors, minors and exotics. Trade EUR/USD, GBP/JPY, USD/TRY and more with spreads starting from 0.0 pips.</p>
                 <div class="ac-tags"><span>EURUSD</span><span>GBPUSD</span><span>USDJPY</span><span>AUDUSD</span><span>USDCHF</span><span>60+</span></div>
@@ -260,25 +349,25 @@
         <!-- Bottom 4 cards -->
         <div class="ac-bottom">
             <div class="ac-card-sm">
-                <div class="ac-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5" opacity="0.5"/><path d="M2 12l10 5 10-5" opacity="0.7"/></svg></div>
+                <div class="ac-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5" opacity="0.5"/><path d="M2 12l10 5 10-5" opacity="0.7"/></svg></div>
                 <h3>Metals</h3>
                 <p>Diversify with precious metals CFDs — Gold, Silver, Platinum and Palladium at competitive spreads.</p>
                 <div class="ac-tags"><span>XAUUSD</span><span>XAGUSD</span><span>XPTUSD</span></div>
             </div>
             <div class="ac-card-sm">
-                <div class="ac-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                <div class="ac-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
                 <h3>Commodities & Energies</h3>
                 <p>Trade CFDs on Crude Oil (WTI & Brent) and other essential energy markets.</p>
                 <div class="ac-tags"><span>USOIL</span><span>UKOIL</span></div>
             </div>
             <div class="ac-card-sm">
-                <div class="ac-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                <div class="ac-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
                 <h3>Futures</h3>
                 <p>CFDs on futures — Germany 40, Crude Oil, Brent, US 10-Year Notes, Gold Futures and more.</p>
                 <div class="ac-tags"><span>DE40.Exp</span><span>USOIL.Exp</span><span>XAUUSD.Exp</span></div>
             </div>
             <div class="ac-card-sm">
-                <div class="ac-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+                <div class="ac-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
                 <h3>Crypto</h3>
                 <p>Trade Bitcoin, Ethereum, Solana, Cardano, Dogecoin, Chainlink, BNB and more on CFDs.</p>
                 <div class="ac-tags"><span>BTCUSD</span><span>ETHUSD</span><span>SOLUSD</span><span>15+</span></div>
@@ -465,7 +554,7 @@
         <p class="section-sub">Professional-grade execution with the platforms you already know and trust.</p>
         <div class="platforms-row">
             <div class="platform-card">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="3" width="20" height="14" rx="2"/>
                     <line x1="8" y1="21" x2="16" y2="21"/>
                     <line x1="12" y1="17" x2="12" y2="21"/>
@@ -652,7 +741,7 @@
             <span><strong>No time limit</strong></span>
         </div>
         <div class="cta-guarantee">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Regulated entity · 24h guaranteed payouts · 24/7 support
         </div>
     </div>
