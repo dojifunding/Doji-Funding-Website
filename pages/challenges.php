@@ -11,7 +11,7 @@
 <!-- BREADCRUMB -->
 <!-- HERO with Liquid Wave -->
 <section class="hero" style="min-height:420px;padding:90px 32px 60px">
-    <canvas class="hero-globe" id="waveCanvas"></canvas>
+    <canvas class="hero-globe" id="waveCanvas" aria-hidden="true"></canvas>
     <div class="hero-glow" style="top:-200px;left:50%;transform:translateX(-50%)"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">

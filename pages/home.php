@@ -9,7 +9,7 @@
 <!-- HERO (Interactive Globe) -->
 <section class="hero">
     <!-- 3D Globe Background -->
-    <canvas class="hero-globe" id="heroGlobe"></canvas>
+    <canvas class="hero-globe" id="heroGlobe" aria-hidden="true"></canvas>
     <div class="hero-glow" style="top:-200px;left:50%;transform:translateX(-50%)"></div>
     <!-- Overlay -->
     <div class="hero-overlay"></div>
