@@ -43,15 +43,13 @@ $v = ASSET_VERSION;
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@0,100..900;1,100..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Doto:wght@100..900&family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@0,100..900;1,100..900&family=Inter:wght@400;500;600;700;800&family=Doto:wght@100..900&display=swap" rel="stylesheet">
     <link rel="preload" href="assets/fonts/Nippo-Variable.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="assets/fonts/Array-Bold.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="assets/fonts/Array-BoldWide.woff2" as="font" type="font/woff2" crossorigin>
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="assets/css/main.css?v=<?= $v ?>">
     <link rel="stylesheet" href="assets/css/auth.css?v=<?= $v ?>">
-    <?php if ($currentPage === 'challenges' || $currentPage === 'home'): ?>
+    <?php if ($currentPage === 'challenges'): ?>
     <link rel="stylesheet" href="assets/css/configurator.css?v=<?= $v ?>">
     <?php endif; ?>
     <?php if ($currentPage === 'faq'): ?>

@@ -56,7 +56,7 @@ body::before       { opacity: 0 !important; animation: none !important; content:
 
     /* Nothing fonts */
     --font-heading:    'Chivo Mono', monospace;
-    --font-body:       'Chivo Mono', monospace;
+    --font-body:       'Nippo', sans-serif;
     --font-mono:       'Chivo Mono', monospace;
     --font-dot:        'Doto', 'Chivo Mono', monospace;
 
@@ -74,7 +74,7 @@ body::before       { opacity: 0 !important; animation: none !important; content:
    3. BASE — Typography & Body
 ══════════════════════════════════════════════════════════ */
 html, body {
-    font-family: 'Chivo Mono', monospace !important;
+    font-family: 'Nippo', sans-serif !important;
     background: #000000 !important;
     color: #E8E8E8 !important;
     -webkit-font-smoothing: antialiased !important;

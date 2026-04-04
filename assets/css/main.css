@@ -19,7 +19,7 @@
 /* ═══ CSS Variables ═══ */
 :root {
     --bg: #0a0a0a;
-    --bg2: #0a0a0a;
+    --bg2: #111111;
     --bg3: #0d0d0d;
     --bg4: #111111;
     --border: #1e1e1e;
@@ -519,7 +519,7 @@ h1 { font-size: clamp(42px, 5.5vw, 60px); font-weight: 700; line-height: 1.08; m
 .kh-left h2 { color: var(--text); font-family: var(--font-heading); letter-spacing: -0.03em; }
 .kh-more-list { display: flex; flex-direction: column; gap: 8px; }
 .kh-more-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); }
-.kh-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.kh-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; }
 .kh-card {
     background: rgba(14,16,20,0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-sm);
     padding: 24px 20px; transition: all 0.3s ease;
@@ -533,6 +533,35 @@ h1 { font-size: clamp(42px, 5.5vw, 60px); font-weight: 700; line-height: 1.08; m
 }
 .kh-card h3 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 8px; font-family: var(--font-heading); }
 .kh-card p { font-size: 12px; color: var(--text3); line-height: 1.7; }
+
+/* ═══ kh Hero Feature Card ═══ */
+.kh-card-hero { grid-row: span 2; display: flex; flex-direction: column; justify-content: flex-end; background: rgba(16,185,129,0.04); border-color: rgba(16,185,129,0.10); }
+.kh-hero-stat { font-family: 'Doto', 'Chivo Mono', monospace; font-size: clamp(52px, 5.5vw, 72px); font-weight: 900; line-height: 0.9; margin-bottom: 14px; color: var(--text); }
+
+/* ═══ Hero Proof Bar ═══ */
+.hero-proof { display: flex; align-items: center; margin-bottom: 36px; }
+.hero-proof-item { display: flex; flex-direction: column; gap: 3px; padding-right: 32px; }
+.hero-proof-sep { width: 1px; height: 36px; background: var(--border2); margin-right: 32px; flex-shrink: 0; }
+.hero-proof-num { font-family: 'Doto', 'Chivo Mono', monospace; font-size: clamp(26px, 3vw, 38px); font-weight: 900; color: var(--text); line-height: 1; }
+.hero-proof-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* ═══ SVG icon color inheritance ═══ */
+.trust-item > svg, .ac-card-icon svg { color: var(--green); }
+
+/* ═══ Teaser Configurator (Home) ═══ */
+.teaser-type { display: flex; justify-content: center; gap: 8px; margin-bottom: 28px; }
+.teaser-type-btn { background: transparent; border: 1px solid var(--border2); color: var(--text3); font-family: var(--font-heading); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; padding: 9px 28px; border-radius: var(--radius-sm); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: all 0.2s ease; }
+.teaser-type-btn.active { border-color: var(--green); color: var(--green); background: rgba(16,185,129,0.06); }
+.teaser-type-sub { font-size: 9px; font-weight: 400; letter-spacing: 0.04em; color: var(--text3); text-transform: none; }
+.teaser-type-btn.active .teaser-type-sub { color: rgba(16,185,129,0.6); }
+.teaser-sizes { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 40px; }
+.teaser-size-btn { background: transparent; border: 1px solid var(--border2); color: var(--text2); font-family: var(--font-heading); font-size: 13px; font-weight: 600; padding: 10px 22px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s ease; }
+.teaser-size-btn.active { border-color: var(--green); color: var(--green); background: rgba(16,185,129,0.06); }
+.teaser-size-btn:hover:not(.active) { border-color: var(--border3); color: var(--text); }
+.teaser-price-row { text-align: center; padding: 8px 0 4px; }
+.teaser-price-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; font-family: var(--font-heading); margin-bottom: 6px; }
+.teaser-price-val { font-family: 'Doto', 'Chivo Mono', monospace; font-size: clamp(52px, 7vw, 80px); font-weight: 900; color: var(--text); line-height: 1; }
+.teaser-price-note { font-size: 12px; color: var(--text3); margin-top: 10px; }
 
 /* ═══ How It Works ═══ */
 .hiw-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
@@ -1810,7 +1839,11 @@ textarea.form-input { resize: vertical; min-height: 100px; }
     .kh-left { text-align: center; }
     .kh-left h2 { font-size: 36px; }
     .kh-more-list { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 12px; }
-    .kh-grid { grid-template-columns: repeat(2, 1fr); }
+    .kh-grid { grid-template-columns: 1fr 1fr; }
+    .kh-card-hero { grid-row: span 1; }
+    .hero-proof { gap: 0; }
+    .hero-proof-item { padding-right: 24px; }
+    .hero-proof-sep { margin-right: 24px; }
     .hiw-grid { grid-template-columns: repeat(2, 1fr); }
     .pill-bar { flex-direction: column; text-align: center; gap: 20px; }
     .pill-bar-title { min-width: auto; }
@@ -1827,6 +1860,9 @@ textarea.form-input { resize: vertical; min-height: 100px; }
     .subtitle { margin: 0 auto 32px; }
     .cta-row { justify-content: center; }
     .hero-stats { grid-template-columns: repeat(2, 1fr); margin: 0 auto 36px; max-width: 400px; }
+    .hero-proof { flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .hero-proof-item { padding-right: 0; }
+    .hero-proof-sep { display: none; }
     .hero-right { display: none; }
     .comp-grid { gap: 20px; }
     /* New pages */
@@ -2118,6 +2154,8 @@ textarea.form-input { resize: vertical; min-height: 100px; }
     .subtitle { font-size: 14px; margin-bottom: 24px; }
     .badge { font-size: 11px; padding: 3px 12px; }
     .hero-stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .teaser-sizes { gap: 6px; }
+    .teaser-size-btn { padding: 8px 14px; font-size: 12px; }
     .hero-stat strong { font-size: 12px; }
     .hero-stat span { font-size: 10px; }
     .cta-row { flex-direction: column; align-items: stretch; }
