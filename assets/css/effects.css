@@ -24,10 +24,8 @@
     100% { background-position: 200% center; }
 }
 
-@keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 0 20px rgba(16,185,129,0.08), 0 0 60px rgba(16,185,129,0.04); }
-    50%      { box-shadow: 0 0 30px rgba(16,185,129,0.15), 0 0 80px rgba(16,185,129,0.08); }
-}
+/* pulseGlow removed — box-shadow in @keyframes triggers repaint every frame.
+   Static equivalent applied directly on .price-box. */
 
 @keyframes gradientShift {
     0%   { background-position: 0% 50%; }
@@ -338,7 +336,7 @@ body::before {
 .price-box {
     position: relative;
     overflow: hidden;
-    animation: pulseGlow 4s ease-in-out infinite;
+    box-shadow: 0 0 25px rgba(16,185,129,0.10), 0 0 70px rgba(16,185,129,0.06);
     transition: all 0.3s ease;
 }
 
