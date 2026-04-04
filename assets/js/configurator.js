@@ -919,11 +919,11 @@ const Configurator = (function() {
             const b = document.getElementById('cfgBadge');
             if (t === 'onestep') {
                 b.textContent = 'FAST TRACK';
-                b.style.cssText = 'border-radius:6px;padding:3px 10px;font-size:10px;font-weight:700;font-family:"JetBrains Mono",monospace;letter-spacing:.08em;background:rgba(74,158,255,0.12);color:var(--blue);border:1px solid rgba(74,158,255,0.25)';
+                b.style.cssText = 'border-radius:6px;padding:3px 10px;font-size:10px;font-weight:700;font-family:"Chivo Mono",monospace;letter-spacing:.08em;background:rgba(74,158,255,0.12);color:var(--blue);border:1px solid rgba(74,158,255,0.25)';
                 S.target = 10; S.daily = 5; S.max = 8; S.split = 80; S.days = 5; S.consistency = 30;
             } else {
                 b.textContent = 'CLASSIC';
-                b.style.cssText = 'border-radius:6px;padding:3px 10px;font-size:10px;font-weight:700;font-family:"JetBrains Mono",monospace;letter-spacing:.08em;background:rgba(200,200,210,0.08);color:#c8c8d0;border:1px solid rgba(200,200,210,0.15)';
+                b.style.cssText = 'border-radius:6px;padding:3px 10px;font-size:10px;font-weight:700;font-family:"Chivo Mono",monospace;letter-spacing:.08em;background:rgba(200,200,210,0.08);color:#c8c8d0;border:1px solid rgba(200,200,210,0.15)';
                 S.target1 = 8; S.target2 = 5; S.daily = 5; S.max = 10; S.split = 80; S.days = 10; S.consistency = 30;
             }
             S.dailyType = 'intraday'; S.maxType = 'intraday';
@@ -1140,10 +1140,10 @@ const Configurator = (function() {
                 const b = document.getElementById('cfgBadge');
                 if (S.tab === 'onestep') {
                     b.textContent = 'FAST TRACK';
-                    b.style.cssText = 'border-radius:6px;padding:3px 10px;font-size:10px;font-weight:700;font-family:"JetBrains Mono",monospace;letter-spacing:.08em;background:rgba(74,158,255,0.12);color:var(--blue);border:1px solid rgba(74,158,255,0.25)';
+                    b.style.cssText = 'border-radius:6px;padding:3px 10px;font-size:10px;font-weight:700;font-family:"Chivo Mono",monospace;letter-spacing:.08em;background:rgba(74,158,255,0.12);color:var(--blue);border:1px solid rgba(74,158,255,0.25)';
                 } else {
                     b.textContent = 'CLASSIC';
-                    b.style.cssText = 'border-radius:6px;padding:3px 10px;font-size:10px;font-weight:700;font-family:"JetBrains Mono",monospace;letter-spacing:.08em;background:rgba(200,200,210,0.08);color:#c8c8d0;border:1px solid rgba(200,200,210,0.15)';
+                    b.style.cssText = 'border-radius:6px;padding:3px 10px;font-size:10px;font-weight:700;font-family:"Chivo Mono",monospace;letter-spacing:.08em;background:rgba(200,200,210,0.08);color:#c8c8d0;border:1px solid rgba(200,200,210,0.15)';
                 }
 
                 // Clean URL without reloading

@@ -397,7 +397,8 @@ button.btn-primary.nav-cta:hover {
     font-weight: 400 !important;
     color: #FFFFFF !important;
 }
-.page-title .green {
+.page-title .green,
+.hero h1 .green {
     background: none !important;
     -webkit-background-clip: unset !important;
     background-clip: unset !important;
@@ -1147,6 +1148,11 @@ h3 { text-transform: none !important; }
     font-family: 'Doto', 'Chivo Mono', monospace !important;
     font-weight: 400 !important;
     color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    animation: none !important;
     text-shadow: none !important;
 }
 .price-original { color: #555555 !important; text-decoration: line-through !important; }
