@@ -304,13 +304,37 @@ const Dashboard = (function() {
                     }
                 } else {
                     switchTab(btn.dataset.tab);
+                    closeSidebar();
                 }
             });
         });
 
+        // Sidebar drawer (mobile)
+        function openSidebar() {
+            var sidebar = document.querySelector('.dash-sidebar');
+            var overlay = document.getElementById('dashSidebarOverlay');
+            if (sidebar) sidebar.classList.add('open');
+            if (overlay) overlay.classList.add('open');
+        }
+        function closeSidebar() {
+            var sidebar = document.querySelector('.dash-sidebar');
+            var overlay = document.getElementById('dashSidebarOverlay');
+            if (sidebar) sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('open');
+        }
+        var hamburger = document.getElementById('dashHamburger');
+        if (hamburger) hamburger.addEventListener('click', openSidebar);
+        var sidebarOverlay = document.getElementById('dashSidebarOverlay');
+        if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+        var mobileMore = document.getElementById('dashMobileMore');
+        if (mobileMore) mobileMore.addEventListener('click', openSidebar);
+
         // Mobile tab clicks
         document.querySelectorAll('.dash-mobile-tab').forEach(btn => {
-            btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+            btn.addEventListener('click', () => {
+                if (!btn.dataset.tab) return; // "More" button handled separately
+                switchTab(btn.dataset.tab);
+            });
         });
 
         // Challenge filters
