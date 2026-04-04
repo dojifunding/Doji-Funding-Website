@@ -49,7 +49,7 @@ $v = ASSET_VERSION;
     <!-- Stylesheets -->
     <link rel="stylesheet" href="assets/css/main.css?v=<?= $v ?>">
     <link rel="stylesheet" href="assets/css/auth.css?v=<?= $v ?>">
-    <?php if ($currentPage === 'challenges'): ?>
+    <?php if ($currentPage === 'challenges' || $currentPage === 'home'): ?>
     <link rel="stylesheet" href="assets/css/configurator.css?v=<?= $v ?>">
     <?php endif; ?>
     <?php if ($currentPage === 'faq'): ?>
