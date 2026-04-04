@@ -602,7 +602,7 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                             $ddUsed      = $ch['account_size'] > 0 && $ch['peak_balance'] > 0
                                 ? max(0, (($ch['peak_balance'] - $ch['current_balance']) / $ch['account_size']) * 100) : 0;
                         ?>
-                        <div class="dash-challenge-card">
+                        <div class="dash-challenge-card" data-status="<?= $ch['status'] ?>">
                             <div class="dash-cc-header">
                                 <div class="dash-cc-type"><?= $ch['type'] === 'one_step' ? '1-STEP' : '2-STEP' ?><?= $ch['phase'] > 1 ? ' · P' . $ch['phase'] : '' ?></div>
                                 <?= challengeStatusBadge($ch['status']) ?>

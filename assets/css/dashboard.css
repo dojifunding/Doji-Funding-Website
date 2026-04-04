@@ -27,8 +27,9 @@
     --accent-sub:     rgba(16,185,129,0.12);
     --error:          #D71921;
     --error-sub:      rgba(215,25,33,0.12);
-    --success:        #4A9E5C;
+    --success:        #10B981;
     --warning:        #D4A843;
+    --info:           #5B9BF6;
 
     /* Fonts */
     --f-ui:   'Chivo Mono', monospace;
@@ -618,8 +619,11 @@ nav.nav, .mobile-menu { display: none !important; }
     padding: var(--s24) var(--s24) var(--s16);
     position: relative;
     transition: background 0.12s;
+    border-top: 2px solid var(--border-vis);
 }
 .dash-kpi:hover { background: var(--surface); }
+.dash-kpis > .dash-kpi:nth-child(1) { border-top-color: var(--success); }
+.dash-kpis > .dash-kpi:nth-child(2) { border-top-color: var(--warning); }
 .dash-kpi-icon { display: none; }
 .dash-kpi-label {
     font-family: var(--f-mono);
@@ -671,8 +675,13 @@ nav.nav, .mobile-menu { display: none !important; }
     background: var(--black);
     padding: var(--s24);
     transition: background 0.12s;
+    border-top: 2px solid var(--border-vis);
 }
 .dash-challenge-card:hover { background: var(--surface); }
+.dash-challenge-card[data-status="active"]  { border-top-color: var(--success); }
+.dash-challenge-card[data-status="funded"]  { border-top-color: var(--warning); }
+.dash-challenge-card[data-status="passed"]  { border-top-color: var(--info); }
+.dash-challenge-card[data-status="failed"]  { border-top-color: var(--error); }
 .dash-cc-header {
     display: flex; justify-content: space-between; align-items: flex-start;
     margin-bottom: var(--s16);
@@ -714,7 +723,7 @@ nav.nav, .mobile-menu { display: none !important; }
     position: absolute; top: 0; left: 0; height: 100%;
     background: repeating-linear-gradient(
         to right,
-        var(--text-disp) 0px, var(--text-disp) 12px,
+        var(--accent) 0px, var(--accent) 12px,
         transparent 12px, transparent 14px
     );
     transition: width 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -746,8 +755,8 @@ nav.nav, .mobile-menu { display: none !important; }
     font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase;
 }
 .badge-active   { border-color: var(--success);  color: var(--success); }
-.badge-funded   { border-color: var(--success);  color: var(--success); }
-.badge-passed   { border-color: #5B9BF6;          color: #5B9BF6; }
+.badge-funded   { border-color: var(--warning);  color: var(--warning); }
+.badge-passed   { border-color: var(--info);     color: var(--info); }
 .badge-failed   { border-color: var(--error);    color: var(--error); }
 .badge-expired  { border-color: var(--border-vis); color: var(--text-dis); }
 .badge-refunded { border-color: var(--warning);  color: var(--warning); }
@@ -858,8 +867,8 @@ nav.nav, .mobile-menu { display: none !important; }
 .dash-kyc-banner {
     display: flex; align-items: center; gap: var(--s16);
     padding: var(--s12) var(--s16);
-    border: 1px solid rgba(16,185,129,0.25);
-    background: rgba(16,185,129,0.06);
+    border: 1px solid rgba(212,168,67,0.35);
+    background: rgba(212,168,67,0.06);
     margin-bottom: var(--s16);
 }
 .dash-kyc-banner.rejected {
@@ -867,7 +876,7 @@ nav.nav, .mobile-menu { display: none !important; }
     background: var(--error-sub);
 }
 .dash-kyc-banner-icon {
-    flex-shrink: 0; color: var(--accent);
+    flex-shrink: 0; color: var(--warning);
 }
 .dash-kyc-banner.rejected .dash-kyc-banner-icon { color: var(--error); }
 .dash-kyc-banner-text {
@@ -883,11 +892,11 @@ nav.nav, .mobile-menu { display: none !important; }
     flex-shrink: 0;
     font-family: var(--f-mono); font-size: 10px; font-weight: 700;
     letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 6px 14px; border: 1px solid var(--accent);
-    background: none; color: var(--accent); cursor: pointer;
+    padding: 6px 14px; border: 1px solid var(--warning);
+    background: none; color: var(--warning); cursor: pointer;
     transition: background 0.12s, color 0.12s;
 }
-.dash-kyc-banner-btn:hover { background: var(--accent); color: var(--black); }
+.dash-kyc-banner-btn:hover { background: var(--warning); color: var(--black); }
 .dash-kyc-banner.rejected .dash-kyc-banner-btn {
     border-color: var(--error); color: var(--error);
 }
@@ -917,14 +926,21 @@ nav.nav, .mobile-menu { display: none !important; }
     display: flex; flex-direction: column; gap: var(--s8);
     padding: var(--s16);
     border: 1px solid var(--border);
+    border-left: 3px solid var(--border-vis);
     background: rgba(0,0,0,0.5);
-    cursor: pointer; transition: border-color 0.15s;
+    cursor: pointer; transition: border-color 0.15s, border-left-color 0.15s;
 }
 .dash-onboard-step:hover { border-color: var(--accent); }
+.dash-onboard-steps > .dash-onboard-step:nth-child(1) { border-left-color: var(--success); }
+.dash-onboard-steps > .dash-onboard-step:nth-child(2) { border-left-color: var(--warning); }
+.dash-onboard-steps > .dash-onboard-step:nth-child(3) { border-left-color: var(--info); }
 .dash-onboard-num {
     font-family: var(--f-disp); font-size: 32px; font-weight: 400;
     color: var(--text-dis); line-height: 1;
 }
+.dash-onboard-steps > .dash-onboard-step:nth-child(1) .dash-onboard-num { color: var(--success); }
+.dash-onboard-steps > .dash-onboard-step:nth-child(2) .dash-onboard-num { color: var(--warning); }
+.dash-onboard-steps > .dash-onboard-step:nth-child(3) .dash-onboard-num { color: var(--info); }
 .dash-onboard-label {
     font-family: var(--f-mono); font-size: 11px; font-weight: 700;
     letter-spacing: 0.08em; text-transform: uppercase;
