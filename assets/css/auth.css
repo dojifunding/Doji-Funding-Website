@@ -105,10 +105,20 @@
 .form-input-wrap .form-input { padding-right: 44px; }
 .eye-toggle {
     position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-    background: none; border: none; cursor: pointer; font-size: 16px;
-    opacity: 0.5; transition: opacity 0.2s;
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.5; transition: opacity 0.2s; color: currentColor;
 }
 .eye-toggle:hover { opacity: 1; }
+@keyframes spinLoader { to { transform: rotate(360deg); } }
+.btn-loader {
+    display: inline-block; width: 13px; height: 13px;
+    border: 1.5px solid rgba(0,0,0,0.25);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spinLoader 0.65s linear infinite;
+    vertical-align: middle;
+}
 
 .form-hint {
     font-size: 11px; margin-top: 4px; color: var(--text3);

@@ -399,5 +399,5 @@ const Dashboard = (function() {
 
     document.addEventListener('DOMContentLoaded', init);
 
-    return { switchTab, filterChallenges, copyReferral, setTheme, toggleTheme, submitKycDoc };
+    return { switchTab, filterChallenges, copyReferral, setTheme, toggleTheme, submitKycDoc, showProfileSection };
 })();

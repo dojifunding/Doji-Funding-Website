@@ -137,10 +137,6 @@ const AuthModal = (function() {
             err.textContent = 'Password must be at least 8 characters.';
             return;
         }
-        if (!form.country.value) {
-            err.textContent = 'Please select your country.';
-            return;
-        }
 
         btn.disabled = true;
         btn.querySelector('.btn-text').style.display = 'none';

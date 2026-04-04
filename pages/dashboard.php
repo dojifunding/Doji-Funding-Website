@@ -4,10 +4,6 @@
  * Layout: fixed sidebar + fixed topbar + scrollable content (Phidias-style)
  */
 ?>
-<!-- Nothing OS — Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Doto:wght@100..900&family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* Nothing Style — supprime grain/bruit/scanlines */
 body::before  { opacity: 0 !important; animation: none !important; }
@@ -519,8 +515,54 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                 <h1 class="dash-page-title" id="dashPageTitle">DASHBOARD</h1>
             </div>
 
+            <?php if ($kycStatus === 'rejected'): ?>
+            <div class="dash-kyc-banner rejected">
+                <span class="dash-kyc-banner-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+                <div class="dash-kyc-banner-text">
+                    <strong>Verification Rejected</strong>
+                    Your identity document was not accepted. Please resubmit with a valid government-issued ID.
+                </div>
+                <button class="dash-kyc-banner-btn" onclick="Dashboard.switchTab('settings'); Dashboard.showProfileSection('verification')">Resubmit →</button>
+            </div>
+            <?php elseif ($kycStatus === 'none'): ?>
+            <div class="dash-kyc-banner">
+                <span class="dash-kyc-banner-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+                <div class="dash-kyc-banner-text">
+                    <strong>Identity Verification Required</strong>
+                    Verify your identity to unlock payouts and funded accounts.
+                </div>
+                <button class="dash-kyc-banner-btn" onclick="Dashboard.switchTab('settings'); Dashboard.showProfileSection('verification')">Verify Now →</button>
+            </div>
+            <?php endif; ?>
+
             <!-- ══ TAB: OVERVIEW ══ -->
             <div class="dash-tab active" id="tab-overview">
+
+                <?php if ($overview['total_challenges'] == 0): ?>
+                <div class="dash-onboard">
+                    <p class="dash-onboard-title">Getting Started</p>
+                    <div class="dash-onboard-steps">
+                        <div class="dash-onboard-step" onclick="Dashboard.switchTab('settings'); Dashboard.showProfileSection('profile')">
+                            <span class="dash-onboard-num">01</span>
+                            <span class="dash-onboard-label">Complete Your Profile</span>
+                            <span class="dash-onboard-desc">Add your address, phone, and timezone so your account is ready for payouts.</span>
+                            <span class="dash-onboard-cta">Go to Profile →</span>
+                        </div>
+                        <div class="dash-onboard-step" onclick="Dashboard.switchTab('settings'); Dashboard.showProfileSection('verification')">
+                            <span class="dash-onboard-num">02</span>
+                            <span class="dash-onboard-label">Verify Your Identity</span>
+                            <span class="dash-onboard-desc">Submit a government-issued ID. Required to receive payouts and funded account access.</span>
+                            <span class="dash-onboard-cta">Start Verification →</span>
+                        </div>
+                        <div class="dash-onboard-step" onclick="Dashboard.switchTab('configurator')">
+                            <span class="dash-onboard-num">03</span>
+                            <span class="dash-onboard-label">Configure Your Challenge</span>
+                            <span class="dash-onboard-desc">Choose your account size, risk profile, and trading type. Price updates live as you configure.</span>
+                            <span class="dash-onboard-cta">Open Configurator →</span>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
 
                 <div class="dash-kpis">
                     <div class="dash-kpi">
@@ -587,8 +629,8 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                 <div class="dash-empty">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     <h3>No Active Challenges</h3>
-                    <p>Start your first challenge and begin your trading journey</p>
-                    <a href="challenges.php" class="dash-action-btn">Browse Challenges</a>
+                    <p>Configure and purchase your first challenge to start trading</p>
+                    <button class="dash-action-btn" onclick="Dashboard.switchTab('configurator')">Configure a Challenge</button>
                 </div>
                 <?php endif; ?>
             </div>
@@ -632,8 +674,8 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                 <div class="dash-empty">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                     <h3>No Challenges Yet</h3>
-                    <p>Purchase your first challenge to start trading</p>
-                    <a href="challenges.php" class="dash-action-btn">Browse Challenges</a>
+                    <p>Use the configurator to set up your first challenge</p>
+                    <button class="dash-action-btn" onclick="Dashboard.switchTab('configurator')">Configure a Challenge</button>
                 </div>
                 <?php endif; ?>
             </div>

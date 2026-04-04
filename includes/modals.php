@@ -42,7 +42,7 @@ $user = getCurrentUser();
                 <div class="form-input-wrap">
                     <input class="form-input" type="password" name="password" 
                            placeholder="••••••••" required autocomplete="current-password" id="loginPassword">
-                    <button type="button" class="eye-toggle" onclick="AuthModal.togglePassword('loginPassword')">👁</button>
+                    <button type="button" class="eye-toggle" onclick="AuthModal.togglePassword('loginPassword')" aria-label="Toggle password visibility"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                 </div>
             </div>
 
@@ -50,7 +50,7 @@ $user = getCurrentUser();
 
             <button type="submit" class="form-btn" id="loginBtn">
                 <span class="btn-text">Log In</span>
-                <span class="btn-loader" style="display:none">⏳</span>
+                <span class="btn-loader" style="display:none"></span>
             </button>
         </form>
 
@@ -101,66 +101,22 @@ $user = getCurrentUser();
                 </div>
             </div>
 
-            <!-- Row 2: Password, Address, City -->
-            <div class="form-row form-row-3">
+            <!-- Row 2: Password -->
+            <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Password <span class="form-req">*</span></label>
                     <div class="form-input-wrap">
-                        <input class="form-input" type="password" name="password" 
-                               placeholder="Password" required minlength="8" 
+                        <input class="form-input" type="password" name="password"
+                               placeholder="Min. 8 characters" required minlength="8"
                                autocomplete="new-password" id="signupPassword">
-                        <button type="button" class="eye-toggle" onclick="AuthModal.togglePassword('signupPassword')">👁</button>
+                        <button type="button" class="eye-toggle" onclick="AuthModal.togglePassword('signupPassword')" aria-label="Toggle password visibility"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                     </div>
                     <div class="form-hint" id="passwordStrength"></div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Address <span class="form-req">*</span></label>
-                    <input class="form-input" type="text" name="address" 
-                           placeholder="Address" required autocomplete="street-address">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">City <span class="form-req">*</span></label>
-                    <input class="form-input" type="text" name="city" 
-                           placeholder="City" required autocomplete="address-level2">
-                </div>
-            </div>
-
-            <!-- Row 3: Zipcode, Country, Region/State -->
-            <div class="form-row form-row-3">
-                <div class="form-group">
-                    <label class="form-label">Zipcode <span class="form-req">*</span></label>
-                    <input class="form-input" type="text" name="zipcode" 
-                           placeholder="Zipcode" required autocomplete="postal-code">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Country <span class="form-req">*</span></label>
-                    <select class="form-input form-select" name="country" required id="signupCountry">
-                        <option value="" disabled selected>Country</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Region/State</label>
-                    <input class="form-input" type="text" name="region" 
-                           placeholder="Region/State" autocomplete="address-level1" id="signupRegion">
-                </div>
-            </div>
-
-            <!-- Row 4: Phone, Referral -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Phone <span class="form-req">*</span></label>
-                    <div class="form-phone-wrap">
-                        <select class="form-input form-select form-phone-code" name="phone_code" id="phoneCode">
-                            <option value="+1">+1</option>
-                        </select>
-                        <input class="form-input form-phone-number" type="tel" name="phone" 
-                               placeholder="123 456 789" required autocomplete="tel-national">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Referral</label>
-                    <input class="form-input" type="text" name="referral" 
-                           placeholder="Referral code (optional)" autocomplete="off">
+                    <label class="form-label">Referral code</label>
+                    <input class="form-input" type="text" name="referral"
+                           placeholder="Optional" autocomplete="off">
                 </div>
             </div>
 
@@ -174,17 +130,13 @@ $user = getCurrentUser();
                     <input type="checkbox" name="terms" required>
                     <span>I agree to the <a href="privacy.php" class="modal-link">Privacy Policy</a> and <a href="terms.php" class="modal-link">Terms</a>.</span>
                 </label>
-                <label class="form-check">
-                    <input type="checkbox" name="identity_confirm" required>
-                    <span>I declare that all information filled are correct and corresponds to government issued identification.</span>
-                </label>
             </div>
 
             <div id="signupError" class="form-error"></div>
 
             <button type="submit" class="form-btn" id="signupBtn">
-                <span class="btn-text">Register!</span>
-                <span class="btn-loader" style="display:none">⏳</span>
+                <span class="btn-text">Create Account</span>
+                <span class="btn-loader" style="display:none"></span>
             </button>
         </form>
 

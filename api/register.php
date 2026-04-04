@@ -37,13 +37,7 @@ if (strlen($firstName) < 1 || strlen($firstName) > 50) $errors[] = "First name i
 if (strlen($lastName) < 1 || strlen($lastName) > 50) $errors[] = "Last name is required.";
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Please enter a valid email address.";
 if (strlen($password) < 8) $errors[] = "Password must be at least 8 characters.";
-if (strlen($address) < 2) $errors[] = "Address is required.";
-if (strlen($city) < 1) $errors[] = "City is required.";
-if (strlen($zipcode) < 1) $errors[] = "Zipcode is required.";
-if (strlen($country) < 1) $errors[] = "Country is required.";
-if (strlen($phone) < 4) $errors[] = "Phone number is required.";
 if (!isset($_POST["terms"])) $errors[] = "You must agree to the Privacy Policy and Terms.";
-if (!isset($_POST["identity_confirm"])) $errors[] = "You must confirm that your information is correct.";
 
 if (!empty($errors)) {
     jsonResponse(["error" => implode(" ", $errors)], 400);

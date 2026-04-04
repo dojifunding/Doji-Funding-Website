@@ -853,6 +853,98 @@ nav.nav, .mobile-menu { display: none !important; }
 }
 
 /* ═══════════════════════════════════════════════════════
+   KYC BANNER  — persistent reminder, top of page
+═══════════════════════════════════════════════════════ */
+.dash-kyc-banner {
+    display: flex; align-items: center; gap: var(--s16);
+    padding: var(--s12) var(--s16);
+    border: 1px solid rgba(16,185,129,0.25);
+    background: rgba(16,185,129,0.06);
+    margin-bottom: var(--s16);
+}
+.dash-kyc-banner.rejected {
+    border-color: rgba(215,25,33,0.3);
+    background: var(--error-sub);
+}
+.dash-kyc-banner-icon {
+    flex-shrink: 0; color: var(--accent);
+}
+.dash-kyc-banner.rejected .dash-kyc-banner-icon { color: var(--error); }
+.dash-kyc-banner-text {
+    flex: 1;
+    font-family: var(--f-mono); font-size: 11px;
+    letter-spacing: 0.04em; color: var(--text-sec);
+}
+.dash-kyc-banner-text strong {
+    color: var(--text-pri); font-weight: 700;
+    display: block; margin-bottom: 2px;
+}
+.dash-kyc-banner-btn {
+    flex-shrink: 0;
+    font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 6px 14px; border: 1px solid var(--accent);
+    background: none; color: var(--accent); cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+}
+.dash-kyc-banner-btn:hover { background: var(--accent); color: var(--black); }
+.dash-kyc-banner.rejected .dash-kyc-banner-btn {
+    border-color: var(--error); color: var(--error);
+}
+.dash-kyc-banner.rejected .dash-kyc-banner-btn:hover {
+    background: var(--error); color: #fff;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ONBOARDING  — 3-step getting started checklist
+═══════════════════════════════════════════════════════ */
+.dash-onboard {
+    border: 1px solid var(--border-vis);
+    padding: var(--s24);
+    margin-bottom: var(--s24);
+    background-image: radial-gradient(circle, var(--border) 0.75px, transparent 0.75px);
+    background-size: 20px 20px;
+}
+.dash-onboard-title {
+    font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 var(--s16);
+}
+.dash-onboard-steps {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s12);
+}
+.dash-onboard-step {
+    display: flex; flex-direction: column; gap: var(--s8);
+    padding: var(--s16);
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.5);
+    cursor: pointer; transition: border-color 0.15s;
+}
+.dash-onboard-step:hover { border-color: var(--accent); }
+.dash-onboard-num {
+    font-family: var(--f-disp); font-size: 32px; font-weight: 400;
+    color: var(--text-dis); line-height: 1;
+}
+.dash-onboard-label {
+    font-family: var(--f-mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-pri);
+}
+.dash-onboard-desc {
+    font-family: var(--f-ui); font-size: 12px;
+    color: var(--text-sec); line-height: 1.55; flex: 1;
+}
+.dash-onboard-cta {
+    font-family: var(--f-mono); font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); margin-top: var(--s4);
+}
+@media (max-width: 768px) {
+    .dash-onboard-steps { grid-template-columns: 1fr; }
+    .dash-kyc-banner { flex-wrap: wrap; }
+}
+
+/* ═══════════════════════════════════════════════════════
    PROFILE  — data rows, mechanical
 ═══════════════════════════════════════════════════════ */
 .dash-profile-layout {
