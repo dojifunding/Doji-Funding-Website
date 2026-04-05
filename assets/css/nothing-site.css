@@ -804,13 +804,17 @@ h3 { text-transform: none !important; }
    30. MODALS & OVERLAYS
 ══════════════════════════════════════════════════════════ */
 .modal-overlay {
-    background: rgba(0,0,0,0.92) !important;
+    background: rgba(0,0,0,0.96) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 }
 .modal {
-    background: #111111 !important;
+    /* OLED black + dot-grid — Nothing OS auth design */
+    background-color: #000000 !important;
+    background-image: radial-gradient(circle, #1A1A1A 0.6px, transparent 0.6px) !important;
+    background-size: 18px 18px !important;
     border: 1px solid #222222 !important;
+    border-top: 2px solid #10B981 !important;
     border-radius: 2px !important;
     box-shadow: none !important;
 }
@@ -1947,11 +1951,7 @@ textarea.form-input { resize: vertical !important; }
 /* Doji Coin card — no lift on hover */
 .dc-reward-card:hover { transform: none !important; }
 
-/* ═══════════════════════════════════════════════════════
-   44. AUTH — Remove glow shadows
-══════════════════════════════════════════════════════════ */
-.form-input:focus { box-shadow: none !important; }
-.form-btn:hover   { box-shadow: none !important; transform: none !important; }
+/* Section 44 merged into section 30 (form elements) and auth.css */
 
 /* ═══════════════════════════════════════════════════════
    45. CONFIGURATOR — Remaining Inter font overrides + artifact removal
