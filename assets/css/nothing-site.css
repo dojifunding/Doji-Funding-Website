@@ -1915,3 +1915,328 @@ textarea.form-input { resize: vertical !important; }
 .legal-section a { color: #10B981 !important; }
 .policy-section strong,
 .legal-section strong { color: #E8E8E8 !important; }
+
+/* ═══════════════════════════════════════════════════════
+   43. GLOBAL — Kill Inter font class + global glow suppressions
+══════════════════════════════════════════════════════════ */
+
+/* .num class — used for tabular numbers sitewide */
+.num {
+    font-family: 'Chivo Mono', monospace !important;
+    font-feature-settings: normal !important;
+}
+
+/* Kill text-shadow glow on all .green text */
+.green { text-shadow: none !important; }
+
+/* Kill remaining glow on metric hover */
+.metric-item:hover .metric-val { text-shadow: none !important; }
+
+/* Kill text-shadow on ch-price (font already Doto, shadow wasn't removed) */
+.ch-price { text-shadow: none !important; }
+
+/* HIW cards — replace gradient left-border with flat 2px accent line */
+.hiw-card::before {
+    background: #10B981 !important;
+    width: 2px !important;
+}
+.hiw-card::after {
+    display: none !important;
+}
+
+/* Doji Coin card — no lift on hover */
+.dc-reward-card:hover { transform: none !important; }
+
+/* ═══════════════════════════════════════════════════════
+   44. AUTH — Remove glow shadows
+══════════════════════════════════════════════════════════ */
+.form-input:focus { box-shadow: none !important; }
+.form-btn:hover   { box-shadow: none !important; transform: none !important; }
+
+/* ═══════════════════════════════════════════════════════
+   45. CONFIGURATOR — Remaining Inter font overrides + artifact removal
+══════════════════════════════════════════════════════════ */
+
+/* Number/value fonts — Doto for big display numbers, Chivo Mono for inline values */
+.cfg-num,
+.switch-price,
+.val-accent,
+.summary-card-dollar,
+.summary-detail-row .val,
+.price-badge,
+.price-original {
+    font-family: 'Chivo Mono', monospace !important;
+}
+
+.summary-account-size,
+.summary-card-pct {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+}
+
+/* Slider — flat fill, no glow thumb */
+.slider-fill {
+    background: #10B981 !important;
+}
+.slider-thumb {
+    box-shadow: none !important;
+    border-color: #10B981 !important;
+    background: #000000 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   46. COMPETITIONS PAGE — Full nothing-style pass
+══════════════════════════════════════════════════════════ */
+
+/* Hero — kill gradient bg, orb blurs, animations */
+.comp-hero {
+    background: #000000 !important;
+}
+.comp-hero-orb,
+.comp-hero-orb-1,
+.comp-hero-orb-2 {
+    display: none !important;
+}
+.comp-hero-grid {
+    opacity: 0.015 !important;
+}
+
+/* Card sweep effect — remove gradient pseudo */
+.comp-card::before { display: none !important; }
+
+/* Card premium hover — flat border only */
+.comp-card-premium:hover { border-color: rgba(16,185,129,0.25) !important; }
+
+/* Badge fonts */
+.comp-badge {
+    font-family: 'Chivo Mono', monospace !important;
+    border-radius: 2px !important;
+    font-size: 9px !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+}
+.comp-badge-green {
+    background: rgba(16,185,129,0.08) !important;
+    color: #10B981 !important;
+    border: 1px solid rgba(16,185,129,0.2) !important;
+}
+.comp-badge-orange {
+    background: rgba(212,168,67,0.08) !important;
+    color: #D4A843 !important;
+    border: 1px solid rgba(212,168,67,0.2) !important;
+}
+
+/* Competition title, description, section headings */
+.comp-title {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #FFFFFF !important;
+}
+.comp-desc {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+}
+.comp-section-heading {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #FFFFFF !important;
+}
+.comp-section-sub {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+}
+
+/* Prize row */
+.comp-prize-row {
+    background: #0A0A0A !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+}
+.comp-prize-label {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #666666 !important;
+}
+.comp-prize-val {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    color: #FFFFFF !important;
+}
+
+/* Rules section */
+.comp-rules {
+    background: #0A0A0A !important;
+    border-color: #1A1A1A !important;
+    border-radius: 0 0 2px 2px !important;
+}
+.comp-rules-title {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #666666 !important;
+    border-bottom-color: #1A1A1A !important;
+}
+.comp-rule-name {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+}
+.comp-rule-val {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #E8E8E8 !important;
+    font-weight: 600 !important;
+}
+
+/* Podium — flat backgrounds, no gradient */
+.comp-podium-item { border-bottom-color: #1A1A1A !important; }
+.comp-podium-rank {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    border-radius: 2px !important;
+}
+.comp-podium-gold {
+    background: rgba(212,168,67,0.1) !important;
+    color: #D4A843 !important;
+    border: 1px solid rgba(212,168,67,0.2) !important;
+}
+.comp-podium-silver {
+    background: rgba(180,180,180,0.08) !important;
+    color: #AAAAAA !important;
+    border: 1px solid rgba(180,180,180,0.15) !important;
+}
+.comp-podium-bronze {
+    background: rgba(160,100,40,0.08) !important;
+    color: #A06428 !important;
+    border: 1px solid rgba(160,100,40,0.15) !important;
+}
+.comp-podium-reward {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+    font-style: normal !important;
+}
+
+/* Prize card headers */
+.comp-prize-card {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+}
+.comp-prize-card-premium { border-color: rgba(212,168,67,0.15) !important; }
+.comp-prize-card-header {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+}
+.comp-prize-card-header-green {
+    background: rgba(16,185,129,0.05) !important;
+    color: #10B981 !important;
+    border-bottom-color: rgba(16,185,129,0.1) !important;
+}
+.comp-prize-card-header-orange {
+    background: rgba(212,168,67,0.05) !important;
+    color: #D4A843 !important;
+    border-bottom-color: rgba(212,168,67,0.1) !important;
+}
+.comp-prize-more,
+.comp-prizes-note {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #666666 !important;
+    font-style: normal !important;
+}
+
+/* Notify block */
+.comp-notify {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+}
+.comp-notify::before { display: none !important; }
+.comp-notify-title {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #E8E8E8 !important;
+}
+.comp-notify-sub {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #666666 !important;
+}
+
+/* Competition FAQ */
+.comp-faq-q {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #E8E8E8 !important;
+}
+.comp-faq-q:hover { background: rgba(255,255,255,0.02) !important; }
+.comp-faq-item.open .comp-faq-q { color: #10B981 !important; }
+.comp-faq-a p {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+}
+
+/* Competition buttons */
+.comp-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    border-radius: 2px !important;
+}
+.comp-btn-green {
+    background: rgba(16,185,129,0.06) !important;
+    color: #10B981 !important;
+    border: 1px solid rgba(16,185,129,0.15) !important;
+}
+.comp-btn-orange {
+    background: rgba(212,168,67,0.06) !important;
+    color: #D4A843 !important;
+    border: 1px solid rgba(212,168,67,0.15) !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   47. RULES PAGE — Remove backdrop-filter + hover lift
+══════════════════════════════════════════════════════════ */
+.rule-card {
+    background: #111111 !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+}
+.rule-card:hover {
+    border-color: rgba(16,185,129,0.2) !important;
+    transform: none !important;
+}
+.rule-card.highlight-green {
+    border-color: rgba(16,185,129,0.2) !important;
+    background: rgba(16,185,129,0.03) !important;
+}
+.rule-card p {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   48. AFFILIATES — step badge: circle → square + no lift
+══════════════════════════════════════════════════════════ */
+.aff-step-num {
+    border-radius: 2px !important;
+    background: transparent !important;
+    width: auto !important;
+    height: auto !important;
+}
+.aff-cta {
+    background: #111111 !important;
+    border: 1px solid rgba(16,185,129,0.15) !important;
+    border-radius: 2px !important;
+}
+.aff-cta p {
+    font-family: 'Chivo Mono', monospace !important;
+    color: #999999 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   49. ABOUT PAGE — flat cards, no blur
+══════════════════════════════════════════════════════════ */
+.about-card,
+.about-section-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border-radius: 2px !important;
+}
+
