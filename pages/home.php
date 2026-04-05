@@ -164,7 +164,7 @@
 <div class="section-divider"></div>
 
 <!-- HOW IT WORKS — 4 Steps -->
-<section class="section" style="background:var(--bg)">
+<section class="section s-dot" style="background:var(--bg)">
     <div class="section-inner" style="max-width:1200px;margin:0 auto;text-align:center">
         <h2>How It Works</h2>
         <p class="section-sub" style="text-align:center;color:var(--text2);font-size:16px;margin-bottom:48px">Your path to becoming a funded trader</p>
@@ -325,7 +325,7 @@
 <div class="section-divider"></div>
 
 <!-- ASSET CLASSES BANNER -->
-<section class="section" style="background:var(--bg);padding-top:100px;padding-bottom:100px">
+<section class="section s-dot" style="background:var(--bg);padding-top:100px;padding-bottom:100px">
     <div class="section-inner" style="max-width:1200px;margin:0 auto">
         <h2 style="text-align:center;margin-bottom:8px">Trade 1,000+ Instruments Across <span class="green">8 Asset Classes</span></h2>
         <p class="section-sub" style="text-align:center;color:var(--text2);font-size:15px;margin-bottom:48px">From forex to crypto, indices to futures — everything you need under one roof with institutional-grade conditions.</p>
@@ -456,7 +456,7 @@
 <div class="section-divider"></div>
 
 <!-- BUILT FOR TRADERS — Pill Bar -->
-<section class="section" style="background:var(--bg)">
+<section class="section s-dot" style="background:var(--bg)">
     <div style="max-width:1200px;margin:0 auto">
         <div class="pill-bar">
             <div class="pill-bar-title">Built for traders,<br>down to the details</div>
@@ -522,7 +522,7 @@
 <div class="section-divider"></div>
 
 <!-- SOCIAL PROOF METRICS -->
-<section class="section" style="background:var(--bg);border-top:1px solid rgba(16,185,129,0.08);border-bottom:1px solid rgba(16,185,129,0.08)">
+<section class="section s-dot" style="background:var(--bg);border-top:1px solid rgba(16,185,129,0.08);border-bottom:1px solid rgba(16,185,129,0.08)">
     <div class="section-inner">
         <div class="proof-grid">
             <div class="proof-item">
@@ -575,7 +575,7 @@
 <div class="section-divider"></div>
 
 <!-- COMPARISON TABLE — Doji vs Competitors -->
-<section class="section" style="background:var(--bg)">
+<section class="section s-dot" style="background:var(--bg)">
     <div class="section-inner">
         <h2>How Doji Funding <span class="green">Compares</span></h2>
         <p class="section-sub">See why traders choose Doji over other prop firms.</p>

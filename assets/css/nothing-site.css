@@ -804,16 +804,17 @@ h3 { text-transform: none !important; }
    30. MODALS & OVERLAYS
 ══════════════════════════════════════════════════════════ */
 .modal-overlay {
-    background: rgba(0,0,0,0.96) !important;
+    background: rgba(0,0,0,0.88) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 }
 .modal {
-    /* OLED black + dot-grid — Nothing OS auth design */
+    /* OLED black + dot-grid — Nothing OS auth design
+       Dots: #2A2A2A on #000000 = visible contrast */
     background-color: #000000 !important;
-    background-image: radial-gradient(circle, #1A1A1A 0.6px, transparent 0.6px) !important;
-    background-size: 18px 18px !important;
-    border: 1px solid #222222 !important;
+    background-image: radial-gradient(circle, #2A2A2A 0.75px, transparent 0.75px) !important;
+    background-size: 20px 20px !important;
+    border: 1px solid #2A2A2A !important;
     border-top: 2px solid #10B981 !important;
     border-radius: 2px !important;
     box-shadow: none !important;
@@ -1921,7 +1922,22 @@ textarea.form-input { resize: vertical !important; }
 .legal-section strong { color: #E8E8E8 !important; }
 
 /* ═══════════════════════════════════════════════════════
-   43. GLOBAL — Kill Inter font class + global glow suppressions
+   43. HOME — Dot-grid on alternating sections (.s-dot)
+   Applied to every other section (bg = pure black).
+   bg2 sections stay plain — creates light/texture rhythm.
+══════════════════════════════════════════════════════════ */
+
+/* Dot-grid texture — slightly brighter than metrics-bar
+   to read on pure #000000 backgrounds */
+.s-dot {
+    background-image: radial-gradient(circle, #222222 0.75px, transparent 0.75px) !important;
+    background-size: 22px 22px !important;
+    background-color: #000000 !important;
+    position: relative !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   44. GLOBAL — Kill Inter font class + global glow suppressions
 ══════════════════════════════════════════════════════════ */
 
 /* .num class — used for tabular numbers sitewide */

@@ -12,7 +12,7 @@
 .modal-overlay {
     display: none;
     position: fixed; inset: 0; z-index: 2000;
-    background: rgba(0,0,0,0.96);
+    background: rgba(0,0,0,0.88);
     /* Mobile: scrollable overlay so form is always reachable */
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -50,9 +50,10 @@
     margin: 40px auto;
     animation: authSlideUp 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 
-    /* Dot-grid background — Nothing OS motif */
-    background-image: radial-gradient(circle, #1A1A1A 0.6px, transparent 0.6px);
-    background-size: 18px 18px;
+    /* Dot-grid background — Nothing OS motif
+       #2A2A2A on #000000 = legible contrast without being loud */
+    background-image: radial-gradient(circle, #2A2A2A 0.75px, transparent 0.75px);
+    background-size: 20px 20px;
     background-color: #000000;
 }
 
@@ -382,7 +383,7 @@
         margin: 12px auto 24px;
         padding: 24px 16px;
         /* Slightly smaller dot-grid on mobile */
-        background-size: 14px 14px;
+        background-size: 16px 16px;
     }
     .modal-wide { width: calc(100vw - 24px); }
 
