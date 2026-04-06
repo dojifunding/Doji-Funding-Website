@@ -24,7 +24,7 @@
     };
 
     // ─── Colors ───
-    var COLOR_REST = 'rgba(255, 255, 255, 0.25)';
+    var COLOR_REST = 'rgba(255, 255, 255, 1)';
     var COLOR_SCATTER = 'rgba(16, 185, 129, 0.45)';
 
     // ─── State ───

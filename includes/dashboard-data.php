@@ -142,7 +142,7 @@ function getUserProfile($userId) {
     if (!$db) return null;
 
     try {
-        $stmt = $db->prepare('SELECT id, email, first_name, last_name, phone, address, city, zipcode, country, region,
+        $stmt = $db->prepare('SELECT id, email, first_name, last_name, username, phone, address, city, zipcode, country, region,
             avatar_url, kyc_status, kyc_submitted_at, kyc_reviewed_at,
             trader_level, doji_coins, referral_code, email_verified, created_at
             FROM users WHERE id = ?');

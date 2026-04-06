@@ -30,7 +30,7 @@
         renderer.setClearColor(0x000000, 0);
 
         createWave();
-        createStars();
+        if (!canvas.hasAttribute('data-no-stars')) createStars();
 
         document.addEventListener('mousemove', function(e) {
             mouseX = (e.clientX / window.innerWidth) * 2 - 1;

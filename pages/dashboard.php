@@ -148,6 +148,7 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                 </button>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span class="dash-topbar-username"><?= htmlspecialchars(strtolower($user['first_name'] . $user['last_name'])) ?></span>
+                <span id="dashFirstName" style="display:none"><?= htmlspecialchars($profile['first_name'] ?? $user['first_name'] ?? '') ?></span>
                 <button class="dash-topbar-logout" onclick="AuthModal.logout()">Log out</button>
                 <button class="dash-topbar-new-challenge" onclick="Dashboard.switchTab('configurator')">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -182,13 +183,13 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                         <div class="dash-sc-top">
                             <span class="dash-sc-dot"></span>
                             <span class="dash-sc-city">Sydney</span>
+                            <span class="dash-sc-status">
+                                <span class="dash-sc-state-dot"></span>
+                                <span class="dash-sc-state-txt"></span>
+                            </span>
                         </div>
                         <div class="dash-sc-time"></div>
                         <div class="dash-sc-timelabel">Local Time</div>
-                        <div class="dash-sc-status">
-                            <span class="dash-sc-state-dot"></span>
-                            <span class="dash-sc-state-txt"></span>
-                        </div>
                         <div class="dash-sc-countdown"></div>
                         <div class="dash-sc-hours"></div>
                     </div>
@@ -197,13 +198,13 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                         <div class="dash-sc-top">
                             <span class="dash-sc-dot"></span>
                             <span class="dash-sc-city">Tokyo</span>
+                            <span class="dash-sc-status">
+                                <span class="dash-sc-state-dot"></span>
+                                <span class="dash-sc-state-txt"></span>
+                            </span>
                         </div>
                         <div class="dash-sc-time"></div>
                         <div class="dash-sc-timelabel">Local Time</div>
-                        <div class="dash-sc-status">
-                            <span class="dash-sc-state-dot"></span>
-                            <span class="dash-sc-state-txt"></span>
-                        </div>
                         <div class="dash-sc-countdown"></div>
                         <div class="dash-sc-hours"></div>
                     </div>
@@ -212,13 +213,13 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                         <div class="dash-sc-top">
                             <span class="dash-sc-dot"></span>
                             <span class="dash-sc-city">London</span>
+                            <span class="dash-sc-status">
+                                <span class="dash-sc-state-dot"></span>
+                                <span class="dash-sc-state-txt"></span>
+                            </span>
                         </div>
                         <div class="dash-sc-time"></div>
                         <div class="dash-sc-timelabel">Local Time</div>
-                        <div class="dash-sc-status">
-                            <span class="dash-sc-state-dot"></span>
-                            <span class="dash-sc-state-txt"></span>
-                        </div>
                         <div class="dash-sc-countdown"></div>
                         <div class="dash-sc-hours"></div>
                     </div>
@@ -227,13 +228,13 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                         <div class="dash-sc-top">
                             <span class="dash-sc-dot"></span>
                             <span class="dash-sc-city">New York</span>
+                            <span class="dash-sc-status">
+                                <span class="dash-sc-state-dot"></span>
+                                <span class="dash-sc-state-txt"></span>
+                            </span>
                         </div>
                         <div class="dash-sc-time"></div>
                         <div class="dash-sc-timelabel">Local Time</div>
-                        <div class="dash-sc-status">
-                            <span class="dash-sc-state-dot"></span>
-                            <span class="dash-sc-state-txt"></span>
-                        </div>
                         <div class="dash-sc-countdown"></div>
                         <div class="dash-sc-hours"></div>
                     </div>
@@ -770,9 +771,9 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                                     </div>
                                     <div class="dash-form-row">
                                         <div class="dash-form-group">
-                                            <label>Username</label>
-                                            <input type="text" name="username" value="<?= htmlspecialchars($profile['username'] ?? '') ?>" class="dash-input" placeholder="your_pseudo" pattern="[a-zA-Z0-9_]{3,30}">
-                                            <span class="dash-form-hint">Letters, numbers, underscores — min 3 characters</span>
+                                            <label>Username <?php if (!empty($profile['username'])): ?><span class="dash-badge-set">✓ set</span><?php else: ?><span class="dash-badge-unset">not set</span><?php endif; ?></label>
+                                            <input type="text" name="username" value="<?= htmlspecialchars($profile['username'] ?? '') ?>" class="dash-input" placeholder="your_pseudo" pattern="[a-zA-Z0-9_]{3,30}" maxlength="30">
+                                            <span class="dash-form-hint">3–30 chars · letters, numbers, underscores · unique</span>
                                         </div>
                                         <div class="dash-form-group">
                                             <label>Email</label>
@@ -1214,12 +1215,134 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
 
             <!-- ══ TAB: CONFIGURATOR ══ -->
             <div class="dash-tab" id="tab-configurator">
-                <div class="dash-coming-soon">
-                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M20 12h2M2 12h2M12 20v2M12 2v2"/></svg>
-                    <div class="dash-cs-title">CONFIGURATOR</div>
-                    <div class="dash-cs-status">[ COMING SOON ]</div>
-                    <div class="dash-cs-desc">Configure and purchase your challenge directly from the dashboard — account size, rules, profit split, and more.</div>
+
+                <!-- CHALLENGE TYPE TABS -->
+                <div class="type-tabs">
+                    <button class="type-tab disabled" disabled>
+                        Instant Funding
+                        <div class="type-tab-sub">Coming Soon</div>
+                    </button>
+                    <button class="type-tab active" id="tab-onestep" onclick="Configurator.setTab('onestep')">
+                        1 Step
+                        <div class="type-tab-sub">Fast Track</div>
+                    </button>
+                    <button class="type-tab" id="tab-twostep" onclick="Configurator.setTab('twostep')">
+                        2 Step
+                        <div class="type-tab-sub">Classic</div>
+                    </button>
                 </div>
+
+                <!-- MODE PICKER -->
+                <div class="mode-strip" id="modeStrip">
+                    <div class="mode-strip-label">Quick Setup</div>
+                    <div class="mode-cards">
+                        <button class="mode-card" data-mode="cheap" onclick="Configurator.applyMode('cheap')">
+                            <span class="mode-tag">BUDGET</span>
+                            <span class="mode-name">Cheap</span>
+                            <span class="mode-desc">Lowest entry price</span>
+                        </button>
+                        <button class="mode-card" data-mode="po" onclick="Configurator.applyMode('po')">
+                            <span class="mode-tag">POWER</span>
+                            <span class="mode-name">Pro</span>
+                            <span class="mode-desc">Max split &amp; freedom</span>
+                        </button>
+                        <button class="mode-card" data-mode="beginner" onclick="Configurator.applyMode('beginner')">
+                            <span class="mode-tag">EASY</span>
+                            <span class="mode-name">Beginner</span>
+                            <span class="mode-desc">Forgiving rules</span>
+                        </button>
+                        <div class="mode-card mode-card-presets" id="modeMyPresets" data-mode="mypresets" onclick="DashPresets.toggle(event)">
+                            <span class="mode-tag">SAVED</span>
+                            <span class="mode-name">My Presets</span>
+                            <span class="mode-desc">Save &amp; load configs</span>
+                            <div class="mode-presets-drop" onclick="event.stopPropagation()">
+                                <div class="mp-save-row">
+                                    <input class="mp-name-input" id="mpNameInput" placeholder="Name this config..." maxlength="50">
+                                    <button class="mp-save-btn" onclick="DashPresets.save()">Save</button>
+                                </div>
+                                <div class="mp-list" id="mpList"><div class="mp-empty">No saved presets yet.</div></div>
+                            </div>
+                        </div>
+                        <button class="mode-card mode-affiliate" data-mode="affiliate" id="modeAffiliate" onclick="Configurator.applyMode('affiliate')">
+                            <span class="mode-tag">AFFILIATE</span>
+                            <span class="mode-name">Affiliate</span>
+                            <span class="mode-desc mode-desc-locked">Unlocks with sales</span>
+                            <span class="mode-lock">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </span>
+                        </button>
+                        <div class="mode-card mode-card-competitor" data-mode="competitor" onclick="Configurator.applyMode('competitor')">
+                            <span class="mode-tag">COMPARE</span>
+                            <span class="mode-name">Competitor</span>
+                            <span class="mode-desc">Load a rival preset</span>
+                            <div class="mode-competitor-drop" onclick="event.stopPropagation()">
+                                <select class="preset-select" id="presetSelect" onchange="this.classList.toggle('has-value',!!this.value);if(this.value){Configurator.loadPreset(this.value)}">
+                                    <option value="">Compare with other firms...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONFIGURATOR LAYOUT -->
+                <div class="cfg-layout">
+
+                    <!-- LEFT PANEL: Parameters -->
+                    <div class="cfg-panel">
+                        <div class="cfg-header">
+                            <h2 class="cfg-title">Challenge Configurator</h2>
+                            <span class="cfg-badge" id="cfgBadge">FAST TRACK</span>
+                        </div>
+                        <div id="slidersContainer"></div>
+                        <button class="reset-btn" onclick="Configurator.reset()">↺ Reset to Defaults</button>
+                    </div>
+
+                    <!-- RIGHT PANEL: Summary + Price -->
+                    <div class="cfg-panel">
+                        <div class="cfg-header">
+                            <h2 class="cfg-title">Your Configuration</h2>
+                        </div>
+                        <div class="summary-box">
+                            <div class="summary-title">Configuration Summary</div>
+                            <div class="summary-grid" id="summaryGrid"></div>
+                        </div>
+                        <div class="price-box">
+                            <div class="price-label">Total Price</div>
+                            <div id="priceDisplay">
+                                <div class="price-val" id="priceVal">$249</div>
+                            </div>
+                        </div>
+                        <div class="promo-row">
+                            <input class="promo-input" id="promoInput"
+                                   placeholder="Enter promo code"
+                                   onkeydown="if(event.key==='Enter')Configurator.applyPromo()">
+                            <button class="promo-btn" id="promoBtn" onclick="Configurator.applyPromo()">Apply</button>
+                        </div>
+                        <div id="promoMsg"></div>
+                        <button class="share-btn" onclick="Configurator.share()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                            Share Configuration
+                        </button>
+                        <div id="shareMsg"></div>
+                        <button class="purchase-btn" id="purchaseBtn" onclick="Configurator.purchase()">
+                            Purchase Challenge — $249
+                        </button>
+                        <div class="note-box" id="noteBox">
+                            <strong class="green">Note:</strong>
+                            Consistency Rule and Payout Frequency apply to Funded accounts only.
+                        </div>
+                        <div class="note-box note-disclaimer">
+                            Doji Funding® is a simulated trading platform designed for performance evaluation and skill development. No real capital is deployed or at risk. Program fees provide access to our simulation and assessment tools. Performance-based payouts are discretionary and subject to compliance with all program rules and Doji Funding®'s <a href="terms.php" class="disclaimer-link">Terms&nbsp;of&nbsp;Service</a>.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden stubs keep configurator.js references valid -->
+                <div id="objectivesSection" style="display:none">
+                    <div id="objEvalCard"><div id="objEvalNum"></div><div id="objEvalTitle"></div><div id="objTargetBox"></div><div id="objDailyVal"></div><div id="objMaxVal"></div><div id="objChartDaily"><svg id="objChartDailySvg"></svg></div><div id="objChartMax"><svg id="objChartMaxSvg"></svg></div><div id="objGuidelines"></div><div id="objTags"></div><div id="objFlow"></div><div id="objLimitDaily"></div><div id="objLimitMax"></div></div>
+                    <div id="objFundedCard"><div id="objFundedNum"></div><div id="objFDailyVal"></div><div id="objFMaxVal"></div><div id="objFConsVal"></div><div id="objChartFdaily"><svg id="objChartFdailySvg"></svg></div><div id="objChartFmax"><svg id="objChartFmaxSvg"></svg></div><div id="objFGuidelines"></div><div id="objRewards"></div></div>
+                </div>
+
             </div>
 
             <!-- ══ TAB: STATISTICS ══ -->

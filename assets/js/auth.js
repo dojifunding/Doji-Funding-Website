@@ -98,8 +98,7 @@ const AuthModal = (function() {
             const json = await res.json();
 
             if (json.success) {
-                close();
-                window.location.href = 'dashboard.php';
+                LaserBurn.trigger('dashboard.php');
             } else {
                 err.textContent = json.error || 'Login failed. Please try again.';
             }
@@ -157,8 +156,7 @@ const AuthModal = (function() {
             const json = await res.json();
 
             if (json.success) {
-                close();
-                window.location.href = 'dashboard.php';
+                LaserBurn.trigger('dashboard.php');
             } else {
                 err.textContent = json.error || 'Registration failed. Please try again.';
             }

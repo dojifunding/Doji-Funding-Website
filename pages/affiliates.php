@@ -4,11 +4,9 @@
  */
 ?>
 
-<!-- HERO with Circuit Board Animation -->
+<!-- HERO -->
 <section class="hero" style="min-height:480px;padding:100px 32px 80px">
-    <canvas class="hero-globe" id="circuitCanvas"></canvas>
-    <div class="hero-glow" style="top:-200px;left:50%;transform:translateX(-50%)"></div>
-    <div class="hero-overlay"></div>
+    <canvas class="hero-globe" id="heroPyramid" aria-hidden="true"></canvas>
     <div class="hero-content">
         <div class="badge">Partner With Us</div>
         <h1>Affiliate <span class="green">Program</span></h1>

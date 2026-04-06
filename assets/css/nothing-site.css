@@ -353,16 +353,6 @@ button.btn-primary.nav-cta:hover {
    9. HERO — Dot-grid background
 ══════════════════════════════════════════════════════════ */
 .hero { background: #000000 !important; position: relative !important; }
-
-.hero::after {
-    content: '' !important;
-    position: absolute !important;
-    inset: 0 !important;
-    z-index: 0 !important;
-    pointer-events: none !important;
-    background-image: radial-gradient(circle, #1A1A1A 0.75px, transparent 0.75px) !important;
-    background-size: 20px 20px !important;
-}
 .hero-split, .hero-content { z-index: 2 !important; position: relative !important; }
 
 .badge {
@@ -691,12 +681,24 @@ footer {
     html { scrollbar-color: #10B981 #000000 !important; }
 }
 
-/* Section dividers */
+/* Section dividers — flat #1A1A1A line + centered 5px emerald square */
 .section-divider {
+    position: relative !important;
     height: 1px !important;
     background: #1A1A1A !important;
     border: none !important;
     margin: 0 !important;
+}
+.section-divider::after {
+    content: '' !important;
+    position: absolute !important;
+    top: -2px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 5px !important;
+    height: 5px !important;
+    border-radius: 0 !important;
+    background: #10B981 !important;
 }
 
 /* Doji Coin terminal amount — same Doto as proof-val */
@@ -705,12 +707,12 @@ footer {
     font-weight: 400 !important;
 }
 
-/* Configurator accent sync */
+/* Configurator accent sync — dark bg + green text only (Nothing style) */
 .cfg-tab.active,
 .type-tab.active {
-    background: #10B981 !important;
-    color: #000000 !important;
-    border-color: #10B981 !important;
+    background-color: #0A0A0A !important;
+    color: #10B981 !important;
+    border-color: rgba(16,185,129,0.25) !important;
 }
 .cfg-price {
     font-family: 'Doto', 'Chivo Mono', monospace !important;
@@ -809,15 +811,15 @@ h3 { text-transform: none !important; }
     -webkit-backdrop-filter: none !important;
 }
 .modal {
-    /* OLED black + dot-grid — Nothing OS auth design
-       Dots: #2A2A2A on #000000 = visible contrast */
+    /* OLED black — dot-grid handled by canvas (.modal-dot-canvas) */
     background-color: #000000 !important;
-    background-image: radial-gradient(circle, #2A2A2A 0.75px, transparent 0.75px) !important;
-    background-size: 20px 20px !important;
-    border: 1px solid #2A2A2A !important;
+    background-image: none !important;
+    border: 1px solid #222222 !important;
     border-top: 2px solid #10B981 !important;
     border-radius: 2px !important;
     box-shadow: none !important;
+    overflow: hidden !important;
+    padding: 0 !important;
 }
 .modal-close {
     font-family: 'Chivo Mono', monospace !important;
@@ -1021,7 +1023,7 @@ h3 { text-transform: none !important; }
     text-transform: uppercase !important;
     letter-spacing: 0.08em !important;
 }
-.type-tab.active .type-tab-sub { color: rgba(0,0,0,0.6) !important; }
+.type-tab.active .type-tab-sub { color: rgba(16,185,129,0.6) !important; }
 
 /* Mode strip */
 .mode-strip {
@@ -2256,3 +2258,196 @@ textarea.form-input { resize: vertical !important; }
     border-radius: 2px !important;
 }
 
+/* ═══════════════════════════════════════════════════════
+   50. PRECISION CORNERS — emerald reticle aesthetic
+   ───────────────────────────────────────────────────────
+   8-gradient technique: 1px × N arm at each of 4 corners.
+   All corners are #10B981 (emerald). Three arm lengths:
+     14px — large panels (cfg-panel, compare-table)
+     11px — cards (kh, ac, hiw, dc-reward, testimonial…)
+      8px — buttons, tabs, small UI elements
+   Renders above background-color; no pseudo-elements used.
+══════════════════════════════════════════════════════════ */
+
+/* ── Reusable gradient definition (same color × 8) ─────
+   G70 = rgba(16,185,129,.70)  G55 = rgba(16,185,129,.55)
+   G45 = rgba(16,185,129,.45)  G60 = rgba(16,185,129,.60) */
+
+/* ── A. Large panels — 14px arms ──────────────────────── */
+.cfg-panel,
+.summary-box,
+.price-box,
+.compare-table-wrap,
+.dc-terminal {
+    background-image:
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)) !important;
+    background-size:
+        14px 1px, 1px 14px,
+        14px 1px, 1px 14px,
+        14px 1px, 1px 14px,
+        14px 1px, 1px 14px !important;
+    background-position:
+        top left,     top left,
+        top right,    top right,
+        bottom left,  bottom left,
+        bottom right, bottom right !important;
+    background-repeat: no-repeat !important;
+}
+
+/* ── B. Hero stats — 12px arms, no border ─────────────── */
+.hero-stat {
+    background-image:
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)) !important;
+    background-size:
+        12px 1px, 1px 12px,
+        12px 1px, 1px 12px,
+        12px 1px, 1px 12px,
+        12px 1px, 1px 12px !important;
+    background-position:
+        top left,     top left,
+        top right,    top right,
+        bottom left,  bottom left,
+        bottom right, bottom right !important;
+    background-repeat: no-repeat !important;
+    border: none !important;
+}
+
+/* ── C. Cards — 11px arms ─────────────────────────────── */
+.kh-card,
+.hiw-card,
+.ac-card-lg,
+.ac-card-sm,
+.mode-card,
+.dc-reward-card,
+.perk-card,
+.engage-card,
+.step-card,
+.stat-card,
+.testimonial-card,
+.contact-card,
+.contact-form-wrap,
+.platform-card,
+.rule-card,
+.about-card,
+.about-section-card,
+.aff-cta {
+    background-image:
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)) !important;
+    background-size:
+        11px 1px, 1px 11px,
+        11px 1px, 1px 11px,
+        11px 1px, 1px 11px,
+        11px 1px, 1px 11px !important;
+    background-position:
+        top left,     top left,
+        top right,    top right,
+        bottom left,  bottom left,
+        bottom right, bottom right !important;
+    background-repeat: no-repeat !important;
+}
+
+/* hiw-card: keep the progressive border-top — only drop sides */
+.hiw-card {
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+}
+
+/* ── D. Buttons & nav elements — 8px arms ─────────────── */
+.btn-outline,
+.btn-outline-lg,
+.nav-dashboard,
+.type-tab,
+.pill-bar-item,
+.proof-item {
+    background-image:
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)) !important;
+    background-size:
+        8px 1px, 1px 8px,
+        8px 1px, 1px 8px,
+        8px 1px, 1px 8px,
+        8px 1px, 1px 8px !important;
+    background-position:
+        top left,     top left,
+        top right,    top right,
+        bottom left,  bottom left,
+        bottom right, bottom right !important;
+    background-repeat: no-repeat !important;
+}
+
+/* Active type-tab — full-strength green corners on dark bg */
+.type-tab.active {
+    background-color: #0A0A0A !important;
+    color: #10B981 !important;
+    border-color: rgba(16,185,129,0.25) !important;
+    background-image:
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)) !important;
+}
+
+/* Hover state: all buttons/nav get full-strength corners */
+.btn-outline:hover,
+.btn-outline-lg:hover,
+.nav-dashboard:hover {
+    background-image:
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)),
+        linear-gradient(rgba(16,185,129,.85),rgba(16,185,129,.85)) !important;
+    background-size:
+        8px 1px, 1px 8px,
+        8px 1px, 1px 8px,
+        8px 1px, 1px 8px,
+        8px 1px, 1px 8px !important;
+    background-position:
+        top left,     top left,
+        top right,    top right,
+        bottom left,  bottom left,
+        bottom right, bottom right !important;
+    background-repeat: no-repeat !important;
+}
+
+/* Pixel particle footer — OLED black background */
+.doji-particle-footer {
+    background: #000000 !important;
+}
+
+/* Challenges hero wave — clip-path applied dynamically by inline script in challenges.php */

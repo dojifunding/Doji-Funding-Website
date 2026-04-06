@@ -180,15 +180,23 @@ $v = ASSET_VERSION;
         pricing: <?= getPricingJson() ?>,
         faq: <?= getFaqJson() ?>,
         seo: <?= getSeoJson() ?>,
-        <?php if (($currentPage === 'challenges' || $currentPage === 'home') && function_exists('getPresetsJson')): ?>
+        <?php if (($currentPage === 'challenges' || $currentPage === 'home' || $currentPage === 'dashboard') && function_exists('getPresetsJson')): ?>
         presets: <?= getPresetsJson() ?>,
+        <?php endif; ?>
+        <?php if ($currentPage === 'dashboard'): ?>
+        csrfToken: '<?= generateCsrf() ?>',
         <?php endif; ?>
     };
 </script>
 <script src="assets/js/app.js?v=<?= $v ?>"></script>
+<script src="assets/js/laser-transition.js?v=<?= $v ?>"></script>
 <script src="assets/js/auth.js?v=<?= $v ?>"></script>
-<?php if ($currentPage === 'challenges' || $currentPage === 'home'): ?>
+<script src="assets/js/auth-canvas.js?v=<?= $v ?>"></script>
+<?php if ($currentPage === 'challenges' || $currentPage === 'home' || $currentPage === 'dashboard'): ?>
 <script src="assets/js/configurator.js?v=<?= $v ?>"></script>
+<?php endif; ?>
+<?php if ($currentPage === 'home' || $currentPage === 'challenges'): ?>
+<script src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 <?php if ($currentPage === 'home'): ?>
 <script src="assets/js/globe.js?v=<?= $v ?>"></script>
@@ -196,10 +204,15 @@ $v = ASSET_VERSION;
 <script src="assets/js/weight-wave.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 <?php if ($currentPage === 'affiliates'): ?>
-<script src="assets/js/circuit.js?v=<?= $v ?>"></script>
+<script src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
+<script src="assets/js/particle-pyramid.js?v=<?= $v ?>"></script>
 <?php endif; ?>
-<?php if ($currentPage === 'challenges' || $currentPage === 'competitions'): ?>
-<script src="assets/js/wave.js?v=<?= $v ?>"></script>
+<?php if ($currentPage === 'competitions'): ?>
+<script src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
+<script src="assets/js/particle-diamond.js?v=<?= $v ?>"></script>
+<?php endif; ?>
+<?php if ($currentPage === 'challenges'): ?>
+<script src="assets/js/particle-square.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 <?php if ($currentPage === 'faq'): ?>
 <script src="assets/js/faq.js?v=<?= $v ?>"></script>

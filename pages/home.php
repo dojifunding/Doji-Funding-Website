@@ -8,11 +8,8 @@
 
 <!-- HERO (Interactive Globe) -->
 <section class="hero">
-    <!-- 3D Globe Background -->
+    <!-- 3D particle sphere (Three.js, WebGL) -->
     <canvas class="hero-globe" id="heroGlobe" aria-hidden="true"></canvas>
-    <div class="hero-glow" style="top:-200px;left:50%;transform:translateX(-50%)"></div>
-    <!-- Overlay -->
-    <div class="hero-overlay"></div>
     <!-- Content -->
     <div class="hero-split">
         <div class="hero-left">
@@ -722,8 +719,10 @@
     </div>
 </section>
 
+<div class="section-divider"></div>
+
 <!-- ENHANCED CTA -->
-<section class="cta-enhanced">
+<section class="cta-enhanced s-dot">
     <div class="cta-enhanced-inner">
         <h2>Start Trading <span class="green">Your Way</span></h2>
         <p class="section-sub" style="margin:0 auto 40px">
@@ -746,5 +745,7 @@
         </div>
     </div>
 </section>
+
+<div class="section-divider"></div>
 
 <?php include 'includes/community.php'; ?>

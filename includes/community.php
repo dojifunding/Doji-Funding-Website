@@ -54,7 +54,7 @@
 </section>
 
 <!-- TEXT LOOP — Trade Your [word] -->
-<section class="text-loop-section">
+<section class="text-loop-section s-dot">
     <p class="text-loop-headline">
         Trade Your <span class="text-loop-word green" id="textLoopWord">Way</span>
     </p>

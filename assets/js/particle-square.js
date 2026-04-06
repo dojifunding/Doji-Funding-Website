@@ -1,25 +1,25 @@
 /**
- * Doji Funding — Particle Sphere
+ * Doji Funding — Particle Cube
  *
- * 3D fibonacci-sphere of green dots. Rotates gently following
+ * 3D cube surface of green dots. Rotates gently following
  * the mouse. Subtle breathing pulse on each dot.
- * No cursor repulsion — the hero dot-grid canvas handles that.
+ * Mirrors globe.js structure — no repulsion (dot-grid handles that).
  */
 (function () {
     'use strict';
 
-    var canvas = document.getElementById('heroGlobe');
+    var canvas = document.getElementById('heroSquare');
     if (!canvas) return;
     try {
         if (!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))) return;
     } catch (e) { return; }
 
-    var scene, camera, renderer, orbGroup;
+    var scene, camera, renderer, cubeGroup;
     var mouseX = 0, mouseY = 0, targetRotX = 0, targetRotY = 0;
     var width, height;
-    var RADIUS    = 1.4;
+    var HALF      = 1.5;        /* half-size of cube side          */
     var GREEN     = 0x10B981;
-    var DOT_COUNT = 2200;
+    var PER_EDGE  = 28;         /* dots per edge (12 edges)        */
 
     /* ── init ────────────────────────────────────────────── */
     function init() {
@@ -28,27 +28,23 @@
 
         scene  = new THREE.Scene();
         camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-        camera.position.z = 4.5;
+        camera.position.z = 5.5;
 
-        function updateCameraOffset() {
-            camera.position.x = window.innerWidth > 1024 ? -1.2 : 0;
-        }
-        updateCameraOffset();
+        camera.position.x = 0;
 
         renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
         renderer.setSize(width, height);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setClearColor(0x000000, 0);
 
-        orbGroup = new THREE.Group();
-        scene.add(orbGroup);
-
         _mInv = new THREE.Matrix4();
         _mVec = new THREE.Vector3();
 
-        buildOrb();
+        cubeGroup = new THREE.Group();
+        scene.add(cubeGroup);
 
-        /* rotation follows global mouse */
+        buildCube();
+
         document.addEventListener('mousemove', function (e) {
             mouseX = (e.clientX / window.innerWidth)  * 2 - 1;
             mouseY = (e.clientY / window.innerHeight) * 2 - 1;
@@ -60,91 +56,105 @@
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
-            updateCameraOffset();
         }, { passive: true });
 
         animate();
     }
 
-    /* ── fibonacci sphere ────────────────────────────────── */
-    function buildOrb() {
-        var positions = new Float32Array(DOT_COUNT * 3);
-        var sizes     = new Float32Array(DOT_COUNT);
-        var phases    = new Float32Array(DOT_COUNT);
+    /* ── cube edges — 12 edges, dots evenly spaced along each ── */
+    function buildCube() {
+        var H = HALF;
+        /* 12 edges defined as [start, end] pairs */
+        var edges = [
+            /* bottom face */
+            [[-H,-H,-H],[H,-H,-H]], [[H,-H,-H],[H,-H,H]],
+            [[H,-H,H],[-H,-H,H]],   [[-H,-H,H],[-H,-H,-H]],
+            /* top face */
+            [[-H,H,-H],[H,H,-H]],   [[H,H,-H],[H,H,H]],
+            [[H,H,H],[-H,H,H]],     [[-H,H,H],[-H,H,-H]],
+            /* vertical pillars */
+            [[-H,-H,-H],[-H,H,-H]], [[H,-H,-H],[H,H,-H]],
+            [[H,-H,H],[H,H,H]],     [[-H,-H,H],[-H,H,H]],
+        ];
 
-        for (var i = 0; i < DOT_COUNT; i++) {
-            var phi   = Math.acos(1 - 2 * (i + 0.5) / DOT_COUNT);
-            var theta = Math.PI * (1 + Math.sqrt(5)) * i;
+        var totalDots = edges.length * PER_EDGE;
+        var positions = new Float32Array(totalDots * 3);
+        var phases    = new Float32Array(totalDots);
+        var idx = 0;
 
-            positions[i * 3]     = RADIUS * Math.sin(phi) * Math.cos(theta);
-            positions[i * 3 + 1] = RADIUS * Math.sin(phi) * Math.sin(theta);
-            positions[i * 3 + 2] = RADIUS * Math.cos(phi);
-
-            sizes[i]  = 0.8 + Math.random() * 1.5;
-            phases[i] = Math.random() * Math.PI * 2;
+        for (var e = 0; e < edges.length; e++) {
+            var a = edges[e][0], b = edges[e][1];
+            for (var i = 0; i < PER_EDGE; i++) {
+                /* evenly spaced t with slight jitter, avoid endpoints (already covered by adjacent edge) */
+                var t = (i + 0.5 + (Math.random() - 0.5) * 0.4) / PER_EDGE;
+                positions[idx * 3]     = a[0] + (b[0] - a[0]) * t;
+                positions[idx * 3 + 1] = a[1] + (b[1] - a[1]) * t;
+                positions[idx * 3 + 2] = a[2] + (b[2] - a[2]) * t;
+                phases[idx] = Math.random() * Math.PI * 2;
+                idx++;
+            }
         }
 
         var geo = new THREE.BufferGeometry();
         geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geo.setAttribute('size',     new THREE.BufferAttribute(sizes, 1));
-        geo.userData.phases = phases;
+        geo.userData.phases        = phases;
+        geo.userData.origPositions = positions.slice();
 
-        orbGroup.add(new THREE.Points(geo, new THREE.PointsMaterial({
-            color:       GREEN,
-            size:        0.032,
-            transparent: true,
-            opacity:     0.18,
-            blending:    THREE.AdditiveBlending,
-            depthWrite:  false,
+        cubeGroup.add(new THREE.Points(geo, new THREE.PointsMaterial({
+            color:           GREEN,
+            size:            0.065,
+            transparent:     true,
+            opacity:         0.18,
+            blending:        THREE.AdditiveBlending,
+            depthWrite:      false,
             sizeAttenuation: true,
         })));
     }
 
     /* ── breathing pulse + mouse distortion ─────────────── */
-    var MOUSE_R    = 1.8;   /* influence radius in object space */
-    var MOUSE_PUSH = 0.45;  /* max outward push                 */
+    var MOUSE_R    = 1.8;
+    var MOUSE_PUSH = 0.55;
     var _mInv, _mVec;
 
     function breathe(time) {
         var pts = null;
-        for (var c = 0; c < orbGroup.children.length; c++) {
-            if (orbGroup.children[c].isPoints) { pts = orbGroup.children[c]; break; }
+        for (var c = 0; c < cubeGroup.children.length; c++) {
+            if (cubeGroup.children[c].isPoints) { pts = cubeGroup.children[c]; break; }
         }
         if (!pts) return;
 
         var pos    = pts.geometry.getAttribute('position');
+        var orig   = pts.geometry.userData.origPositions;
         var phases = pts.geometry.userData.phases;
+        var n      = pos.count;
 
         /* transform mouse NDC → object space so distortion follows rotation */
         _mVec.set(mouseX, -mouseY, 0.5).unproject(camera);
-        _mInv.copy(orbGroup.matrixWorld).invert();
+        _mInv.copy(cubeGroup.matrixWorld).invert();
         _mVec.applyMatrix4(_mInv);
         var mx = _mVec.x, my = _mVec.y, mz = _mVec.z;
 
-        for (var i = 0; i < DOT_COUNT; i++) {
-            var b     = 1 + Math.sin(time * 1.5 + phases[i]) * 0.035;
-            var phi   = Math.acos(1 - 2 * (i + 0.5) / DOT_COUNT);
-            var theta = Math.PI * (1 + Math.sqrt(5)) * i;
-            var px = RADIUS * b * Math.sin(phi) * Math.cos(theta);
-            var py = RADIUS * b * Math.sin(phi) * Math.sin(theta);
-            var pz = RADIUS * b * Math.cos(phi);
+        for (var i = 0; i < n; i++) {
+            var b  = 1 + Math.sin(time * 1.5 + phases[i]) * 0.025;
+            var ox = orig[i * 3],     oy = orig[i * 3 + 1], oz = orig[i * 3 + 2];
+            var px = ox * b,          py = oy * b,           pz = oz * b;
 
-            /* distort outward from sphere centre when near cursor */
+            /* distort outward from cube centre when near cursor */
             var ddx = px - mx, ddy = py - my, ddz = pz - mz;
             var md = Math.sqrt(ddx*ddx + ddy*ddy + ddz*ddz);
             if (md < MOUSE_R && md > 0.01) {
                 var mf = (1 - md / MOUSE_R);
                 mf = mf * mf * MOUSE_PUSH;
-                var len = Math.sqrt(px*px + py*py + pz*pz) || 1;
-                px += (px / len) * mf;
-                py += (py / len) * mf;
-                pz += (pz / len) * mf;
+                var len = Math.sqrt(ox*ox + oy*oy + oz*oz) || 1;
+                px += (ox / len) * mf;
+                py += (oy / len) * mf;
+                pz += (oz / len) * mf;
             }
 
             pos.setXYZ(i, px, py, pz);
         }
         pos.needsUpdate = true;
-        pts.material.opacity = 0.75 + Math.sin(time * 0.8) * 0.15;
+        pts.material.opacity = 0.72 + Math.sin(time * 0.8) * 0.15;
     }
 
     /* ── render loop ─────────────────────────────────────── */
@@ -155,8 +165,8 @@
         targetRotY += (mouseX * 0.25 - targetRotY) * 0.015;
         targetRotX += (mouseY * 0.12 - targetRotX) * 0.015;
 
-        orbGroup.rotation.y = time * 0.05 + targetRotY;
-        orbGroup.rotation.x = 0.15 + targetRotX;
+        cubeGroup.rotation.y = time * 0.04 + targetRotY;
+        cubeGroup.rotation.x = 0.20 + targetRotX;
 
         breathe(time);
         renderer.render(scene, camera);

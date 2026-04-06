@@ -8,12 +8,9 @@
  */
 ?>
 
-<!-- BREADCRUMB -->
-<!-- HERO with Liquid Wave -->
+<!-- HERO -->
 <section class="hero" style="min-height:420px;padding:90px 32px 60px">
-    <canvas class="hero-globe" id="waveCanvas" aria-hidden="true"></canvas>
-    <div class="hero-glow" style="top:-200px;left:50%;transform:translateX(-50%)"></div>
-    <div class="hero-overlay"></div>
+    <canvas class="hero-globe" id="heroSquare" aria-hidden="true"></canvas>
     <div class="hero-content">
         <div class="badge">Configure & Trade</div>
         <h1>Choose Your <span class="green">Challenge</span></h1>
@@ -207,158 +204,11 @@
             </div>
         </div>
 
-        <!-- ═══ TRADING OBJECTIVES — FundingPips-style Cards ═══ -->
-        <div style="height:64px"></div>
-        <div id="objectivesSection">
-
-            <h2 style="text-align:center;margin-bottom:8px">Trading <span class="green">Objectives</span></h2>
-            <p class="section-sub" style="margin-bottom:36px">Your evaluation path to a Doji Funded account — all values update dynamically.</p>
-
-            <!-- ── EVALUATION STAGE ── -->
-            <div class="obj-card" id="objEvalCard">
-                <div class="obj-card-header">
-                    <div class="obj-card-num" id="objEvalNum">1</div>
-                    <div>
-                        <div class="obj-card-title" id="objEvalTitle">The Evaluation Stage</div>
-                        <div class="obj-card-sub">Complete the evaluation to get your Doji Funded account.</div>
-                    </div>
-                </div>
-
-                <div class="obj-two-col">
-                    <!-- Left: Targets -->
-                    <div>
-                        <div class="obj-section-label green">TARGETS — HOW TO PASS</div>
-                        <div class="obj-target-box" id="objTargetBox"></div>
-                    </div>
-                    <!-- Right: Limits -->
-                    <div>
-                        <div class="obj-section-label" style="color:var(--red)">LIMITS — HARD BREACHES</div>
-                        <p style="font-size:13px;color:var(--text2);margin-bottom:12px">These limits apply to the evaluation.</p>
-                        <div class="obj-limit-card" id="objLimitDaily" onclick="toggleObjChart('daily')">
-                            <div class="obj-limit-left">
-                                <svg viewBox="0 0 20 20" fill="none" width="18" height="18"><path d="M3 14l3-4 3 2 4-5 4 3" stroke="var(--text3)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                <div>
-                                    <div class="obj-limit-name">Max Daily Loss</div>
-                                    <div class="obj-limit-desc">The amount you are allowed to lose every day.</div>
-                                </div>
-                            </div>
-                            <div class="obj-limit-right">
-                                <svg class="obj-chart-icon" viewBox="0 0 20 20" fill="none" width="18" height="18"><rect x="2" y="2" width="16" height="16" rx="2" stroke="var(--text3)" stroke-width="1"/><path d="M5 14l3-4 3 2 4-5" stroke="var(--green)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
-                                <span class="obj-limit-val" id="objDailyVal">5%</span>
-                            </div>
-                        </div>
-                        <!-- Daily chart popover -->
-                        <div class="obj-chart-popover" id="objChartDaily">
-                            <div class="obj-chart-title">Max Daily Loss</div>
-                            <svg class="obj-chart-svg" viewBox="0 0 280 120" id="objChartDailySvg"></svg>
-                            <div class="obj-chart-desc">The most you can lose in a single trading day.</div>
-                        </div>
-
-                        <div class="obj-limit-card" id="objLimitMax" onclick="toggleObjChart('max')">
-                            <div class="obj-limit-left">
-                                <svg viewBox="0 0 20 20" fill="none" width="18" height="18"><circle cx="10" cy="10" r="7" stroke="var(--text3)" stroke-width="1.5" fill="none"/><path d="M10 6v4l3 2" stroke="var(--text3)" stroke-width="1.5" stroke-linecap="round"/></svg>
-                                <div>
-                                    <div class="obj-limit-name">Max Overall Loss</div>
-                                    <div class="obj-limit-desc">The amount you are allowed to lose overall.</div>
-                                </div>
-                            </div>
-                            <div class="obj-limit-right">
-                                <svg class="obj-chart-icon" viewBox="0 0 20 20" fill="none" width="18" height="18"><rect x="2" y="2" width="16" height="16" rx="2" stroke="var(--text3)" stroke-width="1"/><path d="M5 14l3-4 3 2 4-5" stroke="var(--green)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
-                                <span class="obj-limit-val" style="color:var(--red)" id="objMaxVal">8%</span>
-                            </div>
-                        </div>
-                        <!-- Max chart popover -->
-                        <div class="obj-chart-popover" id="objChartMax">
-                            <div class="obj-chart-title">Max Overall Loss</div>
-                            <svg class="obj-chart-svg" viewBox="0 0 280 120" id="objChartMaxSvg"></svg>
-                            <div class="obj-chart-desc">A fixed floor your account balance can never breach.</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Guidelines -->
-                <div class="obj-section-label" style="margin-top:28px">GUIDELINES</div>
-                <div class="obj-guidelines" id="objGuidelines"></div>
-
-                <!-- Tags -->
-                <div class="obj-tags" id="objTags"></div>
-
-                <!-- Progress -->
-                <div class="obj-flow" id="objFlow"></div>
-            </div>
-
-            <!-- ── DOJI FUNDED ACCOUNT ── -->
-            <div style="height:24px"></div>
-            <div class="obj-card" id="objFundedCard">
-                <div class="obj-card-header">
-                    <div class="obj-card-num funded" id="objFundedNum">2</div>
-                    <div>
-                        <div class="obj-card-title">Doji Funded Account</div>
-                        <div class="obj-card-sub">Follow these rules to get rewarded on your Doji Funded account.</div>
-                    </div>
-                </div>
-
-                <div class="obj-section-label" style="color:var(--red)">RULES & LIMITS</div>
-                <div class="obj-limit-card" onclick="toggleObjChart('fdaily')">
-                    <div class="obj-limit-left">
-                        <svg viewBox="0 0 20 20" fill="none" width="18" height="18"><path d="M3 14l3-4 3 2 4-5 4 3" stroke="var(--text3)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        <div>
-                            <div class="obj-limit-name">Max Daily Loss</div>
-                            <div class="obj-limit-desc">The amount you are allowed to lose every day.</div>
-                        </div>
-                    </div>
-                    <div class="obj-limit-right">
-                        <svg class="obj-chart-icon" viewBox="0 0 20 20" fill="none" width="18" height="18"><rect x="2" y="2" width="16" height="16" rx="2" stroke="var(--text3)" stroke-width="1"/><path d="M5 14l3-4 3 2 4-5" stroke="var(--green)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
-                        <span class="obj-limit-val" id="objFDailyVal">5%</span>
-                    </div>
-                </div>
-                <div class="obj-chart-popover" id="objChartFdaily">
-                    <div class="obj-chart-title">Max Daily Loss — Funded</div>
-                    <svg class="obj-chart-svg" viewBox="0 0 280 120" id="objChartFdailySvg"></svg>
-                    <div class="obj-chart-desc">The most you can lose in a single trading day on your funded account.</div>
-                </div>
-
-                <div class="obj-limit-card" onclick="toggleObjChart('fmax')">
-                    <div class="obj-limit-left">
-                        <svg viewBox="0 0 20 20" fill="none" width="18" height="18"><circle cx="10" cy="10" r="7" stroke="var(--text3)" stroke-width="1.5" fill="none"/><path d="M10 6v4l3 2" stroke="var(--text3)" stroke-width="1.5" stroke-linecap="round"/></svg>
-                        <div>
-                            <div class="obj-limit-name">Max Overall Loss</div>
-                            <div class="obj-limit-desc">The amount you are allowed to lose overall.</div>
-                        </div>
-                    </div>
-                    <div class="obj-limit-right">
-                        <svg class="obj-chart-icon" viewBox="0 0 20 20" fill="none" width="18" height="18"><rect x="2" y="2" width="16" height="16" rx="2" stroke="var(--text3)" stroke-width="1"/><path d="M5 14l3-4 3 2 4-5" stroke="var(--green)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
-                        <span class="obj-limit-val" style="color:var(--red)" id="objFMaxVal">8%</span>
-                    </div>
-                </div>
-                <div class="obj-chart-popover" id="objChartFmax">
-                    <div class="obj-chart-title">Max Overall Loss — Funded</div>
-                    <svg class="obj-chart-svg" viewBox="0 0 280 120" id="objChartFmaxSvg"></svg>
-                    <div class="obj-chart-desc">A fixed floor your funded account balance can never breach.</div>
-                </div>
-
-                <div class="obj-limit-card">
-                    <div class="obj-limit-left">
-                        <svg viewBox="0 0 20 20" fill="none" width="18" height="18"><circle cx="10" cy="10" r="6" stroke="var(--text3)" stroke-width="1.2" fill="none"/><circle cx="10" cy="10" r="2.5" fill="var(--text3)"/></svg>
-                        <div>
-                            <div class="obj-limit-name">Consistency Rule</div>
-                            <div class="obj-limit-desc">No single day's profit can exceed this % of total profit.</div>
-                        </div>
-                    </div>
-                    <div class="obj-limit-right">
-                        <span class="obj-limit-val" style="color:var(--orange)" id="objFConsVal">30%</span>
-                    </div>
-                </div>
-
-                <!-- Funded Guidelines -->
-                <div class="obj-section-label" style="margin-top:28px">GUIDELINES</div>
-                <div class="obj-guidelines" id="objFGuidelines"></div>
-
-                <!-- Rewards -->
-                <div class="obj-section-label green" style="margin-top:28px">REWARDS</div>
-                <div class="obj-rewards" id="objRewards"></div>
-            </div>
-
+        <!-- Trading Objectives — removed, future section TBD -->
+        <!-- Hidden stubs keep configurator.js references valid -->
+        <div id="objectivesSection" style="display:none">
+            <div id="objEvalCard"><div id="objEvalNum"></div><div id="objEvalTitle"></div><div id="objTargetBox"></div><div id="objDailyVal"></div><div id="objMaxVal"></div><div id="objChartDaily"><svg id="objChartDailySvg"></svg></div><div id="objChartMax"><svg id="objChartMaxSvg"></svg></div><div id="objGuidelines"></div><div id="objTags"></div><div id="objFlow"></div><div id="objLimitDaily"></div><div id="objLimitMax"></div></div>
+            <div id="objFundedCard"><div id="objFundedNum"></div><div id="objFDailyVal"></div><div id="objFMaxVal"></div><div id="objFConsVal"></div><div id="objChartFdaily"><svg id="objChartFdailySvg"></svg></div><div id="objChartFmax"><svg id="objChartFmaxSvg"></svg></div><div id="objFGuidelines"></div><div id="objRewards"></div></div>
         </div>
 
         <!-- SEO Strategy Block -->

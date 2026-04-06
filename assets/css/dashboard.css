@@ -363,7 +363,7 @@ nav.nav, .mobile-menu { display: none !important; }
 
 .dash-sessions {
     position: absolute;
-    left: 50%;
+    right: 0;
     top: 0;
     bottom: 0;
     display: flex;
@@ -371,18 +371,18 @@ nav.nav, .mobile-menu { display: none !important; }
 }
 
 .dash-sc {
-    flex: 1;
+    flex: 0 0 172px;
+    width: 172px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     gap: 2px;
-    padding: 14px 24px;
+    padding: 14px 16px;
     border: none;
     border-radius: 0;
     background: var(--surface);
     transition: background 0.2s;
     position: relative;
-    min-width: 0;
 }
 
 /* Open state — green tint like screenshot */
@@ -445,11 +445,13 @@ nav.nav, .mobile-menu { display: none !important; }
     margin-bottom: 2px;
 }
 
-/* OPEN / CLOSED status row */
+/* OPEN / CLOSED status — inline in .dash-sc-top, pushed to right */
 .dash-sc-status {
     display: flex;
     align-items: center;
     gap: 5px;
+    margin-left: auto;
+    padding-left: 8px;
 }
 .dash-sc-state-dot {
     width: 5px;
@@ -1189,6 +1191,18 @@ nav.nav, .mobile-menu { display: none !important; }
     font-family: var(--f-mono); font-size: 9px;
     letter-spacing: 0.06em; color: var(--text-dis);
 }
+.dash-badge-set {
+    font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.06em;
+    color: #10B981; border: 1px solid rgba(16,185,129,0.3);
+    border-radius: 2px; padding: 1px 5px; margin-left: 6px;
+    vertical-align: middle;
+}
+.dash-badge-unset {
+    font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.06em;
+    color: #555555; border: 1px solid #222222;
+    border-radius: 2px; padding: 1px 5px; margin-left: 6px;
+    vertical-align: middle;
+}
 /* Inline status — no toasts */
 .dash-form-msg { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.04em; min-height: 18px; }
 .dash-form-msg.ok  { color: var(--success); }
@@ -1458,3 +1472,328 @@ nav.nav, .mobile-menu { display: none !important; }
         transition-duration: 0.01ms !important;
     }
 }
+
+/* ═══════════════════════════════════════════════════════
+   CONFIGURATOR — Nothing OS design parity
+   (mirrors nothing-site.css — applied when on dashboard)
+══════════════════════════════════════════════════════════ */
+
+#tab-configurator h2 { text-transform: none !important; }
+
+/* Corner decorations on active type tab */
+.type-tab.active {
+    background-image:
+        linear-gradient(rgba(16,185,129,.60),rgba(16,185,129,.60)),
+        linear-gradient(rgba(16,185,129,.60),rgba(16,185,129,.60)),
+        linear-gradient(rgba(16,185,129,.60),rgba(16,185,129,.60)),
+        linear-gradient(rgba(16,185,129,.60),rgba(16,185,129,.60)),
+        linear-gradient(rgba(16,185,129,.60),rgba(16,185,129,.60)),
+        linear-gradient(rgba(16,185,129,.60),rgba(16,185,129,.60)),
+        linear-gradient(rgba(16,185,129,.60),rgba(16,185,129,.60)),
+        linear-gradient(rgba(16,185,129,.60),rgba(16,185,129,.60)) !important;
+    background-size: 10px 1px, 1px 10px, 10px 1px, 1px 10px, 10px 1px, 1px 10px, 10px 1px, 1px 10px !important;
+    background-position: top left, top left, top right, top right, bottom left, bottom left, bottom right, bottom right !important;
+    background-repeat: no-repeat !important;
+}
+
+.type-tabs { gap: 8px !important; border-bottom: 1px solid #1A1A1A !important; }
+.type-tab {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    letter-spacing: 0.05em !important;
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #666666 !important;
+    box-shadow: none !important;
+    transition: border-color 0.15s, color 0.15s !important;
+}
+.type-tab:hover:not(.disabled):not(.active) {
+    border-color: #333333 !important;
+    color: #E8E8E8 !important;
+    background: #141414 !important;
+}
+.type-tab.active {
+    background-color: #0A0A0A !important;
+    color: #10B981 !important;
+    border-color: rgba(16,185,129,0.25) !important;
+}
+.type-tab.disabled {
+    background: #0A0A0A !important;
+    border-color: #1A1A1A !important;
+    color: #333333 !important;
+    cursor: not-allowed !important;
+    opacity: 1 !important;
+}
+.type-tab-sub {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 9px !important;
+    color: #444444 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+}
+.type-tab.active .type-tab-sub { color: rgba(16,185,129,0.6) !important; }
+
+.mode-strip { background: #000000 !important; border-bottom: 1px solid #1A1A1A !important; padding-bottom: 20px !important; }
+.mode-strip-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #666666 !important;
+    margin-bottom: 12px !important;
+}
+.mode-card {
+    background: #111111 !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+    transition: border-color 0.15s, background 0.15s !important;
+}
+.mode-card:hover:not(.mode-affiliate) { border-color: rgba(16,185,129,0.35) !important; background: #141414 !important; }
+.mode-card.active { border-color: #10B981 !important; background: rgba(16,185,129,0.05) !important; }
+.mode-tag {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 9px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #10B981 !important;
+}
+.mode-name { font-family: 'Chivo Mono', monospace !important; font-size: 14px !important; color: #E8E8E8 !important; }
+.mode-desc { font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; color: #666666 !important; }
+.mode-affiliate { opacity: 0.5 !important; cursor: not-allowed !important; }
+.mode-lock { color: #555555 !important; }
+.preset-select {
+    font-family: 'Chivo Mono', monospace !important;
+    background: #0A0A0A !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #E8E8E8 !important;
+    font-size: 11px !important;
+}
+.preset-select:focus { border-color: rgba(16,185,129,0.4) !important; outline: none !important; }
+
+.cfg-panel { background: #111111 !important; border: 1px solid #222222 !important; border-radius: 2px !important; box-shadow: none !important; }
+.cfg-header { border-bottom: 1px solid #1A1A1A !important; }
+.cfg-title {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    text-align: left !important;
+    color: #FFFFFF !important;
+    letter-spacing: -0.02em !important;
+    margin: 0 !important;
+}
+.cfg-badge {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 9px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #10B981 !important;
+    border: 1px solid rgba(16,185,129,0.3) !important;
+    background: transparent !important;
+    border-radius: 2px !important;
+}
+
+.summary-box { background: #0A0A0A !important; border: 1px solid #1A1A1A !important; border-radius: 2px !important; }
+.summary-title {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #666666 !important;
+    border-bottom: 1px solid #1A1A1A !important;
+}
+.summary-grid { gap: 0 !important; }
+.summary-key, .summary-label { color: #666666 !important; }
+.summary-val, .summary-value { color: #E8E8E8 !important; }
+
+.price-box { background: #000000 !important; border: 1px solid #1A1A1A !important; border-radius: 2px !important; }
+.price-label {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #666666 !important;
+}
+.price-val, #priceVal {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    animation: none !important;
+    text-shadow: none !important;
+}
+.price-original { color: #555555 !important; text-decoration: line-through !important; }
+
+.promo-input {
+    font-family: 'Chivo Mono', monospace !important;
+    background: #0A0A0A !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #E8E8E8 !important;
+    font-size: 12px !important;
+}
+.promo-input:focus { border-color: rgba(16,185,129,0.4) !important; outline: none !important; box-shadow: none !important; }
+.promo-input::placeholder { color: #444444 !important; }
+.promo-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    background: transparent !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #999999 !important;
+}
+.promo-btn:hover { border-color: rgba(16,185,129,0.4) !important; color: #10B981 !important; }
+#promoMsg { font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; letter-spacing: 0.04em !important; }
+
+.share-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    background: transparent !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #666666 !important;
+    box-shadow: none !important;
+}
+.share-btn:hover { border-color: #333333 !important; color: #E8E8E8 !important; }
+#shareMsg { font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; color: #10B981 !important; }
+
+.purchase-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 13px !important;
+    letter-spacing: 0.06em !important;
+    border-radius: 2px !important;
+    background: #10B981 !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+.purchase-btn:hover { background: #0EA572 !important; transform: none !important; }
+
+.reset-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    letter-spacing: 0.06em !important;
+    background: transparent !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+    color: #555555 !important;
+}
+.reset-btn:hover { border-color: #333333 !important; color: #999999 !important; }
+
+.note-box {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 12px !important;
+    background: rgba(16,185,129,0.04) !important;
+    border-left: 2px solid rgba(16,185,129,0.3) !important;
+    border-radius: 2px !important;
+    color: #999999 !important;
+}
+.note-box strong { color: #10B981 !important; }
+.note-box.note-disclaimer { background: rgba(255,255,255,0.02) !important; border-left: 2px solid #222222 !important; color: #555555 !important; }
+.disclaimer-link { color: #10B981 !important; }
+
+input[type="range"] { accent-color: #10B981 !important; }
+.slider-fill { background: #10B981 !important; }
+.slider-thumb { box-shadow: none !important; border-color: #10B981 !important; background: #000000 !important; }
+
+.cfg-num, .switch-price, .val-accent, .summary-card-dollar, .summary-detail-row .val, .price-badge, .price-original {
+    font-family: 'Chivo Mono', monospace !important;
+}
+.summary-account-size, .summary-card-pct {
+    font-family: 'Doto', 'Chivo Mono', monospace !important;
+    font-weight: 400 !important;
+}
+
+/* Corner decorations — panels */
+.cfg-panel, .summary-box, .price-box {
+    background-image:
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
+        linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)) !important;
+    background-size: 14px 1px, 1px 14px, 14px 1px, 1px 14px, 14px 1px, 1px 14px, 14px 1px, 1px 14px !important;
+    background-position: top left, top left, top right, top right, bottom left, bottom left, bottom right, bottom right !important;
+    background-repeat: no-repeat !important;
+}
+
+/* Corner decorations — mode cards */
+.mode-card {
+    background-image:
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)),
+        linear-gradient(rgba(16,185,129,.45),rgba(16,185,129,.45)) !important;
+    background-size: 11px 1px, 1px 11px, 11px 1px, 1px 11px, 11px 1px, 1px 11px, 11px 1px, 1px 11px !important;
+    background-position: top left, top left, top right, top right, bottom left, bottom left, bottom right, bottom right !important;
+    background-repeat: no-repeat !important;
+}
+
+/* ── My Presets card — Nothing OS ── */
+.mp-name-input {
+    font-family: 'Chivo Mono', monospace !important;
+    background: #0A0A0A !important;
+    border: 1px solid #222222 !important;
+    border-radius: 2px !important;
+    color: #E8E8E8 !important;
+    font-size: 11px !important;
+}
+.mp-name-input:focus { border-color: rgba(16,185,129,0.4) !important; outline: none !important; box-shadow: none !important; }
+.mp-name-input::placeholder { color: #444444 !important; }
+.mp-save-btn {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 10px !important;
+    letter-spacing: 0.06em !important;
+    background: #10B981 !important;
+    color: #000000 !important;
+    border: none !important;
+    border-radius: 2px !important;
+}
+.mp-save-btn:hover { background: #0EA572 !important; }
+.mp-list { scrollbar-width: thin; scrollbar-color: #222222 transparent; }
+.mp-item {
+    font-family: 'Chivo Mono', monospace !important;
+    background: #0A0A0A !important;
+    border: 1px solid #1A1A1A !important;
+    border-radius: 2px !important;
+}
+.mp-item:hover { border-color: rgba(16,185,129,0.3) !important; }
+.mp-item-name { font-size: 11px !important; color: #E8E8E8 !important; }
+.mp-item-tab { font-size: 9px !important; color: rgba(16,185,129,0.7) !important; letter-spacing: 0.05em !important; }
+.mp-item-load {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 9px !important;
+    color: #10B981 !important;
+    border: 1px solid rgba(16,185,129,0.3) !important;
+    border-radius: 2px !important;
+    background: transparent !important;
+    letter-spacing: 0.04em !important;
+}
+.mp-item-load:hover { background: rgba(16,185,129,0.08) !important; }
+.mp-item-del {
+    font-family: 'Chivo Mono', monospace !important;
+    font-size: 11px !important;
+    color: #444444 !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 2px !important;
+}
+.mp-item-del:hover { color: #D71921 !important; border-color: rgba(215,25,33,0.3) !important; }
+.mp-empty { font-family: 'Chivo Mono', monospace !important; font-size: 10px !important; color: #444444 !important; letter-spacing: 0.04em !important; }
+.mp-msg { font-family: 'Chivo Mono', monospace !important; font-size: 10px !important; }
+.mp-msg.ok { color: #10B981 !important; }
+.mp-msg.err { color: #D71921 !important; }

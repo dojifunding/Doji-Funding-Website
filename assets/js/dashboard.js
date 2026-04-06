@@ -81,6 +81,10 @@ const Dashboard = (function() {
         const titleEl = document.getElementById('dashPageTitle');
         if (titleEl) titleEl.textContent = TAB_TITLES[tabName] || tabName;
 
+        // Show greeting only on overview tab
+        var greetingEl = document.getElementById('dashGreeting');
+        if (greetingEl) greetingEl.style.display = tabName === 'overview' ? '' : 'none';
+
         // Update URL hash without scrolling
         history.replaceState(null, '', '#' + tabName);
 
@@ -294,13 +298,27 @@ const Dashboard = (function() {
         if (!titleEl || !titleEl.parentNode) return;
         var h = new Date().getHours();
         var salut = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
-        var nameEl = document.querySelector('.dropdown-name');
-        var first = nameEl ? nameEl.textContent.trim().split(' ')[0] : '';
+        var firstNameEl = document.getElementById('dashFirstName');
+        var first = firstNameEl ? firstNameEl.textContent.trim() : '';
         var el = document.createElement('p');
         el.className = 'dash-greeting';
         el.id = 'dashGreeting';
-        el.textContent = salut + (first ? ', ' + first : '') + '.';
+        el.textContent = salut + (first ? ' ' + first : '') + ' !';
         titleEl.parentNode.insertBefore(el, titleEl.nextSibling);
+    }
+
+    // ─── Laser burn inside .dash-main then switch tab ───
+    function burnThenSwitch(tabName, afterSwitch) {
+        var main = document.querySelector('.dash-main');
+        if (!main || typeof LaserBurn === 'undefined' || !LaserBurn.triggerInElement) {
+            switchTab(tabName);
+            if (afterSwitch) afterSwitch();
+            return;
+        }
+        LaserBurn.triggerInElement(main, function() {
+            switchTab(tabName);
+            if (afterSwitch) afterSwitch();
+        });
     }
 
     // ─── Console easter egg ───
@@ -313,20 +331,19 @@ const Dashboard = (function() {
 
     // ─── Init ───
     function init() {
-        // Sidebar nav clicks
+        // Sidebar nav clicks — laser burn inside .dash-main, then switch tab
         document.querySelectorAll('.dash-nav-item').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var group = btn.closest('.dash-nav-group');
                 if (group && group.id === 'navGroupProfile') {
                     var isOpen = group.classList.toggle('open');
                     if (isOpen) {
-                        switchTab('settings');
-                        showProfileSection('profile');
+                        burnThenSwitch('settings', function() { showProfileSection('profile'); });
                     } else {
                         resetProfileSections();
                     }
                 } else {
-                    switchTab(btn.dataset.tab);
+                    burnThenSwitch(btn.dataset.tab);
                     closeSidebar();
                 }
             });
@@ -408,6 +425,7 @@ const Dashboard = (function() {
         initGreeting();
         initConsoleEgg();
 
+
         // ─── Promo banner height → CSS var (fixes overlap) ───
         (function() {
             var banner = document.getElementById('promoBanner');
@@ -428,3 +446,203 @@ const Dashboard = (function() {
 
     return { switchTab, filterChallenges, copyReferral, setTheme, toggleTheme, submitKycDoc, showProfileSection };
 })();
+
+/* ═══════════════════════════════════════════════════
+   DashPresets — save/load named configurator presets
+═══════════════════════════════════════════════════ */
+const DashPresets = (function() {
+    'use strict';
+
+    var _presets = [];
+    var _open    = false;
+
+    /* ── Toggle panel open/close ── */
+    function toggle(e) {
+        var card = document.getElementById('modeMyPresets');
+        if (!card) return;
+        _open = !card.classList.contains('active');
+        // Close other mode cards
+        document.querySelectorAll('.mode-card').forEach(function(c) { c.classList.remove('active'); });
+        if (_open) {
+            card.classList.add('active');
+            _renderList();
+        }
+    }
+
+    /* ── Capture current Configurator state ── */
+    function _captureConfig() {
+        if (typeof Configurator === 'undefined') return null;
+        // Access internal state via a lightweight approach: read slider values from DOM
+        var S = {};
+        var cfg = window.DOJI_CONFIG && window.DOJI_CONFIG.pricing;
+        if (!cfg) return null;
+
+        // Read from sliders + toggles in the DOM
+        var sizeInput = document.querySelector('[data-slider-id="sizeIdx"] .slider-input');
+        if (sizeInput) S.sizeIdx = parseInt(sizeInput.value);
+
+        var tabOneActive = document.getElementById('tab-onestep') && document.getElementById('tab-onestep').classList.contains('active');
+        S.tab = tabOneActive ? 'onestep' : 'twostep';
+
+        ['target','target1','target2','daily','max','split','days','consistency'].forEach(function(id) {
+            var el = document.querySelector('[data-slider-id="' + id + '"] .slider-input');
+            if (el) S[id] = parseInt(el.value);
+        });
+
+        var getToggle = function(groupSel, defaultVal) {
+            var active = document.querySelector(groupSel + ' .toggle-btn.active');
+            return active ? active.getAttribute('onclick').match(/'([^']+)'\)/)?.[1] || defaultVal : defaultVal;
+        };
+
+        S.dailyType = getToggle('[data-slider-id="daily"] ~ div .toggle-group', 'intraday');
+        S.maxType   = getToggle('[data-slider-id="max"] ~ div .toggle-group', 'intraday');
+
+        var payActive = document.querySelector('.toggle-group .toggle-btn.active[onclick*="payout"]');
+        if (payActive) {
+            var m = payActive.getAttribute('onclick').match(/'([^']+)'\)/);
+            S.payout = m ? m[1] : 'monthly';
+        } else { S.payout = 'monthly'; }
+
+        var onRow  = document.querySelector('.switch-row[onclick*="overnight"]');
+        var owRow  = document.querySelector('.switch-row[onclick*="overweek"]');
+        S.overnight = onRow  ? onRow.classList.contains('active')  : false;
+        S.overweek  = owRow  ? owRow.classList.contains('active') : false;
+
+        return S;
+    }
+
+    /* ── Save current config ── */
+    function save() {
+        var nameEl = document.getElementById('mpNameInput');
+        var msgEl  = document.querySelector('.mp-msg') || _getOrCreateMsg();
+        var name   = nameEl ? nameEl.value.trim() : '';
+        if (!name) { _showMsg('err', 'Please enter a name.'); return; }
+
+        var config = _captureConfig();
+        if (!config) { _showMsg('err', 'Configurator not ready.'); return; }
+
+        var csrf = (window.DOJI_CONFIG && window.DOJI_CONFIG.csrfToken) || '';
+        var body = new FormData();
+        body.append('csrf', csrf);
+        body.append('name', name);
+        body.append('config', JSON.stringify(config));
+
+        fetch('api/presets.php', { method: 'POST', body: body })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    _presets.unshift(data.preset);
+                    if (nameEl) nameEl.value = '';
+                    _showMsg('ok', 'Saved!');
+                    _renderList();
+                } else {
+                    _showMsg('err', data.error || 'Error saving.');
+                }
+            })
+            .catch(function() { _showMsg('err', 'Connection error.'); });
+    }
+
+    /* ── Load a preset into Configurator ── */
+    function load(config) {
+        if (typeof Configurator === 'undefined' || !config) return;
+        // Switch tab first if needed
+        var needTab = config.tab || 'onestep';
+        if (needTab !== (document.getElementById('tab-onestep').classList.contains('active') ? 'onestep' : 'twostep')) {
+            Configurator.setTab(needTab);
+        }
+        // Apply config values via Configurator's public onSliderDone/onToggle/onCheck
+        var sliders = ['sizeIdx','target','target1','target2','daily','max','split','days','consistency'];
+        sliders.forEach(function(id) {
+            if (config[id] !== undefined) {
+                Configurator.onSliderDone(id, config[id]);
+                var inp = document.querySelector('[data-slider-id="' + id + '"] .slider-input');
+                if (inp) { inp.value = config[id]; }
+            }
+        });
+        if (config.dailyType) Configurator.onToggle('dailyType', config.dailyType);
+        if (config.maxType)   Configurator.onToggle('maxType',   config.maxType);
+        if (config.payout)    Configurator.onToggle('payout',    config.payout);
+        if (config.overnight !== undefined) Configurator.onCheck('overnight', !!config.overnight);
+        if (config.overweek  !== undefined) Configurator.onCheck('overweek',  !!config.overweek);
+
+        // Close panel
+        var card = document.getElementById('modeMyPresets');
+        if (card) card.classList.remove('active');
+        _open = false;
+    }
+
+    /* ── Delete a preset ── */
+    function remove(id) {
+        var csrf = (window.DOJI_CONFIG && window.DOJI_CONFIG.csrfToken) || '';
+        var body = new FormData();
+        body.append('csrf', csrf);
+        body.append('action', 'delete');
+        body.append('id', id);
+
+        fetch('api/presets.php', { method: 'POST', body: body })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    _presets = _presets.filter(function(p) { return p.id !== id; });
+                    _renderList();
+                }
+            });
+    }
+
+    /* ── Render preset list ── */
+    function _renderList() {
+        var list = document.getElementById('mpList');
+        if (!list) return;
+        if (!_presets.length) {
+            list.innerHTML = '<div class="mp-empty">No saved presets yet.</div>';
+            return;
+        }
+        list.innerHTML = _presets.map(function(p) {
+            var tabLabel = p.config && p.config.tab === 'twostep' ? '2-Step' : '1-Step';
+            return '<div class="mp-item">' +
+                '<span class="mp-item-name" title="' + _esc(p.name) + '">' + _esc(p.name) + '</span>' +
+                '<span class="mp-item-tab">' + tabLabel + '</span>' +
+                '<button class="mp-item-load" onclick="DashPresets.load(' + JSON.stringify(p.config).replace(/"/g, '&quot;') + ')">Load</button>' +
+                '<button class="mp-item-del" onclick="DashPresets.remove(' + p.id + ')" title="Delete">✕</button>' +
+                '</div>';
+        }).join('');
+    }
+
+    function _showMsg(type, text) {
+        var existing = document.getElementById('mpMsg');
+        if (!existing) {
+            existing = document.createElement('div');
+            existing.id = 'mpMsg';
+            existing.className = 'mp-msg';
+            var list = document.getElementById('mpList');
+            if (list && list.parentNode) list.parentNode.insertBefore(existing, list);
+        }
+        existing.className = 'mp-msg ' + type;
+        existing.textContent = text;
+        setTimeout(function() { if (existing) existing.textContent = ''; }, 3000);
+    }
+
+    function _getOrCreateMsg() {
+        return document.getElementById('mpMsg');
+    }
+
+    function _esc(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    /* ── Init: fetch presets from server ── */
+    function init() {
+        fetch('api/presets.php')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    _presets = data.presets || [];
+                }
+            })
+            .catch(function() {});
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    return { toggle: toggle, save: save, load: load, remove: remove };
+}());

@@ -6,12 +6,9 @@
  */
 ?>
 
-<!-- BREADCRUMB -->
-<!-- HERO with Liquid Wave -->
+<!-- HERO -->
 <section class="hero" style="min-height:420px;padding:90px 32px 60px">
-    <canvas class="hero-globe" id="waveCanvas"></canvas>
-    <div class="hero-glow" style="top:-200px;left:50%;transform:translateX(-50%)"></div>
-    <div class="hero-overlay"></div>
+    <canvas class="hero-globe" id="heroDiamond" aria-hidden="true"></canvas>
     <div class="hero-content">
         <div class="badge">Compete & Win</div>
         <h1>Trading <span class="green">Competitions</span></h1>

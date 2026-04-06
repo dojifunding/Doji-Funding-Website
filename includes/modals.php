@@ -13,6 +13,8 @@ $user = getCurrentUser();
 <!-- ═══ LOGIN MODAL ═══ -->
 <div class="modal-overlay" id="loginModal">
     <div class="modal">
+        <canvas class="modal-dot-canvas" aria-hidden="true"></canvas>
+        <div class="modal-content">
         <button class="modal-close" onclick="AuthModal.close()">&times;</button>
         
         <div class="modal-header">
@@ -55,15 +57,18 @@ $user = getCurrentUser();
         </form>
 
         <div class="modal-footer">
-            Don't have an account? 
+            Don't have an account?
             <a onclick="AuthModal.switchTo('signup')" class="modal-link">Sign Up</a>
         </div>
+        </div><!-- /.modal-content -->
     </div>
 </div>
 
 <!-- ═══ SIGNUP MODAL ═══ -->
 <div class="modal-overlay" id="signupModal">
     <div class="modal modal-wide">
+        <canvas class="modal-dot-canvas" aria-hidden="true"></canvas>
+        <div class="modal-content">
         <button class="modal-close" onclick="AuthModal.close()">&times;</button>
         
         <div class="modal-header">
@@ -141,9 +146,10 @@ $user = getCurrentUser();
         </form>
 
         <div class="modal-footer">
-            Already have an account? 
+            Already have an account?
             <a onclick="AuthModal.switchTo('login')" class="modal-link">Sign in</a>
         </div>
+        </div><!-- /.modal-content -->
     </div>
 </div>
 

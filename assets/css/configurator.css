@@ -58,6 +58,49 @@
 .mode-name { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.2; }
 .mode-desc { font-size: 11px; color: var(--text3); line-height: 1.4; }
 
+/* My Presets card — dashboard only */
+.mode-card-presets { cursor: pointer; position: relative; }
+.mode-presets-drop {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.28s ease, margin-top 0.28s ease;
+    margin-top: 0;
+}
+.mode-card.active .mode-presets-drop {
+    max-height: 320px;
+    margin-top: 10px;
+}
+.mp-save-row { display: flex; gap: 6px; margin-bottom: 8px; }
+.mp-name-input {
+    flex: 1; min-width: 0;
+    padding: 6px 8px; font-size: 12px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text1);
+}
+.mp-save-btn {
+    padding: 6px 12px; font-size: 11px; font-weight: 700;
+    background: var(--green); color: var(--bg);
+    border: none; border-radius: var(--radius-sm); cursor: pointer;
+    white-space: nowrap;
+}
+.mp-list { display: flex; flex-direction: column; gap: 4px; max-height: 200px; overflow-y: auto; }
+.mp-item {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 8px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--bg);
+    cursor: pointer; transition: border-color 0.15s;
+}
+.mp-item:hover { border-color: rgba(16,185,129,0.35); }
+.mp-item-name { flex: 1; min-width: 0; font-size: 12px; color: var(--text1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mp-item-tab { font-size: 10px; color: var(--green); opacity: 0.7; }
+.mp-item-load { font-size: 10px; color: var(--green); cursor: pointer; padding: 2px 6px; border: 1px solid rgba(16,185,129,0.3); border-radius: 2px; background: transparent; }
+.mp-item-load:hover { background: rgba(16,185,129,0.08); }
+.mp-item-del { font-size: 10px; color: var(--text3); cursor: pointer; padding: 2px 5px; border: 1px solid transparent; border-radius: 2px; background: transparent; line-height: 1; }
+.mp-item-del:hover { color: #D71921; border-color: rgba(215,25,33,0.3); }
+.mp-empty { font-size: 11px; color: var(--text3); text-align: center; padding: 12px 0; }
+.mp-msg { font-size: 11px; margin-top: 4px; }
+.mp-msg.ok { color: var(--green); }
+.mp-msg.err { color: #D71921; }
+
 /* Competitor card — expandable preset dropdown */
 .mode-card-competitor { cursor: pointer; }
 .mode-competitor-drop {
