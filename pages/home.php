@@ -396,7 +396,7 @@
                     <span class="dc-terminal-status"><span class="dc-dot"></span>ACTIVE</span>
                 </div>
                 <div class="dc-terminal-balance">
-                    <img src="<?= DOJI_COIN_FILE ?>" alt="Doji Coin" class="dc-terminal-coin">
+                    <img src="<?= DOJI_COIN_FILE ?>" loading="lazy" alt="Doji Coin" class="dc-terminal-coin">
                     <span class="dc-terminal-amount">5,300</span>
                     <span class="dc-terminal-unit">DC</span>
                 </div>
@@ -419,28 +419,28 @@
                 <div class="dc-reward-card">
                     <div class="dc-reward-top">
                         <span class="dc-reward-name">Free Challenge</span>
-                        <span class="dc-reward-cost"><img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-reward-icon"> 5,000</span>
+                        <span class="dc-reward-cost"><img src="<?= DOJI_COIN_FILE ?>" loading="lazy" alt="" class="dc-reward-icon"> 5,000</span>
                     </div>
                     <p class="dc-reward-desc">Skip the entry fee entirely. Redeem coins for a full evaluation — same rules, zero cost.</p>
                 </div>
                 <div class="dc-reward-card">
                     <div class="dc-reward-top">
                         <span class="dc-reward-name">+5% Split Boost</span>
-                        <span class="dc-reward-cost"><img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-reward-icon"> 2,500</span>
+                        <span class="dc-reward-cost"><img src="<?= DOJI_COIN_FILE ?>" loading="lazy" alt="" class="dc-reward-icon"> 2,500</span>
                     </div>
                     <p class="dc-reward-desc">Raise your profit share on the next funded cycle. Stack multiple boosts for compounding gains.</p>
                 </div>
                 <div class="dc-reward-card">
                     <div class="dc-reward-top">
                         <span class="dc-reward-name">Fee Reduction</span>
-                        <span class="dc-reward-cost"><img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-reward-icon"> 1,500</span>
+                        <span class="dc-reward-cost"><img src="<?= DOJI_COIN_FILE ?>" loading="lazy" alt="" class="dc-reward-icon"> 1,500</span>
                     </div>
                     <p class="dc-reward-desc">Trim your challenge fee by up to 30%. The more volume you trade, the cheaper your next challenge gets.</p>
                 </div>
                 <div class="dc-reward-card">
                     <div class="dc-reward-top">
                         <span class="dc-reward-name">Exclusive Merch</span>
-                        <span class="dc-reward-cost"><img src="<?= DOJI_COIN_FILE ?>" alt="" class="dc-reward-icon"> 3,000</span>
+                        <span class="dc-reward-cost"><img src="<?= DOJI_COIN_FILE ?>" loading="lazy" alt="" class="dc-reward-icon"> 3,000</span>
                     </div>
                     <p class="dc-reward-desc">Limited Doji Funding drops — gear made for traders, refreshed every quarter. Coins only.</p>
                 </div>
@@ -561,7 +561,7 @@
                 <div class="platform-desc">The industry standard for forex & CFD trading with advanced charting and EAs</div>
             </div>
             <div class="platform-card">
-                <img src="assets/img/ctrader-logo.svg" alt="cTrader" class="platform-logo-img" width="120" height="43">
+                <img src="assets/img/ctrader-logo.svg" alt="cTrader" class="platform-logo-img" width="120" height="43" loading="lazy">
                 <div class="platform-name">cTrader</div>
                 <div class="platform-desc">Modern interface with Level II pricing, advanced cBots and copy trading built-in</div>
             </div>

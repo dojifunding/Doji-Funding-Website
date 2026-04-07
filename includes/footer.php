@@ -36,7 +36,7 @@ $v = ASSET_VERSION;
 <footer>
     <div class="footer-grid">
         <div>
-            <img class="footer-logo" src="<?= LOGO_FILE ?>" alt="<?= SITE_NAME ?> logo">
+            <img class="footer-logo" src="<?= LOGO_FILE ?>" alt="<?= SITE_NAME ?> logo" loading="lazy">
             <div class="footer-brand">DOJI <span class="green">FUNDING</span><sup class="tm">®</sup></div>
             <p class="footer-desc">
                 The first fully customizable prop firm. Trade your way with transparent pricing based on real risk.
@@ -190,57 +190,57 @@ $v = ASSET_VERSION;
         <?php endif; ?>
     };
 </script>
-<script src="assets/js/app.js?v=<?= $v ?>"></script>
-<script src="assets/js/laser-transition.js?v=<?= $v ?>"></script>
-<script src="assets/js/auth.js?v=<?= $v ?>"></script>
-<script src="assets/js/auth-canvas.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/app.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/laser-transition.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/auth.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/auth-canvas.js?v=<?= $v ?>"></script>
 <?php if ($currentPage === 'challenges' || $currentPage === 'home' || $currentPage === 'dashboard'): ?>
-<script src="assets/js/configurator.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/configurator.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 <?php if ($currentPage === 'home' || $currentPage === 'challenges'): ?>
-<script src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 <?php if ($currentPage === 'home'): ?>
-<script src="assets/js/globe.js?v=<?= $v ?>"></script>
-<script src="assets/js/hiw-voxel.js?v=<?= $v ?>"></script>
-<script src="assets/js/weight-wave.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/globe.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/hiw-voxel.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/weight-wave.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 <?php if ($currentPage === 'affiliates'): ?>
-<script src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
-<script src="assets/js/particle-pyramid.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/particle-pyramid.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 <?php if ($currentPage === 'competitions'): ?>
-<script src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
-<script src="assets/js/particle-diamond.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/particle-diamond.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 <?php if ($currentPage === 'challenges'): ?>
-<script src="assets/js/particle-square.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/particle-square.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 <?php if ($currentPage === 'faq'): ?>
-<script src="assets/js/faq.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/faq.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 <?php if ($currentPage === 'dashboard'): ?>
-<script src="assets/js/dashboard.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/dashboard.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 
 <!-- Visual Effects Engine -->
-<script src="assets/js/effects.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/effects.js?v=<?= $v ?>"></script>
 
 <!-- Polish & UX Enhancements -->
-<script src="assets/js/polish.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/polish.js?v=<?= $v ?>"></script>
 
 <?php if ($currentPage !== 'dashboard'): ?>
 <!-- Stacking Words — scroll-scrubbed word reveal -->
-<script src="assets/js/stacking-words.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/stacking-words.js?v=<?= $v ?>"></script>
 
 <!-- Text Loop — cycling headline words -->
-<script src="assets/js/text-loop.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/text-loop.js?v=<?= $v ?>"></script>
 
 <!-- Payment Logo Carousel -->
-<script src="assets/js/payment-carousel.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/payment-carousel.js?v=<?= $v ?>"></script>
 
 <!-- Interactive Pixel Particle Footer -->
-<script src="assets/js/particle-footer.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/particle-footer.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 
 <!-- Animated Grain Overlays (rig.ai style) -->
