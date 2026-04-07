@@ -13,7 +13,7 @@
             <h3 class="engage-title">Do not skip any beat.</h3>
             <p class="engage-desc">The Ultimate Trading Community. Join our Discord server to get the latest updates, market insights, strategies and more.</p>
             <div class="engage-actions">
-                <a href="https://discord.gg/kNUqAqCppU" target="_blank" rel="noopener" class="engage-btn engage-btn-discord">Open Discord</a>
+                <a href="https://discord.gg/kNUqAqCppU" target="_blank" rel="noopener noreferrer" class="engage-btn engage-btn-discord">Open Discord</a>
             </div>
         </div>
 

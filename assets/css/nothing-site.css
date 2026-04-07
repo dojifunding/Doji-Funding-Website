@@ -640,7 +640,7 @@ footer {
     backdrop-filter: none !important;
     border-top-color: #1A1A1A !important;
 }
-.disclaimer-text { font-family: 'Chivo Mono', monospace !important; color: #555555 !important; }
+.disclaimer-text { font-family: 'Chivo Mono', monospace !important; color: #999999 !important; }
 .disclaimer-btn {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 11px !important;
@@ -1073,7 +1073,7 @@ h3 { text-transform: none !important; }
     color: #666666 !important;
 }
 .mode-affiliate { opacity: 0.5 !important; cursor: not-allowed !important; }
-.mode-lock { color: #555555 !important; }
+.mode-lock { color: #999999 !important; }
 .mode-card-competitor { cursor: pointer !important; }
 .preset-select {
     font-family: 'Chivo Mono', monospace !important;
@@ -1162,7 +1162,7 @@ h3 { text-transform: none !important; }
     animation: none !important;
     text-shadow: none !important;
 }
-.price-original { color: #555555 !important; text-decoration: line-through !important; }
+.price-original { color: #999999 !important; text-decoration: line-through !important; }
 .price-discounted { color: #10B981 !important; }
 
 /* Promo row */
@@ -1227,7 +1227,7 @@ h3 { text-transform: none !important; }
     background: transparent !important;
     border: 1px solid #1A1A1A !important;
     border-radius: 2px !important;
-    color: #555555 !important;
+    color: #999999 !important;
 }
 .reset-btn:hover { border-color: #333333 !important; color: #999999 !important; }
 
@@ -1244,7 +1244,7 @@ h3 { text-transform: none !important; }
 .note-box.note-disclaimer {
     background: rgba(255,255,255,0.02) !important;
     border-left: 2px solid #222222 !important;
-    color: #555555 !important;
+    color: #999999 !important;
 }
 .disclaimer-link { color: #10B981 !important; }
 
@@ -1321,7 +1321,7 @@ input[type="range"] {
 }
 .obj-limit-desc {
     font-family: 'Chivo Mono', monospace !important;
-    color: #555555 !important;
+    color: #999999 !important;
     font-size: 11px !important;
 }
 .obj-limit-val {
@@ -1533,7 +1533,7 @@ input[type="range"] {
 .rule-mini-desc {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 10px !important;
-    color: #555555 !important;
+    color: #999999 !important;
 }
 .rule-list { display: flex !important; flex-direction: column !important; gap: 8px !important; }
 .rule-list-item {
@@ -1752,7 +1752,7 @@ input[type="range"] {
 .aff-tier-example {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 11px !important;
-    color: #555555 !important;
+    color: #999999 !important;
     border-top: 1px solid #1A1A1A !important;
     padding-top: 8px !important;
     margin-top: 8px !important;
@@ -1849,7 +1849,7 @@ button.faq-cat {
     font-size: 10px !important;
     text-transform: uppercase !important;
     letter-spacing: 0.06em !important;
-    color: #555555 !important;
+    color: #999999 !important;
 }
 .contact-form-wrap h3 {
     font-family: 'Chivo Mono', monospace !important;

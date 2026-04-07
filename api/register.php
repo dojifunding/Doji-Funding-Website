@@ -114,5 +114,5 @@ try {
 
 } catch (PDOException $e) {
     error_log("Registration error: " . $e->getMessage());
-    jsonResponse(["error" => "DB Error: " . $e->getMessage()], 500);
+    jsonResponse(["error" => "An error occurred. Please try again later."], 500);
 }

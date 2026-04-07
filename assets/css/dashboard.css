@@ -1199,7 +1199,7 @@ nav.nav, .mobile-menu { display: none !important; }
 }
 .dash-badge-unset {
     font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.06em;
-    color: #555555; border: 1px solid #222222;
+    color: #999999; border: 1px solid #222222;
     border-radius: 2px; padding: 1px 5px; margin-left: 6px;
     vertical-align: middle;
 }
@@ -1562,7 +1562,7 @@ nav.nav, .mobile-menu { display: none !important; }
 .mode-name { font-family: 'Chivo Mono', monospace !important; font-size: 14px !important; color: #E8E8E8 !important; }
 .mode-desc { font-family: 'Chivo Mono', monospace !important; font-size: 11px !important; color: #666666 !important; }
 .mode-affiliate { opacity: 0.5 !important; cursor: not-allowed !important; }
-.mode-lock { color: #555555 !important; }
+.mode-lock { color: #999999 !important; }
 .preset-select {
     font-family: 'Chivo Mono', monospace !important;
     background: #0A0A0A !important;
@@ -1627,7 +1627,7 @@ nav.nav, .mobile-menu { display: none !important; }
     animation: none !important;
     text-shadow: none !important;
 }
-.price-original { color: #555555 !important; text-decoration: line-through !important; }
+.price-original { color: #999999 !important; text-decoration: line-through !important; }
 
 .promo-input {
     font-family: 'Chivo Mono', monospace !important;
@@ -1683,7 +1683,7 @@ nav.nav, .mobile-menu { display: none !important; }
     background: transparent !important;
     border: 1px solid #1A1A1A !important;
     border-radius: 2px !important;
-    color: #555555 !important;
+    color: #999999 !important;
 }
 .reset-btn:hover { border-color: #333333 !important; color: #999999 !important; }
 
@@ -1696,7 +1696,7 @@ nav.nav, .mobile-menu { display: none !important; }
     color: #999999 !important;
 }
 .note-box strong { color: #10B981 !important; }
-.note-box.note-disclaimer { background: rgba(255,255,255,0.02) !important; border-left: 2px solid #222222 !important; color: #555555 !important; }
+.note-box.note-disclaimer { background: rgba(255,255,255,0.02) !important; border-left: 2px solid #222222 !important; color: #999999 !important; }
 .disclaimer-link { color: #10B981 !important; }
 
 input[type="range"] { accent-color: #10B981 !important; }
