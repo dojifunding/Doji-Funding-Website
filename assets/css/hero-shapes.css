@@ -1,0 +1,153 @@
+/**
+ * Doji Funding — Hero Shapes (CSS-only)
+ *
+ * Replaces Three.js globe + particle canvas scripts with
+ * zero-JS animated wireframe shapes. GPU-composited via
+ * CSS transform — no main-thread work, no DOMContentLoaded race.
+ *
+ * Shapes: sphere · cube · pyramid · diamond
+ * Aesthetic: Nothing OS — OLED black + #10B981 emerald wireframe
+ */
+
+/* ═══════════════════════════════════════════════════════
+   SHARED WRAPPER  (replaces <canvas class="hero-globe">)
+══════════════════════════════════════════════════════════ */
+.hero-shape {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+    /* Dot-grid background — replaces hero-canvas.js */
+    background-image: radial-gradient(rgba(16,185,129,0.14) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+/* SVG inside any hero-shape */
+.hero-shape .hs-svg {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: visible;
+}
+
+/* ═══════════════════════════════════════════════════════
+   KEYFRAMES
+══════════════════════════════════════════════════════════ */
+@keyframes hsSpinSlow   { to { transform: rotate(360deg); } }
+@keyframes hsSpinMedium { to { transform: rotate(360deg); } }
+@keyframes hsOrbit {
+    from { transform: rotate(0deg) translateX(118px) rotate(0deg); }
+    to   { transform: rotate(360deg) translateX(118px) rotate(-360deg); }
+}
+@keyframes hsCubeRotate {
+    0%   { transform: rotateX(18deg) rotateY(0deg); }
+    100% { transform: rotateX(18deg) rotateY(360deg); }
+}
+@keyframes hsCubePulse {
+    0%, 100% { opacity: 0.06; }
+    50%      { opacity: 0.12; }
+}
+@keyframes hsDiamondSpin {
+    0%   { transform: rotateZ(0deg) rotateX(15deg); }
+    100% { transform: rotateZ(360deg) rotateX(15deg); }
+}
+@keyframes hsGlow {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 1.0; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   1. SPHERE  ·  home.php
+══════════════════════════════════════════════════════════ */
+.hero-sphere .hs-svg {
+    /* Right side of the hero-split layout */
+    left: auto;
+    right: 8%;
+    transform: translateY(-50%);
+    width: 300px;
+    height: 300px;
+}
+
+/* Meridians group — rotates continuously */
+.hs-meridians {
+    transform-origin: 150px 150px;
+    animation: hsSpinSlow 22s linear infinite;
+}
+
+/* Orbiting dot around equator */
+.hs-orbit-wrap {
+    transform-origin: 150px 150px;
+    animation: hsSpinSlow 8s linear infinite;
+}
+
+/* Apex dots pulse */
+.hs-pole { animation: hsGlow 3s ease-in-out infinite; }
+
+/* ═══════════════════════════════════════════════════════
+   2. CUBE  ·  challenges.php
+══════════════════════════════════════════════════════════ */
+.hero-cube .hs-svg {
+    width: 260px;
+    height: 260px;
+}
+
+.hs-cube-group {
+    transform-origin: 150px 150px;
+    animation: hsSpinSlow 18s linear infinite;
+}
+
+/* ═══════════════════════════════════════════════════════
+   3. PYRAMID  ·  affiliates.php
+══════════════════════════════════════════════════════════ */
+.hero-pyramid .hs-svg {
+    width: 280px;
+    height: 280px;
+}
+
+.hs-pyramid-group {
+    transform-origin: 150px 155px;
+    animation: hsSpinSlow 24s linear infinite;
+}
+
+/* ═══════════════════════════════════════════════════════
+   4. DIAMOND  ·  competitions.php
+══════════════════════════════════════════════════════════ */
+.hero-diamond .hs-svg {
+    width: 280px;
+    height: 280px;
+}
+
+.hs-diamond-group {
+    transform-origin: 150px 150px;
+    animation: hsSpinMedium 14s linear infinite;
+}
+
+.hs-diamond-inner {
+    transform-origin: 150px 150px;
+    animation: hsSpinMedium 7s linear infinite reverse;
+}
+
+/* ═══════════════════════════════════════════════════════
+   REDUCED MOTION  (accessibility)
+══════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+    .hs-meridians,
+    .hs-orbit-wrap,
+    .hs-cube-group,
+    .hs-pyramid-group,
+    .hs-diamond-group,
+    .hs-diamond-inner,
+    .hs-pole { animation: none; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE — hide on very small screens
+══════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+    .hero-shape .hs-svg { opacity: 0.5; transform: translate(-50%, -50%) scale(0.7); }
+    .hero-sphere .hs-svg { right: auto; left: 50%; transform: translate(-50%, -50%) scale(0.6); opacity: 0.3; }
+}

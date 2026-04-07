@@ -197,25 +197,8 @@ $v = ASSET_VERSION;
 <?php if ($currentPage === 'challenges' || $currentPage === 'home' || $currentPage === 'dashboard'): ?>
 <script defer src="assets/js/configurator.js?v=<?= $v ?>"></script>
 <?php endif; ?>
-<?php if ($currentPage === 'home' || $currentPage === 'challenges'): ?>
-<script defer src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
-<?php endif; ?>
-<?php if ($currentPage === 'home'): ?>
-<script defer src="assets/js/globe.js?v=<?= $v ?>"></script>
-<script defer src="assets/js/hiw-voxel.js?v=<?= $v ?>"></script>
-<script defer src="assets/js/weight-wave.js?v=<?= $v ?>"></script>
-<?php endif; ?>
-<?php if ($currentPage === 'affiliates'): ?>
-<script defer src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
-<script defer src="assets/js/particle-pyramid.js?v=<?= $v ?>"></script>
-<?php endif; ?>
-<?php if ($currentPage === 'competitions'): ?>
-<script defer src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
-<script defer src="assets/js/particle-diamond.js?v=<?= $v ?>"></script>
-<?php endif; ?>
-<?php if ($currentPage === 'challenges'): ?>
-<script defer src="assets/js/particle-square.js?v=<?= $v ?>"></script>
-<?php endif; ?>
+<?php /* hero-canvas, globe, weight-wave, hiw-voxel, particle-* removed —
+          replaced by CSS-only hero-shapes.css (zero JS, zero DOMContentLoaded race) */ ?>
 <?php if ($currentPage === 'faq'): ?>
 <script defer src="assets/js/faq.js?v=<?= $v ?>"></script>
 <?php endif; ?>

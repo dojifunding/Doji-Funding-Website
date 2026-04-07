@@ -8,7 +8,56 @@
 
 <!-- HERO -->
 <section class="hero" style="min-height:420px;padding:90px 32px 60px">
-    <canvas class="hero-globe" id="heroDiamond" aria-hidden="true"></canvas>
+    <!-- CSS wireframe diamond (octahedron) -->
+    <div class="hero-shape hero-diamond" aria-hidden="true">
+        <svg class="hs-svg" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Outer rotating group -->
+            <g class="hs-diamond-group">
+                <!-- Upper half — 4 faces -->
+                <polygon points="150,38 80,150 150,150"
+                         stroke="rgba(16,185,129,0.28)" stroke-width="1"
+                         fill="rgba(16,185,129,0.04)"/>
+                <polygon points="150,38 220,150 150,150"
+                         stroke="rgba(16,185,129,0.22)" stroke-width="1"
+                         fill="rgba(16,185,129,0.03)"/>
+                <polygon points="150,38 150,150 110,115"
+                         stroke="rgba(16,185,129,0.14)" stroke-width="0.7"
+                         fill="rgba(16,185,129,0.02)"/>
+                <polygon points="150,38 150,150 190,115"
+                         stroke="rgba(16,185,129,0.14)" stroke-width="0.7"
+                         fill="rgba(16,185,129,0.02)"/>
+                <!-- Girdle (equator ellipse) -->
+                <ellipse cx="150" cy="150" rx="70" ry="18"
+                         stroke="rgba(16,185,129,0.30)" stroke-width="1.2"
+                         fill="none"/>
+                <!-- Lower half — 4 faces -->
+                <polygon points="150,262 80,150 150,150"
+                         stroke="rgba(16,185,129,0.22)" stroke-width="0.9"
+                         fill="rgba(16,185,129,0.03)"/>
+                <polygon points="150,262 220,150 150,150"
+                         stroke="rgba(16,185,129,0.18)" stroke-width="0.9"
+                         fill="rgba(16,185,129,0.02)"/>
+                <polygon points="150,262 150,150 110,185"
+                         stroke="rgba(16,185,129,0.10)" stroke-width="0.7"
+                         fill="rgba(16,185,129,0.01)"/>
+                <polygon points="150,262 150,150 190,185"
+                         stroke="rgba(16,185,129,0.10)" stroke-width="0.7"
+                         fill="rgba(16,185,129,0.01)"/>
+                <!-- Inner detail group counter-rotating -->
+                <g class="hs-diamond-inner">
+                    <line x1="150" y1="38"  x2="80"  y2="150" stroke="rgba(16,185,129,0.18)" stroke-width="0.8"/>
+                    <line x1="150" y1="38"  x2="220" y2="150" stroke="rgba(16,185,129,0.18)" stroke-width="0.8"/>
+                    <line x1="150" y1="262" x2="80"  y2="150" stroke="rgba(16,185,129,0.12)" stroke-width="0.6"/>
+                    <line x1="150" y1="262" x2="220" y2="150" stroke="rgba(16,185,129,0.12)" stroke-width="0.6"/>
+                </g>
+                <!-- Key vertices -->
+                <circle cx="150" cy="38"  r="4"   fill="#10B981" class="hs-pole" opacity="0.9"/>
+                <circle cx="150" cy="262" r="3"   fill="#10B981" class="hs-pole" opacity="0.6"/>
+                <circle cx="80"  cy="150" r="2.5" fill="#10B981" opacity="0.5"/>
+                <circle cx="220" cy="150" r="2.5" fill="#10B981" opacity="0.5"/>
+            </g>
+        </svg>
+    </div>
     <div class="hero-content">
         <div class="badge">Compete & Win</div>
         <h1>Trading <span class="green">Competitions</span></h1>

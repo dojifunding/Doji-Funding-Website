@@ -8,8 +8,31 @@
 
 <!-- HERO (Interactive Globe) -->
 <section class="hero">
-    <!-- 3D particle sphere (Three.js, WebGL) -->
-    <canvas class="hero-globe" id="heroGlobe" aria-hidden="true"></canvas>
+    <!-- CSS wireframe sphere (replaces Three.js globe) -->
+    <div class="hero-shape hero-sphere" aria-hidden="true">
+        <svg class="hs-svg" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Outer circle -->
+            <circle cx="150" cy="150" r="118" stroke="rgba(16,185,129,0.22)" stroke-width="1"/>
+            <!-- Latitude rings -->
+            <ellipse cx="150" cy="105" rx="92"  ry="26" stroke="rgba(16,185,129,0.12)" stroke-width="0.8"/>
+            <ellipse cx="150" cy="150" rx="118" ry="34" stroke="rgba(16,185,129,0.20)" stroke-width="1"/>
+            <ellipse cx="150" cy="195" rx="92"  ry="26" stroke="rgba(16,185,129,0.12)" stroke-width="0.8"/>
+            <ellipse cx="150" cy="72"  rx="58"  ry="16" stroke="rgba(16,185,129,0.08)" stroke-width="0.7"/>
+            <ellipse cx="150" cy="228" rx="58"  ry="16" stroke="rgba(16,185,129,0.08)" stroke-width="0.7"/>
+            <!-- Rotating meridians -->
+            <g class="hs-meridians">
+                <ellipse cx="150" cy="150" rx="38" ry="118" stroke="rgba(16,185,129,0.18)" stroke-width="0.9"/>
+                <ellipse cx="150" cy="150" rx="78" ry="118" stroke="rgba(16,185,129,0.10)" stroke-width="0.7"/>
+            </g>
+            <!-- Poles -->
+            <circle cx="150" cy="32"  r="2.5" fill="#10B981" class="hs-pole" opacity="0.6"/>
+            <circle cx="150" cy="268" r="2.5" fill="#10B981" class="hs-pole" opacity="0.4"/>
+            <!-- Orbiting dot -->
+            <g class="hs-orbit-wrap">
+                <circle cx="268" cy="150" r="3.5" fill="#10B981" opacity="0.9"/>
+            </g>
+        </svg>
+    </div>
     <!-- Content -->
     <div class="hero-split">
         <div class="hero-left">

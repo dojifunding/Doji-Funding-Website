@@ -73,6 +73,11 @@ if (!headers_sent()) {
     <link rel="stylesheet" href="assets/css/dashboard.css?v=<?= $v ?>">
     <?php endif; ?>
 
+    <!-- Hero Shapes — CSS-only wireframe animations (no JS) -->
+    <?php if (in_array($currentPage, ['home','challenges','affiliates','competitions'])): ?>
+    <link rel="stylesheet" href="assets/css/hero-shapes.css?v=<?= $v ?>">
+    <?php endif; ?>
+
     <!-- Nothing OS Design System — loaded last, overrides everything -->
     <?php if ($currentPage !== 'dashboard'): ?>
     <link rel="stylesheet" href="assets/css/nothing-site.css?v=<?= $v ?>">
