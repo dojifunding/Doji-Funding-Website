@@ -369,11 +369,11 @@ const Dashboard = (function() {
         var mobileMore = document.getElementById('dashMobileMore');
         if (mobileMore) mobileMore.addEventListener('click', openSidebar);
 
-        // Mobile tab clicks
+        // Mobile tab clicks — use laser burn same as sidebar
         document.querySelectorAll('.dash-mobile-tab').forEach(btn => {
             btn.addEventListener('click', () => {
                 if (!btn.dataset.tab) return; // "More" button handled separately
-                switchTab(btn.dataset.tab);
+                burnThenSwitch(btn.dataset.tab);
             });
         });
 

@@ -8,12 +8,30 @@
 const AuthModal = (function() {
     'use strict';
 
+    // ─── iOS-safe scroll lock ───
+    function lockScroll() {
+        const scrollY = window.scrollY;
+        document.body.style.overflow   = 'hidden';
+        document.body.style.position   = 'fixed';
+        document.body.style.width      = '100%';
+        document.body.style.top        = '-' + scrollY + 'px';
+        document.body.dataset.scrollY  = scrollY;
+    }
+    function unlockScroll() {
+        const scrollY = parseInt(document.body.dataset.scrollY || '0', 10);
+        document.body.style.overflow  = '';
+        document.body.style.position  = '';
+        document.body.style.width     = '';
+        document.body.style.top       = '';
+        window.scrollTo(0, scrollY);
+    }
+
     // ─── Open modal ───
     function open(type) {
         close(); // close any open
         const id = type === 'login' ? 'loginModal' : 'signupModal';
         document.getElementById(id).classList.add('active');
-        document.body.style.overflow = 'hidden';
+        lockScroll();
         // Focus first input after animation
         setTimeout(() => {
             const input = document.querySelector('#' + id + ' .form-input');
@@ -24,7 +42,7 @@ const AuthModal = (function() {
     // ─── Close all modals ───
     function close() {
         document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
-        document.body.style.overflow = '';
+        unlockScroll();
         // Clear errors
         const le = document.getElementById('loginError');
         const se = document.getElementById('signupError');

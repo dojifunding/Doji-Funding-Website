@@ -382,60 +382,29 @@
 /* ═══════════════════════════════════════════════════════
    RESPONSIVE — Mobile first
 ══════════════════════════════════════════════════════════ */
-/* ── Mobile: bottom sheet ──────────────────────────── */
+/* ── Mobile: centered overlay ──────────────────────── */
 @media (max-width: 768px) {
 
-    /* Overlay sticks modal to bottom edge */
+    /* Centered — same as desktop, scrollable so tall forms are reachable */
     .modal-overlay.active {
-        align-items: flex-end;
+        align-items: flex-start;
         justify-content: center;
-        padding: 0;
+        padding: 16px 12px 32px;
     }
 
-    /* Full-width sheet, rounded top corners, max 88vh */
+    /* Full-width, capped height, internal scroll */
     .modal,
     .modal-wide {
         width: 100%;
         max-width: 100%;
         margin: 0;
-        border-radius: 12px 12px 0 0;
-        border-left: none;
-        border-right: none;
-        border-bottom: none;
-        border-top: 2px solid #10B981;
-        max-height: 88vh;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        animation: authSheetUp 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+        border-radius: 2px;
+        max-height: none;
+        overflow-y: visible;
+        animation: authSlideUp 0.22s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .modal-content { padding: 20px 18px 24px; }
-
-    /* Drag handle — on modal-content (z-index:1, above canvas) */
-    .modal-content::before {
-        content: '';
-        display: block;
-        width: 36px;
-        height: 3px;
-        background: #2A2A2A;
-        border-radius: 2px;
-        margin: 0 auto 16px;
-    }
-
-    /* Compact header: no logo, title + subtitle inline */
-    .modal-logo,
-    .modal-logo-fallback { display: none; }
-    .modal-header {
-        text-align: left;
-        margin-bottom: 16px;
-        padding-bottom: 14px;
-        display: flex;
-        align-items: baseline;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-    .modal-title { font-size: 15px; margin-bottom: 0; text-align: left; }
-    .modal-sub   { font-size: 10px; text-align: left; margin: 0; }
 
     /* Form */
     .form-row,
