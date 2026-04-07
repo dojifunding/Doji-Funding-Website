@@ -8,6 +8,30 @@
 const AuthModal = (function() {
     'use strict';
 
+    // ─── Focus trap ───
+    var _trapHandler = null;
+    function trapFocus(modal) {
+        var focusable = modal.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusable.length) return;
+        var first = focusable[0];
+        var last  = focusable[focusable.length - 1];
+        _trapHandler = function(e) {
+            if (e.key !== 'Tab') return;
+            if (e.shiftKey) {
+                if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+            } else {
+                if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+            }
+        };
+        modal.addEventListener('keydown', _trapHandler);
+    }
+    function releaseFocus(modal) {
+        if (_trapHandler && modal) modal.removeEventListener('keydown', _trapHandler);
+        _trapHandler = null;
+    }
+
     // ─── iOS-safe scroll lock ───
     function lockScroll() {
         const scrollY = window.scrollY;
@@ -30,18 +54,23 @@ const AuthModal = (function() {
     function open(type) {
         close(); // close any open
         const id = type === 'login' ? 'loginModal' : 'signupModal';
-        document.getElementById(id).classList.add('active');
+        const overlay = document.getElementById(id);
+        overlay.classList.add('active');
         lockScroll();
-        // Focus first input after animation
+        // Focus first input + activate focus trap after animation
         setTimeout(() => {
-            const input = document.querySelector('#' + id + ' .form-input');
+            const input = overlay.querySelector('.form-input');
             if (input) input.focus();
+            trapFocus(overlay);
         }, 300);
     }
 
     // ─── Close all modals ───
     function close() {
-        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+        document.querySelectorAll('.modal-overlay').forEach(m => {
+            releaseFocus(m);
+            m.classList.remove('active');
+        });
         unlockScroll();
         // Clear errors
         const le = document.getElementById('loginError');

@@ -510,7 +510,7 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
         </script>
 
 
-        <main class="dash-main">
+        <main class="dash-main" id="main-content">
 
             <div class="dash-page-head">
                 <h1 class="dash-page-title" id="dashPageTitle">DASHBOARD</h1>

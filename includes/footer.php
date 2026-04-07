@@ -30,6 +30,8 @@ $v = ASSET_VERSION;
 <!-- SEO Overlay (populated by JS) -->
 <div class="seo-overlay" id="seoOverlay"></div>
 
+<?php if ($currentPage !== 'dashboard'): ?></main><?php endif; ?>
+
 <!-- Footer -->
 <footer>
     <div class="footer-grid">

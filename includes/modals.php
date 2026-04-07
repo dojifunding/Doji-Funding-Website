@@ -11,15 +11,15 @@ $user = getCurrentUser();
 ?>
 
 <!-- ═══ LOGIN MODAL ═══ -->
-<div class="modal-overlay" id="loginModal">
+<div class="modal-overlay" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
     <div class="modal">
         <canvas class="modal-dot-canvas" aria-hidden="true"></canvas>
         <div class="modal-content">
-        <button class="modal-close" onclick="AuthModal.close()">&times;</button>
-        
+        <button class="modal-close" onclick="AuthModal.close()" aria-label="Close login modal">&times;</button>
+
         <div class="modal-header">
             <img class="modal-logo" src="<?= LOGO_FILE ?>" alt="<?= SITE_NAME ?>" onerror="this.outerHTML='<div class=\'modal-logo-fallback\'>D</div>'">
-            <h2 class="modal-title">Welcome Back</h2>
+            <h2 class="modal-title" id="loginModalTitle">Welcome Back</h2>
             <p class="modal-sub">Log in to access your Dashboard</p>
         </div>
 
@@ -65,15 +65,15 @@ $user = getCurrentUser();
 </div>
 
 <!-- ═══ SIGNUP MODAL ═══ -->
-<div class="modal-overlay" id="signupModal">
+<div class="modal-overlay" id="signupModal" role="dialog" aria-modal="true" aria-labelledby="signupModalTitle">
     <div class="modal modal-wide">
         <canvas class="modal-dot-canvas" aria-hidden="true"></canvas>
         <div class="modal-content">
-        <button class="modal-close" onclick="AuthModal.close()">&times;</button>
-        
+        <button class="modal-close" onclick="AuthModal.close()" aria-label="Close signup modal">&times;</button>
+
         <div class="modal-header">
             <img class="modal-logo" src="<?= LOGO_FILE ?>" alt="<?= SITE_NAME ?>" onerror="this.outerHTML='<div class=\'modal-logo-fallback\'>D</div>'">
-            <h2 class="modal-title">Start Trading</h2>
+            <h2 class="modal-title" id="signupModalTitle">Start Trading</h2>
             <p class="modal-sub">Create your account to configure your challenge</p>
         </div>
 

@@ -41,11 +41,15 @@ if (!headers_sent()) {
     <meta property="og:description" content="<?= htmlspecialchars($seo['desc']) ?>">
     <meta property="og:url" content="<?= htmlspecialchars($seo['canonical']) ?>">
     <meta property="og:site_name" content="<?= SITE_NAME ?>">
-    
+    <meta property="og:image" content="<?= SITE_URL ?>/assets/img/hero-poster.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<?= htmlspecialchars($seo['title']) ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars($seo['desc']) ?>">
+    <meta name="twitter:image" content="<?= SITE_URL ?>/assets/img/hero-poster.jpg">
     
     <!-- Schema JSON-LD -->
     <script type="application/ld+json"><?= json_encode($seo['schema'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?></script>
@@ -83,5 +87,15 @@ if (!headers_sent()) {
     <!-- Animated Icons (CDN Web Components) -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <?= iconScripts() ?>
+    <style>
+    .skip-link {
+        position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;
+        font-family: 'Chivo Mono', monospace; font-size: 12px; font-weight: 700;
+        background: #10B981; color: #000; padding: 8px 16px; z-index: 99999;
+        text-decoration: none; border-radius: 0 0 2px 2px;
+    }
+    .skip-link:focus { position: fixed; left: 50%; transform: translateX(-50%); top: 0; width: auto; height: auto; overflow: visible; }
+    </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>

@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Block private/server directories
+Disallow: /config/
+Disallow: /includes/
+Disallow: /database/
+Disallow: /api/
+Disallow: /.env
+Disallow: /dashboard/
+Disallow: /pages/dashboard.php
+
+Sitemap: https://dojifunding.com/sitemap.xml

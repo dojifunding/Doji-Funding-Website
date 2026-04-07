@@ -221,3 +221,6 @@ if (!isset($languages[$currentLang])) $currentLang = 'en';
     </div>
 </div>
 <?php endif; ?>
+<?php if ($currentPage !== 'dashboard'): ?>
+<main id="main-content">
+<?php endif; ?>
