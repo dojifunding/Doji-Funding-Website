@@ -73,9 +73,11 @@ if (!headers_sent()) {
     <link rel="stylesheet" href="assets/css/dashboard.css?v=<?= $v ?>">
     <?php endif; ?>
 
-    <!-- Hero Shapes — CSS-only wireframe animations (no JS) -->
+    <!-- Hero canvas positioning -->
     <?php if (in_array($currentPage, ['home','challenges','affiliates','competitions'])): ?>
-    <link rel="stylesheet" href="assets/css/hero-shapes.css?v=<?= $v ?>">
+    <style>
+    .hero-shape-canvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:.9;}
+    </style>
     <?php endif; ?>
 
     <!-- Nothing OS Design System — loaded last, overrides everything -->

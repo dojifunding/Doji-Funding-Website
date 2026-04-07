@@ -197,10 +197,14 @@ $v = ASSET_VERSION;
 <?php if ($currentPage === 'challenges' || $currentPage === 'home' || $currentPage === 'dashboard'): ?>
 <script defer src="assets/js/configurator.js?v=<?= $v ?>"></script>
 <?php endif; ?>
-<?php /* hero-canvas, globe, weight-wave, hiw-voxel, particle-* removed —
-          replaced by CSS-only hero-shapes.css (zero JS, zero DOMContentLoaded race) */ ?>
+<?php if (in_array($currentPage, ['home','challenges','affiliates','competitions'])): ?>
+<script defer src="assets/js/hero-canvas.js?v=<?= $v ?>"></script>
+<?php endif; ?>
 <?php if ($currentPage === 'faq'): ?>
 <script defer src="assets/js/faq.js?v=<?= $v ?>"></script>
+<?php endif; ?>
+<?php if ($currentPage === 'home'): ?>
+<script defer src="assets/js/hiw-voxel.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 <?php if ($currentPage === 'dashboard'): ?>
 <script defer src="assets/js/dashboard.js?v=<?= $v ?>"></script>

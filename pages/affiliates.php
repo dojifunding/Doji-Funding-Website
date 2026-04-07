@@ -6,43 +6,8 @@
 
 <!-- HERO -->
 <section class="hero" style="min-height:480px;padding:100px 32px 80px">
-    <!-- CSS wireframe pyramid -->
-    <div class="hero-shape hero-pyramid" aria-hidden="true">
-        <svg class="hs-svg" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g class="hs-pyramid-group">
-                <!-- Base parallelogram (isometric square) -->
-                <polygon points="150,230 78,195 150,160 222,195"
-                         stroke="rgba(16,185,129,0.22)" stroke-width="1"
-                         fill="rgba(16,185,129,0.03)"/>
-                <!-- Front-left face -->
-                <polygon points="150,55 78,195 150,230"
-                         stroke="rgba(16,185,129,0.28)" stroke-width="1"
-                         fill="rgba(16,185,129,0.04)"/>
-                <!-- Front-right face -->
-                <polygon points="150,55 222,195 150,230"
-                         stroke="rgba(16,185,129,0.22)" stroke-width="1"
-                         fill="rgba(16,185,129,0.03)"/>
-                <!-- Back-left face (faint, behind) -->
-                <polygon points="150,55 78,195 150,160"
-                         stroke="rgba(16,185,129,0.12)" stroke-width="0.7"
-                         fill="rgba(16,185,129,0.01)"/>
-                <!-- Back-right face (faint, behind) -->
-                <polygon points="150,55 222,195 150,160"
-                         stroke="rgba(16,185,129,0.12)" stroke-width="0.7"
-                         fill="rgba(16,185,129,0.01)"/>
-                <!-- Edge highlight lines -->
-                <line x1="150" y1="55" x2="78"  y2="195" stroke="rgba(16,185,129,0.35)" stroke-width="1.2"/>
-                <line x1="150" y1="55" x2="222" y2="195" stroke="rgba(16,185,129,0.35)" stroke-width="1.2"/>
-                <!-- Apex dot -->
-                <circle cx="150" cy="55" r="4" fill="#10B981" class="hs-pole" opacity="0.9"/>
-                <!-- Base corner dots -->
-                <circle cx="78"  cy="195" r="2.5" fill="#10B981" opacity="0.5"/>
-                <circle cx="222" cy="195" r="2.5" fill="#10B981" opacity="0.5"/>
-                <circle cx="150" cy="230" r="2.5" fill="#10B981" opacity="0.5"/>
-                <circle cx="150" cy="160" r="2"   fill="#10B981" opacity="0.3"/>
-            </g>
-        </svg>
-    </div>
+    <!-- Particle canvas: dot-grid + rotating pyramid (mouse-driven) -->
+    <canvas class="hero-shape-canvas" data-shape="pyramid" aria-hidden="true"></canvas>
     <div class="hero-content">
         <div class="badge">Partner With Us</div>
         <h1>Affiliate <span class="green">Program</span></h1>

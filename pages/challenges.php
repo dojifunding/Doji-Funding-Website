@@ -10,43 +10,8 @@
 
 <!-- HERO -->
 <section class="hero" style="min-height:420px;padding:90px 32px 60px">
-    <!-- CSS wireframe cube -->
-    <div class="hero-shape hero-cube" aria-hidden="true">
-        <svg class="hs-svg" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g class="hs-cube-group">
-                <!-- Back face (slightly offset for depth) -->
-                <rect x="88" y="78" width="120" height="120" rx="1"
-                      stroke="rgba(16,185,129,0.12)" stroke-width="1"
-                      fill="rgba(16,185,129,0.02)"/>
-                <!-- Depth connectors (corners of back to front) -->
-                <line x1="88"  y1="78"  x2="68"  y2="102" stroke="rgba(16,185,129,0.14)" stroke-width="0.8"/>
-                <line x1="208" y1="78"  x2="232" y2="102" stroke="rgba(16,185,129,0.14)" stroke-width="0.8"/>
-                <line x1="88"  y1="198" x2="68"  y2="222" stroke="rgba(16,185,129,0.14)" stroke-width="0.8"/>
-                <line x1="208" y1="198" x2="232" y2="222" stroke="rgba(16,185,129,0.14)" stroke-width="0.8"/>
-                <!-- Front face -->
-                <rect x="68" y="102" width="164" height="120" rx="1"
-                      stroke="rgba(16,185,129,0.30)" stroke-width="1.2"
-                      fill="rgba(16,185,129,0.03)"/>
-                <!-- Front face inner cross -->
-                <line x1="68"  y1="162" x2="232" y2="162" stroke="rgba(16,185,129,0.08)" stroke-width="0.6"/>
-                <line x1="150" y1="102" x2="150" y2="222" stroke="rgba(16,185,129,0.08)" stroke-width="0.6"/>
-                <!-- Top face (visible edge) -->
-                <polygon points="68,102 88,78 208,78 232,102"
-                         stroke="rgba(16,185,129,0.20)" stroke-width="0.9"
-                         fill="rgba(16,185,129,0.04)"/>
-                <!-- Right face -->
-                <polygon points="232,102 208,78 208,198 232,222"
-                         stroke="rgba(16,185,129,0.16)" stroke-width="0.9"
-                         fill="rgba(16,185,129,0.03)"/>
-                <!-- Corner dots -->
-                <circle cx="68"  cy="102" r="2.5" fill="#10B981" opacity="0.6"/>
-                <circle cx="232" cy="102" r="2.5" fill="#10B981" opacity="0.6"/>
-                <circle cx="68"  cy="222" r="2.5" fill="#10B981" opacity="0.4"/>
-                <circle cx="232" cy="222" r="2.5" fill="#10B981" opacity="0.4"/>
-                <circle cx="150" cy="78"  r="2"   fill="#10B981" opacity="0.3"/>
-            </g>
-        </svg>
-    </div>
+    <!-- Particle canvas: dot-grid + rotating cube (mouse-driven) -->
+    <canvas class="hero-shape-canvas" data-shape="cube" aria-hidden="true"></canvas>
     <div class="hero-content">
         <div class="badge">Configure & Trade</div>
         <h1>Choose Your <span class="green">Challenge</span></h1>
