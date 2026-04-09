@@ -149,6 +149,7 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span class="dash-topbar-username"><?= htmlspecialchars(strtolower($user['first_name'] . $user['last_name'])) ?></span>
                 <span id="dashFirstName" style="display:none"><?= htmlspecialchars($profile['first_name'] ?? $user['first_name'] ?? '') ?></span>
+                <span id="dashUsername" style="display:none"><?= htmlspecialchars($profile['username'] ?? '') ?></span>
                 <button class="dash-topbar-logout" onclick="AuthModal.logout()">Log out</button>
                 <button class="dash-topbar-new-challenge" onclick="Dashboard.switchTab('configurator')">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1276,7 +1277,7 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                             <span class="mode-name">Competitor</span>
                             <span class="mode-desc">Load a rival preset</span>
                             <div class="mode-competitor-drop" onclick="event.stopPropagation()">
-                                <select class="preset-select" id="presetSelect" onchange="this.classList.toggle('has-value',!!this.value);if(this.value){Configurator.loadPreset(this.value)}">
+                                <select class="preset-select" id="presetSelect" aria-label="Compare with other prop firms" onchange="this.classList.toggle('has-value',!!this.value);if(this.value){Configurator.loadPreset(this.value)}">
                                     <option value="">Compare with other firms...</option>
                                 </select>
                             </div>

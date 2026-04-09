@@ -35,3 +35,5 @@ uploads/
 # Build artifacts
 dist/
 build/
+.aidesigner/*
+!.aidesigner/.gitkeep

@@ -298,12 +298,15 @@ const Dashboard = (function() {
         if (!titleEl || !titleEl.parentNode) return;
         var h = new Date().getHours();
         var salut = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+        var usernameEl  = document.getElementById('dashUsername');
         var firstNameEl = document.getElementById('dashFirstName');
-        var first = firstNameEl ? firstNameEl.textContent.trim() : '';
+        var username    = usernameEl  ? usernameEl.textContent.trim()  : '';
+        var first       = firstNameEl ? firstNameEl.textContent.trim() : '';
+        var name        = username || first;
         var el = document.createElement('p');
         el.className = 'dash-greeting';
         el.id = 'dashGreeting';
-        el.textContent = salut + (first ? ' ' + first : '') + ' !';
+        el.textContent = salut + (name ? ' ' + name : '') + ' !';
         titleEl.parentNode.insertBefore(el, titleEl.nextSibling);
     }
 

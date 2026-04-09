@@ -58,7 +58,7 @@ $user = getCurrentUser();
 
         <div class="modal-footer">
             Don't have an account?
-            <a onclick="AuthModal.switchTo('signup')" class="modal-link">Sign Up</a>
+            <a href="/signup" onclick="AuthModal.switchTo('signup');return false;" class="modal-link">Sign Up</a>
         </div>
         </div><!-- /.modal-content -->
     </div>
@@ -147,7 +147,7 @@ $user = getCurrentUser();
 
         <div class="modal-footer">
             Already have an account?
-            <a onclick="AuthModal.switchTo('login')" class="modal-link">Sign in</a>
+            <a href="/login" onclick="AuthModal.switchTo('login');return false;" class="modal-link">Sign in</a>
         </div>
         </div><!-- /.modal-content -->
     </div>

@@ -88,6 +88,7 @@ const Configurator = (function() {
                 <div class="slider-fill" style="width:${pct}%"></div>
                 <div class="slider-thumb" style="left:${pct}%"></div>
                 <input class="slider-input" type="range" min="${min}" max="${max}" step="${step}" value="${val}"
+                       aria-label="${label}"
                        oninput="Configurator.onSliderLive('${id}',this)"
                        onchange="Configurator.onSliderDone('${id}',this.value)">
             </div>

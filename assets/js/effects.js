@@ -56,6 +56,8 @@
             '.comp-prizes-section',
             '.comp-faq',
             '.comp-disclaimer',
+            '.feat-card',
+            '.dc2-card',
         ];
 
         selectors.forEach(function(sel) {
@@ -68,7 +70,7 @@
         });
 
         // Tag grids for stagger effect
-        document.querySelectorAll('.symbol-grid, .scale-progression, .aff-stats, .contact-social-grid, .kh-grid, .hiw-grid, .ac-top, .ac-bottom').forEach(function(el) {
+        document.querySelectorAll('.symbol-grid, .scale-progression, .aff-stats, .contact-social-grid, .kh-grid, .hiw-grid, .ac-top, .ac-bottom, .feat-cards, .dc2-cards').forEach(function(el) {
             if (!el.classList.contains('stagger-children')) {
                 el.classList.add('stagger-children');
             }
@@ -314,14 +316,14 @@
 
     function initReveal() {
         // Select elements to animate
-        var selectors = '.kh-card, .hiw-card, .ac-card-lg, .ac-card-sm, .rule-card, .dc-step-card, .aff-step, .aff-tier, .scale-card, .platform-card, .contact-card, .engage-card, .hero-stat, .pill-bar-item';
+        var selectors = '.kh-card, .hiw-card, .ac-card-lg, .ac-card-sm, .rule-card, .dc-step-card, .aff-step, .aff-tier, .scale-card, .platform-card, .contact-card, .engage-card, .hero-stat, .pill-bar-item, .feat-card, .dc2-card';
         document.querySelectorAll(selectors).forEach(function(el, i) {
             el.classList.add('reveal-item');
             el.style.transitionDelay = (i % 6) * 80 + 'ms';
             observer.observe(el);
         });
         // Animate section headers
-        document.querySelectorAll('.section h2, .page-title').forEach(function(el) {
+        document.querySelectorAll('.section h2, .page-title, .feat-section h2, .dc2-section h2, [data-split-reveal]').forEach(function(el) {
             el.classList.add('reveal-fade');
             observer.observe(el);
         });

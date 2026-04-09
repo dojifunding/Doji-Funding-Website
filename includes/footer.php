@@ -39,7 +39,7 @@ $v = ASSET_VERSION;
             <img class="footer-logo" src="<?= LOGO_FILE ?>" alt="<?= SITE_NAME ?> logo" loading="lazy">
             <div class="footer-brand">DOJI <span class="green">FUNDING</span><sup class="tm">®</sup></div>
             <p class="footer-desc">
-                The first fully customizable prop firm. Trade your way with transparent pricing based on real risk.
+                Not like other prop firms. Doji Funding® is built on institutional infrastructure — designed for your success, your comfort, and your trajectory. Set your own dimensions. Trade with freedom.
             </p>
             <div class="footer-socials">
                 <a class="social-icon" href="https://x.com/DojiFunding" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">

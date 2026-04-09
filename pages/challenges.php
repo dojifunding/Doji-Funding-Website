@@ -15,7 +15,7 @@
     <div class="hero-content">
         <div class="badge">Configure & Trade</div>
         <h1>Choose Your <span class="green">Challenge</span></h1>
-        <p class="subtitle">Select your evaluation type, customize every parameter, and see your price in real time.</p>
+        <p class="subtitle">Select your evaluation type, customize every parameter and configure your account in the dimensions of your choice.</p>
     </div>
 </section>
 
@@ -119,7 +119,7 @@
                     <span class="mode-name">Competitor</span>
                     <span class="mode-desc">Load a rival preset</span>
                     <div class="mode-competitor-drop" onclick="event.stopPropagation()">
-                        <select class="preset-select" id="presetSelect" onchange="this.classList.toggle('has-value',!!this.value);if(this.value){Configurator.loadPreset(this.value)}">
+                        <select class="preset-select" id="presetSelect" aria-label="Compare with other prop firms" onchange="this.classList.toggle('has-value',!!this.value);if(this.value){Configurator.loadPreset(this.value)}">
                             <option value="">Compare with other firms...</option>
                         </select>
                     </div>

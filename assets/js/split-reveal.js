@@ -27,7 +27,8 @@
     '.kh-card h3', '.hiw-card h3', '.ac-card-lg h3', '.ac-card-sm h3',
     '.dc-step-card h3', '.engage-card h3', '.rule-card h3',
     '.scale-card h3', '.platform-card h3', '.contact-card h3',
-    '.aff-step h3', '.aff-tier h3', '.comp-card h3'
+    '.aff-step h3', '.aff-tier h3', '.comp-card h3',
+    '.feat-h2', '.feat-card h3', '.dc2-card-title'
   ].join(', ');
 
   var SKIP = '.cfg-title, .promo-bar *, .footer-legal *, .doji-toast *, .modal *';

@@ -42,7 +42,7 @@ body::before       { opacity: 0 !important; animation: none !important; content:
     /* Text */
     --text:            #E8E8E8;
     --text2:           #999999;
-    --text3:           #666666;
+    --text3:           #7a7a7a;
 
     /* Emerald green — keep brand identity */
     --green:           #10B981;
@@ -505,6 +505,63 @@ button.btn-primary.nav-cta:hover {
 .testimonial-card:hover { transform: none !important; border-color: rgba(16,185,129,0.15) !important; }
 .testimonial-stars { letter-spacing: 2px; }
 .testimonial-text { font-family: 'Chivo Mono', monospace !important; }
+/* Dashboard mockup — DA */
+.dsh-mockup {
+    border-radius: 0 !important;
+    background-image:
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)) !important;
+    background-size:
+        14px 1px, 1px 14px,
+        14px 1px, 1px 14px,
+        14px 1px, 1px 14px,
+        14px 1px, 1px 14px !important;
+    background-position:
+        top left,     top left,
+        top right,    top right,
+        bottom left,  bottom left,
+        bottom right, bottom right !important;
+    background-repeat: no-repeat !important;
+}
+.dsh-stat-card, .dsh-chart-panel, .dsh-activity-panel { border-radius: 0 !important; }
+
+/* Testi stage — DA */
+.testi-frame {
+    border-radius: 0 !important;
+    border-color: rgba(255,255,255,0.07) !important;
+    background-image:
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)),
+        linear-gradient(rgba(16,185,129,.55),rgba(16,185,129,.55)) !important;
+    background-size:
+        14px 1px, 1px 14px,
+        14px 1px, 1px 14px,
+        14px 1px, 1px 14px,
+        14px 1px, 1px 14px !important;
+    background-position:
+        top left,     top left,
+        top right,    top right,
+        bottom left,  bottom left,
+        bottom right, bottom right !important;
+    background-repeat: no-repeat !important;
+}
+.testi-quote { font-family: 'Chivo Mono', monospace !important; font-weight: 400 !important; }
+.testi-stars { font-family: 'Chivo Mono', monospace !important; letter-spacing: 4px !important; }
+.testi-avatar { border-radius: 2px !important; }
+.testi-dot { border-radius: 2px !important; }
+.testi-name { font-family: 'Chivo Mono', monospace !important; font-size: 12px !important; text-transform: uppercase !important; letter-spacing: 0.06em !important; color: #E8E8E8 !important; }
+.testi-role { font-family: 'Chivo Mono', monospace !important; font-size: 10px !important; text-transform: uppercase !important; letter-spacing: 0.06em !important; color: #666666 !important; }
 
 /* ═══════════════════════════════════════════════════════
    18. ASSET CLASS CARDS
@@ -607,7 +664,7 @@ footer {
     font-family: 'Chivo Mono', monospace !important;
     font-size: 10px !important;
     letter-spacing: 0.12em !important;
-    color: #666666 !important;
+    color: #7a7a7a !important;
 }
 .footer-link { font-family: 'Chivo Mono', monospace !important; font-size: 13px !important; }
 .footer-copy,
@@ -1036,7 +1093,7 @@ h3 { text-transform: none !important; }
     font-size: 10px !important;
     text-transform: uppercase !important;
     letter-spacing: 0.1em !important;
-    color: #666666 !important;
+    color: #7a7a7a !important;
     margin-bottom: 12px !important;
 }
 .mode-card {
@@ -1968,6 +2025,9 @@ textarea.form-input { resize: vertical !important; }
 
 /* Doji Coin card — no lift on hover */
 .dc-reward-card:hover { transform: none !important; }
+.dc2-card:hover { transform: none !important; }
+.dc2-card { border-radius: 0 !important; }
+.dc2-terminal { border-radius: 2px !important; }
 
 /* Section 44 merged into section 30 (form elements) and auth.css */
 
@@ -2278,7 +2338,8 @@ textarea.form-input { resize: vertical !important; }
 .summary-box,
 .price-box,
 .compare-table-wrap,
-.dc-terminal {
+.dc-terminal,
+.dc2-terminal {
     background-image:
         linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
         linear-gradient(rgba(16,185,129,.70),rgba(16,185,129,.70)),
@@ -2333,6 +2394,7 @@ textarea.form-input { resize: vertical !important; }
 .ac-card-sm,
 .mode-card,
 .dc-reward-card,
+.dc2-card,
 .perk-card,
 .engage-card,
 .step-card,
