@@ -36,7 +36,8 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
         <!-- Logo -->
         <div class="dash-sidebar-logo">
             <a href="index.php" class="dash-logo-link">
-                <img src="<?= LOGO_FILE ?>" alt="Doji" class="dash-logo-img" onerror="this.style.display='none'">
+                <img src="assets/img/doji white.svg" alt="Doji" class="dash-logo-img dash-logo-dark" onerror="this.style.display='none'">
+                <img src="assets/img/doji black.svg" alt="Doji" class="dash-logo-img dash-logo-light" onerror="this.style.display='none'">
                 <span class="dash-logo-brand">DOJI <span class="green">FUNDING</span></span>
             </a>
         </div>

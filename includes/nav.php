@@ -42,7 +42,8 @@ if (!isset($languages[$currentLang])) $currentLang = 'en';
     <div class="nav-inner">
     <div class="nav-left">
         <a class="nav-logo" href="index.php">
-            <img class="logo-icon" src="<?= LOGO_FILE ?>" alt="<?= SITE_NAME ?> logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <img class="logo-icon logo-dark" src="assets/img/doji white.svg" alt="<?= SITE_NAME ?> logo" onerror="this.style.display='none'">
+            <img class="logo-icon logo-light" src="assets/img/doji black.svg" alt="<?= SITE_NAME ?> logo" style="display:none" onerror="this.style.display='none'">
             <div class="logo-icon-fallback" style="display:none">D</div>
             <span class="logo-text">DOJI <span class="green">FUNDING</span><sup class="tm">®</sup></span>
         </a>

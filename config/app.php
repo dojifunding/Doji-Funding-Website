@@ -17,7 +17,7 @@ define('ASSET_VERSION', '425');
 // Branding
 define('BRAND_COLOR_GREEN', '#10B981');
 define('BRAND_COLOR_BG', '#08090b');
-define('LOGO_FILE', 'assets/img/logo.svg?v=' . ASSET_VERSION);
+define('LOGO_FILE', 'assets/img/doji white.svg?v=' . ASSET_VERSION);
 define('DOJI_COIN_FILE', 'assets/img/doji-coin.svg?v=' . ASSET_VERSION);
 
 // Social / Trust metrics (update regularly)
