@@ -72,8 +72,9 @@ function getDashboardOverview($userId) {
             profit_target_1, profit_target_2, daily_loss, max_loss, profit_split,
             current_balance, peak_balance, total_profit, total_trades,
             winning_trades, trading_days, min_trading_days, consistency_rule,
+            daily_loss_type, max_loss_type, best_trade,
             started_at, platform
-            FROM challenges WHERE user_id = ? AND status = "active" 
+            FROM challenges WHERE user_id = ? AND status = "active"
             ORDER BY created_at DESC LIMIT 5');
         $stmt->execute([$userId]);
         $out['active_list'] = $stmt->fetchAll();
@@ -198,6 +199,11 @@ function challengeStatusBadge($status) {
     ];
     $s = $map[$status] ?? ['Unknown', 'badge-default'];
     return '<span class="dash-badge ' . $s[1] . '">' . $s[0] . '</span>';
+}
+
+function lossTypeLabel($type) {
+    static $map = ['intraday' => 'TRAILING', 'eod' => 'END OF DAY', 'static' => 'STATIC'];
+    return $map[$type] ?? strtoupper($type ?: 'TRAILING');
 }
 
 function payoutStatusBadge($status) {

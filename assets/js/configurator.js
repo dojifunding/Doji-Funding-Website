@@ -29,7 +29,7 @@ const Configurator = (function() {
         daily: 5, max: 8,
         split: 80, days: 5, consistency: 30,
         dailyType: 'intraday', maxType: 'intraday',
-        platform: 'ctrader', payout: 'monthly',
+        platform: 'dxtrade', payout: 'monthly',
         overnight: false, overweek: false,
         activePromo: null,
     };
@@ -178,10 +178,9 @@ const Configurator = (function() {
 
         // Platform
         html += `<div style="margin-bottom:14px">
-            <div class="slider-header"><span class="slider-label">Trading Platform</span><span class="slider-val">cTrader</span></div>
+            <div class="slider-header"><span class="slider-label">Trading Platform</span><span class="slider-val">DXTrade</span></div>
             <div class="toggle-group">
-                <button class="toggle-btn toggle-btn-disabled" disabled title="MetaTrader 5 coming soon">MetaTrader 5 <span class="toggle-soon">SOON</span></button>
-                <button class="toggle-btn active" onclick="Configurator.onToggle('platform','ctrader')">cTrader</button>
+                <button class="toggle-btn active" style="cursor:default">DXTrade</button>
             </div>
         </div>`;
 
@@ -276,6 +275,32 @@ const Configurator = (function() {
         return { basePrice: bp, total, final, display: S.activePromo ? final : total };
     }
 
+    function getState() {
+        const price = calculatePrice();
+        const size  = accountSizes[S.sizeIdx];
+        return {
+            type:              S.tab === 'onestep' ? 'one_step' : 'two_step',
+            account_size:      size,
+            platform:          S.platform,
+            profit_target_1:   S.tab === 'onestep' ? S.target : S.target1,
+            profit_target_2:   S.tab === 'twostep' ? S.target2 : null,
+            daily_loss:        S.daily,
+            max_loss:          S.max,
+            profit_split:      S.split,
+            min_trading_days:  S.days,
+            consistency_rule:  S.consistency,
+            daily_loss_type:   S.dailyType,
+            max_loss_type:     S.maxType,
+            payout_frequency:  S.payout,
+            overnight_holding: S.overnight,
+            weekend_holding:   S.overweek,
+            base_price:        price.basePrice,
+            final_price:       price.final,
+            promo_discount:    price.total - price.final,
+            promo_code:        S.activePromo ? (S.activePromo.code || '') : '',
+        };
+    }
+
     // ═══════════════════════
     //  UPDATE UI
     // ═══════════════════════
@@ -297,7 +322,7 @@ const Configurator = (function() {
 
             // ── Account header card ──
             const typeLabel = t === 'onestep' ? '1 Step — Fast Track' : '2 Step — Classic';
-            const platLabel = S.platform === 'mt5' ? 'MetaTrader 5' : 'cTrader';
+            const platLabel = 'DXTrade';
             html += `<div class="summary-account">
                 <div class="summary-account-size">$${size.toLocaleString()}</div>
                 <div class="summary-account-info">
@@ -580,7 +605,7 @@ const Configurator = (function() {
         const tags = document.getElementById('objTags');
         if (tags) {
             const newsOk = is2 || S.target > 8;
-            const platform = S.platform === 'mt5' ? 'MetaTrader 5' : 'cTrader';
+            const platform = 'DXTrade';
             tags.innerHTML = `
                 <div class="obj-tag-pill"><span class="dot green"></span> ${newsOk ? 'News Trading · Allowed' : 'News Trading · Restricted'}</div>
                 <div class="obj-tag-pill"><span class="dot ${S.overnight || S.overweek ? 'green' : 'blue'}"></span> ${S.overnight || S.overweek ? 'Overnight' + (S.overweek ? ' & Weekend' : '') + ' · Allowed' : 'Overnight · Not included'}</div>
@@ -879,25 +904,25 @@ const Configurator = (function() {
             target: 5,  target1: 6,  target2: 4,
             daily: 3,   max: 6,      split: 60,  days: 5,  consistency: 30,
             dailyType: 'intraday', maxType: 'intraday',
-            platform: 'ctrader', payout: 'monthly', overnight: false, overweek: false,
+            platform: 'dxtrade', payout: 'monthly', overnight: false, overweek: false,
         },
         po: {
             target: 10, target1: 8, target2: 5,
             daily: 8,   max: 12,    split: 90,  days: 5,  consistency: 20,
             dailyType: 'static', maxType: 'static',
-            platform: 'ctrader', payout: 'weekly', overnight: true, overweek: false,
+            platform: 'dxtrade', payout: 'weekly', overnight: true, overweek: false,
         },
         beginner: {
             target: 8,  target1: 6,  target2: 4,
             daily: 3,   max: 6,      split: 80,  days: 7,  consistency: 40,
             dailyType: 'intraday', maxType: 'intraday',
-            platform: 'ctrader', payout: 'monthly', overnight: false, overweek: false,
+            platform: 'dxtrade', payout: 'monthly', overnight: false, overweek: false,
         },
         affiliate: {
             target: 8,  target1: 7,  target2: 4,
             daily: 5,   max: 10,     split: 85,  days: 5,  consistency: 25,
             dailyType: 'intraday', maxType: 'intraday',
-            platform: 'ctrader', payout: 'monthly', overnight: false, overweek: false,
+            platform: 'dxtrade', payout: 'monthly', overnight: false, overweek: false,
         },
     };
 
@@ -928,7 +953,7 @@ const Configurator = (function() {
                 S.target1 = 8; S.target2 = 5; S.daily = 5; S.max = 10; S.split = 80; S.days = 10; S.consistency = 30;
             }
             S.dailyType = 'intraday'; S.maxType = 'intraday';
-            S.platform = 'ctrader'; S.payout = 'monthly';
+            S.platform = 'dxtrade'; S.payout = 'monthly';
             S.overnight = false; S.overweek = false; S.activePromo = null;
             document.getElementById('promoInput').value = '';
             document.getElementById('promoMsg').innerHTML = '';
@@ -945,7 +970,7 @@ const Configurator = (function() {
             if (S.tab === 'onestep') { S.target = 10; S.daily = 5; S.max = 8; S.split = 80; S.days = 5; }
             else { S.target1 = 8; S.target2 = 5; S.daily = 5; S.max = 10; S.split = 80; S.days = 10; }
             S.consistency = 30; S.dailyType = 'intraday'; S.maxType = 'intraday';
-            S.platform = 'ctrader'; S.payout = 'monthly';
+            S.platform = 'dxtrade'; S.payout = 'monthly';
             S.overnight = false; S.overweek = false;
             S.activePromo = null; S.sizeIdx = 9;
             document.getElementById('promoInput').value = '';
@@ -997,11 +1022,12 @@ const Configurator = (function() {
         purchase() {
             if (!window.DOJI_CONFIG?.isLoggedIn) {
                 AuthModal.open('signup');
-            } else {
-                // TODO: proceed to payment flow
-                alert('Redirecting to payment...');
+                return;
             }
+            PurchaseModal.open(getState());
         },
+
+        getState() { return getState(); },
 
         /**
          * Load a preset configuration (competitor or affiliate).
@@ -1106,12 +1132,12 @@ const Configurator = (function() {
 
                 // ── Restore toggles ──
                 const dlMap = { i: 'intraday', e: 'eod', s: 'static' };
-                const plMap = { m: 'mt5', c: 'ctrader' }; // mt5 kept for legacy URL compat
+                const plMap = { d: 'dxtrade', m: 'mt5', c: 'ctrader' }; // legacy compat
                 const payMap = { m: 'monthly', b: 'biweekly', w: 'weekly' };
 
                 if (params.has('dl')) S.dailyType = dlMap[params.get('dl')] || 'intraday';
                 if (params.has('ml')) S.maxType   = dlMap[params.get('ml')] || 'intraday';
-                if (params.has('pl')) S.platform  = plMap[params.get('pl')] || 'mt5';
+                if (params.has('pl')) S.platform  = plMap[params.get('pl')] || 'dxtrade';
                 if (params.has('p'))  S.payout    = payMap[params.get('p')] || 'monthly';
 
                 S.overnight = params.get('on') === '1';

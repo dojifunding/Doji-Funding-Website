@@ -10,7 +10,7 @@
 ═══════════════════════════════════════════════════════ */
 :root {
     --promo-h:    0px;
-    --topbar-h:   48px;
+    --topbar-h:   36px;
     --sidebar-w:  196px;
 
     /* OLED palette */
@@ -542,6 +542,9 @@ nav.nav, .mobile-menu { display: none !important; }
     padding: var(--s32);
     overflow-x: hidden;
     overflow-y: auto;
+    /* Dot-grid background — same colour as sidebar (#1a1a1a dots on black) */
+    background-image: radial-gradient(circle, #1a1a1a 0.75px, transparent 0.75px);
+    background-size: 16px 16px;
 }
 
 /* Page title — Doto dot-matrix, the ONE surprise per screen */
@@ -771,7 +774,14 @@ nav.nav, .mobile-menu { display: none !important; }
 /* ═══════════════════════════════════════════════════════
    TABLE
 ═══════════════════════════════════════════════════════ */
-.dash-table-wrap { border: 1px solid var(--border-vis); overflow-x: auto; }
+.dash-table-wrap {
+    border: 1px solid var(--border-vis);
+    overflow-x: auto;
+    /* Solid surface background so dot-grid never bleeds through */
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
 .dash-table { width: 100%; border-collapse: collapse; }
 .dash-table th {
     padding: var(--s8) var(--s16); text-align: left;
@@ -785,10 +795,12 @@ nav.nav, .mobile-menu { display: none !important; }
     font-family: var(--f-mono); font-size: 12px;
     border-bottom: 1px solid var(--border);
     color: var(--text-pri);
+    background: var(--surface);
 }
 .dash-table tbody tr:last-child td { border-bottom: none; }
-.dash-table tbody tr:hover { background: var(--surface); }
+.dash-table tbody tr:hover td { background: var(--surface-raised); }
 /* Active row indicator */
+.dash-table tbody tr.active-row td { background: var(--surface-raised); }
 .dash-table tbody tr.active-row { border-left: 2px solid var(--accent); }
 
 .dash-cell-type { font-family: var(--f-ui); font-size: 13px; font-weight: 500; color: var(--text-pri); }
@@ -876,7 +888,9 @@ nav.nav, .mobile-menu { display: none !important; }
     display: flex; align-items: center; gap: var(--s16);
     padding: var(--s12) var(--s16);
     border: 1px solid rgba(212,168,67,0.35);
-    background: rgba(212,168,67,0.06);
+    background: rgba(212,168,67,0.10);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     margin-bottom: var(--s16);
 }
 .dash-kyc-banner.rejected {
@@ -1327,8 +1341,8 @@ nav.nav, .mobile-menu { display: none !important; }
         pointer-events: auto;
     }
     /* Compact topbar */
-    :root { --topbar-h: 56px; }
-    .dash-topbar { height: 56px; padding: 0 var(--s12); gap: var(--s8); }
+    :root { --topbar-h: 44px; }
+    .dash-topbar { height: 44px; padding: 0 var(--s12); gap: var(--s8); }
     .dash-sessions { display: none; }
     .dash-topbar-alloc { display: none; }
     .dash-topbar-support { display: none; }
@@ -1356,6 +1370,359 @@ nav.nav, .mobile-menu { display: none !important; }
     .dash-mobile-tab { padding: 8px 10px; }
     .dash-mobile-tab span { font-size: 7px; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   OVERVIEW TAB  — 5 KPI cards + equity curve + recent activity
+═══════════════════════════════════════════════════════ */
+
+/* Top row — 5 metric cards, edge-to-edge, 1px gap grid */
+.ov-top-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--border-vis);
+    border: 1px solid var(--border-vis);
+    margin-bottom: var(--s16);
+}
+@media (max-width: 1100px) { .ov-top-row { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 700px)  { .ov-top-row { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .ov-top-row { grid-template-columns: 1fr; } }
+
+.ov-card {
+    background: var(--surface);
+    padding: var(--s24);
+    transition: background 0.12s;
+}
+.ov-card:hover { background: var(--surface-raised); }
+
+.ov-card-lbl {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-sec); /* bumped from text-dis for contrast on surface bg */
+    margin-bottom: var(--s12);
+}
+.ov-card-val {
+    font-family: var(--f-dot);
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--text-disp);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    margin-bottom: var(--s8);
+}
+.ov-card-val.green { color: var(--success); }
+.ov-card-val.warn  { color: var(--warning); }
+.ov-card-val.red   { color: var(--error); }
+
+.ov-card-sub {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--text-dis);
+}
+.ov-card-sub.green { color: var(--success); }
+.ov-card-sub.red   { color: var(--error); }
+.ov-card-convert {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--text-sec);
+    margin-top: var(--s4);
+}
+
+/* Segmented progress bar inside KPI card */
+.ov-bar-wrap {
+    margin-top: var(--s12);
+    height: 8px;
+    position: relative;
+    /* gaps use var(--surface) to match card background */
+    background: repeating-linear-gradient(
+        to right,
+        var(--border-vis) 0px, var(--border-vis) 12px,
+        var(--surface) 12px, var(--surface) 14px
+    );
+}
+.ov-bar-fill {
+    position: absolute;
+    top: 0; left: 0; height: 100%;
+    background-repeat: repeat-x;
+    background-size: 14px 100%;
+    animation: barReveal 0.9s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.ov-bar-fill-green {
+    background-image: repeating-linear-gradient(
+        to right,
+        var(--success) 0px, var(--success) 12px,
+        var(--surface) 12px, var(--surface) 14px
+    );
+}
+.ov-bar-fill-amber {
+    background-image: repeating-linear-gradient(
+        to right,
+        var(--warning) 0px, var(--warning) 12px,
+        var(--surface) 12px, var(--surface) 14px
+    );
+}
+.ov-bar-fill-red {
+    background-image: repeating-linear-gradient(
+        to right,
+        var(--error) 0px, var(--error) 12px,
+        var(--surface) 12px, var(--surface) 14px
+    );
+}
+
+/* Bottom row — 2/3 chart + 1/3 activity */
+.ov-bottom-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1px;
+    background: var(--border-vis);
+    border: 1px solid var(--border-vis);
+    min-height: 260px;
+}
+@media (max-width: 767px) { .ov-bottom-row { grid-template-columns: 1fr; } }
+
+.ov-chart-card {
+    background: var(--black);
+    padding: var(--s24);
+    display: flex;
+    flex-direction: column;
+}
+.ov-chart-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--s24);
+}
+.ov-chart-title {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--text-pri);
+}
+.ov-chart-badge {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dis);
+    border: 1px solid var(--border-vis);
+    padding: 3px 8px;
+    border-radius: 2px;
+}
+.ov-canvas {
+    flex: 1;
+    width: 100%;
+    min-height: 140px;
+    display: block;
+}
+
+/* Recent Activity panel */
+.ov-activity-card {
+    background: var(--black);
+    padding: var(--s24);
+    display: flex;
+    flex-direction: column;
+}
+.ov-activity-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--s24);
+}
+.ov-activity-title {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--text-pri);
+}
+.ov-live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 6px var(--success);
+    animation: livePulse 2s ease-in-out infinite;
+}
+@keyframes livePulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+}
+
+.ov-activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border-vis);
+    flex: 1;
+}
+.ov-activity-row {
+    display: flex;
+    align-items: center;
+    gap: var(--s12);
+    padding: 10px var(--s12);
+    background: var(--surface);
+    transition: background 0.1s;
+}
+.ov-activity-row:hover { background: var(--surface-raised); }
+
+.ov-badge {
+    font-family: var(--f-mono);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+.ov-badge-win    { background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+.ov-badge-loss   { background: rgba(215,25,33,0.15);  color: var(--error);   border: 1px solid rgba(215,25,33,0.3); }
+.ov-badge-payout { background: transparent; color: var(--success); border: 1px solid var(--success); }
+
+.ov-act-lbl {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--text-sec);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.ov-act-val {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+}
+.ov-act-val.green { color: var(--success); }
+.ov-act-val.red   { color: var(--error); }
+
+.ov-activity-empty {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    color: var(--text-dis);
+    letter-spacing: 0.06em;
+    padding: var(--s24);
+    text-align: center;
+    background: var(--surface);
+}
+
+/* Account Info card (4th KPI slot) */
+.ov-card-info { display: flex; flex-direction: column; gap: var(--s8); }
+.ov-info-type {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-disp);
+}
+.ov-info-id-row {
+    display: flex;
+    align-items: center;
+    gap: var(--s8);
+    margin-top: var(--s4);
+}
+.ov-info-id {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--text-sec);
+}
+.ov-copy-btn {
+    font-family: var(--f-mono);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid var(--border-vis);
+    background: none;
+    color: var(--text-dis);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.12s;
+}
+.ov-copy-btn:hover { border-color: var(--text-sec); color: var(--text-sec); }
+.ov-info-actions {
+    display: flex;
+    gap: var(--s8);
+    margin-top: auto;
+    padding-top: var(--s8);
+    flex-wrap: wrap;
+}
+.ov-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--f-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    cursor: pointer;
+    background: none;
+    transition: all 0.12s;
+}
+.ov-action-reset {
+    border: 1px solid var(--border-vis);
+    color: var(--text-dis);
+}
+.ov-action-reset:hover { border-color: var(--info); color: var(--info); }
+.ov-action-delete {
+    border: 1px solid rgba(215,25,33,0.3);
+    color: var(--error);
+}
+.ov-action-delete:hover { border-color: var(--error); background: rgba(215,25,33,0.08); }
+
+/* Wallet tab hero */
+.wlt-hero {
+    padding: var(--s32) var(--s24);
+    background: var(--black);
+    border: 1px solid var(--border-vis);
+    margin-bottom: var(--s24);
+    max-width: 480px;
+}
+.wlt-hero-lbl {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dis);
+    margin-bottom: var(--s12);
+}
+.wlt-hero-val {
+    font-family: var(--f-dot);
+    font-size: 48px;
+    font-weight: 400;
+    color: var(--warning);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    margin-bottom: var(--s8);
+}
+.wlt-hero-sub {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    color: var(--text-dis);
+    letter-spacing: 0.04em;
+}
+
+/* Light mode overrides */
+[data-theme="light"] .ov-card         { background: var(--surface-raised); }
+[data-theme="light"] .ov-card:hover   { background: var(--border); }
+[data-theme="light"] .ov-chart-card,
+[data-theme="light"] .ov-activity-card { background: var(--surface); }
+[data-theme="light"] .ov-activity-row  { background: var(--surface-raised); }
+[data-theme="light"] .ov-activity-row:hover { background: var(--border-vis); }
+[data-theme="light"] .wlt-hero        { background: var(--surface); }
 
 /* ═══════════════════════════════════════════════════════
    LIGHT MODE
@@ -1392,8 +1759,99 @@ nav.nav, .mobile-menu { display: none !important; }
     background-size: 20px 20px;
     border-color: var(--border-vis);
 }
-[data-theme="light"] .dash-table th { background: var(--surface-raised); border-bottom-color: var(--border-vis); }
-[data-theme="light"] .dash-table tbody tr:hover { background: var(--surface-raised); }
+/* ── Light mode: dot-grid très subtil ── */
+[data-theme="light"] .dash-main {
+    background-image: radial-gradient(circle, rgba(0,0,0,0.07) 0.75px, transparent 0.75px);
+}
+
+/* ── Card title row — label gauche, type droit ── */
+.ov-card-lbl-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--s12);
+}
+.ov-card-lbl-row .ov-card-lbl { margin-bottom: 0; }
+
+/* ── Loss calculation type badge (inline dans le titre) ── */
+.dd-type-badge {
+    font-family: var(--f-mono);
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dis);
+    flex-shrink: 0;
+}
+
+/* ── Daily Drawdown reset countdown ── */
+.dd-reset-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s8);
+    margin-top: var(--s12);
+}
+.dd-reset-lbl {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dis);
+    white-space: nowrap;
+}
+.dd-reset-val {
+    font-family: var(--f-dot);
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--text-sec);
+    line-height: 1;
+}
+/* Light mode */
+[data-theme="light"] .dd-reset-val {
+    font-weight: 700;
+    color: var(--text-pri);
+}
+
+/* ── Light mode: Doto font — dots plus épais pour meilleure lisibilité ──
+   Doto est une police variable dot-matrix. En dark mode les dots blancs
+   sur noir sont très lisibles. En light mode il faut un weight plus élevé
+   pour que les dots soient plus denses et visibles sur fond clair.        */
+[data-theme="light"] .dash-page-title,
+[data-theme="light"] .dash-alloc-val,
+[data-theme="light"] .dash-alloc-pnl,
+[data-theme="light"] .dash-alloc-pct,
+[data-theme="light"] .dash-sc-time,
+[data-theme="light"] .dash-cs-title,
+[data-theme="light"] .dash-coins-card-val,
+[data-theme="light"] .wlt-hero-val,
+[data-theme="light"] .ov-card-val,
+[data-theme="light"] .cred-val {
+    font-weight: 700;
+}
+/* Couleurs de statut Doto — légèrement plus sombres sur fond clair */
+[data-theme="light"] .ov-card-val.green { color: #0a7a50; }
+[data-theme="light"] .ov-card-val.warn  { color: #8a6010; }
+[data-theme="light"] .ov-card-val.red   { color: #b01018; }
+[data-theme="light"] .wlt-hero-val      { color: #8a6010; }
+
+/* ── Light mode: table ── */
+[data-theme="light"] .dash-table-wrap { background: var(--surface); }
+[data-theme="light"] .dash-table th   { background: var(--surface-raised); border-bottom-color: var(--border-vis); }
+[data-theme="light"] .dash-table td   { background: var(--surface); }
+[data-theme="light"] .dash-table tbody tr:hover td       { background: var(--surface-raised); }
+[data-theme="light"] .dash-table tbody tr.active-row td  { background: var(--surface-raised); }
+
+/* ── Light mode: KYC banner lisible ── */
+[data-theme="light"] .dash-kyc-banner {
+    background: rgba(212,168,67,0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-color: rgba(212,168,67,0.5);
+}
+[data-theme="light"] .dash-kyc-banner.rejected {
+    background: rgba(215,25,33,0.10);
+    border-color: rgba(215,25,33,0.4);
+}
 [data-theme="light"] .dash-input { border-bottom-color: var(--border-vis); }
 [data-theme="light"] .dash-user-card,
 [data-theme="light"] .dash-coins-card,
@@ -1406,6 +1864,101 @@ nav.nav, .mobile-menu { display: none !important; }
 [data-theme="light"] .dash h1,
 [data-theme="light"] .dash h2,
 [data-theme="light"] .dash h3 { color: var(--text-disp); }
+/* ═══════════════════════════════════════════════════════
+   CONSISTENCY ARC-GAUGE  — Nothing style, 270° sweep
+   Layout horizontal : balance texte gauche, jauge droite
+═══════════════════════════════════════════════════════ */
+
+/* Row inside Account Balance card */
+.cons-card-row {
+    display: flex;
+    align-items: center;
+    gap: var(--s16);
+    margin-top: var(--s4);
+}
+.cons-card-left {
+    flex: 1;
+    min-width: 0;
+}
+.cons-card-left .ov-card-val {
+    font-size: 22px;
+    margin-bottom: var(--s4);
+}
+.cons-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+/* Gauge container */
+.cons-gauge-container {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    flex-shrink: 0;
+}
+.cons-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+.cons-track {
+    stroke: var(--border-vis);
+    stroke-linecap: round;
+}
+.cons-center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -56%);
+    pointer-events: none;
+}
+.cons-pct {
+    font-family: var(--f-dot);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-pri);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    display: block;
+    text-align: center;
+}
+/* Limite choisie — bas de l'arc (dans le gap du 270°) */
+.cons-limit-text {
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--f-mono);
+    font-size: 8px;
+    letter-spacing: 0.10em;
+    color: var(--text-dis);
+    pointer-events: none;
+}
+.cons-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cons-status {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.10em;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+/* Light mode */
+[data-theme="light"] .cons-pct { font-weight: 700; }
+
+/* ── Table: P&L column color (override .dash-table td color) ── */
+.dash-table td.green { color: var(--success) !important; }
+.dash-table td.red   { color: var(--error)   !important; }
+.dash-table td.warn  { color: var(--warning) !important; }
+
 /* ── Dashboard logo dark/light swap ── */
 .dash-logo-light { display: none; }
 [data-theme="light"] .dash-logo-dark  { display: none !important; }
@@ -1805,3 +2358,159 @@ input[type="range"] { accent-color: #10B981 !important; }
 .mp-msg { font-family: 'Chivo Mono', monospace !important; font-size: 10px !important; }
 .mp-msg.ok { color: #10B981 !important; }
 .mp-msg.err { color: #D71921 !important; }
+
+/* ══════════════════════════════════════════════════════════
+   CREDENTIALS CARD — Challenges tab
+══════════════════════════════════════════════════════════ */
+.cred-card {
+    background: var(--surface);
+    border: 1px solid var(--border-vis);
+    padding: var(--s24);
+    margin-bottom: var(--s24);
+}
+
+.cred-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s12);
+    margin-bottom: var(--s16);
+}
+.cred-card-lbl {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-sec);
+}
+
+/* Mobile dropdown — hidden on desktop */
+.cred-mobile-select {
+    display: none;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    background: var(--black);
+    border: 1px solid var(--border-vis);
+    color: var(--text-sec);
+    padding: 4px var(--s8);
+    border-radius: 2px;
+    cursor: pointer;
+    max-width: 220px;
+    outline: none;
+}
+
+/* Account pills row */
+.cred-accounts {
+    display: flex;
+    gap: var(--s8);
+    flex-wrap: wrap;
+    margin-bottom: var(--s16);
+}
+.cred-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border: 1px solid var(--border-vis);
+    background: none;
+    color: var(--text-dis);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: border-color 0.12s, color 0.12s;
+}
+.cred-pill:hover    { border-color: var(--text-sec); color: var(--text-sec); }
+.cred-pill.active   { border-color: var(--text-disp); color: var(--text-disp); }
+
+.cred-pill-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--text-dis);
+    flex-shrink: 0;
+}
+.cred-pill-dot.active  { background: var(--success); }
+.cred-pill-dot.funded  { background: var(--success); }
+.cred-pill-dot.passed  { background: var(--info); }
+.cred-pill-dot.failed  { background: var(--error); }
+.cred-pill-dot.expired { background: var(--text-dis); }
+
+.cred-pill-size  { color: var(--text-sec); }
+.cred-pill.active .cred-pill-size { color: var(--text-disp); }
+.cred-pill-phase { font-size: 8px; color: var(--warning); }
+
+/* Credentials 4-col grid with 1px gap lines */
+.cred-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border-vis);
+}
+.cred-field {
+    background: var(--surface);
+    padding: var(--s16);
+}
+.cred-lbl {
+    font-family: var(--f-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-sec);
+    margin-bottom: var(--s8);
+}
+.cred-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+.cred-val {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    color: var(--text-disp);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cred-val-pass { letter-spacing: 0.12em; } /* extra spacing for masked dots */
+.cred-val-na   { color: var(--text-dis) !important; font-size: 10px; }
+
+/* Icon buttons (copy / eye / reset) */
+.cred-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border: 1px solid var(--border-vis);
+    background: none;
+    color: var(--text-dis);
+    border-radius: 2px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.12s, color 0.12s;
+}
+.cred-btn:hover         { border-color: var(--text-sec); color: var(--text-sec); }
+.cred-btn.copied        { border-color: var(--success);  color: var(--success); }
+.cred-btn-reset:hover   { border-color: var(--info);     color: var(--info); }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .cred-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+    .cred-grid         { grid-template-columns: 1fr; }
+    .cred-accounts     { display: none; }
+    .cred-mobile-select { display: block; }
+    .cred-card         { padding: var(--s16); }
+}
+
+/* Light mode */
+[data-theme="light"] .cred-card    { background: var(--surface-raised); }
+[data-theme="light"] .cred-field   { background: var(--surface-raised); }
+[data-theme="light"] .cred-mobile-select { background: var(--surface); }
