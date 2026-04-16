@@ -49,13 +49,36 @@
 </IfModule>
 
 # ─── Caching ───
+# PHP pages: never cache — ensures HTML always has current asset version numbers
+<FilesMatch "\.php$">
+    Header always set Cache-Control "no-cache, no-store, must-revalidate"
+    Header always set Pragma "no-cache"
+    Header always set Expires "0"
+</FilesMatch>
+
+# LiteSpeed: use full URL including query string as cache key
+# so ?v=425 and ?v=426 are distinct entries
+<IfModule LiteSpeed>
+    RewriteEngine On
+    RewriteRule .* - [E=cache-control:no-cache]
+</IfModule>
+
 <IfModule mod_expires.c>
     ExpiresActive On
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
+    # CSS/JS: short TTL so stale assets expire quickly even if LiteSpeed ignores QS
+    ExpiresByType text/css "access plus 1 hour"
+    ExpiresByType application/javascript "access plus 1 hour"
     ExpiresByType image/webp "access plus 1 year"
     ExpiresByType image/png "access plus 1 year"
     ExpiresByType image/jpeg "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+    # CSS/JS: must-revalidate so clients always check freshness
+    <FilesMatch "\.(css|js)$">
+        Header append Cache-Control "must-revalidate"
+        Header set Vary "Accept-Encoding"
+    </FilesMatch>
 </IfModule>
 
 # ─── GZIP Compression ───

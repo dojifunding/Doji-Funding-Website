@@ -689,23 +689,24 @@ var ChallengeCredentials = (function() {
             p.classList.toggle('active', parseInt(p.dataset.credId, 10) === id);
         });
 
-        /* Update mobile select */
-        var mSel = document.getElementById('credMobileSelect');
-        if (mSel) mSel.value = id;
+        /* Update mobile selects (both tabs) */
+        document.querySelectorAll('.cred-mobile-sel').forEach(function(mSel) {
+            mSel.value = id;
+        });
 
         /* ── Credentials fields ── */
         _setText('credLogin',        cred.login || '—');
         _setText('credMasterPass',   cred.master_password   ? '••••••••' : 'N/A');
-        _setText('credInvestorPass', cred.investor_password ? '••••••••' : 'N/A');
+        _setText('credInvestorPass', cred.investor_password || 'N/A');
         _setText('credServer',       cred.server || '—');
 
-        var eyeBtn   = document.getElementById('credMasterToggle');
-        var masterEl = document.getElementById('credMasterPass');
-        if (eyeBtn) {
+        document.querySelectorAll('.cred-master-eye-btn').forEach(function(eyeBtn) {
             eyeBtn.style.display = cred.master_password ? '' : 'none';
             eyeBtn.innerHTML = EYE_OPEN;
-        }
-        if (masterEl) masterEl.classList.toggle('cred-val-na', !cred.master_password);
+        });
+        _qsa('credMasterPass').forEach(function(masterEl) {
+            masterEl.classList.toggle('cred-val-na', !cred.master_password);
+        });
 
         /* ── KPI cards ── */
         _updateKpi(cred);
@@ -733,7 +734,7 @@ var ChallengeCredentials = (function() {
         /* Profit Target */
         var profEl = document.getElementById('chKpiProfitPct');
         if (profEl) {
-            profEl.textContent = _fmtPct(pnlPct) + ' / ' + _fmtPct(target);
+            profEl.textContent = _fmtPct(pnlPct) + '/' + _fmtPct(target);
             profEl.className = 'ov-card-val ' + (profit >= 0 ? 'green' : 'red');
         }
         _setText('chKpiProfitConvert',
@@ -744,7 +745,7 @@ var ChallengeCredentials = (function() {
         var ddDanger = ddMax > 0 && ddUsed > ddMax * 0.7;
         var ddEl = document.getElementById('chKpiDdPct');
         if (ddEl) {
-            ddEl.textContent = _fmtPct(ddUsed) + ' / ' + _fmtPct(ddMax);
+            ddEl.textContent = _fmtPct(ddUsed) + '/' + _fmtPct(ddMax);
             ddEl.className = 'ov-card-val ' + (ddDanger ? 'red' : 'warn');
         }
         _setText('chKpiDdConvert',
@@ -759,7 +760,7 @@ var ChallengeCredentials = (function() {
         var mdDanger = mdMax > 0 && mdUsed > mdMax * 0.7;
         var mdEl = document.getElementById('chKpiMdPct');
         if (mdEl) {
-            mdEl.textContent = _fmtPct(mdUsed) + ' / ' + _fmtPct(mdMax);
+            mdEl.textContent = _fmtPct(mdUsed) + '/' + _fmtPct(mdMax);
             mdEl.className = 'ov-card-val ' + (mdDanger ? 'red' : (mdUsed > mdMax * 0.4 ? 'warn' : ''));
         }
         _setText('chKpiMdConvert',
@@ -780,9 +781,23 @@ var ChallengeCredentials = (function() {
 
         /* Account Info */
         _setText('chKpiType', cred.type_label || '—');
-        _setText('chKpiId',   cred.ch_id_fmt  || '—');
+        _setText('chKpiId',   cred.acct_ref   || cred.ch_id_fmt || '—');
         var resetBtn = document.getElementById('chKpiResetBtn');
         if (resetBtn) resetBtn.style.display = cred.is_eval ? '' : 'none';
+
+        var payoutBtn = document.getElementById('chKpiPayoutBtn');
+        if (payoutBtn) {
+            if (cred.is_funded) {
+                payoutBtn.style.display = '';
+                payoutBtn.disabled = !cred.payout_eligible;
+                payoutBtn.title = cred.payout_eligible
+                    ? 'Request a payout'
+                    : 'Not yet eligible — verify trading days, profit, and consistency rule';
+            } else {
+                payoutBtn.style.display = 'none';
+                payoutBtn.disabled = false;
+            }
+        }
     }
 
     function selectFromRow(rowEl, id) {
@@ -800,10 +815,19 @@ var ChallengeCredentials = (function() {
         if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function copyChId() {
+    function copyChId(btnEl) {
         var el = document.getElementById('chKpiId');
         if (!el) return;
-        navigator.clipboard.writeText(el.textContent).catch(function() {});
+        navigator.clipboard.writeText(el.textContent.trim()).then(function() {
+            if (!btnEl) return;
+            btnEl.classList.add('copied');
+            setTimeout(function() { btnEl.classList.remove('copied'); }, 1200);
+        }).catch(function() {});
+    }
+
+    function goToPayouts() {
+        var btn = document.querySelector('[data-tab="payouts"]');
+        if (btn) btn.click();
     }
 
     function resetChallenge() {
@@ -835,8 +859,10 @@ var ChallengeCredentials = (function() {
         if (!cred || !cred.master_password) return;
         _masterVisible = !_masterVisible;
         _setText('credMasterPass', _masterVisible ? cred.master_password : '••••••••');
-        var eyeBtn = document.getElementById('credMasterToggle');
-        if (eyeBtn) eyeBtn.innerHTML = _masterVisible ? EYE_CLOSE : EYE_OPEN;
+        var icon = _masterVisible ? EYE_CLOSE : EYE_OPEN;
+        document.querySelectorAll('.cred-master-eye-btn').forEach(function(btn) {
+            btn.innerHTML = icon;
+        });
     }
 
     function copy(field, btnEl) {
@@ -856,9 +882,19 @@ var ChallengeCredentials = (function() {
         alert('Password reset request submitted. Check your email.');
     }
 
+    /* Find elements by id OR data-cred-field attribute (for multi-tab updates) */
+    function _qsa(id) {
+        var results = [];
+        var byId = document.getElementById(id);
+        if (byId) results.push(byId);
+        document.querySelectorAll('[data-cred-field="' + id + '"]').forEach(function(el) {
+            results.push(el);
+        });
+        return results;
+    }
+
     function _setText(id, val) {
-        var el = document.getElementById(id);
-        if (el) el.textContent = val;
+        _qsa(id).forEach(function(el) { el.textContent = val; });
     }
 
     /* Consistency arc-gauge — r=34, 270° sweep, circumference≈213.63 */
@@ -903,7 +939,7 @@ var ChallengeCredentials = (function() {
         var statusEl = document.getElementById('chKpiConsStatus');
         if (statusEl) {
             var label = pct <= 0   ? 'N/A'
-                      : pct >= 100 ? 'VIOLATED'
+                      : pct >= 100 ? 'TOO HIGH'
                       : pct >=  80 ? 'WARNING'
                       : 'OK';
             statusEl.textContent = label;
@@ -915,7 +951,8 @@ var ChallengeCredentials = (function() {
 
     return { select: select, selectFromRow: selectFromRow, toggleMaster: toggleMaster,
              copy: copy, resetMaster: resetMaster,
-             copyChId: copyChId, resetChallenge: resetChallenge, deleteChallenge: deleteChallenge };
+             copyChId: copyChId, resetChallenge: resetChallenge, deleteChallenge: deleteChallenge,
+             goToPayouts: goToPayouts };
 }());
 
 /* ── Daily Drawdown Reset Countdown (GMT+3 midnight) ───────────────── */

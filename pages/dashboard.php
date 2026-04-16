@@ -18,14 +18,220 @@ $kycStatus  = $profile['kyc_status'] ?? 'none';
 $kycClass   = ['none' => 'kyc-none', 'pending' => 'kyc-pending', 'approved' => 'kyc-approved', 'rejected' => 'kyc-rejected'];
 $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1));
 
-// ── Topbar: total allocation across all active accounts ──
+// ── Topbar: total allocation across active + funded accounts ──
 $topbar_allocation = 0;
 $topbar_pnl        = 0;
-foreach (($overview['active_list'] ?? []) as $_ch) {
-    $topbar_allocation += $_ch['account_size'] ?? 0;
-    $topbar_pnl        += $_ch['total_profit'] ?? 0;
+foreach ($challenges as $_ch) {
+    if (in_array($_ch['status'], ['active', 'funded'])) {
+        $topbar_allocation += (float)($_ch['account_size'] ?? 0);
+        $topbar_pnl        += (float)($_ch['total_profit'] ?? 0);
+    }
 }
 $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) * 100 : 0;
+
+// ── Topbar: cumulative Doji Coins from all accounts (1 coin / lot) ──
+$topbar_coins = 0;
+foreach ($challenges as $_ch) {
+    $topbar_coins += (int)floor((float)($_ch['lots_traded'] ?? 0));
+}
+
+// ── Account index map: challenge id → sequential position (1 = first ever created) ──
+$_chTotal     = count($challenges);
+$acctIndexMap = [];
+foreach ($challenges as $_idx => $_ch) {
+    $acctIndexMap[(int)$_ch['id']] = $_chTotal - $_idx;
+}
+
+// ── Summary bar counts (used in overview + challenges tabs) ──
+$sumEvalCount = 0;  $sumEvalAlloc = 0.0;  $sumEvalProfit = 0.0;
+$sumFundedCount = 0; $sumFundedAlloc = 0.0; $sumFundedProfit = 0.0;
+foreach ($challenges as $_c) {
+    if (in_array($_c['status'], ['active', 'passed'])) {
+        $sumEvalCount++;
+        $sumEvalAlloc  += (float)$_c['account_size'];
+        $sumEvalProfit += (float)$_c['total_profit'];
+    } elseif ($_c['status'] === 'funded') {
+        $sumFundedCount++;
+        $sumFundedAlloc  += (float)$_c['account_size'];
+        $sumFundedProfit += (float)$_c['total_profit'];
+    }
+}
+$sumEvalPct   = $sumEvalAlloc   > 0 ? ($sumEvalProfit   / $sumEvalAlloc)   * 100 : 0;
+$sumFundedPct = $sumFundedAlloc > 0 ? ($sumFundedProfit / $sumFundedAlloc) * 100 : 0;
+
+// ── Stats cards (overview tab) ──
+
+// 1. Bias — long vs short across eval + funded
+$biasLong = 0; $biasShort = 0;
+$biasLongWins = 0; $biasShortWins = 0;
+foreach ($challenges as $_c) {
+    if (in_array($_c['status'], ['active', 'passed', 'funded'])) {
+        $biasLong      += (int)($_c['long_trades']          ?? 0);
+        $biasShort     += (int)($_c['short_trades']         ?? 0);
+        $biasLongWins  += (int)($_c['long_winning_trades']  ?? 0);
+        $biasShortWins += (int)($_c['short_winning_trades'] ?? 0);
+    }
+}
+$biasLongWR  = $biasLong  > 0 ? round($biasLongWins  / $biasLong  * 100) : null;
+$biasShortWR = $biasShort > 0 ? round($biasShortWins / $biasShort * 100) : null;
+$biasTotal    = $biasLong + $biasShort;
+$biasLongPct  = $biasTotal > 0 ? round($biasLong  / $biasTotal * 100) : 0;
+$biasShortPct = $biasTotal > 0 ? 100 - $biasLongPct : 0;
+$biasDir      = $biasTotal === 0 ? 'N/A'
+              : ($biasLong > $biasShort ? 'LONG BIAS'
+              : ($biasShort > $biasLong ? 'SHORT BIAS' : 'NEUTRAL'));
+// SVG semicircle gauge arc endpoint (cx=50, cy=60, r=46)
+// angle 180°=left(short), 90°=top(neutral), 0°=right(long)
+$_biasPctCl   = $biasTotal > 0 ? max(1, min(99, $biasLongPct)) : 50;
+$_biasAngle   = deg2rad(180.0 - $_biasPctCl * 1.8);
+$biasArcEndX  = round(50 + 46 * cos($_biasAngle), 2);
+$biasArcEndY  = round(60 - 46 * sin($_biasAngle), 2);
+$biasArcColor = $biasTotal === 0 ? '#333333'
+              : ($biasLongPct > 52 ? '#10B981'
+              : ($biasLongPct < 48 ? '#D71921' : '#999999'));
+
+// 2. Daily P&L — average per trading day per category
+$dpEvalProfit = 0.0; $dpEvalDays = 0;
+$dpFundedProfit = 0.0; $dpFundedDays = 0;
+foreach ($challenges as $_c) {
+    $days = max(1, (int)($_c['trading_days'] ?? 1));
+    if (in_array($_c['status'], ['active', 'passed'])) {
+        $dpEvalProfit += (float)$_c['total_profit'];
+        $dpEvalDays   += $days;
+    } elseif ($_c['status'] === 'funded') {
+        $dpFundedProfit += (float)$_c['total_profit'];
+        $dpFundedDays   += $days;
+    }
+}
+$dpEvalDaily   = $dpEvalDays   > 0 ? $dpEvalProfit   / $dpEvalDays   : null;
+$dpFundedDaily = $dpFundedDays > 0 ? $dpFundedProfit / $dpFundedDays : null;
+
+// 3. Grade — based on total payout amount
+$gradePayoutCount = (int)($overview['total_payouts']        ?? 0);
+$gradePayoutTotal = (float)($overview['total_payout_amount'] ?? 0);
+$gradeHighest = 0.0;
+foreach (($payouts ?? []) as $_p) {
+    if ($_p['status'] === 'completed') {
+        $gradeHighest = max($gradeHighest, (float)$_p['amount']);
+    }
+}
+// Moody's-style investment grade scale based on total payouts
+// BBB and above = Investment Grade threshold
+if      ($gradePayoutTotal === 0.0)   { $gradeLetter = 'NR';  $gradeLabel = 'NOT RATED';    $gradeColor = 'var(--text-dis)'; $gradeTarget = 0;      $gradeIsIG = false; }
+elseif  ($gradePayoutTotal < 1000)    { $gradeLetter = 'B';   $gradeLabel = 'SPECULATIVE';  $gradeColor = '#888888';         $gradeTarget = 1000;   $gradeIsIG = false; }
+elseif  ($gradePayoutTotal < 5000)    { $gradeLetter = 'BB';  $gradeLabel = 'UPPER SPEC.';  $gradeColor = 'var(--warning)';  $gradeTarget = 5000;   $gradeIsIG = false; }
+elseif  ($gradePayoutTotal < 25000)   { $gradeLetter = 'BBB'; $gradeLabel = 'INV. GRADE';   $gradeColor = 'var(--info)';     $gradeTarget = 25000;  $gradeIsIG = true;  }
+elseif  ($gradePayoutTotal < 100000)  { $gradeLetter = 'A';   $gradeLabel = 'UPPER MEDIUM'; $gradeColor = 'var(--success)';  $gradeTarget = 100000; $gradeIsIG = true;  }
+elseif  ($gradePayoutTotal < 500000)  { $gradeLetter = 'AA';  $gradeLabel = 'HIGH GRADE';   $gradeColor = '#10E8A8';         $gradeTarget = 500000; $gradeIsIG = true;  }
+else                                  { $gradeLetter = 'AAA'; $gradeLabel = 'PRIME';        $gradeColor = 'var(--warning)';  $gradeTarget = 0;      $gradeIsIG = true;  }
+$gradeProg      = $gradeTarget > 0 ? min(100, ($gradePayoutTotal / $gradeTarget) * 100) : 100;
+$gradeLetterLen = strlen($gradeLetter); // 2 = NR/BB/AA, 3 = BBB/AAA
+
+// 4. Doji Wallet balance
+$walletBalance = (float)($profile['wallet_balance'] ?? 0);
+
+// 5. Doji Coins
+$dojiCoins = (int)($overview['doji_coins'] ?? 0);
+if ($dojiCoins === 0) $dojiCoins = $topbar_coins;
+
+// 6. Trading session distribution
+$sesNY = 0; $sesLondon = 0; $sesAsia = 0;
+foreach ($challenges as $_c) {
+    if (in_array($_c['status'], ['active', 'passed', 'funded'])) {
+        $sesNY     += (int)($_c['session_ny']     ?? 0);
+        $sesLondon += (int)($_c['session_london'] ?? 0);
+        $sesAsia   += (int)($_c['session_asia']   ?? 0);
+    }
+}
+$sesTotal     = $sesNY + $sesLondon + $sesAsia;
+$sesNYPct     = $sesTotal > 0 ? round($sesNY     / $sesTotal * 100) : 0;
+$sesLondonPct = $sesTotal > 0 ? round($sesLondon / $sesTotal * 100) : 0;
+$sesAsiaPct   = $sesTotal > 0 ? round($sesAsia   / $sesTotal * 100) : 0;
+
+// ── Trading credentials data (shared between overview + challenges tabs) ──
+$credData    = [];
+$credFirstId = 0;
+foreach ($challenges as $ch) {
+    $cid    = (int)$ch['id'];
+    $login  = $ch['account_login'] ?? $ch['mt_login'] ?? '—';
+    if (empty($login)) $login = '—';
+    $server = $ch['account_server'] ?? $ch['mt_server'] ?? '';
+    if (empty($server)) {
+        $server = in_array($ch['status'], ['funded']) ? 'DXTrade-Live-EU1' : 'DXTrade-Demo-US1';
+    }
+    $rawPwd = $ch['account_password'] ?? $ch['mt_password'] ?? null;
+    $hasPwd = !empty($rawPwd) && in_array($ch['status'], ['active', 'funded']);
+    $masterPwd   = $hasPwd ? $rawPwd : null;
+    $investorPwd = $hasPwd ? 'Inv@' . str_pad($cid, 4, '0', STR_PAD_LEFT) . 'Rd' : null;
+    $kBalance  = (float)$ch['current_balance'];
+    $kProfit   = (float)$ch['total_profit'];
+    $kSize     = (float)$ch['account_size'] ?: 1;
+    $kPeak     = max((float)$ch['peak_balance'], $kBalance);
+    $kTarget   = (float)$ch['profit_target_1'];
+    $kTarget2  = (float)($ch['profit_target_2'] ?? 0);
+    $kDailyLoss = (float)$ch['daily_loss'];
+    $kMaxLoss   = (float)$ch['max_loss'];
+    $kPnlPct   = ($kProfit / $kSize) * 100;
+    $kProfProg = $kTarget > 0 ? min(100, max(0, ($kPnlPct / $kTarget) * 100)) : 0;
+    $kDdRaw    = max(0, (($kPeak - $kBalance) / $kSize) * 100);
+    $kDdUsed   = min($kDdRaw, $kDailyLoss);
+    $kDdProg   = $kDailyLoss > 0 ? min(100, max(0, ($kDdUsed / $kDailyLoss) * 100)) : 0;
+    $kMdUsed   = $kDdRaw;
+    $kMdProg   = $kMaxLoss > 0 ? min(100, max(0, ($kMdUsed / $kMaxLoss) * 100)) : 0;
+    $kBestTrade = (float)($ch['best_trade'] ?? 0);
+    $kConsRule  = max(1, (float)($ch['consistency_rule'] ?? 30));
+    $kConsUsed  = ($kProfit > 0 && $kBestTrade > 0) ? ($kBestTrade / $kProfit) * 100 : 0;
+    $kConsPct   = $kConsUsed > 0 ? ($kConsUsed / $kConsRule) * 100 : 0;
+    $kIsEval    = in_array($ch['status'], ['active', 'passed']);
+    $kIsFunded  = $ch['status'] === 'funded';
+    $kPhase     = (int)$ch['phase'];
+    $kTypeLbl   = $kIsFunded
+        ? 'FUNDED ACCOUNT'
+        : (($ch['type'] === 'one_step' ? '1-STEP' : '2-STEP')
+           . ($kPhase > 1 ? ' · PHASE ' . $kPhase : '') . ' EVAL');
+    $kAcctRef        = challengeAcctRef($ch['type'], $ch['account_size'], $userId, $acctIndexMap[$cid] ?? 1);
+    $kTradingDays    = (int)($ch['trading_days']     ?? 0);
+    $kMinTradingDays = (int)($ch['min_trading_days'] ?? 0);
+    $kPayoutEligible = $kIsFunded && $kProfit > 0
+        && ($kMinTradingDays === 0 || $kTradingDays >= $kMinTradingDays)
+        && $kConsPct < 100;
+    $credData[$cid] = [
+        'id'                => $cid,
+        'label'             => ($ch['type'] === 'one_step' ? '1-Step' : '2-Step')
+                               . ' · ' . formatMoneyShort($ch['account_size']),
+        'status'            => $ch['status'],
+        'login'             => $login,
+        'master_password'   => $masterPwd,
+        'investor_password' => $investorPwd,
+        'server'            => $server,
+        'balance'           => $kBalance,
+        'profit'            => $kProfit,
+        'account_size'      => $kSize,
+        'profit_target'     => $kTarget,
+        'profit_target_2'   => $kTarget2,
+        'daily_loss'        => $kDailyLoss,
+        'max_loss'          => $kMaxLoss,
+        'pnl_pct'           => round($kPnlPct, 2),
+        'prof_prog'         => round($kProfProg, 2),
+        'dd_used'           => round($kDdUsed, 2),
+        'dd_prog'           => round($kDdProg, 2),
+        'md_used'           => round($kMdUsed, 2),
+        'md_prog'           => round($kMdProg, 2),
+        'daily_loss_type'   => $ch['daily_loss_type'] ?? 'intraday',
+        'max_loss_type'     => $ch['max_loss_type']   ?? 'intraday',
+        'best_trade'        => $kBestTrade,
+        'cons_rule'         => $kConsRule,
+        'cons_used'         => round($kConsUsed, 1),
+        'cons_pct'          => round($kConsPct, 1),
+        'is_eval'           => $kIsEval,
+        'is_funded'         => $kIsFunded,
+        'type_label'        => $kTypeLbl,
+        'ch_id_fmt'         => $kAcctRef,
+        'acct_ref'          => $kAcctRef,
+        'payout_eligible'   => $kPayoutEligible,
+    ];
+    if ($credFirstId === 0) $credFirstId = $cid;
+}
 ?>
 
 <div class="dash">
@@ -169,17 +375,27 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
             <!-- RIGHT — allocation widget + market session cards -->
             <div class="dash-topbar-right">
 
-                <!-- Total Allocation widget -->
-                <div class="dash-topbar-alloc">
-                    <div class="dash-alloc-label">TOTAL ALLOCATION</div>
-                    <div class="dash-alloc-val"><?= formatMoney($topbar_allocation) ?></div>
-                    <div class="dash-alloc-row">
-                        <span class="dash-alloc-pnl <?= $topbar_pnl >= 0 ? 'pos' : 'neg' ?>">
-                            <?= $topbar_pnl >= 0 ? '+' : '' ?><?= formatMoney($topbar_pnl) ?>
-                        </span>
-                        <span class="dash-alloc-pct <?= $topbar_perf_pct >= 0 ? 'pos' : 'neg' ?>">
-                            <?= $topbar_perf_pct >= 0 ? '+' : '' ?><?= number_format($topbar_perf_pct, 2) ?>%
-                        </span>
+                <!-- Allocation + Doji Coins widgets -->
+                <div class="dash-topbar-widgets">
+                    <div class="dash-topbar-alloc">
+                        <div class="dash-alloc-label">TOTAL ALLOCATION</div>
+                        <div class="dash-alloc-val"><?= formatMoney($topbar_allocation) ?></div>
+                        <div class="dash-alloc-row">
+                            <span class="dash-alloc-pnl <?= $topbar_pnl >= 0 ? 'pos' : 'neg' ?>">
+                                <?= $topbar_pnl >= 0 ? '+' : '' ?><?= formatMoney($topbar_pnl) ?>
+                            </span>
+                            <span class="dash-alloc-pct <?= $topbar_perf_pct >= 0 ? 'pos' : 'neg' ?>">
+                                <?= $topbar_perf_pct >= 0 ? '+' : '' ?><?= number_format($topbar_perf_pct, 2) ?>%
+                            </span>
+                        </div>
+                    </div>
+                    <div class="dash-topbar-coins-wallet">
+                        <div class="dash-coins-label">DOJI COINS</div>
+                        <div class="dash-wallet-label">WALLET</div>
+                        <div class="dash-coins-val"><?= number_format($topbar_coins) ?></div>
+                        <div class="dash-wallet-val" onclick="Dashboard.switchTab('wallet')" title="Go to Wallet"><?= formatMoney($walletBalance) ?></div>
+                        <div class="dash-coins-sub">FROM VOLUME</div>
+                        <div class="dash-wallet-sub">AVAILABLE</div>
                     </div>
                 </div>
 
@@ -589,6 +805,9 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                 $ovMdUsed   = $ovDdRaw;                 // hard: valeur brute non capée
                 $ovMdProg   = $ovMdMax > 0 ? min(100, max(0, ($ovMdUsed / $ovMdMax) * 100)) : 0;
                 $ovChId     = $firstCh ? (int)$firstCh['id'] : 0;
+                $ovAcctRef  = ($firstCh && $ovChId)
+                    ? challengeAcctRef($firstCh['type'], $firstCh['account_size'], $userId, $acctIndexMap[$ovChId] ?? 1)
+                    : '—';
                 $ovType     = $firstCh ? ($firstCh['type'] === 'one_step' ? '1-STEP' : '2-STEP') : '—';
                 $ovPhase    = $firstCh && $firstCh['phase'] > 1 ? ' · PHASE ' . $firstCh['phase'] : '';
                 $ovStatus   = $firstCh ? $firstCh['status'] : '';
@@ -601,222 +820,422 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                 $ovMdType     = $firstCh['max_loss_type']   ?? 'intraday';
                 $ovConsUsed   = ($ovProfit > 0 && $ovBestTrade > 0) ? ($ovBestTrade / $ovProfit) * 100 : 0;
                 $ovConsPct    = $ovConsUsed > 0 ? ($ovConsUsed / $ovConsRule) * 100 : 0;
+                $cgFill  = $ovConsPct > 0 ? min(160.22 * 1.04, 160.22 * $ovConsPct / 100) : 0;
+                $cgColor = $ovConsPct >= 100 ? '#D71921' : ($ovConsPct >= 80 ? '#e86820' : ($ovConsPct >= 60 ? '#D4A843' : ($ovConsPct > 0 ? '#10B981' : '#333')));
+                $cgLbl   = $ovConsPct >= 100 ? 'TOO HIGH' : ($ovConsPct >= 80 ? 'WARNING' : ($ovConsPct > 0 ? 'OK' : 'N/A'));
+                $cgDisp  = $ovConsPct > 0 ? round($ovConsUsed) : '—';
                 ?>
 
-                <!-- ── TOP ROW: 4 KPI cards ── -->
-                <div class="ov-top-row">
-
-                    <div class="ov-card">
-                        <?php
-                        $cgFill  = $ovConsPct > 0 ? min(160.22 * 1.04, 160.22 * $ovConsPct / 100) : 0;
-                        $cgColor = $ovConsPct >= 100 ? '#D71921' : ($ovConsPct >= 80 ? '#e86820' : ($ovConsPct >= 60 ? '#D4A843' : ($ovConsPct > 0 ? '#10B981' : '#333')));
-                        $cgLbl   = $ovConsPct >= 100 ? 'VIOLATED' : ($ovConsPct >= 80 ? 'WARNING' : ($ovConsPct > 0 ? 'OK' : 'N/A'));
-                        $cgDisp  = $ovConsPct > 0 ? round($ovConsUsed) : '—';
-                        ?>
-                        <div class="ov-card-lbl">ACCOUNT BALANCE</div>
-                        <div class="cons-card-row">
-                            <div class="cons-card-left">
-                                <div class="ov-card-val"><?= formatMoney($ovBalance) ?></div>
-                                <div class="ov-card-sub <?= $ovProfit >= 0 ? 'green' : 'red' ?>">
-                                    <?= $ovProfit >= 0 ? '▲' : '▼' ?> <?= ($ovProfit >= 0 ? '+' : '') . formatMoney($ovProfit) ?> P&amp;L
-                                </div>
-                            </div>
-                            <div class="cons-right">
-                                <div class="cons-gauge-container">
-                                    <svg viewBox="0 0 100 100" class="cons-svg">
-                                        <circle class="cons-track" cx="50" cy="50" r="34" fill="none" stroke-width="7" stroke-dasharray="160.22 213.63" transform="rotate(135 50 50)"/>
-                                        <circle cx="50" cy="50" r="34" fill="none" stroke="<?= $cgColor ?>" stroke-width="7" stroke-linecap="round" stroke-dasharray="<?= number_format($cgFill, 2, '.', '') ?> 213.63" transform="rotate(135 50 50)"/>
-                                    </svg>
-                                    <div class="cons-center-text">
-                                        <span class="cons-pct" style="color:<?= $cgColor ?>"><?= $cgDisp ?></span>
-                                    </div>
-                                    <div class="cons-limit-text">/<?= round($ovConsRule) ?>%</div>
-                                </div>
-                                <div class="cons-meta">
-                                    <span class="cons-status" style="color:<?= $cgColor ?>"><?= $cgLbl ?></span>
-                                </div>
-                            </div>
+                <?php if (!empty($challenges)): ?>
+                <!-- ── SUMMARY BAR (overview tab) ── -->
+                <div class="dash-tab-actions">
+                    <div class="ch-summary">
+                        <div class="ch-sum-item">
+                            <span class="ch-sum-lbl">EVAL</span>
+                            <span class="ch-sum-val"><?= $sumEvalCount ?></span>
                         </div>
-                    </div>
-
-                    <div class="ov-card">
-                        <div class="ov-card-lbl">PROFIT TARGET</div>
-                        <div class="ov-card-val green"><?= number_format($ovPnlPct, 1) ?>% / <?= number_format($ovTarget, 0) ?>%</div>
-                        <div class="ov-card-convert"><?= formatMoney($ovProfit) ?> / <?= formatMoney($ovSize * $ovTarget / 100) ?></div>
-                        <div class="ov-bar-wrap"><div class="ov-bar-fill ov-bar-fill-green" style="width:<?= $ovProfProg ?>%"></div></div>
-                    </div>
-
-                    <div class="ov-card">
-                        <?php
-                        $ovDdDollar    = $ovSize * $ovDdUsed / 100;
-                        $ovDdMaxDollar = $ovSize * $ovDdMax  / 100;
-                        $ovDdClass     = $ovDdUsed > ($ovDdMax * 0.7) ? 'red' : 'warn';
-                        $ovDdBarClass  = $ovDdUsed > ($ovDdMax * 0.7) ? 'ov-bar-fill-red' : 'ov-bar-fill-amber';
-                        ?>
-                        <div class="ov-card-lbl-row">
-                            <span class="ov-card-lbl">DAILY DRAWDOWN</span>
-                            <span class="dd-type-badge"><?= lossTypeLabel($ovDdType) ?></span>
+                        <span class="ch-sum-sep">·</span>
+                        <div class="ch-sum-item">
+                            <span class="ch-sum-lbl">FUNDED</span>
+                            <span class="ch-sum-val"><?= $sumFundedCount ?></span>
                         </div>
-                        <div class="ov-card-val <?= $ovDdClass ?>"><?= number_format($ovDdUsed, 1) ?>% / <?= number_format($ovDdMax, 0) ?>%</div>
-                        <div class="ov-card-convert"><?= formatMoney($ovDdDollar) ?> / <?= formatMoney($ovDdMaxDollar) ?></div>
-                        <div class="ov-bar-wrap"><div class="ov-bar-fill <?= $ovDdBarClass ?>" style="width:<?= $ovDdProg ?>%"></div></div>
-                        <div class="dd-reset-row">
-                            <span class="dd-reset-lbl">RESETS IN</span>
-                            <span class="dd-reset-val" id="ovDdCountdown">--:--:--</span>
-                        </div>
-                    </div>
-
-                    <!-- Max Drawdown card -->
-                    <div class="ov-card">
-                        <?php
-                        $ovMdDollar    = $ovSize * $ovMdUsed / 100;
-                        $ovMdMaxDollar = $ovSize * $ovMdMax  / 100;
-                        $ovMdClass     = $ovMdUsed > ($ovMdMax * 0.7) ? 'red' : ($ovMdUsed > ($ovMdMax * 0.4) ? 'warn' : '');
-                        $ovMdBarClass  = $ovMdUsed > ($ovMdMax * 0.7) ? 'ov-bar-fill-red' : 'ov-bar-fill-amber';
-                        ?>
-                        <div class="ov-card-lbl-row">
-                            <span class="ov-card-lbl">MAX DRAWDOWN</span>
-                            <span class="dd-type-badge"><?= lossTypeLabel($ovMdType) ?></span>
-                        </div>
-                        <div class="ov-card-val <?= $ovMdClass ?>"><?= number_format($ovMdUsed, 1) ?>% / <?= number_format($ovMdMax, 0) ?>%</div>
-                        <div class="ov-card-convert"><?= formatMoney($ovMdDollar) ?> / <?= formatMoney($ovMdMaxDollar) ?></div>
-                        <div class="ov-bar-wrap"><div class="ov-bar-fill <?= $ovMdBarClass ?>" style="width:<?= $ovMdProg ?>%"></div></div>
-                        <div class="ov-card-sub" style="margin-top:var(--s8);font-size:10px;color:var(--text-dis)">OVERALL · FROM PEAK</div>
-                    </div>
-
-                    <!-- Account Info card -->
-                    <div class="ov-card ov-card-info">
-                        <div class="ov-card-lbl">ACCOUNT INFO</div>
-                        <div class="ov-info-type"><?= $ovTypeLabel ?></div>
-                        <?php if ($ovChId): ?>
-                        <div class="ov-info-id-row">
-                            <span class="ov-info-id" id="ovAccountId">#CH-<?= str_pad($ovChId, 5, '0', STR_PAD_LEFT) ?></span>
-                            <button class="ov-copy-btn" onclick="
-                                navigator.clipboard.writeText(document.getElementById('ovAccountId').textContent);
-                                this.textContent='✓';
-                                var b=this; setTimeout(function(){b.textContent='COPY';},1500);
-                            ">COPY</button>
+                        <?php if ($sumEvalAlloc > 0): ?>
+                        <span class="ch-sum-sep">|</span>
+                        <div class="ch-sum-item">
+                            <span class="ch-sum-lbl">EVAL ALLOC</span>
+                            <span class="ch-sum-val"><?= formatMoneyShort($sumEvalAlloc) ?></span>
+                            <span class="ch-sum-perf <?= $sumEvalProfit >= 0 ? 'green' : 'red' ?>">
+                                <?= ($sumEvalProfit >= 0 ? '+' : '') . formatMoney($sumEvalProfit) ?>
+                                <span class="ch-sum-pct">(<?= ($sumEvalProfit >= 0 ? '+' : '') . number_format($sumEvalPct, 1) ?>%)</span>
+                            </span>
                         </div>
                         <?php endif; ?>
-                        <div class="ov-info-actions">
-                            <?php if ($ovIsEval): ?>
-                            <button class="ov-action-btn ov-action-reset" onclick="if(confirm('Reset this challenge? This cannot be undone.')) alert('Reset requested — support will process shortly.')">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5.02"/></svg>
-                                Reset
-                            </button>
+                        <?php if ($sumFundedAlloc > 0): ?>
+                        <span class="ch-sum-sep">|</span>
+                        <div class="ch-sum-item">
+                            <span class="ch-sum-lbl">FUNDED ALLOC</span>
+                            <span class="ch-sum-val"><?= formatMoneyShort($sumFundedAlloc) ?></span>
+                            <span class="ch-sum-perf <?= $sumFundedProfit >= 0 ? 'green' : 'red' ?>">
+                                <?= ($sumFundedProfit >= 0 ? '+' : '') . formatMoney($sumFundedProfit) ?>
+                                <span class="ch-sum-pct">(<?= ($sumFundedProfit >= 0 ? '+' : '') . number_format($sumFundedPct, 1) ?>%)</span>
+                            </span>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    <a href="challenges.php" class="dash-action-btn">+ New Challenge</a>
+                </div>
+
+                <!-- ── CREDENTIALS CARD (overview tab) ── -->
+                <div class="cred-card" id="ovCredCard">
+
+                    <div class="cred-header">
+                        <span class="cred-card-lbl">TRADING CREDENTIALS</span>
+                        <!-- Mobile: dropdown selector -->
+                        <select class="cred-mobile-select cred-mobile-sel" id="ovCredMobileSelect"
+                                onchange="ChallengeCredentials.select(parseInt(this.value))">
+                            <?php foreach ($challenges as $ch): ?>
+                            <option value="<?= (int)$ch['id'] ?>">
+                                <?= htmlspecialchars(
+                                    ($ch['type'] === 'one_step' ? '1-Step' : '2-Step')
+                                    . ' · ' . formatMoneyShort($ch['account_size'])
+                                    . ' · #' . str_pad($ch['id'], 5, '0', STR_PAD_LEFT)
+                                ) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <!-- Desktop: account pills -->
+                    <div class="cred-accounts" id="ovCredAccounts">
+                        <?php foreach ($challenges as $i => $ch): ?>
+                        <button class="cred-pill<?= $i === 0 ? ' active' : '' ?>"
+                                data-cred-id="<?= (int)$ch['id'] ?>"
+                                onclick="ChallengeCredentials.select(<?= (int)$ch['id'] ?>)">
+                            <span class="cred-pill-dot <?= htmlspecialchars($ch['status']) ?>"></span>
+                            <?= $ch['type'] === 'one_step' ? '1-Step' : '2-Step' ?>
+                            <span class="cred-pill-size"><?= formatMoneyShort($ch['account_size']) ?></span>
+                            <?php if ((int)$ch['phase'] > 1): ?>
+                            <span class="cred-pill-phase">P<?= (int)$ch['phase'] ?></span>
                             <?php endif; ?>
-                            <button class="ov-action-btn ov-action-delete" onclick="if(confirm('Delete this challenge? This cannot be undone.')) alert('Deletion requested — support will process shortly.')">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                                Delete
-                            </button>
+                        </button>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- Credentials fields -->
+                    <div class="cred-grid">
+
+                        <!-- LOGIN -->
+                        <div class="cred-field">
+                            <div class="cred-lbl">Login</div>
+                            <div class="cred-row">
+                                <span class="cred-val" data-cred-field="credLogin">—</span>
+                                <button class="cred-btn" onclick="ChallengeCredentials.copy('login', this)" title="Copy login">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- MASTER PASSWORD -->
+                        <div class="cred-field">
+                            <div class="cred-lbl">Master Password</div>
+                            <div class="cred-row">
+                                <span class="cred-val cred-val-pass" data-cred-field="credMasterPass">—</span>
+                                <button class="cred-btn cred-master-eye-btn" id="ovCredMasterToggle"
+                                        onclick="ChallengeCredentials.toggleMaster()" title="Show / hide">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                                <button class="cred-btn" onclick="ChallengeCredentials.copy('master_password', this)" title="Copy">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                </button>
+                                <button class="cred-btn cred-btn-reset"
+                                        onclick="ChallengeCredentials.resetMaster()" title="Reset password">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- INVESTOR PASSWORD -->
+                        <div class="cred-field">
+                            <div class="cred-lbl">Investor Password</div>
+                            <div class="cred-row">
+                                <span class="cred-val" data-cred-field="credInvestorPass">—</span>
+                                <button class="cred-btn" onclick="ChallengeCredentials.copy('investor_password', this)" title="Copy">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- SERVER -->
+                        <div class="cred-field">
+                            <div class="cred-lbl">Server</div>
+                            <div class="cred-row">
+                                <span class="cred-val" data-cred-field="credServer">—</span>
+                                <button class="cred-btn" onclick="ChallengeCredentials.copy('server', this)" title="Copy">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div><!-- /.cred-grid -->
+                </div><!-- /.cred-card (overview) -->
+                <?php endif; ?>
+
+                <!-- ── 6 STATS CARDS ── -->
+                <?php if ($overview['total_challenges'] > 0): ?>
+                <div class="stat-grid">
+
+                    <!-- 1. BIAS -->
+                    <div class="stat-card">
+                        <div class="stat-card-lbl">BIAS</div>
+                        <?php if ($biasTotal > 0): ?>
+                        <div class="stat-bias-gauge-row">
+                            <div class="stat-bias-gauge-wrap">
+                                <svg viewBox="0 0 100 64" class="stat-bias-svg" aria-hidden="true">
+                                    <!-- Short zone track -->
+                                    <path d="M 4 60 A 46 46 0 0 1 50 14" fill="none" stroke="rgba(215,25,33,0.18)" stroke-width="9" stroke-linecap="butt"/>
+                                    <!-- Long zone track -->
+                                    <path d="M 50 14 A 46 46 0 0 1 96 60" fill="none" stroke="rgba(16,185,129,0.18)" stroke-width="9" stroke-linecap="butt"/>
+                                    <!-- Fill arc -->
+                                    <path d="M 4 60 A 46 46 0 0 1 <?= $biasArcEndX ?> <?= $biasArcEndY ?>"
+                                          fill="none" stroke="<?= $biasArcColor ?>" stroke-width="9" stroke-linecap="round"/>
+                                    <!-- Center tick -->
+                                    <line x1="50" y1="8" x2="50" y2="20" stroke="var(--border-vis)" stroke-width="1.5"/>
+                                    <!-- Indicator dot -->
+                                    <circle cx="<?= $biasArcEndX ?>" cy="<?= $biasArcEndY ?>" r="5" fill="<?= $biasArcColor ?>"/>
+                                    <circle cx="<?= $biasArcEndX ?>" cy="<?= $biasArcEndY ?>" r="2.5" fill="var(--black)"/>
+                                    <!-- Direction label inside gauge -->
+                                    <text x="50" y="50" text-anchor="middle"
+                                          font-family="'Chivo Mono', monospace"
+                                          font-size="11" font-weight="700" letter-spacing="0.5"
+                                          fill="<?= $biasArcColor ?>"><?= $biasDir ?></text>
+                                </svg>
+                                <div class="stat-bias-gauge-labels">
+                                    <span>SHORT</span>
+                                    <span>LONG</span>
+                                </div>
+                            </div>
+                            <div class="stat-bias-counts">
+                                <div class="stat-bias-count-grid">
+                                    <span class="stat-bias-count-n" style="color:#10B981"><?= number_format($biasLong) ?></span>
+                                    <?php if ($biasLongWR !== null): ?>
+                                    <span class="stat-bias-count-wr" style="color:#10B981"><?= $biasLongWR ?>%</span>
+                                    <?php else: ?>
+                                    <span></span>
+                                    <?php endif; ?>
+                                    <span class="stat-bias-count-lbl">LONG</span>
+                                    <?php if ($biasLongWR !== null): ?>
+                                    <span class="stat-bias-count-wr-lbl">WIN RATE</span>
+                                    <?php else: ?>
+                                    <span></span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="stat-bias-count-grid">
+                                    <span class="stat-bias-count-n" style="color:#D71921"><?= number_format($biasShort) ?></span>
+                                    <?php if ($biasShortWR !== null): ?>
+                                    <span class="stat-bias-count-wr" style="color:#D71921"><?= $biasShortWR ?>%</span>
+                                    <?php else: ?>
+                                    <span></span>
+                                    <?php endif; ?>
+                                    <span class="stat-bias-count-lbl">SHORT</span>
+                                    <?php if ($biasShortWR !== null): ?>
+                                    <span class="stat-bias-count-wr-lbl">WIN RATE</span>
+                                    <?php else: ?>
+                                    <span></span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <?php else: ?>
+                        <div class="stat-no-data">NO DATA YET</div>
+                        <svg viewBox="0 0 100 64" class="stat-bias-svg" aria-hidden="true" style="opacity:.15">
+                            <path d="M 4 60 A 46 46 0 0 1 50 14" fill="none" stroke="rgba(215,25,33,0.5)" stroke-width="9" stroke-linecap="butt"/>
+                            <path d="M 50 14 A 46 46 0 0 1 96 60" fill="none" stroke="rgba(16,185,129,0.5)" stroke-width="9" stroke-linecap="butt"/>
+                            <line x1="50" y1="8" x2="50" y2="20" stroke="var(--border-vis)" stroke-width="1.5"/>
+                        </svg>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- 2. DAILY P&L -->
+                    <div class="stat-card">
+                        <div class="stat-card-lbl">DAILY P&L</div>
+                        <div class="stat-daily-rows">
+                            <div class="stat-daily-row">
+                                <span class="stat-daily-cat">EVAL</span>
+                                <?php if ($dpEvalDaily !== null): ?>
+                                <span class="stat-daily-val <?= $dpEvalDaily >= 0 ? 'green' : 'red' ?>">
+                                    <?= ($dpEvalDaily >= 0 ? '+' : '') . formatMoney($dpEvalDaily) ?>/day
+                                </span>
+                                <?php else: ?>
+                                <span class="stat-daily-val na">—</span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="stat-daily-row">
+                                <span class="stat-daily-cat">FUNDED</span>
+                                <?php if ($dpFundedDaily !== null): ?>
+                                <span class="stat-daily-val <?= $dpFundedDaily >= 0 ? 'green' : 'red' ?>">
+                                    <?= ($dpFundedDaily >= 0 ? '+' : '') . formatMoney($dpFundedDaily) ?>/day
+                                </span>
+                                <?php else: ?>
+                                <span class="stat-daily-val na">—</span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="stat-daily-row">
+                                <span class="stat-daily-cat">COMPETITION</span>
+                                <span class="stat-daily-val na">—</span>
+                            </div>
                         </div>
                     </div>
 
-                </div><!-- /ov-top-row -->
+                    <!-- 3. GRADE -->
+                    <div class="stat-card">
+                        <div class="stat-card-lbl">GRADE</div>
+                        <div class="stat-grade-body">
+                            <div class="stat-grade-letter<?= $gradeLetterLen >= 3 ? ' sz3' : ($gradeLetterLen === 2 ? ' sz2' : '') ?>" style="color:<?= $gradeColor ?>"><?= $gradeLetter ?></div>
+                            <div class="stat-grade-meta">
+                                <div class="stat-grade-label-row">
+                                    <span class="stat-grade-label" style="color:<?= $gradeColor ?>"><?= $gradeLabel ?></span>
+                                    <?php if ($gradeIsIG): ?>
+                                    <span class="stat-grade-ig-badge">IG</span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="stat-grade-kpis">
+                                    <div class="stat-grade-kpi">
+                                        <span class="stat-grade-kpi-lbl">PAYOUTS</span>
+                                        <span class="stat-grade-kpi-val"><?= $gradePayoutCount ?></span>
+                                    </div>
+                                    <div class="stat-grade-kpi">
+                                        <span class="stat-grade-kpi-lbl">TOTAL</span>
+                                        <span class="stat-grade-kpi-val"><?= formatMoneyShort($gradePayoutTotal) ?></span>
+                                    </div>
+                                    <div class="stat-grade-kpi">
+                                        <span class="stat-grade-kpi-lbl">HIGHEST</span>
+                                        <span class="stat-grade-kpi-val"><?= $gradeHighest > 0 ? formatMoneyShort($gradeHighest) : '—' ?></span>
+                                    </div>
+                                </div>
+                                <?php if ($gradeTarget > 0): ?>
+                                <?php $gradeSegs = 16; $gradeSegsOn = (int)round($gradeProg / 100 * $gradeSegs); ?>
+                                <div class="seg-bar">
+                                    <?php for ($__i = 0; $__i < $gradeSegs; $__i++): ?>
+                                    <div class="seg-bar-cell<?= $__i < $gradeSegsOn ? ' filled' : '' ?>"
+                                         <?= $__i < $gradeSegsOn ? 'style="background:' . $gradeColor . '"' : '' ?>></div>
+                                    <?php endfor; ?>
+                                </div>
+                                <div class="stat-grade-prog-lbl"><?= round($gradeProg) ?>% TO NEXT TIER</div>
+                                <?php endif; ?>
+                            </div>
+                            <!-- Arc gauge — progress to next tier (270° sweep, r=30) -->
+                            <?php
+                            $_gFill = $gradeProg > 0
+                                ? round(min(141.37, 141.37 * $gradeProg / 100), 2)
+                                : 0;
+                            ?>
+                            <div class="stat-grade-gauge-wrap">
+                                <svg viewBox="0 0 80 80" class="stat-grade-gauge" aria-hidden="true">
+                                    <circle class="grade-gauge-track"
+                                            cx="40" cy="40" r="30"
+                                            fill="none" stroke-width="7"
+                                            stroke-dasharray="141.37 188.50"
+                                            transform="rotate(135 40 40)"/>
+                                    <circle class="grade-gauge-fill"
+                                            cx="40" cy="40" r="30"
+                                            fill="none" stroke="<?= $gradeColor ?>" stroke-width="7"
+                                            stroke-linecap="round"
+                                            stroke-dasharray="<?= $_gFill ?> 188.50"
+                                            transform="rotate(135 40 40)"/>
+                                    <text x="40" y="37" text-anchor="middle" class="grade-gauge-pct"><?= round($gradeProg) ?></text>
+                                    <text x="40" y="50" text-anchor="middle" class="grade-gauge-sub">%</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. DOJI WALLET -->
+                    <div class="stat-card">
+                        <div class="stat-card-lbl">DOJI WALLET</div>
+                        <div class="stat-wallet-bal"><?= formatMoney($walletBalance) ?></div>
+                        <div class="stat-wallet-sub">AVAILABLE BALANCE</div>
+                        <div class="stat-wallet-btns">
+                            <button class="stat-btn stat-btn-ghost" onclick="Dashboard.switchTab('wallet')">HISTORY</button>
+                            <button class="stat-btn stat-btn-accent" onclick="Dashboard.switchTab('payouts')">PAYOUT</button>
+                        </div>
+                    </div>
+
+                    <!-- 5. DOJI COINS -->
+                    <div class="stat-card">
+                        <div class="stat-card-lbl">DOJI COINS</div>
+                        <div class="stat-coin-val"><?= number_format($dojiCoins) ?><span class="stat-coin-sym"> DC</span></div>
+                        <div class="stat-coin-sub">EARNED FROM LOTS TRADED</div>
+                        <button class="stat-btn stat-btn-ghost stat-btn-full" onclick="Dashboard.switchTab('configurator')">BUY ACCOUNT</button>
+                    </div>
+
+                    <!-- 6. TRADING SESSION -->
+                    <div class="stat-card">
+                        <div class="stat-card-lbl">TRADING SESSION</div>
+                        <?php
+                        // Segmented bars: 20 cells per session
+                        $_sesData = [
+                            ['LONDON',   $sesLondonPct],
+                            ['NEW YORK', $sesNYPct],
+                            ['ASIA',     $sesAsiaPct],
+                        ];
+                        ?>
+                        <?php if ($sesTotal > 0): ?>
+                        <div class="stat-ses-rows">
+                            <?php foreach ($_sesData as $_s): ?>
+                            <?php $_segsOn = (int)round($_s[1] / 100 * 20); ?>
+                            <div class="stat-ses-row">
+                                <span class="stat-ses-name"><?= $_s[0] ?></span>
+                                <div class="seg-bar seg-bar-ses">
+                                    <?php for ($__i = 0; $__i < 20; $__i++): ?>
+                                    <div class="seg-bar-cell<?= $__i < $_segsOn ? ' filled' : '' ?>"></div>
+                                    <?php endfor; ?>
+                                </div>
+                                <span class="stat-ses-pct"><?= $_s[1] ?>%</span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php else: ?>
+                        <div class="stat-no-data">NO DATA YET</div>
+                        <div class="stat-ses-rows" style="opacity:0.15;pointer-events:none">
+                            <?php foreach ([['LONDON',40],['NEW YORK',35],['ASIA',25]] as $_s): ?>
+                            <?php $_segsOn = (int)round($_s[1] / 100 * 20); ?>
+                            <div class="stat-ses-row">
+                                <span class="stat-ses-name"><?= $_s[0] ?></span>
+                                <div class="seg-bar seg-bar-ses">
+                                    <?php for ($__i = 0; $__i < 20; $__i++): ?>
+                                    <div class="seg-bar-cell<?= $__i < $_segsOn ? ' filled' : '' ?>"></div>
+                                    <?php endfor; ?>
+                                </div>
+                                <span class="stat-ses-pct">—</span>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+
+                </div><!-- /.stat-grid -->
+                <?php endif; ?>
 
             </div><!-- /tab-overview -->
 
             <!-- ══ TAB: MY CHALLENGES ══ -->
             <div class="dash-tab" id="tab-challenges">
                 <div class="dash-tab-actions">
-                    <p class="dash-tab-count"><?= count($challenges) ?> challenge<?= count($challenges) !== 1 ? 's' : '' ?></p>
+                    <div class="ch-summary">
+                        <div class="ch-sum-item">
+                            <span class="ch-sum-lbl">EVAL</span>
+                            <span class="ch-sum-val"><?= $sumEvalCount ?></span>
+                        </div>
+                        <span class="ch-sum-sep">·</span>
+                        <div class="ch-sum-item">
+                            <span class="ch-sum-lbl">FUNDED</span>
+                            <span class="ch-sum-val"><?= $sumFundedCount ?></span>
+                        </div>
+                        <?php if ($sumEvalAlloc > 0): ?>
+                        <span class="ch-sum-sep">|</span>
+                        <div class="ch-sum-item">
+                            <span class="ch-sum-lbl">EVAL ALLOC</span>
+                            <span class="ch-sum-val"><?= formatMoneyShort($sumEvalAlloc) ?></span>
+                            <span class="ch-sum-perf <?= $sumEvalProfit >= 0 ? 'green' : 'red' ?>">
+                                <?= ($sumEvalProfit >= 0 ? '+' : '') . formatMoney($sumEvalProfit) ?>
+                                <span class="ch-sum-pct">(<?= ($sumEvalProfit >= 0 ? '+' : '') . number_format($sumEvalPct, 1) ?>%)</span>
+                            </span>
+                        </div>
+                        <?php endif; ?>
+                        <?php if ($sumFundedAlloc > 0): ?>
+                        <span class="ch-sum-sep">|</span>
+                        <div class="ch-sum-item">
+                            <span class="ch-sum-lbl">FUNDED ALLOC</span>
+                            <span class="ch-sum-val"><?= formatMoneyShort($sumFundedAlloc) ?></span>
+                            <span class="ch-sum-perf <?= $sumFundedProfit >= 0 ? 'green' : 'red' ?>">
+                                <?= ($sumFundedProfit >= 0 ? '+' : '') . formatMoney($sumFundedProfit) ?>
+                                <span class="ch-sum-pct">(<?= ($sumFundedProfit >= 0 ? '+' : '') . number_format($sumFundedPct, 1) ?>%)</span>
+                            </span>
+                        </div>
+                        <?php endif; ?>
+                    </div>
                     <a href="challenges.php" class="dash-action-btn">+ New Challenge</a>
                 </div>
-
-                <?php
-                /* ── Trading credentials per challenge ──────────────────────
-                   account_login / account_server come from the DB (set when
-                   the challenge is created via DXtrade API).
-                   master_password / investor_password are never stored in
-                   plain text — they are fetched on-demand via the DXtrade
-                   API in production. For demo purposes we derive a
-                   placeholder that matches seed_demo.sql values.
-                ─────────────────────────────────────────────────────────── */
-                $credData    = [];
-                $credFirstId = 0;
-                foreach ($challenges as $ch) {
-                    $cid    = (int)$ch['id'];
-                    // account_login / mt_login — support both schema versions
-                    $login  = $ch['account_login'] ?? $ch['mt_login'] ?? '—';
-                    if (empty($login)) $login = '—';
-
-                    $server = $ch['account_server'] ?? $ch['mt_server'] ?? '';
-                    if (empty($server)) {
-                        $server = in_array($ch['status'], ['funded']) ? 'DXTrade-Live-EU1' : 'DXTrade-Demo-US1';
-                    }
-
-                    // Passwords available only for active/funded accounts
-                    $rawPwd = $ch['account_password'] ?? $ch['mt_password'] ?? null;
-                    $hasPwd = !empty($rawPwd) && in_array($ch['status'], ['active', 'funded']);
-                    $masterPwd   = $hasPwd ? $rawPwd : null;
-                    $investorPwd = $hasPwd ? 'Inv@' . str_pad($cid, 4, '0', STR_PAD_LEFT) . 'Rd' : null;
-
-                    // ── KPI calculations ──────────────────────────
-                    $kBalance  = (float)$ch['current_balance'];
-                    $kProfit   = (float)$ch['total_profit'];
-                    $kSize     = (float)$ch['account_size'] ?: 1;
-                    $kPeak     = max((float)$ch['peak_balance'], $kBalance);
-                    $kTarget   = (float)$ch['profit_target_1'];
-                    $kTarget2  = (float)($ch['profit_target_2'] ?? 0);
-                    $kDailyLoss = (float)$ch['daily_loss'];
-                    $kMaxLoss   = (float)$ch['max_loss'];
-                    $kPnlPct   = ($kProfit / $kSize) * 100;
-                    $kProfProg = $kTarget > 0 ? min(100, max(0, ($kPnlPct / $kTarget) * 100)) : 0;
-                    $kDdRaw    = max(0, (($kPeak - $kBalance) / $kSize) * 100); // brut depuis le peak
-                    $kDdUsed   = min($kDdRaw, $kDailyLoss);  // soft: jamais > limite daily
-                    $kDdProg   = $kDailyLoss > 0 ? min(100, max(0, ($kDdUsed / $kDailyLoss) * 100)) : 0;
-                    $kMdUsed   = $kDdRaw;                    // hard: valeur brute non capée
-                    $kMdProg   = $kMaxLoss > 0 ? min(100, max(0, ($kMdUsed / $kMaxLoss) * 100)) : 0;
-                    $kBestTrade = (float)($ch['best_trade'] ?? 0);
-                    $kConsRule  = max(1, (float)($ch['consistency_rule'] ?? 30));
-                    $kConsUsed  = ($kProfit > 0 && $kBestTrade > 0) ? ($kBestTrade / $kProfit) * 100 : 0;
-                    $kConsPct   = $kConsUsed > 0 ? ($kConsUsed / $kConsRule) * 100 : 0;
-                    $kIsEval    = in_array($ch['status'], ['active', 'passed']);
-                    $kIsFunded  = $ch['status'] === 'funded';
-                    $kPhase     = (int)$ch['phase'];
-                    $kTypeLbl   = $kIsFunded
-                        ? 'FUNDED ACCOUNT'
-                        : (($ch['type'] === 'one_step' ? '1-STEP' : '2-STEP')
-                           . ($kPhase > 1 ? ' · PHASE ' . $kPhase : '')
-                           . ' EVAL');
-
-                    $credData[$cid] = [
-                        'id'                => $cid,
-                        'label'             => ($ch['type'] === 'one_step' ? '1-Step' : '2-Step')
-                                               . ' · ' . formatMoneyShort($ch['account_size']),
-                        'status'            => $ch['status'],
-                        'login'             => $login,
-                        'master_password'   => $masterPwd,
-                        'investor_password' => $investorPwd,
-                        'server'            => $server,
-                        // KPI fields
-                        'balance'           => $kBalance,
-                        'profit'            => $kProfit,
-                        'account_size'      => $kSize,
-                        'profit_target'     => $kTarget,
-                        'profit_target_2'   => $kTarget2,
-                        'daily_loss'        => $kDailyLoss,
-                        'max_loss'          => $kMaxLoss,
-                        'pnl_pct'           => round($kPnlPct, 2),
-                        'prof_prog'         => round($kProfProg, 2),
-                        'dd_used'           => round($kDdUsed, 2),
-                        'dd_prog'           => round($kDdProg, 2),
-                        'md_used'           => round($kMdUsed, 2),
-                        'md_prog'           => round($kMdProg, 2),
-                        'daily_loss_type'   => $ch['daily_loss_type'] ?? 'intraday',
-                        'max_loss_type'     => $ch['max_loss_type']   ?? 'intraday',
-                        'best_trade'        => $kBestTrade,
-                        'cons_rule'         => $kConsRule,
-                        'cons_used'         => round($kConsUsed, 1),
-                        'cons_pct'          => round($kConsPct, 1),
-                        'is_eval'           => $kIsEval,
-                        'is_funded'         => $kIsFunded,
-                        'type_label'        => $kTypeLbl,
-                        'ch_id_fmt'         => '#CH-' . str_pad($cid, 5, '0', STR_PAD_LEFT),
-                    ];
-                    if ($credFirstId === 0) $credFirstId = $cid;
-                }
-                ?>
 
                 <?php if (!empty($challenges)): ?>
                 <!-- ── CREDENTIALS CARD ── -->
@@ -825,7 +1244,7 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                     <div class="cred-header">
                         <span class="cred-card-lbl">TRADING CREDENTIALS</span>
                         <!-- Mobile: dropdown selector -->
-                        <select class="cred-mobile-select" id="credMobileSelect"
+                        <select class="cred-mobile-select cred-mobile-sel" id="credMobileSelect"
                                 onchange="ChallengeCredentials.select(parseInt(this.value))">
                             <?php foreach ($challenges as $ch): ?>
                             <option value="<?= (int)$ch['id'] ?>">
@@ -874,7 +1293,7 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                             <div class="cred-lbl">Master Password</div>
                             <div class="cred-row">
                                 <span class="cred-val cred-val-pass" id="credMasterPass">—</span>
-                                <button class="cred-btn" id="credMasterToggle"
+                                <button class="cred-btn cred-master-eye-btn" id="credMasterToggle"
                                         onclick="ChallengeCredentials.toggleMaster()" title="Show / hide">
                                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                 </button>
@@ -919,27 +1338,8 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                     <!-- Account Balance -->
                     <div class="ov-card">
                         <div class="ov-card-lbl">ACCOUNT BALANCE</div>
-                        <div class="cons-card-row">
-                            <div class="cons-card-left">
-                                <div class="ov-card-val" id="chKpiBalance">—</div>
-                                <div class="ov-card-sub" id="chKpiPnl">—</div>
-                            </div>
-                            <div class="cons-right">
-                                <div class="cons-gauge-container">
-                                    <svg viewBox="0 0 100 100" class="cons-svg">
-                                        <circle class="cons-track" cx="50" cy="50" r="34" fill="none" stroke-width="7" stroke-dasharray="160.22 213.63" transform="rotate(135 50 50)"/>
-                                        <circle class="cons-fill" id="chKpiConsArc" cx="50" cy="50" r="34" fill="none" stroke="#333" stroke-width="7" stroke-linecap="round" stroke-dasharray="0 213.63" transform="rotate(135 50 50)"/>
-                                    </svg>
-                                    <div class="cons-center-text">
-                                        <span class="cons-pct" id="chKpiConsPct">—</span>
-                                    </div>
-                                    <div class="cons-limit-text" id="chKpiConsLimit">—</div>
-                                </div>
-                                <div class="cons-meta">
-                                    <span class="cons-status" id="chKpiConsStatus">—</span>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="ov-card-val" id="chKpiBalance">—</div>
+                        <div class="ov-card-sub" id="chKpiPnl">—</div>
                     </div>
 
                     <!-- Profit Target -->
@@ -983,15 +1383,42 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                         <div class="ov-card-sub" style="margin-top:var(--s8);font-size:10px;color:var(--text-dis)">OVERALL · FROM PEAK</div>
                     </div>
 
+                    <!-- Consistency -->
+                    <div class="ov-card ov-card-cons">
+                        <div class="ov-card-lbl">CONSISTENCY</div>
+                        <div class="ov-cons-wrap">
+                            <div class="cons-gauge-container">
+                                <svg viewBox="0 0 100 100" class="cons-svg">
+                                    <circle class="cons-track" cx="50" cy="50" r="34" fill="none" stroke-width="7" stroke-dasharray="160.22 213.63" transform="rotate(135 50 50)"/>
+                                    <circle class="cons-fill" id="chKpiConsArc" cx="50" cy="50" r="34" fill="none" stroke="#333" stroke-width="7" stroke-linecap="round" stroke-dasharray="0 213.63" transform="rotate(135 50 50)"/>
+                                </svg>
+                                <div class="cons-center-text">
+                                    <span class="cons-pct" id="chKpiConsPct">—</span>
+                                </div>
+                                <div class="cons-limit-text" id="chKpiConsLimit">—</div>
+                            </div>
+                            <div class="cons-meta">
+                                <span class="cons-status" id="chKpiConsStatus">—</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Account Info -->
                     <div class="ov-card ov-card-info">
                         <div class="ov-card-lbl">ACCOUNT INFO</div>
                         <div class="ov-info-type" id="chKpiType">—</div>
                         <div class="ov-info-id-row">
                             <span class="ov-info-id" id="chKpiId">—</span>
-                            <button class="ov-copy-btn" onclick="ChallengeCredentials.copyChId()">COPY</button>
+                            <button class="ov-copy-btn" id="chKpiCopyBtn" onclick="ChallengeCredentials.copyChId(this)" title="Copy reference">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                            </button>
                         </div>
                         <div class="ov-info-actions">
+                            <button class="ov-action-btn ov-action-payout" id="chKpiPayoutBtn" style="display:none"
+                                    onclick="ChallengeCredentials.goToPayouts()">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                Payout
+                            </button>
                             <button class="ov-action-btn ov-action-reset" id="chKpiResetBtn" style="display:none"
                                     onclick="ChallengeCredentials.resetChallenge()">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5.02"/></svg>
@@ -1023,7 +1450,7 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                 <?php if (!empty($challenges)): ?>
                 <div class="dash-table-wrap">
                     <table class="dash-table">
-                        <thead><tr><th>Challenge</th><th>Account</th><th>Progress</th><th>Balance</th><th>P&amp;L</th><th>Max Loss</th><th>Consistency</th><th>Status</th><th>Trading Days</th></tr></thead>
+                        <thead><tr><th>Challenge</th><th>Account</th><th>Progress</th><th>Balance</th><th>P&amp;L</th><th>Max Loss</th><th>Consistency</th><th>Status</th><th>Trading Days</th><th>Doji Coins</th></tr></thead>
                         <tbody>
                             <?php foreach ($challenges as $ch):
                                 $pnlPct    = $ch['account_size'] > 0 ? ($ch['total_profit'] / $ch['account_size']) * 100 : 0;
@@ -1072,6 +1499,14 @@ $topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) *
                                 <td><?= challengeStatusBadge($ch['status']) ?></td>
                                 <?php $tdDays = (int)$ch['trading_days']; $tdMin = (int)$ch['min_trading_days']; $tdClr = $tdDays >= $tdMin ? 'green' : 'warn'; ?>
                                 <td class="mono <?= $tdClr ?>"><?= $tdDays ?><span class="dash-cell-sub"> /<?= $tdMin ?></span></td>
+                                <?php $chCoins = (int)floor((float)($ch['lots_traded'] ?? 0)); ?>
+                                <td class="mono ch-coins-cell <?= $chCoins > 0 ? 'coins-active' : '' ?>">
+                                    <?php if ($chCoins > 0): ?>
+                                        <span class="ch-coin-icon">◈</span><?= number_format($chCoins) ?>
+                                    <?php else: ?>
+                                        <span class="dash-cell-sub">—</span>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>

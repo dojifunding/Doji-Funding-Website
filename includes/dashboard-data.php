@@ -206,6 +206,17 @@ function lossTypeLabel($type) {
     return $map[$type] ?? strtoupper($type ?: 'TRAILING');
 }
 
+function challengeAcctRef($type, $size, $userId, $accountIndex) {
+    $typeCode = ($type === 'one_step') ? '1S' : '2S';
+    $sizeVal  = (int)$size;
+    if ($sizeVal >= 1000000)  $sizeCode = (int)round($sizeVal / 1000000) . 'M';
+    elseif ($sizeVal >= 1000) $sizeCode = (int)round($sizeVal / 1000) . 'K';
+    else                      $sizeCode = (string)$sizeVal;
+    return 'DF-' . $typeCode . $sizeCode . '-'
+         . str_pad((int)$userId, 6, '0', STR_PAD_LEFT) . '-'
+         . str_pad((int)$accountIndex, 6, '0', STR_PAD_LEFT);
+}
+
 function payoutStatusBadge($status) {
     $map = [
         'pending'    => ['Pending', 'badge-pending'],
