@@ -145,7 +145,7 @@ function getUserProfile($userId) {
     try {
         $stmt = $db->prepare('SELECT id, email, first_name, last_name, username, phone, address, city, zipcode, country, region,
             avatar_url, kyc_status, kyc_submitted_at, kyc_reviewed_at,
-            trader_level, doji_coins, referral_code, email_verified, created_at
+            trader_level, doji_coins, wallet_balance, referral_code, email_verified, created_at
             FROM users WHERE id = ?');
         $stmt->execute([$userId]);
         return $stmt->fetch();
@@ -171,6 +171,51 @@ function getUserNotifications($userId, $limit = 10) {
         return $stmt->fetchAll();
     } catch (PDOException $e) {
         error_log('Notifications query error: ' . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Get Doji Coins earned per day for the last N days (including today)
+ * Returns array of ['date' => 'YYYY-MM-DD', 'total' => int], most recent first
+ */
+function getRecentCoinsDays($userId, $days = 3) {
+    $db = getDB();
+    if (!$db) return [];
+    try {
+        $stmt = $db->prepare('SELECT DATE(created_at) AS day, COALESCE(SUM(amount),0) AS total
+            FROM coins_log
+            WHERE user_id = ? AND amount > 0 AND created_at >= CURDATE() - INTERVAL ? DAY
+            GROUP BY DATE(created_at)
+            ORDER BY DATE(created_at) DESC
+            LIMIT ?');
+        $stmt->bindValue(1, $userId, PDO::PARAM_INT);
+        $stmt->bindValue(2, $days - 1, PDO::PARAM_INT);
+        $stmt->bindValue(3, $days, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    } catch (PDOException $e) {
+        return [];
+    }
+}
+
+/**
+ * Get last N wallet movements for a user
+ */
+function getWalletMovements($userId, $limit = 3) {
+    $db = getDB();
+    if (!$db) return [];
+    try {
+        $stmt = $db->prepare('SELECT type, amount, description, created_at
+            FROM wallet_transactions
+            WHERE user_id = ?
+            ORDER BY created_at DESC
+            LIMIT ?');
+        $stmt->bindValue(1, $userId, PDO::PARAM_INT);
+        $stmt->bindValue(2, $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    } catch (PDOException $e) {
         return [];
     }
 }

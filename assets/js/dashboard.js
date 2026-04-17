@@ -776,8 +776,17 @@ var ChallengeCredentials = (function() {
         _setText('chKpiDdType', _lossType[cred.daily_loss_type] || 'TRAILING');
         _setText('chKpiMdType', _lossType[cred.max_loss_type]   || 'TRAILING');
 
-        /* Consistency gauge */
-        _updateConsGauge(cred.cons_pct || 0, cred.cons_used || 0, cred.cons_rule || 30);
+        /* Consistency gauge — funded accounts only */
+        if (cred.is_funded) {
+            _updateConsGauge(cred.cons_pct || 0, cred.cons_used || 0, cred.cons_rule || 30);
+        } else {
+            _updateConsGauge(0, 0, 0);
+            var consStatusEl = document.getElementById('chKpiConsStatus');
+            if (consStatusEl) {
+                consStatusEl.textContent = 'FUNDED ONLY';
+                consStatusEl.style.color = 'var(--text-dis)';
+            }
+        }
 
         /* Account Info */
         _setText('chKpiType', cred.type_label || '—');

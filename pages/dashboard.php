@@ -19,15 +19,15 @@ $kycClass   = ['none' => 'kyc-none', 'pending' => 'kyc-pending', 'approved' => '
 $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1));
 
 // ── Topbar: total allocation across active + funded accounts ──
-$topbar_allocation = 0;
+$topbar_capital = 0;
 $topbar_pnl        = 0;
 foreach ($challenges as $_ch) {
     if (in_array($_ch['status'], ['active', 'funded'])) {
-        $topbar_allocation += (float)($_ch['account_size'] ?? 0);
+        $topbar_capital += (float)($_ch['account_size'] ?? 0);
         $topbar_pnl        += (float)($_ch['total_profit'] ?? 0);
     }
 }
-$topbar_perf_pct = $topbar_allocation > 0 ? ($topbar_pnl / $topbar_allocation) * 100 : 0;
+$topbar_perf_pct = $topbar_capital > 0 ? ($topbar_pnl / $topbar_capital) * 100 : 0;
 
 // ── Topbar: cumulative Doji Coins from all accounts (1 coin / lot) ──
 $topbar_coins = 0;
@@ -127,12 +127,14 @@ else                                  { $gradeLetter = 'AAA'; $gradeLabel = 'PRI
 $gradeProg      = $gradeTarget > 0 ? min(100, ($gradePayoutTotal / $gradeTarget) * 100) : 100;
 $gradeLetterLen = strlen($gradeLetter); // 2 = NR/BB/AA, 3 = BBB/AAA
 
-// 4. Doji Wallet balance
-$walletBalance = (float)($profile['wallet_balance'] ?? 0);
+// 4. Doji Wallet balance + last movements
+$walletBalance   = (float)($profile['wallet_balance'] ?? 0);
+$walletMovements = getWalletMovements($userId, 3);
 
-// 5. Doji Coins
-$dojiCoins = (int)($overview['doji_coins'] ?? 0);
+// 5. Doji Coins + today earned
+$dojiCoins      = (int)($overview['doji_coins'] ?? 0);
 if ($dojiCoins === 0) $dojiCoins = $topbar_coins;
+$recentCoinsDays = getRecentCoinsDays($userId, 3);
 
 // 6. Trading session distribution
 $sesNY = 0; $sesLondon = 0; $sesAsia = 0;
@@ -180,10 +182,11 @@ foreach ($challenges as $ch) {
     $kMdProg   = $kMaxLoss > 0 ? min(100, max(0, ($kMdUsed / $kMaxLoss) * 100)) : 0;
     $kBestTrade = (float)($ch['best_trade'] ?? 0);
     $kConsRule  = max(1, (float)($ch['consistency_rule'] ?? 30));
-    $kConsUsed  = ($kProfit > 0 && $kBestTrade > 0) ? ($kBestTrade / $kProfit) * 100 : 0;
-    $kConsPct   = $kConsUsed > 0 ? ($kConsUsed / $kConsRule) * 100 : 0;
     $kIsEval    = in_array($ch['status'], ['active', 'passed']);
     $kIsFunded  = $ch['status'] === 'funded';
+    // Consistency rule applies to Funded accounts only
+    $kConsUsed  = ($kIsFunded && $kProfit > 0 && $kBestTrade > 0) ? ($kBestTrade / $kProfit) * 100 : 0;
+    $kConsPct   = ($kIsFunded && $kConsUsed > 0) ? ($kConsUsed / $kConsRule) * 100 : 0;
     $kPhase     = (int)$ch['phase'];
     $kTypeLbl   = $kIsFunded
         ? 'FUNDED ACCOUNT'
@@ -377,24 +380,26 @@ foreach ($challenges as $ch) {
 
                 <!-- Allocation + Doji Coins widgets -->
                 <div class="dash-topbar-widgets">
-                    <div class="dash-topbar-alloc">
-                        <div class="dash-alloc-label">TOTAL ALLOCATION</div>
-                        <div class="dash-alloc-val"><?= formatMoney($topbar_allocation) ?></div>
-                        <div class="dash-alloc-row">
-                            <span class="dash-alloc-pnl <?= $topbar_pnl >= 0 ? 'pos' : 'neg' ?>">
+                    <div class="dash-topbar-capital">
+                        <div class="dash-capital-label">TOTAL CAPITAL</div>
+                        <div class="dash-capital-val"><?= formatMoney($topbar_capital) ?></div>
+                        <div class="dash-capital-row">
+                            <span class="dash-capital-pnl <?= $topbar_pnl >= 0 ? 'pos' : 'neg' ?>">
                                 <?= $topbar_pnl >= 0 ? '+' : '' ?><?= formatMoney($topbar_pnl) ?>
                             </span>
-                            <span class="dash-alloc-pct <?= $topbar_perf_pct >= 0 ? 'pos' : 'neg' ?>">
+                            <span class="dash-capital-pct <?= $topbar_perf_pct >= 0 ? 'pos' : 'neg' ?>">
                                 <?= $topbar_perf_pct >= 0 ? '+' : '' ?><?= number_format($topbar_perf_pct, 2) ?>%
                             </span>
                         </div>
                     </div>
-                    <div class="dash-topbar-coins-wallet">
+                    <div class="dash-topbar-coins">
                         <div class="dash-coins-label">DOJI COINS</div>
-                        <div class="dash-wallet-label">WALLET</div>
                         <div class="dash-coins-val"><?= number_format($topbar_coins) ?></div>
-                        <div class="dash-wallet-val" onclick="Dashboard.switchTab('wallet')" title="Go to Wallet"><?= formatMoney($walletBalance) ?></div>
                         <div class="dash-coins-sub">FROM VOLUME</div>
+                    </div>
+                    <div class="dash-topbar-wallet" onclick="Dashboard.switchTab('wallet')" title="Go to Wallet">
+                        <div class="dash-wallet-label">WALLET</div>
+                        <div class="dash-wallet-val"><?= formatMoney($walletBalance) ?></div>
                         <div class="dash-wallet-sub">AVAILABLE</div>
                     </div>
                 </div>
@@ -842,7 +847,7 @@ foreach ($challenges as $ch) {
                         <?php if ($sumEvalAlloc > 0): ?>
                         <span class="ch-sum-sep">|</span>
                         <div class="ch-sum-item">
-                            <span class="ch-sum-lbl">EVAL ALLOC</span>
+                            <span class="ch-sum-lbl">EVAL CAP</span>
                             <span class="ch-sum-val"><?= formatMoneyShort($sumEvalAlloc) ?></span>
                             <span class="ch-sum-perf <?= $sumEvalProfit >= 0 ? 'green' : 'red' ?>">
                                 <?= ($sumEvalProfit >= 0 ? '+' : '') . formatMoney($sumEvalProfit) ?>
@@ -853,7 +858,7 @@ foreach ($challenges as $ch) {
                         <?php if ($sumFundedAlloc > 0): ?>
                         <span class="ch-sum-sep">|</span>
                         <div class="ch-sum-item">
-                            <span class="ch-sum-lbl">FUNDED ALLOC</span>
+                            <span class="ch-sum-lbl">FUNDED CAP</span>
                             <span class="ch-sum-val"><?= formatMoneyShort($sumFundedAlloc) ?></span>
                             <span class="ch-sum-perf <?= $sumFundedProfit >= 0 ? 'green' : 'red' ?>">
                                 <?= ($sumFundedProfit >= 0 ? '+' : '') . formatMoney($sumFundedProfit) ?>
@@ -968,70 +973,58 @@ foreach ($challenges as $ch) {
                     <div class="stat-card">
                         <div class="stat-card-lbl">BIAS</div>
                         <?php if ($biasTotal > 0): ?>
-                        <div class="stat-bias-gauge-row">
-                            <div class="stat-bias-gauge-wrap">
-                                <svg viewBox="0 0 100 64" class="stat-bias-svg" aria-hidden="true">
-                                    <!-- Short zone track -->
-                                    <path d="M 4 60 A 46 46 0 0 1 50 14" fill="none" stroke="rgba(215,25,33,0.18)" stroke-width="9" stroke-linecap="butt"/>
-                                    <!-- Long zone track -->
-                                    <path d="M 50 14 A 46 46 0 0 1 96 60" fill="none" stroke="rgba(16,185,129,0.18)" stroke-width="9" stroke-linecap="butt"/>
-                                    <!-- Fill arc -->
-                                    <path d="M 4 60 A 46 46 0 0 1 <?= $biasArcEndX ?> <?= $biasArcEndY ?>"
-                                          fill="none" stroke="<?= $biasArcColor ?>" stroke-width="9" stroke-linecap="round"/>
-                                    <!-- Center tick -->
-                                    <line x1="50" y1="8" x2="50" y2="20" stroke="var(--border-vis)" stroke-width="1.5"/>
-                                    <!-- Indicator dot -->
-                                    <circle cx="<?= $biasArcEndX ?>" cy="<?= $biasArcEndY ?>" r="5" fill="<?= $biasArcColor ?>"/>
-                                    <circle cx="<?= $biasArcEndX ?>" cy="<?= $biasArcEndY ?>" r="2.5" fill="var(--black)"/>
-                                    <!-- Direction label inside gauge -->
-                                    <text x="50" y="50" text-anchor="middle"
-                                          font-family="'Chivo Mono', monospace"
-                                          font-size="11" font-weight="700" letter-spacing="0.5"
-                                          fill="<?= $biasArcColor ?>"><?= $biasDir ?></text>
-                                </svg>
-                                <div class="stat-bias-gauge-labels">
-                                    <span>SHORT</span>
-                                    <span>LONG</span>
-                                </div>
+                        <div class="bias-db">
+                            <div class="bias-db-head">
+                                <span class="bias-db-dir" style="color:<?= $biasArcColor ?>"><?= $biasDir ?></span>
+                                <span class="bias-db-split"><?= $biasShortPct ?>%&nbsp;&nbsp;·&nbsp;&nbsp;<?= $biasLongPct ?>%</span>
                             </div>
-                            <div class="stat-bias-counts">
-                                <div class="stat-bias-count-grid">
-                                    <span class="stat-bias-count-n" style="color:#10B981"><?= number_format($biasLong) ?></span>
-                                    <?php if ($biasLongWR !== null): ?>
-                                    <span class="stat-bias-count-wr" style="color:#10B981"><?= $biasLongWR ?>%</span>
-                                    <?php else: ?>
-                                    <span></span>
-                                    <?php endif; ?>
-                                    <span class="stat-bias-count-lbl">LONG</span>
-                                    <?php if ($biasLongWR !== null): ?>
-                                    <span class="stat-bias-count-wr-lbl">WIN RATE</span>
-                                    <?php else: ?>
-                                    <span></span>
-                                    <?php endif; ?>
+                            <?php
+                                $_bSegs      = 20;
+                                $_bShortSegs = (int)round($_bSegs * $biasShortPct / 100);
+                            ?>
+                            <div class="bias-db-bar">
+                                <?php for ($s = 0; $s < $_bSegs; $s++):
+                                    $cls = $s < $_bShortSegs ? 'bias-db-seg short' : 'bias-db-seg long';
+                                    if ($s === 9)  $cls .= ' center-l';
+                                    if ($s === 10) $cls .= ' center-r';
+                                ?>
+                                <div class="<?= $cls ?>"></div>
+                                <?php endfor; ?>
+                            </div>
+                            <div class="bias-db-foot">
+                                <div class="bias-db-side">
+                                    <div class="stat-bias-count-grid">
+                                        <span class="stat-bias-count-n" style="color:#D71921"><?= number_format($biasShort) ?></span>
+                                        <?php if ($biasShortWR !== null): ?>
+                                        <span class="stat-bias-count-wr" style="color:#D71921"><?= $biasShortWR ?>%</span>
+                                        <?php else: ?><span></span><?php endif; ?>
+                                        <span class="stat-bias-count-lbl">SHORT</span>
+                                        <?php if ($biasShortWR !== null): ?>
+                                        <span class="stat-bias-count-wr-lbl">WIN RATE</span>
+                                        <?php else: ?><span></span><?php endif; ?>
+                                    </div>
                                 </div>
-                                <div class="stat-bias-count-grid">
-                                    <span class="stat-bias-count-n" style="color:#D71921"><?= number_format($biasShort) ?></span>
-                                    <?php if ($biasShortWR !== null): ?>
-                                    <span class="stat-bias-count-wr" style="color:#D71921"><?= $biasShortWR ?>%</span>
-                                    <?php else: ?>
-                                    <span></span>
-                                    <?php endif; ?>
-                                    <span class="stat-bias-count-lbl">SHORT</span>
-                                    <?php if ($biasShortWR !== null): ?>
-                                    <span class="stat-bias-count-wr-lbl">WIN RATE</span>
-                                    <?php else: ?>
-                                    <span></span>
-                                    <?php endif; ?>
+                                <div class="bias-db-side bias-db-side-r">
+                                    <div class="stat-bias-count-grid bias-db-grid-r">
+                                        <?php if ($biasLongWR !== null): ?>
+                                        <span class="stat-bias-count-wr" style="color:#10B981"><?= $biasLongWR ?>%</span>
+                                        <?php else: ?><span></span><?php endif; ?>
+                                        <span class="stat-bias-count-n" style="color:#10B981"><?= number_format($biasLong) ?></span>
+                                        <?php if ($biasLongWR !== null): ?>
+                                        <span class="stat-bias-count-wr-lbl">WIN RATE</span>
+                                        <?php else: ?><span></span><?php endif; ?>
+                                        <span class="stat-bias-count-lbl">LONG</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <?php else: ?>
                         <div class="stat-no-data">NO DATA YET</div>
-                        <svg viewBox="0 0 100 64" class="stat-bias-svg" aria-hidden="true" style="opacity:.15">
-                            <path d="M 4 60 A 46 46 0 0 1 50 14" fill="none" stroke="rgba(215,25,33,0.5)" stroke-width="9" stroke-linecap="butt"/>
-                            <path d="M 50 14 A 46 46 0 0 1 96 60" fill="none" stroke="rgba(16,185,129,0.5)" stroke-width="9" stroke-linecap="butt"/>
-                            <line x1="50" y1="8" x2="50" y2="20" stroke="var(--border-vis)" stroke-width="1.5"/>
-                        </svg>
+                        <div class="bias-db-bar bias-db-bar-empty">
+                            <?php for ($s = 0; $s < 20; $s++): ?>
+                            <div class="bias-db-seg <?= $s < 10 ? 'short' : 'long' ?><?= $s === 9 ? ' center-l' : ($s === 10 ? ' center-r' : '') ?>"></div>
+                            <?php endfor; ?>
+                        </div>
                         <?php endif; ?>
                     </div>
 
@@ -1132,20 +1125,57 @@ foreach ($challenges as $ch) {
                     <!-- 4. DOJI WALLET -->
                     <div class="stat-card">
                         <div class="stat-card-lbl">DOJI WALLET</div>
-                        <div class="stat-wallet-bal"><?= formatMoney($walletBalance) ?></div>
-                        <div class="stat-wallet-sub">AVAILABLE BALANCE</div>
-                        <div class="stat-wallet-btns">
-                            <button class="stat-btn stat-btn-ghost" onclick="Dashboard.switchTab('wallet')">HISTORY</button>
-                            <button class="stat-btn stat-btn-accent" onclick="Dashboard.switchTab('payouts')">PAYOUT</button>
+                        <div class="stat-card-split">
+                            <div class="stat-card-split-l">
+                                <div class="stat-wallet-bal"><?= formatMoney($walletBalance) ?></div>
+                                <div class="stat-wallet-sub">AVAILABLE BALANCE</div>
+                                <div class="stat-wallet-btns">
+                                    <button class="stat-btn stat-btn-ghost" onclick="Dashboard.switchTab('wallet')">HISTORY</button>
+                                    <button class="stat-btn stat-btn-accent" onclick="Dashboard.switchTab('payouts')">PAYOUT</button>
+                                </div>
+                            </div>
+                            <?php if (!empty($walletMovements)): ?>
+                            <div class="stat-card-split-r">
+                                <?php foreach ($walletMovements as $_mv):
+                                    $_isCredit = $_mv['amount'] > 0;
+                                    $_amt = abs((float)$_mv['amount']);
+                                    $_sign = $_isCredit ? '+' : '−';
+                                    $_cls = $_isCredit ? 'wm-credit' : 'wm-debit';
+                                    $_date = date('d M', strtotime($_mv['created_at']));
+                                ?>
+                                <div class="stat-wallet-move <?= $_cls ?>">
+                                    <span class="swm-amt"><?= $_sign ?>$<?= number_format($_amt, 0) ?></span>
+                                    <span class="swm-date"><?= $_date ?></span>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
 
                     <!-- 5. DOJI COINS -->
                     <div class="stat-card">
                         <div class="stat-card-lbl">DOJI COINS</div>
-                        <div class="stat-coin-val"><?= number_format($dojiCoins) ?><span class="stat-coin-sym"> DC</span></div>
-                        <div class="stat-coin-sub">EARNED FROM LOTS TRADED</div>
-                        <button class="stat-btn stat-btn-ghost stat-btn-full" onclick="Dashboard.switchTab('configurator')">BUY ACCOUNT</button>
+                        <div class="stat-card-split">
+                            <div class="stat-card-split-l">
+                                <div class="stat-coin-val"><?= number_format($dojiCoins) ?><span class="stat-coin-sym"> DC</span></div>
+                                <div class="stat-coin-sub">EARNED FROM LOTS TRADED</div>
+                                <button class="stat-btn stat-btn-ghost stat-btn-sm" onclick="Dashboard.switchTab('configurator')">BUY ACCOUNT</button>
+                            </div>
+                            <?php if (!empty($recentCoinsDays)): ?>
+                            <div class="stat-card-split-r">
+                                <?php foreach ($recentCoinsDays as $_cd):
+                                    $_dayLabel = date('d M', strtotime($_cd['day']));
+                                    $_isToday  = $_cd['day'] === date('Y-m-d');
+                                ?>
+                                <div class="stat-wallet-move wm-credit">
+                                    <span class="swm-amt">+<?= number_format((int)$_cd['total']) ?> DC</span>
+                                    <span class="swm-date"><?= $_isToday ? 'TODAY' : $_dayLabel ?></span>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
 
                     <!-- 6. TRADING SESSION -->
@@ -1214,7 +1244,7 @@ foreach ($challenges as $ch) {
                         <?php if ($sumEvalAlloc > 0): ?>
                         <span class="ch-sum-sep">|</span>
                         <div class="ch-sum-item">
-                            <span class="ch-sum-lbl">EVAL ALLOC</span>
+                            <span class="ch-sum-lbl">EVAL CAP</span>
                             <span class="ch-sum-val"><?= formatMoneyShort($sumEvalAlloc) ?></span>
                             <span class="ch-sum-perf <?= $sumEvalProfit >= 0 ? 'green' : 'red' ?>">
                                 <?= ($sumEvalProfit >= 0 ? '+' : '') . formatMoney($sumEvalProfit) ?>
@@ -1225,7 +1255,7 @@ foreach ($challenges as $ch) {
                         <?php if ($sumFundedAlloc > 0): ?>
                         <span class="ch-sum-sep">|</span>
                         <div class="ch-sum-item">
-                            <span class="ch-sum-lbl">FUNDED ALLOC</span>
+                            <span class="ch-sum-lbl">FUNDED CAP</span>
                             <span class="ch-sum-val"><?= formatMoneyShort($sumFundedAlloc) ?></span>
                             <span class="ch-sum-perf <?= $sumFundedProfit >= 0 ? 'green' : 'red' ?>">
                                 <?= ($sumFundedProfit >= 0 ? '+' : '') . formatMoney($sumFundedProfit) ?>
@@ -1490,7 +1520,9 @@ foreach ($challenges as $ch) {
                                     <div class="dash-cell-sub"><?= lossTypeLabel($mlType) ?></div>
                                 </td>
                                 <td class="mono" style="<?= $tConsClr ? 'color:' . $tConsClr : '' ?>">
-                                    <?php if ($tConsUsed > 0): ?>
+                                    <?php if ($ch['status'] !== 'funded'): ?>
+                                        <span class="dash-cell-sub">—</span>
+                                    <?php elseif ($tConsUsed > 0): ?>
                                         <?= number_format($tConsUsed, 0) ?>%<span class="dash-cell-sub"> /<?= $tConsRule ?>%</span>
                                     <?php else: ?>
                                         <span class="dash-cell-sub">N/A</span>
