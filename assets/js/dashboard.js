@@ -1707,80 +1707,228 @@ const PayoutDetailModal = (function () {
 
 /* ── Competitions Tab ── */
 window.CompTab = (function () {
-    var _tickInterval = null;
+    /* ── Gradient palette for avatars (12 pairs) ── */
+    var GRADS = [
+        ['#10B981','#0EA5E9'],['#8B5CF6','#EC4899'],['#F59E0B','#EF4444'],
+        ['#06B6D4','#6366F1'],['#10B981','#84CC16'],['#F97316','#FBBF24'],
+        ['#6366F1','#A855F7'],['#EF4444','#F97316'],['#0EA5E9','#10B981'],
+        ['#EC4899','#8B5CF6'],['#14B8A6','#3B82F6'],['#A855F7','#06B6D4'],
+    ];
+    var RULES = {
+        monthly:      ['10% Max Overall Loss','5% Max Daily Loss','EA execution is prohibited','Minimum 3 trading days','No overnight holding on Friday'],
+        championship: ['10% Max Overall Loss','4% Max Daily Loss','EA execution is prohibited','Minimum 5 trading days','News trading prohibited'],
+    };
 
-    function _parseDate(str) {
-        // "YYYY-MM-DD HH:MM:SS" or ISO — always parse as UTC-naive local
-        return str ? new Date(str.replace(' ', 'T')) : null;
+    /* ── State ── */
+    var _gridTick   = null;
+    var _detailTick = null;
+    var _viewOpen   = false;
+
+    /* ── Low-level helpers ── */
+    function _pd(str)  { return str ? new Date(str.replace(' ', 'T')) : null; }
+    function _esc(s)   { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function _grad(uid){ return GRADS[Math.abs(uid|0) % GRADS.length]; }
+    function _ini(name){
+        var p = (name||'').trim().split(/\s+/);
+        return p.length >= 2 ? (p[0][0]+p[1][0]).toUpperCase() : (name||'X').slice(0,2).toUpperCase();
+    }
+    function _flag(code) {
+        if (!code || code === '—') return '—';
+        try { return Array.from(code.toUpperCase().slice(0,2)).map(function(c){ return String.fromCodePoint(c.charCodeAt(0)+127397); }).join(''); }
+        catch(e){ return code; }
+    }
+    function _fmtP(n)  { return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+    function _fmtG(n)  { var v=Number(n); return (v>=0?'+':'')+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+'%'; }
+
+    function _cd(target) {
+        var diff = Math.floor((target - new Date()) / 1000);
+        if (diff <= 0) return {d:'00',h:'00',m:'00',s:'00',inline:'00:00:00'};
+        var d=Math.floor(diff/86400); diff-=d*86400;
+        var h=Math.floor(diff/3600);  diff-=h*3600;
+        var m=Math.floor(diff/60);    diff-=m*60;
+        var p=function(n){return('0'+n).slice(-2);};
+        return {d:p(d),h:p(h),m:p(m),s:p(diff),
+                inline: d>0 ? d+'D '+p(h)+':'+p(m)+':'+p(diff) : p(h)+':'+p(m)+':'+p(diff)};
     }
 
-    function _formatCountdown(target) {
-        var now  = new Date();
-        var diff = Math.floor((target - now) / 1000);
-        if (diff <= 0) return '00:00:00';
-        var d = Math.floor(diff / 86400); diff -= d * 86400;
-        var h = Math.floor(diff / 3600);  diff -= h * 3600;
-        var m = Math.floor(diff / 60);    diff -= m * 60;
-        var s = diff;
-        var hh = ('0' + h).slice(-2), mm = ('0' + m).slice(-2), ss = ('0' + s).slice(-2);
-        return d > 0 ? (d + 'D ' + hh + ':' + mm + ':' + ss) : (hh + ':' + mm + ':' + ss);
+    function _av(uid, name, sz) {
+        var g = _grad(uid);
+        return '<span class="comp-av" style="width:'+sz+'px;height:'+sz+'px;background:linear-gradient(135deg,'+g[0]+','+g[1]+');font-size:'+Math.round(sz*.38)+'px">'+_esc(_ini(name))+'</span>';
     }
 
+    function _getComp(id) {
+        var a = window.DojiCompData||[]; for(var i=0;i<a.length;i++){if(a[i].id==id)return a[i];} return null;
+    }
+    function _getLb(id) { var l=window.DojiCompLeaderboards||{}; return l[id]||[]; }
+
+    /* ── Render: podium ── */
+    function _podium(lb) {
+        if (!lb.length) return '<div class="comp-podium-empty">[ NO PARTICIPANTS YET ]</div>';
+        function slot(p, cls, sz) {
+            if (!p) return '<div class="comp-podium-slot '+cls+'"></div>';
+            return '<div class="comp-podium-slot '+cls+'">'
+                +_av(p.uid,p.name,sz)
+                +'<div class="comp-podium-rank">#'+p.rank+'</div>'
+                +'<div class="comp-podium-name">'+_esc((p.name||'').split(' ')[0])+'</div>'
+                +'<div class="comp-podium-gain">'+_fmtG(p.gain)+'</div>'
+                +'</div>';
+        }
+        return '<div class="comp-podium">'+slot(lb[1],'comp-podium-slot--2',36)+slot(lb[0],'comp-podium-slot--1',50)+slot(lb[2],'comp-podium-slot--3',36)+'</div>';
+    }
+
+    /* ── Render: leaderboard table ── */
+    function _table(lb) {
+        if (!lb.length) return '<div class="comp-lb-empty">[ COMPETITION NOT YET STARTED ]</div>';
+        var rows = lb.map(function(p) {
+            var isMe = p.me||p.isMe;
+            var medal = p.rank<=3 ? ['','🥇','🥈','🥉'][p.rank]+' ' : '';
+            return '<tr class="comp-lb-row'+(isMe?' comp-lb-row--me':'')+'">'
+                +'<td class="comp-lb-td comp-lb-td--rank">'+medal+p.rank+'</td>'
+                +'<td class="comp-lb-td comp-lb-td--name">'+_av(p.uid,p.name,26)
+                +'<span class="comp-lb-name-txt">'+_esc(p.name)+(isMe?' <span class="comp-lb-me">YOU</span>':'')+'</span></td>'
+                +'<td class="comp-lb-td">'+_flag(p.country)+'</td>'
+                +'<td class="comp-lb-td">'+p.trades+'</td>'
+                +'<td class="comp-lb-td">'+p.wr+'%</td>'
+                +'<td class="comp-lb-td comp-lb-td--profit">'+_fmtP(p.profit)+'</td>'
+                +'<td class="comp-lb-td comp-lb-td--gain">'+_fmtG(p.gain)+'</td>'
+                +'<td class="comp-lb-td comp-lb-td--arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></td>'
+                +'</tr>';
+        }).join('');
+        return '<table class="comp-lb-table"><thead><tr>'
+            +'<th>RANK</th><th>NAME</th><th>COUNTRY</th><th>TRADES</th><th>WIN RATIO</th><th>PROFIT</th><th>GAIN</th><th></th>'
+            +'</tr></thead><tbody>'+rows+'</tbody></table>';
+    }
+
+    /* ── Render: right sidebar ── */
+    function _sidebar(comp, lb) {
+        var myEntry = null; lb.forEach(function(p){if(p.me||p.isMe)myEntry=p;});
+        var rules   = (RULES[comp.category]||RULES.monthly).map(function(r){
+            return '<div class="comp-side-rule"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>'+_esc(r)+'</div>';
+        }).join('');
+        var myRank = myEntry
+            ? '<div class="comp-myrank"><div class="comp-myrank-lbl">MY CURRENT RANK</div><div class="comp-myrank-val">#'+myEntry.rank+'</div><div class="comp-myrank-sub">OF '+lb.length+'</div></div>'
+            : '<div class="comp-myrank comp-myrank--none"><div class="comp-myrank-lbl">MY RANK</div><div class="comp-myrank-val">—</div><div class="comp-myrank-sub">NOT JOINED</div></div>';
+        var entryTxt = comp.type==='free' ? '<span class="comp-entry--free">FREE</span>' : '$'+Number(comp.entry).toFixed(2);
+        return '<div class="comp-detail-side">'
+            +myRank
+            +'<div class="comp-side-info">'
+            +'<div class="comp-side-row"><span class="comp-side-lbl">STARTS</span><span class="comp-side-val">'+_esc((comp.starts||'').slice(0,10))+'</span></div>'
+            +'<div class="comp-side-row"><span class="comp-side-lbl">ENDS</span><span class="comp-side-val">'+_esc((comp.ends||'').slice(0,10))+'</span></div>'
+            +'<div class="comp-side-row"><span class="comp-side-lbl">ENTRY</span><span class="comp-side-val">'+entryTxt+'</span></div>'
+            +'<div class="comp-side-row"><span class="comp-side-lbl">PARTICIPANTS</span><span class="comp-side-val">'+Number(comp.participants).toLocaleString()+'</span></div>'
+            +'<div class="comp-side-row"><span class="comp-side-lbl">ORGANIZER</span><span class="comp-side-val">'+_esc(comp.organizer)+'</span></div>'
+            +'<div class="comp-side-row"><span class="comp-side-lbl">PLATFORM</span><span class="comp-side-val">'+_esc(comp.platform)+'</span></div>'
+            +'</div>'
+            +'<div class="comp-side-rules"><div class="comp-side-rules-title">TRADING RULES</div>'+rules+'</div>'
+            +'</div>';
+    }
+
+    /* ── Build full detail view HTML ── */
+    function _buildDetail(comp, lb) {
+        var isLive = comp.status==='live', isUp = comp.status==='upcoming';
+        var cdEnd  = isLive ? comp.ends : (isUp ? comp.starts : '');
+        var cdT    = _pd(cdEnd); var cdV = cdT ? _cd(cdT) : {d:'00',h:'00',m:'00',s:'00'};
+        var cdLbl  = isLive ? 'ENDING IN' : (isUp ? 'STARTS IN' : 'ENDED');
+        var stLbl  = isLive ? 'ONGOING' : comp.status.toUpperCase();
+        var cdAttr = cdEnd ? ' data-comp-detail-end="'+_esc(cdEnd)+'"' : '';
+        return '<div class="comp-detail">'
+            // header
+            +'<div class="comp-detail-hdr">'
+            +'<button class="comp-detail-back" onclick="CompTab.closeView()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg> BACK</button>'
+            +'<div class="comp-detail-hdr-title">'+_esc(comp.edition+' '+comp.name)+'</div>'
+            +'<span class="comp-status comp-status--'+comp.status+'"><span class="comp-status-dot comp-status-dot--'+comp.status+'"></span>'+stLbl+'</span>'
+            +'</div>'
+            // countdown blocks
+            +'<div class="comp-detail-cd"><div class="comp-detail-cd-lbl">'+cdLbl+'</div>'
+            +'<div class="comp-detail-cd-blocks"'+cdAttr+'>'
+            +'<div class="comp-cd-block"><div class="comp-cd-val" id="cdD">'+cdV.d+'</div><div class="comp-cd-unit">DAY</div></div>'
+            +'<div class="comp-cd-sep">:</div>'
+            +'<div class="comp-cd-block"><div class="comp-cd-val" id="cdH">'+cdV.h+'</div><div class="comp-cd-unit">HR</div></div>'
+            +'<div class="comp-cd-sep">:</div>'
+            +'<div class="comp-cd-block"><div class="comp-cd-val" id="cdM">'+cdV.m+'</div><div class="comp-cd-unit">MIN</div></div>'
+            +'<div class="comp-cd-sep">:</div>'
+            +'<div class="comp-cd-block"><div class="comp-cd-val" id="cdS">'+cdV.s+'</div><div class="comp-cd-unit">SEC</div></div>'
+            +'</div></div>'
+            // body
+            +'<div class="comp-detail-body">'
+            +'<div class="comp-detail-main">'+_podium(lb)+_table(lb)+'</div>'
+            +_sidebar(comp, lb)
+            +'</div></div>';
+    }
+
+    /* ── Detail countdown tick ── */
+    function _tickDetail() {
+        var blocks = document.querySelector('.comp-detail-cd-blocks');
+        if (!blocks) { _stopDetail(); return; }
+        var t = _pd(blocks.getAttribute('data-comp-detail-end')); if (!t) return;
+        var v = _cd(t);
+        var q = function(id,val){ var el=document.getElementById(id); if(el)el.textContent=val; };
+        q('cdD',v.d); q('cdH',v.h); q('cdM',v.m); q('cdS',v.s);
+    }
+    function _startDetail() { _stopDetail(); _tickDetail(); _detailTick = setInterval(_tickDetail,1000); }
+    function _stopDetail()  { if(_detailTick){clearInterval(_detailTick);_detailTick=null;} }
+
+    /* ── Grid countdown tick ── */
     function _tick() {
-        document.querySelectorAll('[data-comp-end]').forEach(function (el) {
-            var t = _parseDate(el.getAttribute('data-comp-end'));
-            if (t) el.textContent = _formatCountdown(t);
+        if (_viewOpen) return;
+        document.querySelectorAll('[data-comp-end]').forEach(function(el){
+            var t=_pd(el.getAttribute('data-comp-end')); if(t) el.textContent=_cd(t).inline;
+        });
+    }
+    function _startTick() { if(_gridTick)return; _tick(); _gridTick=setInterval(_tick,1000); }
+    function _stopTick()  { if(_gridTick){clearInterval(_gridTick);_gridTick=null;} }
+
+    /* ── Sub-tab filter ── */
+    function _filter(f) {
+        document.querySelectorAll('#compGrid .comp-card').forEach(function(card){
+            var cat=card.getAttribute('data-comp-category'), j=card.getAttribute('data-comp-joined')==='1';
+            card.hidden = !(f==='all' || (f==='joined'&&j) || (f==='championship'&&cat==='championship'));
         });
     }
 
-    function _startTick() {
-        if (_tickInterval) return;
-        _tick();
-        _tickInterval = setInterval(_tick, 1000);
+    /* ── Public API ── */
+    function openView(id) {
+        var comp=_getComp(id); if(!comp)return;
+        var lb=_getLb(id);
+        _viewOpen = true;
+        var tab    = document.getElementById('tab-competitions');
+        var detail = document.getElementById('compDetailView');
+        if (!detail) { detail=document.createElement('div'); detail.id='compDetailView'; tab.appendChild(detail); }
+        detail.innerHTML = _buildDetail(comp, lb);
+        tab.querySelectorAll('.comp-hero,.comp-subtabs,#compGrid').forEach(function(el){el.hidden=true;});
+        detail.hidden = false;
+        _startDetail();
     }
 
-    function _stopTick() {
-        if (_tickInterval) { clearInterval(_tickInterval); _tickInterval = null; }
+    function closeView() {
+        _viewOpen = false; _stopDetail();
+        var tab    = document.getElementById('tab-competitions');
+        var detail = document.getElementById('compDetailView');
+        if (detail) detail.hidden = true;
+        tab.querySelectorAll('.comp-hero,.comp-subtabs,#compGrid').forEach(function(el){el.hidden=false;});
     }
 
-    function _filterGrid(filter) {
-        document.querySelectorAll('#compGrid .comp-card').forEach(function (card) {
-            var cat    = card.getAttribute('data-comp-category');
-            var joined = card.getAttribute('data-comp-joined') === '1';
-            var show   = filter === 'all'
-                       || (filter === 'joined' && joined)
-                       || (filter === 'championship' && cat === 'championship');
-            card.hidden = !show;
-        });
-    }
+    function openPrizepool(id) { /* TBD */ }
+    function openInfo(id)      { /* TBD */ }
 
+    /* ── Init ── */
     function init() {
-        // Sub-tab switching
-        document.querySelectorAll('.comp-subtab-btn').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll('.comp-subtab-btn').forEach(function (b) {
-                    b.classList.remove('comp-subtab-btn--active');
-                });
+        document.querySelectorAll('.comp-subtab-btn').forEach(function(btn){
+            btn.addEventListener('click', function(){
+                document.querySelectorAll('.comp-subtab-btn').forEach(function(b){b.classList.remove('comp-subtab-btn--active');});
                 btn.classList.add('comp-subtab-btn--active');
-                _filterGrid(btn.getAttribute('data-comp-filter'));
+                _filter(btn.getAttribute('data-comp-filter'));
             });
         });
-
-        // Start countdown when competitions tab activates, stop when hidden
         var tabEl = document.getElementById('tab-competitions');
         if (tabEl) {
-            new MutationObserver(function () {
+            new MutationObserver(function(){
                 tabEl.classList.contains('active') ? _startTick() : _stopTick();
-            }).observe(tabEl, { attributes: true, attributeFilter: ['class'] });
+            }).observe(tabEl,{attributes:true,attributeFilter:['class']});
             if (tabEl.classList.contains('active')) _startTick();
         }
     }
 
-    function openView(id)      { /* will be implemented — described by user */ }
-    function openPrizepool(id) { /* will be implemented — described by user */ }
-    function openInfo(id)      { /* will be implemented — described by user */ }
-
     document.addEventListener('DOMContentLoaded', init);
-
-    return { openView: openView, openPrizepool: openPrizepool, openInfo: openInfo };
+    return { openView:openView, closeView:closeView, openPrizepool:openPrizepool, openInfo:openInfo };
 }());

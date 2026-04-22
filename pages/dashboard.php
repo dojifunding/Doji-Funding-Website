@@ -93,6 +93,62 @@ foreach ($competitions_all as $_c) { if (!empty($_c['featured'])) { $comp_featur
 if (!$comp_featured) { foreach ($competitions_all as $_c) { if ($_c['status'] === 'live') { $comp_featured = $_c; break; } } }
 if (!$comp_featured) { foreach ($competitions_all as $_c) { if ($_c['status'] === 'upcoming') { $comp_featured = $_c; break; } } }
 
+// ── Competition leaderboards demo data ──
+$comp_leaderboards = [
+    1 => [
+        ['rank'=>1, 'uid'=>101,'name'=>'Rahul K',    'country'=>'IN','trades'=>179,'wr'=>75, 'profit'=>1988536.90,'gain'=>1988.54],
+        ['rank'=>2, 'uid'=>102,'name'=>'Mahendra J', 'country'=>'IN','trades'=>200,'wr'=>100,'profit'=>1701383.56,'gain'=>1701.38],
+        ['rank'=>3, 'uid'=>103,'name'=>'Dikshit S',  'country'=>'IN','trades'=>257,'wr'=>67, 'profit'=>1105219.28,'gain'=>1105.22],
+        ['rank'=>4, 'uid'=>104,'name'=>'Raushan K',  'country'=>'IN','trades'=>88, 'wr'=>52, 'profit'=>1008061.40,'gain'=>1008.06],
+        ['rank'=>5, 'uid'=>105,'name'=>'Manoj S',    'country'=>'—', 'trades'=>117,'wr'=>71, 'profit'=>770878.12, 'gain'=>770.88],
+        ['rank'=>6, 'uid'=>106,'name'=>'Alex T',     'country'=>'US','trades'=>94, 'wr'=>63, 'profit'=>621450.00, 'gain'=>621.45],
+        ['rank'=>7, 'uid'=>107,'name'=>'Chen W',     'country'=>'CN','trades'=>143,'wr'=>69, 'profit'=>543200.00, 'gain'=>543.20],
+        ['rank'=>8, 'uid'=>108,'name'=>'Sofia M',    'country'=>'ES','trades'=>112,'wr'=>58, 'profit'=>489300.00, 'gain'=>489.30],
+        ['rank'=>9, 'uid'=>109,'name'=>'Yuki T',     'country'=>'JP','trades'=>87, 'wr'=>72, 'profit'=>412500.00, 'gain'=>412.50],
+        ['rank'=>10,'uid'=>110,'name'=>'Lucas B',    'country'=>'BR','trades'=>201,'wr'=>55, 'profit'=>387600.00, 'gain'=>387.60],
+        ['rank'=>11,'uid'=>111,'name'=>'Emma K',     'country'=>'DE','trades'=>76, 'wr'=>68, 'profit'=>312400.00, 'gain'=>312.40],
+        ['rank'=>12,'uid'=>0,  'name'=>'You',        'country'=>'FR','trades'=>45, 'wr'=>62, 'profit'=>198750.00, 'gain'=>198.75,'me'=>true],
+        ['rank'=>13,'uid'=>112,'name'=>'Omar A',     'country'=>'AE','trades'=>63, 'wr'=>49, 'profit'=>167300.00, 'gain'=>167.30],
+        ['rank'=>14,'uid'=>113,'name'=>'Ivan P',     'country'=>'RU','trades'=>98, 'wr'=>54, 'profit'=>143200.00, 'gain'=>143.20],
+        ['rank'=>15,'uid'=>114,'name'=>'Fatima Z',   'country'=>'MA','trades'=>55, 'wr'=>65, 'profit'=>121800.00, 'gain'=>121.80],
+    ],
+    2 => [],
+    101 => [
+        ['rank'=>1, 'uid'=>115,'name'=>'Pierre D',   'country'=>'FR','trades'=>156,'wr'=>78, 'profit'=>2341200.00,'gain'=>2341.20],
+        ['rank'=>2, 'uid'=>116,'name'=>'Ankit S',    'country'=>'IN','trades'=>189,'wr'=>82, 'profit'=>1987400.00,'gain'=>1987.40],
+        ['rank'=>3, 'uid'=>117,'name'=>'Kim J',      'country'=>'KR','trades'=>134,'wr'=>71, 'profit'=>1654300.00,'gain'=>1654.30],
+        ['rank'=>4, 'uid'=>118,'name'=>'Liu W',      'country'=>'CN','trades'=>167,'wr'=>66, 'profit'=>1234500.00,'gain'=>1234.50],
+        ['rank'=>5, 'uid'=>119,'name'=>'Maria G',    'country'=>'MX','trades'=>142,'wr'=>73, 'profit'=>987600.00, 'gain'=>987.60],
+        ['rank'=>6, 'uid'=>120,'name'=>'David N',    'country'=>'NG','trades'=>118,'wr'=>69, 'profit'=>812300.00, 'gain'=>812.30],
+        ['rank'=>7, 'uid'=>121,'name'=>'Sarah M',    'country'=>'GB','trades'=>95, 'wr'=>77, 'profit'=>698400.00, 'gain'=>698.40],
+        ['rank'=>8, 'uid'=>0,  'name'=>'You',        'country'=>'FR','trades'=>67, 'wr'=>59, 'profit'=>534200.00, 'gain'=>534.20,'me'=>true],
+        ['rank'=>9, 'uid'=>122,'name'=>'Hassan A',   'country'=>'SA','trades'=>89, 'wr'=>61, 'profit'=>456700.00, 'gain'=>456.70],
+        ['rank'=>10,'uid'=>123,'name'=>'Priya R',    'country'=>'IN','trades'=>112,'wr'=>74, 'profit'=>389100.00, 'gain'=>389.10],
+    ],
+    102 => [
+        ['rank'=>1, 'uid'=>124,'name'=>'Kenji T',    'country'=>'JP','trades'=>178,'wr'=>81, 'profit'=>2156700.00,'gain'=>2156.70],
+        ['rank'=>2, 'uid'=>125,'name'=>'Amara D',    'country'=>'SN','trades'=>145,'wr'=>76, 'profit'=>1876400.00,'gain'=>1876.40],
+        ['rank'=>3, 'uid'=>126,'name'=>'Carlos V',   'country'=>'CO','trades'=>198,'wr'=>68, 'profit'=>1543200.00,'gain'=>1543.20],
+        ['rank'=>4, 'uid'=>127,'name'=>'Nadia B',    'country'=>'TN','trades'=>134,'wr'=>72, 'profit'=>1234800.00,'gain'=>1234.80],
+        ['rank'=>5, 'uid'=>128,'name'=>'Ryan C',     'country'=>'AU','trades'=>167,'wr'=>65, 'profit'=>987300.00, 'gain'=>987.30],
+    ],
+    103 => [
+        ['rank'=>1, 'uid'=>129,'name'=>'Ming L',     'country'=>'CN','trades'=>201,'wr'=>79, 'profit'=>2345600.00,'gain'=>2345.60],
+        ['rank'=>2, 'uid'=>130,'name'=>'Aisha M',    'country'=>'NG','trades'=>167,'wr'=>83, 'profit'=>1987200.00,'gain'=>1987.20],
+        ['rank'=>3, 'uid'=>131,'name'=>'Thomas B',   'country'=>'FR','trades'=>189,'wr'=>71, 'profit'=>1654800.00,'gain'=>1654.80],
+    ],
+    201 => [
+        ['rank'=>1, 'uid'=>132,'name'=>'Viktor S',   'country'=>'UA','trades'=>123,'wr'=>84, 'profit'=>987400.00, 'gain'=>987.40],
+        ['rank'=>2, 'uid'=>133,'name'=>'Jun K',       'country'=>'KR','trades'=>145,'wr'=>78, 'profit'=>756300.00, 'gain'=>756.30],
+        ['rank'=>3, 'uid'=>134,'name'=>'Lena M',     'country'=>'DE','trades'=>98, 'wr'=>71, 'profit'=>534200.00, 'gain'=>534.20],
+    ],
+    202 => [
+        ['rank'=>1, 'uid'=>135,'name'=>'Andre F',    'country'=>'BR','trades'=>112,'wr'=>82, 'profit'=>876500.00, 'gain'=>876.50],
+        ['rank'=>2, 'uid'=>136,'name'=>'Mei X',      'country'=>'CN','trades'=>98, 'wr'=>77, 'profit'=>654300.00, 'gain'=>654.30],
+        ['rank'=>3, 'uid'=>137,'name'=>'James O',    'country'=>'GH','trades'=>87, 'wr'=>69, 'profit'=>432100.00, 'gain'=>432.10],
+    ],
+];
+
 // ── Account index map: challenge id → sequential position (1 = first ever created) ──
 $_chTotal     = count($challenges);
 $acctIndexMap = [];
@@ -2909,6 +2965,11 @@ foreach ($challenges as $ch) {
 
             <!-- ══ TAB: COMPETITIONS ══ -->
             <div class="dash-tab" id="tab-competitions">
+                <script>
+                window.DojiCompData        = <?= json_encode(array_values($competitions_all), JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>;
+                window.DojiCompJoined      = <?= json_encode($comp_joined_ids) ?>;
+                window.DojiCompLeaderboards= <?= json_encode($comp_leaderboards, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>;
+                </script>
 
                 <?php if ($comp_featured): ?>
                 <?php
