@@ -1895,17 +1895,18 @@ window.CompTab = (function () {
         var detail = document.getElementById('compDetailView');
         if (!detail) { detail=document.createElement('div'); detail.id='compDetailView'; tab.appendChild(detail); }
         detail.innerHTML = _buildDetail(comp, lb);
-        tab.querySelectorAll('.comp-hero,.comp-subtabs,#compGrid').forEach(function(el){el.hidden=true;});
+        var blocks = document.getElementById('compBlocks');
+        if (blocks) blocks.hidden = true;
         detail.hidden = false;
         _startDetail();
     }
 
     function closeView() {
         _viewOpen = false; _stopDetail();
-        var tab    = document.getElementById('tab-competitions');
         var detail = document.getElementById('compDetailView');
         if (detail) detail.hidden = true;
-        tab.querySelectorAll('.comp-hero,.comp-subtabs,#compGrid').forEach(function(el){el.hidden=false;});
+        var blocks = document.getElementById('compBlocks');
+        if (blocks) blocks.hidden = false;
     }
 
     function openPrizepool(id) { /* TBD */ }

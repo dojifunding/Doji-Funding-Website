@@ -2971,124 +2971,83 @@ foreach ($challenges as $ch) {
                 window.DojiCompLeaderboards= <?= json_encode($comp_leaderboards, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>;
                 </script>
 
-                <?php if ($comp_featured): ?>
                 <?php
-                    $_cf  = $comp_featured;
-                    $_cfTl  = $_cf['status'] === 'live' ? compTimeLeft($_cf['ends']) : compTimeUntil($_cf['starts']);
-                    $_cfLbl = $_cf['status'] === 'live' ? 'ENDING IN' : 'STARTS IN';
-                    $_cfTs  = $_cf['status'] === 'live' ? $_cf['ends'] : $_cf['starts'];
+                /* Pick the active (live or upcoming) free and paid competition */
+                $_compFree = null; $_compPaid = null;
+                foreach ($competitions_all as $_c) {
+                    if (!$_compFree && $_c['type']==='free' && $_c['status']!=='ended') $_compFree = $_c;
+                    if (!$_compPaid && $_c['type']==='paid' && $_c['status']!=='ended') $_compPaid = $_c;
+                    if ($_compFree && $_compPaid) break;
+                }
+                $__blocks = array_filter([$_compFree, $_compPaid]);
                 ?>
-                <!-- Hero featured competition -->
-                <div class="comp-hero">
-                    <div class="comp-hero-left">
-                        <div class="comp-hero-eyebrow"><?= strtoupper($_cf['category']) ?> COMPETITION</div>
-                        <div>
-                            <div class="comp-hero-title"><?= htmlspecialchars($_cf['edition'] . ' ' . $_cf['name']) ?></div>
-                            <div class="comp-hero-meta">
-                                <span class="comp-status comp-status--<?= $_cf['status'] ?>">
-                                    <span class="comp-status-dot comp-status-dot--<?= $_cf['status'] ?>"></span>
-                                    <?= $_cf['status'] === 'live' ? 'ONGOING' : strtoupper($_cf['status']) ?>
-                                </span>
-                                <span class="comp-hero-meta-item">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M16 8h-6a2 2 0 100 4h4a2 2 0 110 4H8"/><path d="M12 6v2m0 8v2"/></svg>
-                                    <?= htmlspecialchars($_cf['platform']) ?>
-                                </span>
-                                <span class="comp-hero-meta-item">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-                                    <?= number_format($_cf['participants']) ?>
-                                </span>
-                                <span class="comp-hero-meta-item comp-entry--<?= $_cf['type'] ?>">
-                                    <?= $_cf['type'] === 'free' ? 'FREE ENTRY' : 'ENTRY $' . number_format($_cf['entry'], 2) ?>
-                                </span>
-                            </div>
+                <!-- Two competition blocks -->
+                <div class="comp-blocks" id="compBlocks">
+                <?php foreach ($__blocks as $_b):
+                    $_bCdEnd = $_b['status']==='live' ? $_b['ends'] : ($_b['status']==='upcoming' ? $_b['starts'] : '');
+                    $_bCdLbl = $_b['status']==='live' ? 'ENDING IN' : ($_b['status']==='upcoming' ? 'STARTS IN' : 'ENDED');
+                    $_bCdVal = $_b['status']==='live' ? compTimeLeft($_b['ends']) : ($_b['status']==='upcoming' ? compTimeUntil($_b['starts']) : '00:00:00');
+                    $_bJoined = in_array($_b['id'], $comp_joined_ids);
+                ?>
+                <div class="comp-block comp-block--<?= $_b['status'] ?>">
+                    <!-- Header -->
+                    <div class="comp-block-hdr">
+                        <div class="comp-block-hdr-left">
+                            <div class="comp-block-name"><?= htmlspecialchars($_b['name']) ?></div>
+                            <div class="comp-block-edition"><?= htmlspecialchars($_b['edition']) ?><?= $_bJoined ? ' <span class="comp-block-joined-tag">JOINED</span>' : '' ?></div>
                         </div>
-                        <div class="comp-hero-dates">
-                            <div class="comp-hero-date-item">
-                                <div class="comp-hero-date-lbl">STARTS</div>
-                                <div class="comp-hero-date-val"><?= date('M j, Y', strtotime($_cf['starts'])) ?></div>
+                        <span class="comp-status comp-status--<?= $_b['status'] ?>">
+                            <span class="comp-status-dot comp-status-dot--<?= $_b['status'] ?>"></span>
+                            <?= $_b['status']==='live' ? 'ONGOING' : strtoupper($_b['status']) ?>
+                        </span>
+                    </div>
+                    <!-- Body -->
+                    <div class="comp-block-body">
+                        <!-- Left: countdown clock + entry type -->
+                        <div class="comp-block-left">
+                            <div class="comp-block-cd-wrap">
+                                <div class="comp-block-cd comp-block-cd--<?= $_b['status'] ?>"<?= $_bCdEnd ? ' data-comp-end="'.htmlspecialchars($_bCdEnd).'"' : '' ?>><?= $_bCdVal ?></div>
+                                <div class="comp-block-cd-lbl"><?= $_bCdLbl ?></div>
                             </div>
-                            <div class="comp-hero-date-item">
-                                <div class="comp-hero-date-lbl">ENDS</div>
-                                <div class="comp-hero-date-val"><?= date('M j, Y', strtotime($_cf['ends'])) ?></div>
+                            <div class="comp-block-entry-badge comp-block-entry-badge--<?= $_b['type'] ?>">
+                                <?= $_b['type']==='free' ? 'FREE' : '$'.number_format($_b['entry'], 0) ?>
                             </div>
-                            <div class="comp-hero-date-item">
-                                <div class="comp-hero-date-lbl"><?= $_cfLbl ?></div>
-                                <div class="comp-hero-date-val comp-hero-date-val--cd" data-comp-end="<?= htmlspecialchars($_cfTs) ?>"><?= $_cfTl ?></div>
-                            </div>
+                            <div class="comp-block-entry-sub"><?= $_b['type']==='free' ? 'FREE ENTRY' : 'ENTRY FEE' ?></div>
                         </div>
-                        <div class="comp-hero-actions">
-                            <button class="comp-btn comp-btn--primary" onclick="CompTab.openView(<?= $_cf['id'] ?>)">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                                VIEW
-                            </button>
-                            <button class="comp-btn" onclick="CompTab.openPrizepool(<?= $_cf['id'] ?>)">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-                                SHOW PRIZEPOOL
-                            </button>
-                            <button class="comp-btn" onclick="CompTab.openInfo(<?= $_cf['id'] ?>)">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                                MORE INFO
-                            </button>
+                        <!-- Separator -->
+                        <div class="comp-block-sep"></div>
+                        <!-- Right: info rows -->
+                        <div class="comp-block-right">
+                            <div class="comp-block-row"><span class="comp-block-lbl">STARTS</span><span class="comp-block-val"><?= date('M d, Y', strtotime($_b['starts'])) ?></span></div>
+                            <div class="comp-block-row"><span class="comp-block-lbl">ENDS</span><span class="comp-block-val"><?= date('M d, Y', strtotime($_b['ends'])) ?></span></div>
+                            <div class="comp-block-row"><span class="comp-block-lbl">ENTRY</span><span class="comp-block-val <?= $_b['type']==='free' ? 'comp-entry--free' : '' ?>"><?= $_b['type']==='free' ? 'FREE' : '$'.number_format($_b['entry'],2) ?></span></div>
+                            <div class="comp-block-row"><span class="comp-block-lbl">PARTICIPANTS</span><span class="comp-block-val"><?= number_format($_b['participants']) ?></span></div>
+                            <div class="comp-block-row"><span class="comp-block-lbl">PLATFORM</span><span class="comp-block-val"><?= htmlspecialchars($_b['platform']) ?></span></div>
+                            <div class="comp-block-row"><span class="comp-block-lbl">ORGANIZER</span><span class="comp-block-val"><?= htmlspecialchars($_b['organizer']) ?></span></div>
+                            <div class="comp-block-row"><span class="comp-block-lbl">STATUS</span><span class="comp-block-val"><span class="comp-status comp-status--<?= $_b['status'] ?>"><span class="comp-status-dot comp-status-dot--<?= $_b['status'] ?>"></span><?= $_b['status']==='live' ? 'ONGOING' : strtoupper($_b['status']) ?></span></span></div>
                         </div>
                     </div>
-                    <div class="comp-hero-right">
-                        <div class="comp-hero-prize-lbl">PRIZE POOL</div>
-                        <div class="comp-hero-prize-val">$<?= number_format($_cf['prize_pool']) ?></div>
-                        <div class="comp-hero-prize-org"><?= htmlspecialchars($_cf['organizer']) ?></div>
+                    <!-- Footer: 3 buttons -->
+                    <div class="comp-block-footer">
+                        <button class="comp-btn comp-btn--primary" onclick="CompTab.openView(<?= $_b['id'] ?>)">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            VIEW
+                        </button>
+                        <button class="comp-btn" onclick="CompTab.openPrizepool(<?= $_b['id'] ?>)">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                            PRIZEPOOL
+                        </button>
+                        <button class="comp-btn" onclick="CompTab.openInfo(<?= $_b['id'] ?>)">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            INFO
+                        </button>
                     </div>
                 </div>
-                <?php endif; ?>
+                <?php endforeach; ?>
+                </div><!-- /.comp-blocks -->
 
-                <!-- Sub-tabs -->
-                <div class="comp-subtabs">
-                    <button class="comp-subtab-btn" data-comp-filter="joined">JOINED</button>
-                    <button class="comp-subtab-btn comp-subtab-btn--active" data-comp-filter="all">DOJI FUNDING</button>
-                    <button class="comp-subtab-btn" data-comp-filter="championship">CHAMPIONSHIPS</button>
-                </div>
-
-                <!-- Cards grid -->
-                <div class="comp-grid" id="compGrid">
-                    <?php foreach ($competitions_all as $_c):
-                        $_tl2    = $_c['status'] === 'live'     ? compTimeLeft($_c['ends'])
-                                 : ($_c['status'] === 'upcoming' ? compTimeUntil($_c['starts']) : '00:00:00');
-                        $_cdEnd  = $_c['status'] === 'live'     ? $_c['ends']
-                                 : ($_c['status'] === 'upcoming' ? $_c['starts'] : '');
-                        $_joined = in_array($_c['id'], $comp_joined_ids);
-                    ?>
-                    <div class="comp-card" data-comp-category="<?= $_c['category'] ?>" data-comp-joined="<?= $_joined ? '1' : '0' ?>">
-                        <div class="comp-card-cd <?= $_c['status'] === 'live' ? 'comp-card-cd--live' : '' ?>"
-                             <?= $_cdEnd ? 'data-comp-end="' . htmlspecialchars($_cdEnd) . '"' : '' ?>><?= $_tl2 ?></div>
-                        <div>
-                            <div class="comp-card-name"><?= htmlspecialchars($_c['edition'] . ' ' . $_c['name']) ?></div>
-                        </div>
-                        <div class="comp-card-meta">
-                            <span class="comp-status comp-status--<?= $_c['status'] ?>">
-                                <span class="comp-status-dot comp-status-dot--<?= $_c['status'] ?>"></span>
-                                <?= $_c['status'] === 'live' ? 'ONGOING' : strtoupper($_c['status']) ?>
-                            </span>
-                            <span class="comp-card-meta-item comp-entry--<?= $_c['type'] ?>">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-                                <?= $_c['type'] === 'free' ? 'FREE' : '$' . number_format($_c['entry'], 2) ?>
-                            </span>
-                            <span class="comp-card-meta-item">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-                                <?= number_format($_c['participants']) ?>
-                            </span>
-                        </div>
-                        <div class="comp-card-tags">
-                            <span class="comp-card-tag"><?= htmlspecialchars($_c['organizer']) ?></span>
-                            <span class="comp-card-tag"><?= htmlspecialchars($_c['platform']) ?></span>
-                            <?php if ($_joined): ?><span class="comp-card-tag comp-card-tag--joined">JOINED</span><?php endif; ?>
-                        </div>
-                        <div class="comp-card-foot">
-                            <button class="comp-btn comp-btn--primary comp-btn--sm" onclick="CompTab.openView(<?= $_c['id'] ?>)">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                                VIEW
-                            </button>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
+                <!-- Detail view (injected by CompTab.openView) -->
+                <div id="compDetailView" hidden></div>
 
             </div>
 
