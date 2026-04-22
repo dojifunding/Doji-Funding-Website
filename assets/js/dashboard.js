@@ -1704,3 +1704,83 @@ const PayoutDetailModal = (function () {
 
     return { open: open, close: close, downloadCert: downloadCert, download: download };
 }());
+
+/* ── Competitions Tab ── */
+window.CompTab = (function () {
+    var _tickInterval = null;
+
+    function _parseDate(str) {
+        // "YYYY-MM-DD HH:MM:SS" or ISO — always parse as UTC-naive local
+        return str ? new Date(str.replace(' ', 'T')) : null;
+    }
+
+    function _formatCountdown(target) {
+        var now  = new Date();
+        var diff = Math.floor((target - now) / 1000);
+        if (diff <= 0) return '00:00:00';
+        var d = Math.floor(diff / 86400); diff -= d * 86400;
+        var h = Math.floor(diff / 3600);  diff -= h * 3600;
+        var m = Math.floor(diff / 60);    diff -= m * 60;
+        var s = diff;
+        var hh = ('0' + h).slice(-2), mm = ('0' + m).slice(-2), ss = ('0' + s).slice(-2);
+        return d > 0 ? (d + 'D ' + hh + ':' + mm + ':' + ss) : (hh + ':' + mm + ':' + ss);
+    }
+
+    function _tick() {
+        document.querySelectorAll('[data-comp-end]').forEach(function (el) {
+            var t = _parseDate(el.getAttribute('data-comp-end'));
+            if (t) el.textContent = _formatCountdown(t);
+        });
+    }
+
+    function _startTick() {
+        if (_tickInterval) return;
+        _tick();
+        _tickInterval = setInterval(_tick, 1000);
+    }
+
+    function _stopTick() {
+        if (_tickInterval) { clearInterval(_tickInterval); _tickInterval = null; }
+    }
+
+    function _filterGrid(filter) {
+        document.querySelectorAll('#compGrid .comp-card').forEach(function (card) {
+            var cat    = card.getAttribute('data-comp-category');
+            var joined = card.getAttribute('data-comp-joined') === '1';
+            var show   = filter === 'all'
+                       || (filter === 'joined' && joined)
+                       || (filter === 'championship' && cat === 'championship');
+            card.hidden = !show;
+        });
+    }
+
+    function init() {
+        // Sub-tab switching
+        document.querySelectorAll('.comp-subtab-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.comp-subtab-btn').forEach(function (b) {
+                    b.classList.remove('comp-subtab-btn--active');
+                });
+                btn.classList.add('comp-subtab-btn--active');
+                _filterGrid(btn.getAttribute('data-comp-filter'));
+            });
+        });
+
+        // Start countdown when competitions tab activates, stop when hidden
+        var tabEl = document.getElementById('tab-competitions');
+        if (tabEl) {
+            new MutationObserver(function () {
+                tabEl.classList.contains('active') ? _startTick() : _stopTick();
+            }).observe(tabEl, { attributes: true, attributeFilter: ['class'] });
+            if (tabEl.classList.contains('active')) _startTick();
+        }
+    }
+
+    function openView(id)      { /* will be implemented — described by user */ }
+    function openPrizepool(id) { /* will be implemented — described by user */ }
+    function openInfo(id)      { /* will be implemented — described by user */ }
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    return { openView: openView, openPrizepool: openPrizepool, openInfo: openInfo };
+}());
