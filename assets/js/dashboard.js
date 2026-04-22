@@ -466,6 +466,20 @@ const Dashboard = (function() {
         // Init theme
         initTheme();
 
+        // Language toggle (EN / FR) — UI only, persisted in localStorage
+        (function () {
+            var btn = document.getElementById('dashLangBtn');
+            var txt = document.getElementById('dashLangTxt');
+            if (!btn || !txt) return;
+            var lang = localStorage.getItem('doji-lang') || 'EN';
+            txt.textContent = lang;
+            btn.addEventListener('click', function () {
+                lang = lang === 'EN' ? 'FR' : 'EN';
+                localStorage.setItem('doji-lang', lang);
+                txt.textContent = lang;
+            });
+        }());
+
         // Delight
         initGreeting();
         initConsoleEgg();

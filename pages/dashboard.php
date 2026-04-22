@@ -35,6 +35,26 @@ foreach ($challenges as $_ch) {
     $topbar_coins += (int)floor((float)($_ch['lots_traded'] ?? 0));
 }
 
+// ── Payout notification counts (topbar badge + sidebar) ──
+// Demo data injected once here if no real payouts exist, so badge and tab stay in sync
+if (empty($payouts)) {
+    $payouts = [
+        ['id'=>1,'challenge_id'=>1,'account_size'=>100000,'challenge_type'=>'one_step', 'method'=>'rise',    'amount'=>4200.00,'status'=>'completed',      'requested_at'=>'2024-11-10 10:00:00','processed_at'=>'2024-11-17 14:00:00','action_detail'=>''],
+        ['id'=>2,'challenge_id'=>2,'account_size'=>50000, 'challenge_type'=>'two_step','method'=>'confirmo','amount'=>1850.00,'status'=>'completed',      'requested_at'=>'2024-12-05 09:30:00','processed_at'=>'2024-12-12 16:00:00','action_detail'=>''],
+        ['id'=>3,'challenge_id'=>1,'account_size'=>100000,'challenge_type'=>'one_step', 'method'=>'rise',    'amount'=>3100.00,'status'=>'action_required','requested_at'=>'2025-01-20 11:00:00','processed_at'=>null,                 'action_detail'=>'Justificatif de domicile'],
+        ['id'=>4,'challenge_id'=>3,'account_size'=>200000,'challenge_type'=>'one_step', 'method'=>'confirmo','amount'=>8500.00,'status'=>'pending',       'requested_at'=>'2025-02-14 15:00:00','processed_at'=>null,                 'action_detail'=>''],
+        ['id'=>5,'challenge_id'=>2,'account_size'=>50000, 'challenge_type'=>'two_step','method'=>'rise',    'amount'=>2200.00,'status'=>'completed',      'requested_at'=>'2025-03-01 08:00:00','processed_at'=>'2025-03-08 12:00:00','action_detail'=>''],
+        ['id'=>6,'challenge_id'=>1,'account_size'=>100000,'challenge_type'=>'one_step', 'method'=>'confirmo','amount'=>5750.00,'status'=>'pending',       'requested_at'=>'2025-04-01 10:00:00','processed_at'=>null,                 'action_detail'=>''],
+    ];
+}
+$notifPayoutPending = 0;
+$notifPayoutAction  = 0;
+foreach ($payouts as $_p) {
+    if (in_array($_p['status'], ['pending', 'processing'])) $notifPayoutPending++;
+    if ($_p['status'] === 'action_required') $notifPayoutAction++;
+}
+$notifTotal = $notifPayoutPending + $notifPayoutAction;
+
 // ── Account index map: challenge id → sequential position (1 = first ever created) ──
 $_chTotal     = count($challenges);
 $acctIndexMap = [];
@@ -275,6 +295,12 @@ foreach ($challenges as $ch) {
             <button class="dash-nav-item" data-tab="payouts">
                 <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
                 <span>Payouts</span>
+                <?php if ($notifPayoutPending > 0): ?>
+                <span class="dash-nav-badge"><?= $notifPayoutPending ?></span>
+                <?php endif; ?>
+                <?php if ($notifPayoutAction > 0): ?>
+                <span class="dash-nav-badge dash-nav-badge-action"><?= $notifPayoutAction ?></span>
+                <?php endif; ?>
             </button>
 
             <button class="dash-nav-item" data-tab="statistics">
@@ -355,7 +381,7 @@ foreach ($challenges as $ch) {
         <!-- ─── TOPBAR ─── -->
         <header class="dash-topbar">
 
-            <!-- LEFT — user + logout + new challenge -->
+            <!-- LEFT — user + actions -->
             <div class="dash-topbar-left">
                 <button class="dash-topbar-hamburger" id="dashHamburger" aria-label="Menu">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -364,15 +390,33 @@ foreach ($challenges as $ch) {
                 <span class="dash-topbar-username"><?= htmlspecialchars(strtolower($user['first_name'] . $user['last_name'])) ?></span>
                 <span id="dashFirstName" style="display:none"><?= htmlspecialchars($profile['first_name'] ?? $user['first_name'] ?? '') ?></span>
                 <span id="dashUsername" style="display:none"><?= htmlspecialchars($profile['username'] ?? '') ?></span>
-                <button class="dash-topbar-logout" onclick="AuthModal.logout()">Log out</button>
                 <button class="dash-topbar-new-challenge" onclick="Dashboard.switchTab('configurator')">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     New Challenge
                 </button>
-                <button class="dash-topbar-support" onclick="Dashboard.switchTab('support')">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    Support
-                </button>
+                <!-- icon-button group -->
+                <div class="dash-topbar-actions">
+                    <!-- Notifications -->
+                    <button class="dash-topbar-icon-btn" onclick="Dashboard.switchTab('payouts')" title="Notifications" aria-label="Notifications">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        <?php if ($notifTotal > 0): ?>
+                        <span class="dash-topbar-badge <?= $notifPayoutAction > 0 ? 'dash-topbar-badge-urgent' : '' ?>"><?= $notifTotal ?></span>
+                        <?php endif; ?>
+                    </button>
+                    <!-- Language -->
+                    <button class="dash-topbar-icon-btn dash-topbar-lang-btn" id="dashLangBtn" title="Switch language" aria-label="Switch language">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        <span class="dash-topbar-lang-txt" id="dashLangTxt">EN</span>
+                    </button>
+                    <!-- Support -->
+                    <button class="dash-topbar-icon-btn" onclick="Dashboard.switchTab('support')" title="Support" aria-label="Support">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </button>
+                    <!-- Logout -->
+                    <button class="dash-topbar-icon-btn" onclick="AuthModal.logout()" title="Log out" aria-label="Log out">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    </button>
+                </div>
             </div>
 
             <!-- RIGHT — allocation widget + market session cards -->
@@ -1755,17 +1799,6 @@ foreach ($challenges as $ch) {
                     return $h;
                 };
 
-                /* Demo data — shown when no real payouts exist */
-                if (empty($payouts)) {
-                    $payouts = [
-                        ['id'=>1,'challenge_id'=>1,'account_size'=>100000,'challenge_type'=>'one_step', 'method'=>'rise',    'amount'=>4200.00,'status'=>'completed',      'requested_at'=>'2024-11-10 10:00:00','processed_at'=>'2024-11-17 14:00:00','action_detail'=>''],
-                        ['id'=>2,'challenge_id'=>2,'account_size'=>50000, 'challenge_type'=>'two_step','method'=>'confirmo','amount'=>1850.00,'status'=>'completed',      'requested_at'=>'2024-12-05 09:30:00','processed_at'=>'2024-12-12 16:00:00','action_detail'=>''],
-                        ['id'=>3,'challenge_id'=>1,'account_size'=>100000,'challenge_type'=>'one_step', 'method'=>'rise',    'amount'=>3100.00,'status'=>'action_required','requested_at'=>'2025-01-20 11:00:00','processed_at'=>null,                 'action_detail'=>'Justificatif de domicile'],
-                        ['id'=>4,'challenge_id'=>3,'account_size'=>200000,'challenge_type'=>'one_step', 'method'=>'confirmo','amount'=>8500.00,'status'=>'pending',       'requested_at'=>'2025-02-14 15:00:00','processed_at'=>null,                 'action_detail'=>''],
-                        ['id'=>5,'challenge_id'=>2,'account_size'=>50000, 'challenge_type'=>'two_step','method'=>'rise',    'amount'=>2200.00,'status'=>'completed',      'requested_at'=>'2025-03-01 08:00:00','processed_at'=>'2025-03-08 12:00:00','action_detail'=>''],
-                        ['id'=>6,'challenge_id'=>1,'account_size'=>100000,'challenge_type'=>'one_step', 'method'=>'confirmo','amount'=>5750.00,'status'=>'pending',       'requested_at'=>'2025-04-01 10:00:00','processed_at'=>null,                 'action_detail'=>''],
-                    ];
-                }
                 ?>
 
                 <!-- Stats bar -->
