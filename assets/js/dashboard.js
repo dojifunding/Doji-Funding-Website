@@ -2,6 +2,47 @@
  * Doji Funding — Dashboard Module
  * Tab navigation, form submissions, filters, and clipboard utils.
  */
+
+/* ── Wallet tab pagination ── */
+(function() {
+    var PAGE_SIZE = 8;
+
+    function initPagination(pagEl) {
+        var listId = pagEl.getAttribute('data-list');
+        var list   = document.getElementById(listId);
+        if (!list) return;
+
+        var rows  = list.querySelectorAll('.wlt-tx-row');
+        var total = rows.length;
+        if (total <= PAGE_SIZE) { pagEl.style.display = 'none'; return; }
+
+        var page  = 0;
+        var pages = Math.ceil(total / PAGE_SIZE);
+        var info  = pagEl.querySelector('.wlt-pg-info');
+        var prev  = pagEl.querySelector('[data-dir="-1"]');
+        var next  = pagEl.querySelector('[data-dir="1"]');
+
+        function render() {
+            var start = page * PAGE_SIZE;
+            var end   = start + PAGE_SIZE;
+            rows.forEach(function(r, i) {
+                r.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+            if (info) info.textContent = 'PAGE ' + (page + 1) + ' / ' + pages;
+            if (prev) prev.disabled = (page === 0);
+            if (next) next.disabled = (page >= pages - 1);
+        }
+
+        prev.addEventListener('click', function() { if (page > 0) { page--; render(); } });
+        next.addEventListener('click', function() { if (page < pages - 1) { page++; render(); } });
+        render();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.wlt-pagination').forEach(initPagination);
+    });
+}());
+
 const Dashboard = (function() {
     'use strict';
 
@@ -10,6 +51,7 @@ const Dashboard = (function() {
         overview:     'DASHBOARD',
         challenges:   'CHALLENGES',
         configurator: 'CONFIGURATOR',
+        wallet:       'WALLET',
         payouts:      'PAYOUTS',
         statistics:   'STATISTICS',
         competitions: 'COMPETITIONS',
@@ -994,4 +1036,657 @@ var ChallengeCredentials = (function() {
         tick();
         setInterval(tick, 1000);
     });
+}());
+
+/* ── Payout Modal ── */
+const PayoutModal = (function () {
+    'use strict';
+
+    var _method = 'rise';
+    var _maxAmt = 0;
+
+    function open() {
+        var overlay = document.getElementById('payoutModal');
+        if (!overlay) return;
+        _showStep(1);
+        var amtEl = document.getElementById('pytAmount');
+        if (amtEl) { amtEl.value = ''; _maxAmt = parseFloat(amtEl.max) || 0; }
+        var ack = document.getElementById('pytAck');
+        if (ack) ack.checked = false;
+        var firstBtn = document.querySelector('.pyt-method-btn');
+        if (firstBtn) setMethod(firstBtn);
+        validate();
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+        var overlay = document.getElementById('payoutModal');
+        if (!overlay) return;
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function setMethod(btn) {
+        document.querySelectorAll('.pyt-method-btn').forEach(function (b) {
+            b.classList.remove('pyt-method-active');
+        });
+        if (btn) {
+            btn.classList.add('pyt-method-active');
+            _method = btn.getAttribute('data-method') || 'rise';
+        }
+    }
+
+    function setMax() {
+        var el = document.getElementById('pytAmount');
+        if (el) { el.value = _maxAmt.toFixed(2); validate(); }
+    }
+
+    function validate() {
+        var amtEl = document.getElementById('pytAmount');
+        var ackEl = document.getElementById('pytAck');
+        var errEl = document.getElementById('pytAmountErr');
+        var btn   = document.getElementById('pytSubmitBtn');
+        if (!amtEl || !ackEl || !btn) return;
+        var val = parseFloat(amtEl.value);
+        var amtOk = amtEl.value !== '' && !isNaN(val) && val > 0;
+        if (amtOk && val > _maxAmt) {
+            if (errEl) errEl.textContent = 'Amount exceeds available balance.';
+            amtOk = false;
+        } else {
+            if (errEl) errEl.textContent = '';
+        }
+        btn.disabled = !(amtOk && ackEl.checked);
+    }
+
+    function submit() {
+        var amtEl = document.getElementById('pytAmount');
+        var val = parseFloat(amtEl ? amtEl.value : 0);
+        if (!val || val <= 0) return;
+        var ref = 'DOJ-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2, 9).toUpperCase();
+        var methodLabel = _method === 'confirmo' ? 'Confirmo (Crypto)' : 'Rise (rise.com)';
+        var fmt = '$' + val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        document.getElementById('pytRecapAmt').textContent  = fmt;
+        document.getElementById('pytRecapDest').textContent = methodLabel;
+        document.getElementById('pytRecapRef').textContent  = ref;
+        _showStep(2);
+    }
+
+    function _showStep(n) {
+        var s1 = document.getElementById('pytStep1');
+        var s2 = document.getElementById('pytStep2');
+        if (s1) s1.style.display = n === 1 ? '' : 'none';
+        if (s2) s2.style.display = n === 2 ? '' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var overlay = document.getElementById('payoutModal');
+        if (!overlay) return;
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    });
+
+    return { open: open, close: close, setMethod: setMethod, setMax: setMax, validate: validate, submit: submit };
+}());
+
+/* ── Profit Split Modal ── */
+const ProfitSplitModal = (function () {
+    'use strict';
+
+    var _account  = null; // { id, ref, size, split }
+    var _tier     = null; // { pct, cost }
+    var _dcBal    = 0;
+
+    function open() {
+        var overlay = document.getElementById('profitSplitModal');
+        if (!overlay) return;
+        _dcBal   = parseInt(overlay.getAttribute('data-dc'), 10) || 0;
+        _account = null;
+        _tier    = null;
+        document.querySelectorAll('.psl-acct-btn').forEach(function (b) { b.classList.remove('psl-acct-active'); });
+        document.querySelectorAll('#pslTierRow .pyt-method-btn').forEach(function (b) { b.classList.remove('pyt-method-active'); });
+        var ack = document.getElementById('pslAck');
+        if (ack) ack.checked = false;
+        _hideResult();
+        _showStep(1);
+        validate();
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+        var overlay = document.getElementById('profitSplitModal');
+        if (!overlay) return;
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function setAccount(btn) {
+        document.querySelectorAll('.psl-acct-btn').forEach(function (b) { b.classList.remove('psl-acct-active'); });
+        btn.classList.add('psl-acct-active');
+        _account = {
+            id:    btn.getAttribute('data-id'),
+            ref:   btn.getAttribute('data-ref'),
+            size:  btn.getAttribute('data-size'),
+            split: parseInt(btn.getAttribute('data-split'), 10) || 80
+        };
+        _updateResult();
+        validate();
+    }
+
+    function setTier(btn) {
+        document.querySelectorAll('#pslTierRow .pyt-method-btn').forEach(function (b) { b.classList.remove('pyt-method-active'); });
+        btn.classList.add('pyt-method-active');
+        _tier = {
+            pct:  parseInt(btn.getAttribute('data-tier'), 10),
+            cost: parseInt(btn.getAttribute('data-cost'), 10)
+        };
+        _updateResult();
+        validate();
+    }
+
+    function _updateResult() {
+        var line = document.getElementById('pslResultLine');
+        if (!line) return;
+        if (!_account || !_tier) { _hideResult(); return; }
+        var newSplit = _account.split + _tier.pct;
+        var remaining = _dcBal - _tier.cost;
+        var lowDc = remaining < 0;
+        line.style.display = '';
+        line.innerHTML = 'New split: <strong>' + newSplit + '%</strong>'
+            + ' &nbsp;·&nbsp; Cost: <strong>' + _tier.cost.toLocaleString() + ' DC</strong>'
+            + ' &nbsp;·&nbsp; Remaining: <span class="' + (lowDc ? 'psl-err-dc' : '') + '">'
+            + remaining.toLocaleString() + ' DC</span>';
+    }
+
+    function _hideResult() {
+        var line = document.getElementById('pslResultLine');
+        if (line) line.style.display = 'none';
+    }
+
+    function validate() {
+        var btn = document.getElementById('pslSubmitBtn');
+        var err = document.getElementById('pslErr');
+        if (!btn) return;
+        var ack = document.getElementById('pslAck');
+        var hasAccount = !!_account;
+        var hasTier    = !!_tier;
+        var hasAck     = ack && ack.checked;
+        var enoughDc   = _tier ? (_dcBal >= _tier.cost) : false;
+
+        if (hasTier && !enoughDc) {
+            if (err) err.textContent = 'Insufficient Doji Coins balance for this tier.';
+        } else {
+            if (err) err.textContent = '';
+        }
+        btn.disabled = !(hasAccount && hasTier && hasAck && enoughDc);
+    }
+
+    function submit() {
+        if (!_account || !_tier) return;
+        var ref      = 'PSL-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2, 9).toUpperCase();
+        var newSplit = _account.split + _tier.pct;
+        document.getElementById('pslRecapAcct').textContent  = _account.ref;
+        document.getElementById('pslRecapTier').textContent  = '+' + _tier.pct + '% Profit Split Upgrade';
+        document.getElementById('pslRecapSplit').textContent = newSplit + '%';
+        document.getElementById('pslRecapCost').textContent  = _tier.cost.toLocaleString() + ' DC';
+        document.getElementById('pslRecapRef').textContent   = ref;
+        _showStep(2);
+    }
+
+    function _showStep(n) {
+        var s1 = document.getElementById('pslStep1');
+        var s2 = document.getElementById('pslStep2');
+        if (s1) s1.style.display = n === 1 ? '' : 'none';
+        if (s2) s2.style.display = n === 2 ? '' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var overlay = document.getElementById('profitSplitModal');
+        if (!overlay) return;
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    });
+
+    return { open: open, close: close, setAccount: setAccount, setTier: setTier, validate: validate, submit: submit };
+}());
+
+/* ── Discount Coupon Modal ── */
+const DiscountModal = (function () {
+    'use strict';
+
+    var _tier  = null;
+    var _dcBal = 0;
+
+    function open() {
+        var overlay = document.getElementById('discountModal');
+        if (!overlay) return;
+        _dcBal = parseInt(overlay.getAttribute('data-dc'), 10) || 0;
+        _tier  = null;
+        document.querySelectorAll('.disc-tier-btn').forEach(function (b) { b.classList.remove('disc-tier-active'); });
+        var ack = document.getElementById('discAck');
+        if (ack) ack.checked = false;
+        var rl = document.getElementById('discResultLine');
+        if (rl) rl.style.display = 'none';
+        var err = document.getElementById('discErr');
+        if (err) err.textContent = '';
+        _showStep(1);
+        validate();
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+        var overlay = document.getElementById('discountModal');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function setTier(btn) {
+        document.querySelectorAll('.disc-tier-btn').forEach(function (b) { b.classList.remove('disc-tier-active'); });
+        btn.classList.add('disc-tier-active');
+        _tier = { pct: parseInt(btn.getAttribute('data-pct'), 10), cost: parseInt(btn.getAttribute('data-cost'), 10) };
+        var remaining = _dcBal - _tier.cost;
+        var rl = document.getElementById('discResultLine');
+        if (rl) {
+            rl.style.display = '';
+            rl.innerHTML = 'Cost: <strong>' + _tier.cost.toLocaleString() + ' DC</strong>'
+                + ' &nbsp;·&nbsp; Remaining: <span class="' + (remaining < 0 ? 'psl-err-dc' : '') + '">'
+                + remaining.toLocaleString() + ' DC</span>';
+        }
+        validate();
+    }
+
+    function validate() {
+        var btn = document.getElementById('discSubmitBtn');
+        var err = document.getElementById('discErr');
+        if (!btn) return;
+        var ack  = document.getElementById('discAck');
+        var enoughDc = _tier ? (_dcBal >= _tier.cost) : true;
+        if (_tier && !enoughDc) {
+            if (err) err.textContent = 'Insufficient Doji Coins balance.';
+        } else {
+            if (err) err.textContent = '';
+        }
+        btn.disabled = !(_tier && ack && ack.checked && enoughDc);
+    }
+
+    function submit() {
+        if (!_tier) return;
+        var code = 'DC' + _tier.pct + '-' + Math.random().toString(36).slice(2, 9).toUpperCase();
+        window.DojiActiveCoupon = { code: code, pct: _tier.pct, label: _tier.pct + '% OFF', cost: _tier.cost };
+        document.getElementById('discRecapCode').textContent  = code;
+        document.getElementById('discRecapPct').textContent   = _tier.pct + '% OFF';
+        document.getElementById('discRecapCost').textContent  = _tier.cost.toLocaleString() + ' DC';
+        _showStep(2);
+    }
+
+    function goCheckout() {
+        close();
+        if (typeof Dashboard !== 'undefined') Dashboard.switchTab('configurator');
+    }
+
+    function _showStep(n) {
+        var s1 = document.getElementById('discStep1');
+        var s2 = document.getElementById('discStep2');
+        if (s1) s1.style.display = n === 1 ? '' : 'none';
+        if (s2) s2.style.display = n === 2 ? '' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var overlay = document.getElementById('discountModal');
+        if (!overlay) return;
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    });
+
+    return { open: open, close: close, setTier: setTier, validate: validate, submit: submit, goCheckout: goCheckout };
+}());
+
+/* ── Purchase / Checkout Modal ── */
+const PurchaseModal = (function () {
+    'use strict';
+
+    var _state   = null;
+    var _payment = 'stripe';
+    var _coupon  = null; // { pct, label } or { flat, label }
+
+    function open(state) {
+        _state   = state || {};
+        _payment = 'stripe';
+        _coupon  = null;
+        var overlay = document.getElementById('purchaseModal');
+        if (!overlay) return;
+        _showStep(1);
+        _populateSummary();
+        _resetPaymentBtns();
+        _checkAutoCoupon();
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+        var overlay = document.getElementById('purchaseModal');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function _populateSummary() {
+        var typeLabel = _state.type === 'one_step' ? '1-STEP EVALUATION' : '2-STEP EVALUATION';
+        var sizeFmt   = '$' + parseInt(_state.account_size || 0).toLocaleString();
+        var opts = [];
+        if (_state.overnight_holding) opts.push('Overnight Holding');
+        if (_state.weekend_holding)   opts.push('Weekend Holding');
+
+        _setText('coChallengeLbl', typeLabel + ' — ' + sizeFmt);
+        _setText('coSumType', typeLabel);
+        _setText('coSumSize', sizeFmt);
+
+        var optsRow = document.getElementById('coSumOptionsRow');
+        if (opts.length) {
+            _setText('coSumOptions', opts.join(' + '));
+            if (optsRow) optsRow.style.display = '';
+        } else {
+            if (optsRow) optsRow.style.display = 'none';
+        }
+        var sub = (_state.final_price || 0);
+        _setText('coSumSubtotal', '$' + sub.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+
+        var inp = document.getElementById('coCouponInput');
+        if (inp) inp.value = '';
+        var msg = document.getElementById('coCouponMsg');
+        if (msg) msg.innerHTML = '';
+        var discRow = document.getElementById('coDiscountRow');
+        if (discRow) discRow.style.display = 'none';
+        _updateTotal();
+    }
+
+    function _checkAutoCoupon() {
+        if (window.DojiActiveCoupon) {
+            var inp = document.getElementById('coCouponInput');
+            if (inp) inp.value = window.DojiActiveCoupon.code;
+            applyCoupon();
+        }
+    }
+
+    function applyCoupon() {
+        var inp = document.getElementById('coCouponInput');
+        var msg = document.getElementById('coCouponMsg');
+        if (!inp || !msg) return;
+        var code = inp.value.trim().toUpperCase();
+        if (!code) { msg.innerHTML = '<span class="co-coupon-err">Please enter a code.</span>'; return; }
+
+        // DC coupon format: DC5-XXXXXXX, DC10-XXXXXXX, DC15-XXXXXXX, DC20-XXXXXXX
+        var dcMatch = code.match(/^DC(5|10|15|20)-[A-Z0-9]{7}$/);
+        if (dcMatch) {
+            _coupon = { pct: parseInt(dcMatch[1], 10), label: dcMatch[1] + '% OFF' };
+            msg.innerHTML = '<span class="co-coupon-ok">✓ ' + _coupon.label + ' applied!</span>';
+            _updateTotal(); return;
+        }
+        // Server promo codes
+        var promoCodes = (window.DOJI_CONFIG && window.DOJI_CONFIG.pricing && window.DOJI_CONFIG.pricing.promoCodes) || {};
+        if (promoCodes[code]) {
+            var promo = promoCodes[code];
+            _coupon = promo.type === 'percent'
+                ? { pct: promo.value, label: promo.label }
+                : { flat: promo.value, label: promo.label };
+            msg.innerHTML = '<span class="co-coupon-ok">✓ ' + _coupon.label + ' applied!</span>';
+            _updateTotal(); return;
+        }
+        _coupon = null;
+        msg.innerHTML = '<span class="co-coupon-err">Invalid coupon code.</span>';
+        _updateTotal();
+    }
+
+    function _updateTotal() {
+        var base = parseFloat((_state && _state.final_price) || 0);
+        var discount = 0;
+        if (_coupon) {
+            if (_coupon.pct)  discount = base * _coupon.pct / 100;
+            else if (_coupon.flat) discount = _coupon.flat;
+        }
+        var total = Math.max(base - discount, 0);
+        var discRow = document.getElementById('coDiscountRow');
+        var discVal = document.getElementById('coDiscountVal');
+        var totalEl = document.getElementById('coTotal');
+        if (_coupon && discount > 0) {
+            if (discRow) discRow.style.display = '';
+            if (discVal) discVal.textContent = '-$' + discount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        } else {
+            if (discRow) discRow.style.display = 'none';
+        }
+        if (totalEl) totalEl.textContent = '$' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function setPayment(btn) {
+        document.querySelectorAll('#coStep1 .pyt-method-btn').forEach(function (b) { b.classList.remove('pyt-method-active'); });
+        btn.classList.add('pyt-method-active');
+        _payment = btn.getAttribute('data-pay') || 'stripe';
+    }
+
+    function _resetPaymentBtns() {
+        document.querySelectorAll('#coStep1 .pyt-method-btn').forEach(function (b) { b.classList.remove('pyt-method-active'); });
+        var first = document.querySelector('#coStep1 .pyt-method-btn');
+        if (first) { first.classList.add('pyt-method-active'); _payment = first.getAttribute('data-pay') || 'stripe'; }
+    }
+
+    function confirm() {
+        if (!_state) return;
+        var base = parseFloat(_state.final_price || 0);
+        var discount = 0;
+        if (_coupon) {
+            if (_coupon.pct)  discount = base * _coupon.pct / 100;
+            else if (_coupon.flat) discount = _coupon.flat;
+        }
+        var total = Math.max(base - discount, 0);
+        var fmt = function (n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); };
+        var ref = 'CHG-' + new Date().getFullYear() + '-' + Math.random().toString(36).slice(2, 9).toUpperCase();
+        _setText('coRecapChallenge', _state.type === 'one_step' ? '1-STEP EVALUATION' : '2-STEP EVALUATION');
+        _setText('coRecapSize', '$' + parseInt(_state.account_size || 0).toLocaleString());
+        _setText('coRecapTotal', fmt(total));
+        _setText('coRecapPayment', _payment === 'confirmo' ? 'Confirmo (Crypto)' : 'Stripe (Card)');
+        _setText('coRecapRef', ref);
+        window.DojiActiveCoupon = null;
+        _showStep(2);
+    }
+
+    function _showStep(n) {
+        var s1 = document.getElementById('coStep1');
+        var s2 = document.getElementById('coStep2');
+        if (s1) s1.style.display = n === 1 ? '' : 'none';
+        if (s2) s2.style.display = n === 2 ? '' : 'none';
+    }
+
+    function _setText(id, txt) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = txt;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var overlay = document.getElementById('purchaseModal');
+        if (!overlay) return;
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    });
+
+    return { open: open, close: close, setPayment: setPayment, applyCoupon: applyCoupon, confirm: confirm };
+}());
+
+/* ── Payouts tab pagination ── */
+(function () {
+    var PAGE_SIZE = 5;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var tbody = document.getElementById('pyoTableBody');
+        var prev  = document.getElementById('pyoPrev');
+        var next  = document.getElementById('pyoNext');
+        var info  = document.getElementById('pyoPagInfo');
+        if (!tbody || !prev || !next) return;
+
+        var rows  = tbody.querySelectorAll('.pyo-row');
+        var total = rows.length;
+        if (total <= PAGE_SIZE) return;
+
+        var page  = 0;
+        var pages = Math.ceil(total / PAGE_SIZE);
+
+        function render() {
+            var start = page * PAGE_SIZE;
+            var end   = start + PAGE_SIZE;
+            rows.forEach(function (r, i) {
+                r.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+            if (info) info.textContent = 'PAGE ' + (page + 1) + ' / ' + pages;
+            prev.disabled = (page === 0);
+            next.disabled = (page >= pages - 1);
+        }
+
+        prev.addEventListener('click', function () { if (page > 0) { page--; render(); } });
+        next.addEventListener('click', function () { if (page < pages - 1) { page++; render(); } });
+        render();
+    });
+}());
+
+/* ── PayoutDetailModal ─────────────────────────────────── */
+const PayoutDetailModal = (function () {
+    'use strict';
+
+    var _data = null;
+
+    function open(btn) {
+        var raw = btn.getAttribute('data-payout');
+        if (!raw) return;
+        try { _data = JSON.parse(raw); } catch (e) { return; }
+        _fill();
+        var overlay = document.getElementById('payoutDetailModal');
+        if (overlay) overlay.classList.add('active');
+    }
+
+    function close() {
+        var overlay = document.getElementById('payoutDetailModal');
+        if (overlay) overlay.classList.remove('active');
+        _data = null;
+    }
+
+    function _fill() {
+        if (!_data) return;
+        _setText('pydNum', '#' + _data.num);
+        _setText('pydSource', _data.source);
+        _setText('pydAmount', _data.amount + ' ' + (_data.currency || ''));
+        _setText('pydMethod', (_data.currency || '') + ' · ' + (_data.provider || ''));
+        _setText('pydRequested', _data.requested);
+
+        var procRow = document.getElementById('pydProcessedRow');
+        if (_data.processed) {
+            _setText('pydProcessed', _data.processed);
+            if (procRow) procRow.style.display = '';
+        } else {
+            if (procRow) procRow.style.display = 'none';
+        }
+
+        var certBtn = document.getElementById('pydCertBtn');
+        if (certBtn) certBtn.style.display = _data.status === 'completed' ? '' : 'none';
+
+        var vprog = document.getElementById('pydVprog');
+        if (vprog) vprog.innerHTML = _buildVprog(_data.status);
+    }
+
+    function _buildVprog(status) {
+        var steps = [
+            { label: 'IN REVIEW',       sub: 'Payout request being processed' },
+            { label: 'ACTION REQUIRED', sub: 'Document verification needed' },
+            { label: 'COMPLETED',       sub: 'Funds transferred to your account' },
+        ];
+
+        var activeIdx = 0;
+        if (status === 'action_required') activeIdx = 1;
+        else if (status === 'completed')  activeIdx = 2;
+
+        var html = '';
+        steps.forEach(function (step, i) {
+            var done   = i < activeIdx;
+            var active = i === activeIdx;
+            var isLast = i === steps.length - 1;
+
+            var dotMod   = done ? '--done' : active ? '--active' : '--empty';
+            var titleMod = done ? '--done' : active ? '--active' : '';
+            var lineMod  = done ? ' pyd-vstep-vline--done' : '';
+
+            html += '<div class="pyd-vstep">';
+            html += '<div class="pyd-vstep-left">';
+            html += '<div class="pyd-vstep-dot pyd-vstep-dot' + dotMod + '"></div>';
+            if (!isLast) html += '<div class="pyd-vstep-vline' + lineMod + '"></div>';
+            html += '</div>';
+            html += '<div class="pyd-vstep-right">';
+            html += '<div class="pyd-vstep-title' + (titleMod ? ' pyd-vstep-title' + titleMod : '') + '">' + step.label + '</div>';
+            html += '<div class="pyd-vstep-sub">' + step.sub + '</div>';
+            html += '</div>';
+            html += '</div>';
+        });
+        return html;
+    }
+
+    function downloadCert() {
+        if (!_data || _data.status !== 'completed') return;
+        var lines = [
+            '═══════════════════════════════════════',
+            '         DOJI FUNDING',
+            '         PAYOUT CERTIFICATE',
+            '═══════════════════════════════════════',
+            '',
+            'PAYOUT  : #' + _data.num,
+            'SOURCE  : ' + _data.source,
+            'AMOUNT  : ' + _data.amount + ' ' + (_data.currency || ''),
+            'METHOD  : ' + (_data.currency || '') + ' · ' + (_data.provider || ''),
+            'REQ.    : ' + _data.requested,
+            'PROC.   : ' + (_data.processed || '—'),
+            'STATUS  : COMPLETED',
+            '',
+            '═══════════════════════════════════════',
+            'This certificate confirms that the above',
+            'payout has been successfully processed.',
+            '═══════════════════════════════════════',
+        ];
+        _dlText(lines.join('\n'), 'doji-certificate-payout-' + _data.num + '.txt');
+    }
+
+    function download(data) {
+        if (!data) return;
+        var lines = [
+            'DOJI FUNDING — PAYOUT DETAILS',
+            '══════════════════════════════',
+            '',
+            'PAYOUT    : #' + data.num,
+            'SOURCE    : ' + data.source,
+            'AMOUNT    : ' + data.amount + ' ' + (data.currency || ''),
+            'METHOD    : ' + (data.currency || '') + ' · ' + (data.provider || ''),
+            'STATUS    : ' + data.status.toUpperCase().replace('_', ' '),
+            'REQUESTED : ' + data.requested,
+            'PROCESSED : ' + (data.processed || 'N/A'),
+            '',
+            '══════════════════════════════',
+        ];
+        _dlText(lines.join('\n'), 'doji-payout-' + data.num + '.txt');
+    }
+
+    function _dlText(content, filename) {
+        var blob = new Blob([content], { type: 'text/plain' });
+        var url  = URL.createObjectURL(blob);
+        var a    = document.createElement('a');
+        a.href     = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function _setText(id, txt) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = txt;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var overlay = document.getElementById('payoutDetailModal');
+        if (!overlay) return;
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    });
+
+    return { open: open, close: close, downloadCert: downloadCert, download: download };
 }());

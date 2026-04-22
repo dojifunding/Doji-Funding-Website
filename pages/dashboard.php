@@ -270,7 +270,7 @@ foreach ($challenges as $ch) {
             </button>
             <button class="dash-nav-item" data-tab="wallet">
                 <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H5a3 3 0 00-3 3v1"/><circle cx="17" cy="14" r="1" fill="currentColor"/></svg>
-                <span>Wallet</span>
+                <span>WALLET</span>
             </button>
             <button class="dash-nav-item" data-tab="payouts">
                 <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
@@ -394,8 +394,8 @@ foreach ($challenges as $ch) {
                     </div>
                     <div class="dash-topbar-coins">
                         <div class="dash-coins-label">DOJI COINS</div>
-                        <div class="dash-coins-val"><?= number_format($topbar_coins) ?></div>
-                        <div class="dash-coins-sub">FROM VOLUME</div>
+                        <div class="dash-coins-val"><?= number_format($dojiCoins) ?></div>
+                        <div class="dash-coins-sub">BALANCE</div>
                     </div>
                     <div class="dash-topbar-wallet" onclick="Dashboard.switchTab('wallet')" title="Go to Wallet">
                         <div class="dash-wallet-label">WALLET</div>
@@ -1131,7 +1131,7 @@ foreach ($challenges as $ch) {
                                 <div class="stat-wallet-sub">AVAILABLE BALANCE</div>
                                 <div class="stat-wallet-btns">
                                     <button class="stat-btn stat-btn-ghost" onclick="Dashboard.switchTab('wallet')">HISTORY</button>
-                                    <button class="stat-btn stat-btn-accent" onclick="Dashboard.switchTab('payouts')">PAYOUT</button>
+                                    <button class="stat-btn stat-btn-accent" onclick="PayoutModal.open()">PAYOUT</button>
                                 </div>
                             </div>
                             <?php if (!empty($walletMovements)): ?>
@@ -1557,50 +1557,337 @@ foreach ($challenges as $ch) {
             <!-- ══ TAB: WALLET ══ -->
             <div class="dash-tab" id="tab-wallet">
                 <?php
-                $wCoins   = (int)($overview['doji_coins'] ?? 0);
-                $wNextRwd = max(0, 5000 - ($wCoins % 5000 ?: 5000));
-                $wProgPct = $wCoins > 0 ? min(100, (($wCoins % 5000) / 5000) * 100) : 0;
+                $wAllTx    = getAllWalletTransactions($userId);
+                $wAllCoins = getAllCoinsTransactions($userId);
+                $wCoins    = (int)($overview['doji_coins'] ?? 0);
+                $wNextRwd  = max(0, 5000 - ($wCoins % 5000 ?: 5000));
+                $wProgPct  = $wCoins > 0 ? min(100, (($wCoins % 5000) / 5000) * 100) : 0;
+
+                /* Badge labels per type */
+                $wltBadge = [
+                    'payout_transfer'   => 'PAYOUT',
+                    'challenge_purchase'=> 'PURCHASE',
+                ];
+                $dcBadge = [
+                    'volume'              => 'VOLUME',
+                    'bonus'               => 'BONUS',
+                    'promo'               => 'PROMO',
+                    'referral'            => 'REFERRAL',
+                    'discount_purchase'   => 'DISCOUNT',
+                    'account_purchase'    => 'PURCHASE',
+                    'profit_split_upgrade'=> 'UPGRADE',
+                ];
                 ?>
-                <div class="wlt-hero">
-                    <div class="wlt-hero-lbl">DOJI COINS™</div>
-                    <div class="wlt-hero-val"><?= number_format($wCoins) ?> DC</div>
-                    <div class="wlt-hero-sub">Next reward: <?= number_format($wNextRwd) ?> DC away</div>
-                    <div class="ov-bar-wrap" style="max-width:320px;margin-top:var(--s12)">
-                        <div class="ov-bar-fill ov-bar-fill-amber" style="width:<?= $wProgPct ?>%"></div>
+                <div class="wlt-grid">
+
+                    <!-- ─ DOJI WALLET card ─ -->
+                    <div class="wlt-card">
+                        <div class="wlt-card-head">
+                            <div class="wlt-card-title">DOJI WALLET</div>
+                            <div class="wlt-card-bal-row">
+                                <div class="wlt-card-bal"><?= formatMoney($walletBalance) ?></div>
+                                <div class="wlt-card-btns">
+                                    <button class="wlt-action-btn wlt-btn-accent" onclick="PayoutModal.open()">PAYOUT</button>
+                                    <button class="wlt-action-btn wlt-btn-ghost" onclick="Dashboard.switchTab('configurator')">BUY CHALLENGES</button>
+                                </div>
+                            </div>
+                            <div class="wlt-card-sub">AVAILABLE BALANCE</div>
+                            <div class="wlt-card-prog-wrap">
+                                <?php
+                                $wTotalIn = 0; $wTotalOut = 0;
+                                foreach ($wAllTx as $_t) {
+                                    if ($_t['amount'] > 0) $wTotalIn  += $_t['amount'];
+                                    else                   $wTotalOut += abs($_t['amount']);
+                                }
+                                $wInPct   = ($wTotalIn + $wTotalOut) > 0 ? ($wTotalIn / ($wTotalIn + $wTotalOut)) * 100 : 0;
+                                $_wSegs   = 20;
+                                $_wOnSegs = (int)round($_wSegs * $wInPct / 100);
+                                ?>
+                                <div class="wlt-seg-bar">
+                                    <?php for ($_s = 0; $_s < $_wSegs; $_s++): ?>
+                                    <div class="wlt-seg<?= $_s < $_wOnSegs ? ' wlt-seg-on wlt-seg-green' : '' ?>"></div>
+                                    <?php endfor; ?>
+                                </div>
+                                <div class="wlt-card-prog-labels">
+                                    <span class="wlt-prog-lbl green">+<?= formatMoney($wTotalIn) ?> IN</span>
+                                    <span class="wlt-prog-lbl red">−<?= formatMoney($wTotalOut) ?> OUT</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="wlt-tx-list" id="wltTxWallet">
+                            <div class="wlt-tx-header">
+                                <span>TYPE</span><span>DESCRIPTION</span><span>AMOUNT</span><span>DATE</span>
+                            </div>
+                            <?php if (empty($wAllTx)): ?>
+                            <div class="wlt-tx-empty">NO TRANSACTIONS YET</div>
+                            <?php else: foreach ($wAllTx as $_i => $_tx):
+                                $_credit = $_tx['amount'] > 0;
+                                $_amt    = abs((float)$_tx['amount']);
+                                $_sign   = $_credit ? '+' : '−';
+                                $_cls    = $_credit ? 'wlt-tx-credit' : 'wlt-tx-debit';
+                                $_badge  = $wltBadge[$_tx['type']] ?? strtoupper($_tx['type']);
+                                $_date   = date('d M Y', strtotime($_tx['created_at']));
+                            ?>
+                            <div class="wlt-tx-row <?= $_cls ?>" data-wlt-idx="<?= $_i ?>">
+                                <span class="wlt-tx-badge wlt-badge-<?= $_credit ? 'credit' : 'debit' ?>"><?= $_badge ?></span>
+                                <span class="wlt-tx-desc"><?= htmlspecialchars($_tx['description']) ?></span>
+                                <span class="wlt-tx-amt"><?= $_sign ?>$<?= number_format($_amt, 2) ?></span>
+                                <span class="wlt-tx-date"><?= $_date ?></span>
+                            </div>
+                            <?php endforeach; endif; ?>
+                        </div>
+                        <?php if (count($wAllTx) > 8): ?>
+                        <div class="wlt-pagination" id="wltPagWallet" data-list="wltTxWallet" data-total="<?= count($wAllTx) ?>">
+                            <button class="wlt-pg-btn" data-dir="-1">&#8592;</button>
+                            <span class="wlt-pg-info"></span>
+                            <button class="wlt-pg-btn" data-dir="1">&#8594;</button>
+                        </div>
+                        <?php endif; ?>
                     </div>
-                </div>
-                <div class="dash-coming-soon">
-                    <svg class="dash-cs-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H5a3 3 0 00-3 3v1"/><circle cx="17" cy="14" r="1" fill="currentColor"/></svg>
-                    <p class="dash-cs-status">— COMING SOON —</p>
-                    <p class="dash-cs-title">WALLET</p>
-                    <p class="dash-cs-desc">Spend your Doji Coins on challenges, discounts, and exclusive rewards. Full wallet features launching soon.</p>
+
+                    <!-- ─ DOJI COINS card ─ -->
+                    <div class="wlt-card">
+                        <div class="wlt-card-head">
+                            <div class="wlt-card-title">DOJI COINS</div>
+                            <div class="wlt-card-bal-row">
+                                <div class="wlt-card-bal wlt-card-bal--coins"><?= number_format($wCoins) ?> <span class="wlt-dc-sym">DC</span></div>
+                                <div class="wlt-card-btns">
+                                    <button class="wlt-action-btn wlt-btn-ghost" onclick="Dashboard.switchTab('configurator')">BUY CHALLENGES</button>
+                                    <button class="wlt-action-btn wlt-btn-ghost" onclick="DiscountModal.open()">DISCOUNT</button>
+                                    <button class="wlt-action-btn wlt-btn-ghost" onclick="ProfitSplitModal.open()">PROFIT SPLIT</button>
+                                </div>
+                            </div>
+                            <div class="wlt-card-sub">TOTAL BALANCE</div>
+                            <div class="wlt-card-prog-wrap">
+                                <?php
+                                $_dcSegs   = 20;
+                                $_dcOnSegs = (int)round($_dcSegs * $wProgPct / 100);
+                                ?>
+                                <div class="wlt-seg-bar">
+                                    <?php for ($_s = 0; $_s < $_dcSegs; $_s++): ?>
+                                    <div class="wlt-seg<?= $_s < $_dcOnSegs ? ' wlt-seg-on wlt-seg-amber' : '' ?>"></div>
+                                    <?php endfor; ?>
+                                </div>
+                                <div class="wlt-card-prog-labels">
+                                    <span class="wlt-prog-lbl amber"><?= number_format($wCoins % 5000 ?: ($wCoins > 0 ? 5000 : 0)) ?> / 5,000 DC</span>
+                                    <span class="wlt-prog-lbl dim">NEXT REWARD <?= number_format($wNextRwd) ?> DC AWAY</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="wlt-tx-list" id="wltTxCoins">
+                            <div class="wlt-tx-header">
+                                <span>TYPE</span><span>DESCRIPTION</span><span>AMOUNT</span><span>DATE</span>
+                            </div>
+                            <?php if (empty($wAllCoins)): ?>
+                            <div class="wlt-tx-empty">NO TRANSACTIONS YET</div>
+                            <?php else: foreach ($wAllCoins as $_i => $_cx):
+                                $_credit = $_cx['amount'] > 0;
+                                $_amt    = abs((int)$_cx['amount']);
+                                $_sign   = $_credit ? '+' : '−';
+                                $_cls    = $_credit ? 'wlt-tx-credit' : 'wlt-tx-debit';
+                                $_badge  = $dcBadge[$_cx['source']] ?? strtoupper($_cx['source']);
+                                $_date   = date('d M Y', strtotime($_cx['created_at']));
+                            ?>
+                            <div class="wlt-tx-row <?= $_cls ?>" data-wlt-idx="<?= $_i ?>">
+                                <span class="wlt-tx-badge wlt-badge-<?= $_credit ? 'coins' : 'debit' ?>"><?= $_badge ?></span>
+                                <span class="wlt-tx-desc"><?= htmlspecialchars($_cx['description']) ?></span>
+                                <span class="wlt-tx-amt wlt-tx-amt--coins"><?= $_sign ?><?= number_format($_amt) ?> DC</span>
+                                <span class="wlt-tx-date"><?= $_date ?></span>
+                            </div>
+                            <?php endforeach; endif; ?>
+                        </div>
+                        <?php if (count($wAllCoins) > 8): ?>
+                        <div class="wlt-pagination" id="wltPagCoins" data-list="wltTxCoins" data-total="<?= count($wAllCoins) ?>">
+                            <button class="wlt-pg-btn" data-dir="-1">&#8592;</button>
+                            <span class="wlt-pg-info"></span>
+                            <button class="wlt-pg-btn" data-dir="1">&#8594;</button>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+
                 </div>
             </div>
 
             <!-- ══ TAB: PAYOUTS ══ -->
             <div class="dash-tab" id="tab-payouts">
-                <div class="dash-tab-actions">
-                    <p class="dash-tab-count">Total earned: <strong class="green"><?= formatMoney($overview['total_payout_amount']) ?></strong></p>
+                <?php
+                $payoutTotal = count($payouts);
+                $pyoMethodInfo = function($method) {
+                    $map = [
+                        'rise'         => ['USD',  'Rise'],
+                        'confirmo'     => ['USDT', 'Confirmo'],
+                        'crypto_btc'   => ['BTC',  'Confirmo'],
+                        'crypto_eth'   => ['ETH',  'Confirmo'],
+                        'crypto_usdt'  => ['USDT', 'Confirmo'],
+                        'bank_transfer'=> ['USD',  'Rise'],
+                        'wire_transfer'=> ['USD',  'Wire'],
+                        'wise'         => ['USD',  'Wise'],
+                        'paypal'       => ['USD',  'PayPal'],
+                    ];
+                    return $map[$method] ?? ['USD', ucfirst(str_replace('_', ' ', $method ?: '—'))];
+                };
+                $pyoProgress = function($status, $actionDetail = '') {
+                    /* seg0 = IN REVIEW, seg1 = ACTION, seg2 = COMPLETED */
+                    if ($status === 'completed') {
+                        $segs  = ['done', 'done', 'done'];
+                        $lbl   = 'COMPLETED'; $mod = 'done';
+                    } elseif ($status === 'action_required') {
+                        $segs  = ['done', 'active', 'empty'];
+                        $lbl   = 'ACTION REQUIRED'; $mod = 'active';
+                    } elseif ($status === 'failed') {
+                        $segs  = ['done', 'failed', 'empty'];
+                        $lbl   = 'REJECTED'; $mod = 'failed';
+                    } else {
+                        $segs  = ['active', 'empty', 'empty'];
+                        $lbl   = 'IN REVIEW'; $mod = 'active';
+                    }
+                    $h  = '<div class="pyo-seg">';
+                    $h .= '<div class="pyo-seg-bar">';
+                    foreach ($segs as $s) {
+                        $h .= '<div class="pyo-seg-step pyo-seg-' . $s . '"></div>';
+                    }
+                    $h .= '</div>';
+                    $h .= '<span class="pyo-seg-lbl pyo-seg-lbl--' . $mod . '">' . $lbl . '</span>';
+                    if ($status === 'action_required' && $actionDetail !== '') {
+                        $h .= '<span class="pyo-seg-action">' . htmlspecialchars($actionDetail) . '</span>';
+                    }
+                    $h .= '</div>';
+                    return $h;
+                };
+
+                /* Demo data — shown when no real payouts exist */
+                if (empty($payouts)) {
+                    $payouts = [
+                        ['id'=>1,'challenge_id'=>1,'account_size'=>100000,'challenge_type'=>'one_step', 'method'=>'rise',    'amount'=>4200.00,'status'=>'completed',      'requested_at'=>'2024-11-10 10:00:00','processed_at'=>'2024-11-17 14:00:00','action_detail'=>''],
+                        ['id'=>2,'challenge_id'=>2,'account_size'=>50000, 'challenge_type'=>'two_step','method'=>'confirmo','amount'=>1850.00,'status'=>'completed',      'requested_at'=>'2024-12-05 09:30:00','processed_at'=>'2024-12-12 16:00:00','action_detail'=>''],
+                        ['id'=>3,'challenge_id'=>1,'account_size'=>100000,'challenge_type'=>'one_step', 'method'=>'rise',    'amount'=>3100.00,'status'=>'action_required','requested_at'=>'2025-01-20 11:00:00','processed_at'=>null,                 'action_detail'=>'Justificatif de domicile'],
+                        ['id'=>4,'challenge_id'=>3,'account_size'=>200000,'challenge_type'=>'one_step', 'method'=>'confirmo','amount'=>8500.00,'status'=>'pending',       'requested_at'=>'2025-02-14 15:00:00','processed_at'=>null,                 'action_detail'=>''],
+                        ['id'=>5,'challenge_id'=>2,'account_size'=>50000, 'challenge_type'=>'two_step','method'=>'rise',    'amount'=>2200.00,'status'=>'completed',      'requested_at'=>'2025-03-01 08:00:00','processed_at'=>'2025-03-08 12:00:00','action_detail'=>''],
+                        ['id'=>6,'challenge_id'=>1,'account_size'=>100000,'challenge_type'=>'one_step', 'method'=>'confirmo','amount'=>5750.00,'status'=>'pending',       'requested_at'=>'2025-04-01 10:00:00','processed_at'=>null,                 'action_detail'=>''],
+                    ];
+                }
+                ?>
+
+                <!-- Stats bar -->
+                <div class="pyo-stats-bar">
+                    <div class="pyo-stat">
+                        <span class="pyo-stat-lbl">TOTAL EARNED</span>
+                        <span class="pyo-stat-val green"><?= formatMoney($overview['total_payout_amount']) ?></span>
+                    </div>
+                    <div class="pyo-stat">
+                        <span class="pyo-stat-lbl">PAYOUTS</span>
+                        <span class="pyo-stat-val"><?= $payoutTotal ?></span>
+                    </div>
+                    <div class="pyo-stat">
+                        <span class="pyo-stat-lbl">COMPLETED</span>
+                        <span class="pyo-stat-val"><?= count(array_filter($payouts, fn($p) => $p['status'] === 'completed')) ?></span>
+                    </div>
+                    <div class="pyo-stat">
+                        <span class="pyo-stat-lbl">PENDING</span>
+                        <span class="pyo-stat-val"><?= count(array_filter($payouts, fn($p) => $p['status'] === 'pending')) ?></span>
+                    </div>
                 </div>
+
+                <!-- Eligible Accounts Card -->
+                <?php $pyoEligible = array_filter($challenges, fn($c) => $c['status'] === 'funded'); ?>
+                <?php if (!empty($pyoEligible)): ?>
+                <div class="pyo-eligible-card">
+                    <div class="pyo-eligible-head">
+                        <span class="pyo-eligible-title">FUNDED ACCOUNTS <span class="pyo-eligible-badge"><?= count($pyoEligible) ?></span></span>
+                        <span class="pyo-eligible-sub">PAYOUT ELIGIBLE</span>
+                    </div>
+                    <?php foreach ($pyoEligible as $ea):
+                        $eaRef    = challengeAcctRef($ea['type'], $ea['account_size'], $userId, $acctIndexMap[(int)$ea['id']] ?? 1);
+                        $eaSplit  = (int)($ea['profit_split'] ?? 80);
+                        $eaProfit = (float)($ea['total_profit'] ?? 0);
+                    ?>
+                    <div class="pyo-eligible-item">
+                        <div class="pyo-ei-ref"><?= htmlspecialchars($eaRef) ?></div>
+                        <div class="pyo-ei-meta"><?= htmlspecialchars(formatMoney($ea['account_size'])) ?> &nbsp;·&nbsp; <?= $eaSplit ?>% SPLIT</div>
+                        <div class="pyo-ei-profit <?= $eaProfit >= 0 ? 'green' : '' ?>"><?= ($eaProfit >= 0 ? '+' : '') . formatMoney($eaProfit) ?></div>
+                        <button class="pyo-request-btn" type="button" onclick="PayoutModal.open()">REQUEST PAYOUT →</button>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+
+                <!-- Payouts Table -->
                 <?php if (!empty($payouts)): ?>
-                <div class="dash-table-wrap">
-                    <table class="dash-table">
-                        <thead><tr><th>Payout</th><th>Challenge</th><th>Amount</th><th>Method</th><th>Status</th><th>Requested</th></tr></thead>
-                        <tbody>
-                            <?php foreach ($payouts as $po):
-                                $methodLabels = ['crypto_btc'=>'BTC','crypto_eth'=>'ETH','crypto_usdt'=>'USDT','bank_transfer'=>'Bank','wise'=>'Wise','paypal'=>'PayPal'];
-                            ?>
+                <div class="pyo-table-wrap">
+                    <table class="pyo-table">
+                        <thead>
                             <tr>
-                                <td class="mono">#<?= $po['id'] ?></td>
-                                <td><span class="dash-cell-type"><?= $po['challenge_type'] === 'one_step' ? '1-Step' : '2-Step' ?></span> <span class="dash-cell-sub"><?= formatMoneyShort($po['account_size']) ?></span></td>
-                                <td class="mono green">+<?= formatMoney($po['amount']) ?></td>
-                                <td><?= $methodLabels[$po['method']] ?? '—' ?></td>
-                                <td><?= payoutStatusBadge($po['status']) ?></td>
-                                <td class="dash-cell-sub"><?= timeAgo($po['requested_at']) ?></td>
+                                <th class="pyo-th-num">#</th>
+                                <th>SOURCE</th>
+                                <th>AMOUNT</th>
+                                <th>METHOD</th>
+                                <th>STATUS</th>
+                                <th>REQUESTED</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pyoTableBody">
+                            <?php foreach ($payouts as $poIdx => $po):
+                                $poNum    = $payoutTotal - $poIdx;
+                                $mInfo    = $pyoMethodInfo($po['method'] ?? '');
+                                $poRef    = challengeAcctRef(
+                                    $po['challenge_type'] ?? 'one_step',
+                                    $po['account_size'] ?? 0,
+                                    $userId,
+                                    $acctIndexMap[(int)($po['challenge_id'] ?? 0)] ?? 1
+                                );
+                                $poSource = !empty($po['challenge_id']) ? $poRef : 'WALLET';
+                                $poJson   = htmlspecialchars(json_encode([
+                                    'num'       => $poNum,
+                                    'source'    => $poSource,
+                                    'amount'    => '+' . formatMoney($po['amount']),
+                                    'currency'  => $mInfo[0],
+                                    'provider'  => $mInfo[1],
+                                    'status'    => $po['status'],
+                                    'requested' => date('d M Y', strtotime($po['requested_at'])),
+                                    'processed'    => !empty($po['processed_at']) ? date('d M Y', strtotime($po['processed_at'])) : null,
+                                    'action_detail'=> $po['action_detail'] ?? '',
+                                    'id'           => (int)$po['id'],
+                                ]), ENT_QUOTES);
+                            ?>
+                            <tr class="pyo-row">
+                                <td class="pyo-td-num">#<?= $poNum ?></td>
+                                <td>
+                                    <div class="pyo-source-ref"><?= htmlspecialchars($poSource) ?></div>
+                                    <div class="pyo-source-type"><?= $po['challenge_type'] === 'one_step' ? '1-STEP' : '2-STEP' ?> · <?= formatMoneyShort($po['account_size'] ?? 0) ?></div>
+                                </td>
+                                <td class="pyo-td-amt green">+<?= formatMoney($po['amount']) ?></td>
+                                <td>
+                                    <div class="pyo-method-currency"><?= htmlspecialchars($mInfo[0]) ?></div>
+                                    <div class="pyo-method-provider"><?= htmlspecialchars($mInfo[1]) ?></div>
+                                </td>
+                                <td><?= $pyoProgress($po['status'], $po['action_detail'] ?? '') ?></td>
+                                <td class="pyo-td-date"><?= date('d M Y', strtotime($po['requested_at'])) ?></td>
+                                <td class="pyo-td-action">
+                                    <button class="pyo-act-btn pyo-act-view" type="button"
+                                            data-payout="<?= $poJson ?>"
+                                            onclick="PayoutDetailModal.open(this)"
+                                            title="View Details">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    </button>
+                                    <button class="pyo-act-btn pyo-act-dl" type="button"
+                                            data-payout="<?= $poJson ?>"
+                                            onclick="PayoutDetailModal.download(JSON.parse(this.dataset.payout))"
+                                            title="Download Details">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    </button>
+                                </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+                    <?php if (count($payouts) > 5): ?>
+                    <div class="pyo-pagination" id="pyoPagination">
+                        <button class="wlt-pg-btn" id="pyoPrev" data-dir="-1">&#8592;</button>
+                        <span class="wlt-pg-info" id="pyoPagInfo"></span>
+                        <button class="wlt-pg-btn" id="pyoNext" data-dir="1">&#8594;</button>
+                    </div>
+                    <?php endif; ?>
                 </div>
                 <?php else: ?>
                 <div class="dash-empty">
@@ -2242,13 +2529,312 @@ foreach ($challenges as $ch) {
             </div>
 
             <!-- ══ TAB: STATISTICS ══ -->
+            <!-- ══ TAB: STATISTICS ══ -->
             <div class="dash-tab" id="tab-statistics">
-                <div class="dash-coming-soon">
-                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-                    <div class="dash-cs-title">STATISTICS</div>
-                    <div class="dash-cs-status">[ COMING SOON ]</div>
-                    <div class="dash-cs-desc">Advanced performance analytics, trade history, drawdown charts, win rate, and risk score for all your funded accounts.</div>
+                <?php
+                $statAccounts = array_map(function($c) use ($userId, $acctIndexMap) {
+                    return [
+                        'id'             => (int)$c['id'],
+                        'ref'            => challengeAcctRef($c['type'], $c['account_size'], $userId, $acctIndexMap[(int)$c['id']] ?? 1),
+                        'type'           => $c['type'],
+                        'size'           => (float)$c['account_size'],
+                        'profit'         => (float)$c['total_profit'],
+                        'status'         => $c['status'],
+                        'lots'           => (float)($c['lots_traded']      ?? 0),
+                        'nTrades'        => (int)($c['total_trades']       ?? 0),
+                        'nWins'          => (int)($c['winning_trades']     ?? 0),
+                        'dailyLossPct'   => (float)($c['daily_loss']       ?? 5),
+                        'maxLossPct'     => (float)($c['max_loss']         ?? 10),
+                        'dailyLossType'  => $c['daily_loss_type']          ?? 'static',
+                        'maxLossType'    => $c['max_loss_type']            ?? 'static',
+                    ];
+                }, $challenges);
+                $challengeAssets = function_exists('getUserChallengeAssets') ? getUserChallengeAssets($userId) : [];
+                ?>
+                <script>
+                window.DojiStatAccounts = <?= json_encode($statAccounts) ?>;
+                window.DojiStatAssets   = <?= json_encode($challengeAssets) ?>;
+                </script>
+
+                <!-- Filter bar -->
+                <?php
+                $statDotClass = [
+                    'active'  => 'stat-dot-amber',
+                    'funded'  => 'stat-dot-green',
+                    'passed'  => 'stat-dot-blue',
+                    'failed'  => 'stat-dot-red',
+                    'expired' => 'stat-dot-gray',
+                ];
+                ?>
+                <div class="stat-filterbar">
+                    <button class="stat-filter-btn stat-filter-active" data-filter="all">ALL</button>
+                    <button class="stat-filter-btn" data-filter="evaluation">EVALUATION</button>
+                    <button class="stat-filter-btn" data-filter="funded">FUNDED</button>
+                    <?php if (!empty($challenges)): ?>
+                    <div class="stat-filter-sep"></div>
+                    <?php foreach ($challenges as $sc):
+                        $dotCls = $statDotClass[$sc['status']] ?? 'stat-dot-gray';
+                    ?>
+                    <button class="stat-filter-btn" data-filter="acct-<?= (int)$sc['id'] ?>">
+                        <span class="stat-acct-dot <?= $dotCls ?>"></span><?= htmlspecialchars(challengeAcctRef($sc['type'], $sc['account_size'], $userId, $acctIndexMap[(int)$sc['id']] ?? 1)) ?>
+                    </button>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                    <div class="stat-filter-spacer"></div>
+                    <div class="stat-period-btns">
+                        <button class="stat-period-btn" data-period="1">1D</button>
+                        <button class="stat-period-btn" data-period="7">1W</button>
+                        <button class="stat-period-btn" data-period="30">1M</button>
+                        <button class="stat-period-btn" data-period="90">3M</button>
+                        <button class="stat-period-btn stat-period-active" data-period="180">6M</button>
+                        <button class="stat-period-btn" data-period="365">1Y</button>
+                    </div>
                 </div>
+
+                <!-- KPI strip (8 draggable cards) -->
+                <div class="stat-kpi-grid" id="statKpiGrid">
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">NET P&L</div>
+                        <div class="stat-kpi-val green" id="skPnl">—</div>
+                        <div class="stat-kpi-sub" id="skPnlSub">—</div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">WIN RATE</div>
+                        <div class="stat-kpi-val" id="skWr">—</div>
+                        <div class="stat-seg-bar" id="skWrSegs"><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div></div>
+                        <div class="stat-kpi-sub" id="skWrSub">—</div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">PROFIT FACTOR</div>
+                        <div class="stat-kpi-val" id="skPf">—</div>
+                        <div class="stat-kpi-sub" id="skPfSub">—</div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">SHARPE RATIO</div>
+                        <div class="stat-kpi-val" id="skSharpe">—</div>
+                        <div class="stat-kpi-sub" id="skSharpeSub">—</div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">MAX DRAWDOWN</div>
+                        <div class="stat-kpi-val amber" id="skMdd">—</div>
+                        <div class="stat-seg-bar" id="skMddSegs"><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div></div>
+                        <div class="stat-kpi-sub" id="skMddSub">—</div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">EXPECTANCY</div>
+                        <div class="stat-kpi-val" id="skExpect">—</div>
+                        <div class="stat-kpi-sub" id="skExpectSub">EXPECTED PER TRADE</div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">CONSISTENCY</div>
+                        <div class="stat-kpi-val" id="skConsist">—</div>
+                        <div class="stat-seg-bar" id="skConsistSegs"><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div></div>
+                        <div class="stat-kpi-sub" id="skConsistSub">—</div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">CALMAR RATIO</div>
+                        <div class="stat-kpi-val" id="skCalmar">—</div>
+                        <div class="stat-kpi-sub" id="skCalmarSub">ANNUAL / MAX DD</div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">TOTAL LOTS</div>
+                        <div class="stat-kpi-val" id="skLots">—</div>
+                        <div class="stat-kpi-sub" id="skLotsSub">LOTS TRADED</div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">AVG R:R</div>
+                        <div class="stat-kpi-val" id="skRR">—</div>
+                        <div class="stat-kpi-sub" id="skRRSub">REWARD / RISK RATIO</div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">BEST TRADE</div>
+                        <div class="stat-kpi-val green" id="skBest">—</div>
+                        <div class="stat-kpi-sub" id="skBestSub">—</div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">WORST TRADE</div>
+                        <div class="stat-kpi-val red" id="skWorst">—</div>
+                        <div class="stat-kpi-sub" id="skWorstSub">—</div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">TOTAL TRADES</div>
+                        <div class="stat-kpi-val" id="skTotal">—</div>
+                        <div class="stat-kpi-sub" id="skTotalSub">—</div>
+                    </div>
+
+                    <div class="stat-kpi-card stat-kpi-wide" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">BIAS</div>
+                        <div class="bias-db">
+                            <div class="bias-db-head">
+                                <span class="bias-db-dir" id="skBiasDir">—</span>
+                                <span class="bias-db-split" id="skBiasSplit">—</span>
+                            </div>
+                            <div class="bias-db-bar" id="skBiasBar"></div>
+                            <div class="bias-db-foot">
+                                <div class="bias-db-side">
+                                    <div class="stat-bias-count-grid">
+                                        <span class="stat-bias-count-n" id="skBiasShortN" style="color:#D71921">—</span>
+                                        <span class="stat-bias-count-wr" id="skBiasShortWR" style="color:#D71921">—</span>
+                                        <span class="stat-bias-count-lbl">SHORT</span>
+                                        <span class="stat-bias-count-wr-lbl">WIN RATE</span>
+                                    </div>
+                                </div>
+                                <div class="bias-db-side bias-db-side-r">
+                                    <div class="stat-bias-count-grid bias-db-grid-r">
+                                        <span class="stat-bias-count-wr" id="skBiasLongWR" style="color:#10B981">—</span>
+                                        <span class="stat-bias-count-n" id="skBiasLongN" style="color:#10B981">—</span>
+                                        <span class="stat-bias-count-wr-lbl">WIN RATE</span>
+                                        <span class="stat-bias-count-lbl">LONG</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /.stat-kpi-grid -->
+
+                <!-- Charts grid (8 draggable cards) -->
+                <div class="stat-chart-grid" id="statChartGrid">
+
+                    <!-- 1. Equity Curve — full width -->
+                    <div class="stat-chart-card stat-chart-full" draggable="true">
+                        <div class="stat-chart-head">
+                            <span class="stat-chart-title">EQUITY CURVE</span>
+                            <div class="stat-chart-controls">
+                                <button class="stat-ctrl-btn stat-ctrl-active" data-granularity="daily">DAILY</button>
+                                <button class="stat-ctrl-btn" data-granularity="weekly">WEEKLY</button>
+                            </div>
+                        </div>
+                        <div class="stat-chart-body" style="height:196px"><canvas id="chartEquity"></canvas></div>
+                        <div class="stat-eq-footer">
+                            <div class="stat-eq-stat">
+                                <div class="stat-eq-lbl">CURRENT P&L</div>
+                                <div class="stat-eq-val" id="eqCurrent">—</div>
+                            </div>
+                            <div class="stat-eq-stat">
+                                <div class="stat-eq-lbl">PEAK</div>
+                                <div class="stat-eq-val green" id="eqHigh">—</div>
+                            </div>
+                            <div class="stat-eq-stat">
+                                <div class="stat-eq-lbl">TROUGH</div>
+                                <div class="stat-eq-val red" id="eqLow">—</div>
+                            </div>
+                            <div id="eqStopSection" style="display:none">
+                                <div class="stat-eq-sep"></div>
+                                <div class="stat-eq-stat">
+                                    <div class="stat-eq-lbl">DAILY STOP <span class="stat-eq-stop-type" id="eqDailyStopType">—</span></div>
+                                    <div class="stat-eq-val amber" id="eqDailyDist">—</div>
+                                </div>
+                                <div class="stat-eq-stat">
+                                    <div class="stat-eq-lbl">MAX STOP <span class="stat-eq-stop-type" id="eqMaxStopType">—</span></div>
+                                    <div class="stat-eq-val" id="eqMaxDist">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-kpi-drag">⠿</div>
+                    </div>
+
+                    <!-- 2. Monthly P&L -->
+                    <div class="stat-chart-card" draggable="true">
+                        <div class="stat-chart-head"><span class="stat-chart-title">MONTHLY P&L</span></div>
+                        <div class="stat-chart-body" style="height:178px"><canvas id="chartMonthly"></canvas></div>
+                        <div class="stat-kpi-drag">⠿</div>
+                    </div>
+
+                    <!-- 3. Trade Outcome Donut -->
+                    <div class="stat-chart-card" draggable="true">
+                        <div class="stat-chart-head"><span class="stat-chart-title">TRADE OUTCOME</span></div>
+                        <div class="stat-chart-body" style="height:178px"><canvas id="chartWinloss"></canvas></div>
+                        <div class="stat-kpi-drag">⠿</div>
+                    </div>
+
+                    <!-- 4. Trading DNA Radar -->
+                    <div class="stat-chart-card" draggable="true">
+                        <div class="stat-chart-head">
+                            <span class="stat-chart-title">TRADING DNA</span>
+                            <span class="stat-chart-hint">TRADER PROFILE</span>
+                        </div>
+                        <div class="stat-chart-body" style="height:170px"><canvas id="chartDna"></canvas></div>
+                        <div class="stat-dna-result">
+                            <div class="stat-dna-letter" id="statDnaGrade">—</div>
+                            <div class="stat-dna-detail">
+                                <div class="stat-dna-score" id="statDnaGradeLbl">— / 10</div>
+                                <div class="stat-dna-desc" id="statDnaGradeDesc">—</div>
+                                <div class="stat-seg-bar stat-seg-bar-sm" id="statDnaSegs"><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div></div>
+                            </div>
+                        </div>
+                        <div class="stat-kpi-drag">⠿</div>
+                    </div>
+
+                    <!-- 5. Session Performance -->
+                    <div class="stat-chart-card" draggable="true">
+                        <div class="stat-chart-head"><span class="stat-chart-title">SESSION PERFORMANCE</span></div>
+                        <div class="stat-chart-body" style="height:196px"><canvas id="chartSession"></canvas></div>
+                        <div class="stat-kpi-drag">⠿</div>
+                    </div>
+
+                    <!-- 6. Day of Week P&L -->
+                    <div class="stat-chart-card" draggable="true">
+                        <div class="stat-chart-head"><span class="stat-chart-title">P&L BY DAY OF WEEK</span></div>
+                        <div class="stat-chart-body" style="height:174px"><canvas id="chartDow"></canvas></div>
+                        <div class="stat-kpi-drag">⠿</div>
+                    </div>
+
+                    <!-- 7. Trade Duration Profile -->
+                    <div class="stat-chart-card" draggable="true">
+                        <div class="stat-chart-head"><span class="stat-chart-title">TRADE DURATION PROFILE</span></div>
+                        <div class="stat-chart-body" style="height:174px"><canvas id="chartDuration"></canvas></div>
+                        <div class="stat-kpi-drag">⠿</div>
+                    </div>
+
+                    <!-- 8. Drawdown Timeline — full width -->
+                    <div class="stat-chart-card stat-chart-full" draggable="true">
+                        <div class="stat-chart-head">
+                            <span class="stat-chart-title">DRAWDOWN PERIODS</span>
+                            <span class="stat-chart-hint">UNDERWATER EQUITY</span>
+                        </div>
+                        <div class="stat-chart-body" style="height:130px"><canvas id="chartDrawdown"></canvas></div>
+                        <div class="stat-kpi-drag">⠿</div>
+                    </div>
+
+                    <!-- 9. Traded Assets — full width -->
+                    <div class="stat-chart-card stat-chart-full" draggable="true">
+                        <div class="stat-chart-head">
+                            <span class="stat-chart-title">TRADED ASSETS</span>
+                            <span class="stat-chart-hint">P&amp;L · WIN RATE · LOTS · TRADES</span>
+                        </div>
+                        <div id="statAssetBars" class="stat-asset-wrap"></div>
+                        <div class="stat-kpi-drag">⠿</div>
+                    </div>
+
+                </div><!-- /.stat-chart-grid -->
             </div>
 
             <!-- ══ TAB: COMPETITIONS ══ -->
@@ -2351,4 +2937,472 @@ foreach ($challenges as $ch) {
     <!-- Sidebar overlay (mobile drawer) -->
     <div class="dash-sidebar-overlay" id="dashSidebarOverlay"></div>
 
+</div>
+
+<!-- ══ PAYOUT MODAL ══ -->
+<div class="modal-overlay" id="payoutModal" role="dialog" aria-modal="true" aria-labelledby="pytTitle">
+    <div class="modal modal-payout">
+        <canvas class="modal-dot-canvas" aria-hidden="true"></canvas>
+        <div class="modal-content">
+            <button class="modal-close" onclick="PayoutModal.close()" aria-label="Close">&times;</button>
+
+            <!-- ─ STEP 1: REQUEST ─ -->
+            <div id="pytStep1">
+                <div class="pyt-header">
+                    <div class="pyt-avail-label">AVAILABLE BALANCE</div>
+                    <div class="pyt-avail-val"><?= formatMoney($walletBalance) ?></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Payout Method</label>
+                    <div class="pyt-method-row">
+                        <button class="pyt-method-btn pyt-method-active" type="button" data-method="rise" onclick="PayoutModal.setMethod(this)">
+                            <span class="pyt-method-name">RISE</span>
+                            <span class="pyt-method-sub">rise.com</span>
+                        </button>
+                        <button class="pyt-method-btn" type="button" data-method="confirmo" onclick="PayoutModal.setMethod(this)">
+                            <span class="pyt-method-name">CONFIRMO</span>
+                            <span class="pyt-method-sub">Crypto</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Amount <span class="form-req">*</span></label>
+                    <div class="pyt-amount-wrap">
+                        <span class="pyt-currency">$</span>
+                        <input class="form-input pyt-amount-input" type="number" id="pytAmount"
+                               placeholder="0.00" min="1" step="0.01"
+                               max="<?= htmlspecialchars((string)$walletBalance) ?>"
+                               oninput="PayoutModal.validate()">
+                        <button class="pyt-max-btn" type="button" onclick="PayoutModal.setMax()">MAX</button>
+                    </div>
+                    <div class="form-error" id="pytAmountErr"></div>
+                </div>
+
+                <div class="pyt-disclaimer">
+                    <div class="pyt-disclaimer-title">⚠ IMPORTANT NOTICE</div>
+                    <p class="pyt-disclaimer-body">This payout transfer is definitive and irreversible once initiated. Doji Funding cannot cancel or reverse a transfer after submission. Processing may take up to 7 business days depending on your selected method and jurisdiction. Ensure your payout details are correct before confirming.</p>
+                    <label class="pyt-check-lbl">
+                        <input type="checkbox" id="pytAck" onchange="PayoutModal.validate()">
+                        <span>I acknowledge that this transfer is definitive and irreversible.</span>
+                    </label>
+                </div>
+
+                <button class="form-btn" id="pytSubmitBtn" type="button" onclick="PayoutModal.submit()" disabled>
+                    SUBMIT PAYOUT →
+                </button>
+            </div>
+
+            <!-- ─ STEP 2: RECAP ─ -->
+            <div id="pytStep2" style="display:none">
+                <div class="pyt-success-block">
+                    <div class="pyt-success-icon">✓</div>
+                    <h2 class="modal-title" id="pytTitle">Request Submitted</h2>
+                    <p class="modal-sub">Your payout request has been received and is being processed.</p>
+                </div>
+
+                <div class="pyt-recap">
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">AMOUNT REQUESTED</span>
+                        <span class="pyt-recap-val" id="pytRecapAmt">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">DESTINATION</span>
+                        <span class="pyt-recap-val" id="pytRecapDest">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">STATUS</span>
+                        <span class="pyt-recap-val pyt-status-pending">PENDING</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">REFERENCE</span>
+                        <span class="pyt-recap-val pyt-recap-ref" id="pytRecapRef">—</span>
+                    </div>
+                </div>
+
+                <div class="pyt-reminder">
+                    This transfer is definitive and irreversible. Processing can take up to 7 business days. You will receive a notification once the transfer is completed.
+                </div>
+
+                <button class="form-btn" type="button" onclick="PayoutModal.close()">CLOSE</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div>
+</div>
+
+<!-- ══ DISCOUNT COUPON MODAL ══ -->
+<div class="modal-overlay" id="discountModal" role="dialog" aria-modal="true"
+     data-dc="<?= (int)$dojiCoins ?>">
+    <div class="modal modal-psl">
+        <canvas class="modal-dot-canvas" aria-hidden="true"></canvas>
+        <div class="modal-content">
+            <button class="modal-close" onclick="DiscountModal.close()" aria-label="Close">&times;</button>
+
+            <!-- ─ STEP 1 ─ -->
+            <div id="discStep1">
+                <div class="pyt-header">
+                    <div class="pyt-avail-label">DOJI COINS BALANCE</div>
+                    <div class="pyt-avail-val pyt-avail-coins"><?= number_format((int)$dojiCoins) ?><span class="pyt-avail-coins-sym">DC</span></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Select Discount Tier</label>
+                    <div class="disc-tiers">
+                        <button class="disc-tier-btn" type="button" data-pct="5"  data-cost="100"  onclick="DiscountModal.setTier(this)">
+                            <span class="disc-tier-pct">5%</span><span class="disc-tier-off">OFF</span><span class="disc-tier-cost">100 DC</span>
+                        </button>
+                        <button class="disc-tier-btn" type="button" data-pct="10" data-cost="200"  onclick="DiscountModal.setTier(this)">
+                            <span class="disc-tier-pct">10%</span><span class="disc-tier-off">OFF</span><span class="disc-tier-cost">200 DC</span>
+                        </button>
+                        <button class="disc-tier-btn" type="button" data-pct="15" data-cost="350"  onclick="DiscountModal.setTier(this)">
+                            <span class="disc-tier-pct">15%</span><span class="disc-tier-off">OFF</span><span class="disc-tier-cost">350 DC</span>
+                        </button>
+                        <button class="disc-tier-btn" type="button" data-pct="20" data-cost="500"  onclick="DiscountModal.setTier(this)">
+                            <span class="disc-tier-pct">20%</span><span class="disc-tier-off">OFF</span><span class="disc-tier-cost">500 DC</span>
+                        </button>
+                    </div>
+                    <div class="psl-result-line" id="discResultLine" style="display:none"></div>
+                </div>
+
+                <div class="pyt-disclaimer">
+                    <div class="pyt-disclaimer-title">⚠ IMPORTANT NOTICE</div>
+                    <p class="pyt-disclaimer-body">The use of Doji Coins for discount coupons is definitive and irreversible. Once confirmed, the Doji Coins will be permanently deducted from your balance and a single-use coupon code generated. Coupons apply to one evaluation purchase only and cannot be refunded or transferred.</p>
+                    <label class="pyt-check-lbl">
+                        <input type="checkbox" id="discAck" onchange="DiscountModal.validate()">
+                        <span>I acknowledge that the use of Doji Coins is definitive and irreversible.</span>
+                    </label>
+                </div>
+
+                <div class="form-error" id="discErr"></div>
+
+                <button class="form-btn" id="discSubmitBtn" type="button" onclick="DiscountModal.submit()" disabled>
+                    GENERATE COUPON →
+                </button>
+            </div>
+
+            <!-- ─ STEP 2: RECAP ─ -->
+            <div id="discStep2" style="display:none">
+                <div class="pyt-success-block">
+                    <div class="pyt-success-icon" style="font-size:16px;font-family:var(--f-mono)">%</div>
+                    <h2 class="modal-title">Coupon Generated</h2>
+                    <p class="modal-sub">Your discount coupon is ready to use at checkout.</p>
+                </div>
+
+                <div class="pyt-recap">
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">COUPON CODE</span>
+                        <span class="pyt-recap-val disc-coupon-code" id="discRecapCode">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">DISCOUNT</span>
+                        <span class="pyt-recap-val" id="discRecapPct" style="color:var(--accent)">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">DC SPENT</span>
+                        <span class="pyt-recap-val pyt-status-pending" id="discRecapCost">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">VALIDITY</span>
+                        <span class="pyt-recap-val" style="color:var(--text-sec);font-size:10px">Single use · Evaluation only</span>
+                    </div>
+                </div>
+
+                <div class="pyt-reminder">
+                    Your coupon will be automatically applied when you proceed to checkout from the Configurator. Valid for one evaluation purchase only.
+                </div>
+
+                <div class="disc-cta-row">
+                    <button class="form-btn disc-btn-ghost" type="button" onclick="DiscountModal.close()">CLOSE</button>
+                    <button class="form-btn" type="button" onclick="DiscountModal.goCheckout()">BUY CHALLENGE →</button>
+                </div>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div>
+</div>
+
+<!-- ══ CHECKOUT MODAL ══ -->
+<div class="modal-overlay" id="purchaseModal" role="dialog" aria-modal="true">
+    <div class="modal modal-checkout">
+        <canvas class="modal-dot-canvas" aria-hidden="true"></canvas>
+        <div class="modal-content">
+            <button class="modal-close" onclick="PurchaseModal.close()" aria-label="Close">&times;</button>
+
+            <!-- ─ STEP 1: SUMMARY + PAYMENT ─ -->
+            <div id="coStep1">
+                <div class="pyt-header">
+                    <div class="pyt-avail-label">CHECKOUT</div>
+                    <div class="co-challenge-label" id="coChallengeLbl">—</div>
+                </div>
+
+                <div class="co-summary">
+                    <div class="co-summary-row">
+                        <span class="co-summary-lbl">CHALLENGE</span>
+                        <span class="co-summary-val" id="coSumType">—</span>
+                    </div>
+                    <div class="co-summary-row">
+                        <span class="co-summary-lbl">ACCOUNT SIZE</span>
+                        <span class="co-summary-val" id="coSumSize">—</span>
+                    </div>
+                    <div class="co-summary-row" id="coSumOptionsRow" style="display:none">
+                        <span class="co-summary-lbl">OPTIONS</span>
+                        <span class="co-summary-val co-summary-options" id="coSumOptions">—</span>
+                    </div>
+                    <div class="co-summary-row co-summary-sub">
+                        <span class="co-summary-lbl">SUBTOTAL</span>
+                        <span class="co-summary-val" id="coSumSubtotal">—</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Discount Coupon</label>
+                    <div class="co-coupon-wrap">
+                        <input class="form-input co-coupon-input" type="text" id="coCouponInput"
+                               placeholder="Enter coupon code"
+                               oninput="this.value=this.value.toUpperCase()">
+                        <button class="co-apply-btn" type="button" onclick="PurchaseModal.applyCoupon()">APPLY</button>
+                    </div>
+                    <div id="coCouponMsg" class="co-coupon-msg"></div>
+                </div>
+
+                <div class="co-price-block">
+                    <div class="co-price-row" id="coDiscountRow" style="display:none">
+                        <span class="co-price-lbl">DISCOUNT</span>
+                        <span class="co-price-val co-discount-val" id="coDiscountVal">—</span>
+                    </div>
+                    <div class="co-price-row co-total-row">
+                        <span class="co-price-lbl">TOTAL</span>
+                        <span class="co-price-total" id="coTotal">—</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Payment Method</label>
+                    <div class="pyt-method-row">
+                        <button class="pyt-method-btn pyt-method-active" type="button" data-pay="stripe" onclick="PurchaseModal.setPayment(this)">
+                            <span class="pyt-method-name">STRIPE</span>
+                            <span class="pyt-method-sub">Card · Bank</span>
+                        </button>
+                        <button class="pyt-method-btn" type="button" data-pay="confirmo" onclick="PurchaseModal.setPayment(this)">
+                            <span class="pyt-method-name">CONFIRMO</span>
+                            <span class="pyt-method-sub">Crypto</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="form-btn" id="coSubmitBtn" type="button" onclick="PurchaseModal.confirm()">
+                    PROCEED TO PAYMENT →
+                </button>
+            </div>
+
+            <!-- ─ STEP 2: RECAP ─ -->
+            <div id="coStep2" style="display:none">
+                <div class="pyt-success-block">
+                    <div class="pyt-success-icon">✓</div>
+                    <h2 class="modal-title">Order Confirmed</h2>
+                    <p class="modal-sub">Your challenge purchase request has been submitted.</p>
+                </div>
+
+                <div class="pyt-recap">
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">CHALLENGE</span>
+                        <span class="pyt-recap-val" id="coRecapChallenge">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">ACCOUNT SIZE</span>
+                        <span class="pyt-recap-val" id="coRecapSize">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">AMOUNT</span>
+                        <span class="pyt-recap-val" id="coRecapTotal" style="color:var(--accent)">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">PAYMENT</span>
+                        <span class="pyt-recap-val" id="coRecapPayment">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">STATUS</span>
+                        <span class="pyt-recap-val pyt-status-pending">PENDING</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">REFERENCE</span>
+                        <span class="pyt-recap-val pyt-recap-ref" id="coRecapRef">—</span>
+                    </div>
+                </div>
+
+                <div class="pyt-reminder">
+                    Your order has been received and is awaiting payment confirmation. Your challenge account will be activated within 1–2 business days after payment is confirmed. You will receive a notification by email.
+                </div>
+
+                <button class="form-btn" type="button" onclick="PurchaseModal.close()">CLOSE</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div>
+</div>
+
+<!-- ══ PROFIT SPLIT MODAL ══ -->
+<div class="modal-overlay" id="profitSplitModal" role="dialog" aria-modal="true"
+     data-dc="<?= (int)$dojiCoins ?>">
+    <div class="modal modal-psl">
+        <canvas class="modal-dot-canvas" aria-hidden="true"></canvas>
+        <div class="modal-content">
+            <button class="modal-close" onclick="ProfitSplitModal.close()" aria-label="Close">&times;</button>
+
+            <!-- ─ STEP 1: REQUEST ─ -->
+            <div id="pslStep1">
+                <div class="pyt-header">
+                    <div class="pyt-avail-label">DOJI COINS BALANCE</div>
+                    <div class="pyt-avail-val pyt-avail-coins"><?= number_format((int)$dojiCoins) ?><span class="pyt-avail-coins-sym">DC</span></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Select Funded Account</label>
+                    <div class="psl-accounts">
+                        <?php
+                        $pslFunded = array_filter($challenges, fn($c) => $c['status'] === 'funded');
+                        if (empty($pslFunded)): ?>
+                        <div class="psl-no-accounts">No funded accounts available.</div>
+                        <?php else: foreach ($pslFunded as $fa):
+                            $faRef   = challengeAcctRef($fa['type'], $fa['account_size'], $userId, $acctIndexMap[(int)$fa['id']] ?? 1);
+                            $faSplit = (int)($fa['profit_split'] ?? 80);
+                        ?>
+                        <button class="psl-acct-btn" type="button"
+                                data-id="<?= (int)$fa['id'] ?>"
+                                data-ref="<?= htmlspecialchars($faRef) ?>"
+                                data-size="<?= htmlspecialchars(formatMoney($fa['account_size'])) ?>"
+                                data-split="<?= $faSplit ?>"
+                                onclick="ProfitSplitModal.setAccount(this)">
+                            <span class="psl-acct-ref"><?= htmlspecialchars($faRef) ?></span>
+                            <span class="psl-acct-meta"><?= htmlspecialchars(formatMoney($fa['account_size'])) ?> &nbsp;·&nbsp; CURRENT SPLIT <?= $faSplit ?>%</span>
+                        </button>
+                        <?php endforeach; endif; ?>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Upgrade Tier</label>
+                    <div class="pyt-method-row" id="pslTierRow">
+                        <button class="pyt-method-btn" type="button" data-tier="5" data-cost="500" onclick="ProfitSplitModal.setTier(this)">
+                            <span class="pyt-method-name">+5%</span>
+                            <span class="pyt-method-sub">500 DC</span>
+                        </button>
+                        <button class="pyt-method-btn" type="button" data-tier="10" data-cost="1000" onclick="ProfitSplitModal.setTier(this)">
+                            <span class="pyt-method-name">+10%</span>
+                            <span class="pyt-method-sub">1,000 DC</span>
+                        </button>
+                    </div>
+                    <div class="psl-result-line" id="pslResultLine" style="display:none"></div>
+                </div>
+
+                <div class="pyt-disclaimer">
+                    <div class="pyt-disclaimer-title">⚠ IMPORTANT NOTICE</div>
+                    <p class="pyt-disclaimer-body">The use of Doji Coins for profit split upgrades is definitive and irreversible. Once confirmed, the Doji Coins will be permanently deducted from your balance and the upgrade applied to the selected account. This action cannot be undone or refunded under any circumstances.</p>
+                    <label class="pyt-check-lbl">
+                        <input type="checkbox" id="pslAck" onchange="ProfitSplitModal.validate()">
+                        <span>I acknowledge that the use of Doji Coins is definitive and irreversible.</span>
+                    </label>
+                </div>
+
+                <div class="form-error" id="pslErr"></div>
+
+                <button class="form-btn" id="pslSubmitBtn" type="button" onclick="ProfitSplitModal.submit()" disabled>
+                    CONFIRM UPGRADE →
+                </button>
+            </div>
+
+            <!-- ─ STEP 2: RECAP ─ -->
+            <div id="pslStep2" style="display:none">
+                <div class="pyt-success-block">
+                    <div class="pyt-success-icon">✓</div>
+                    <h2 class="modal-title">Upgrade Applied</h2>
+                    <p class="modal-sub">Your profit split upgrade has been confirmed.</p>
+                </div>
+
+                <div class="pyt-recap">
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">ACCOUNT</span>
+                        <span class="pyt-recap-val psl-recap-ref" id="pslRecapAcct">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">UPGRADE</span>
+                        <span class="pyt-recap-val" id="pslRecapTier">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">NEW PROFIT SPLIT</span>
+                        <span class="pyt-recap-val" id="pslRecapSplit" style="color:var(--accent)">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">DC SPENT</span>
+                        <span class="pyt-recap-val pyt-status-pending" id="pslRecapCost">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">STATUS</span>
+                        <span class="pyt-recap-val pyt-status-pending">PENDING</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">REFERENCE</span>
+                        <span class="pyt-recap-val pyt-recap-ref" id="pslRecapRef">—</span>
+                    </div>
+                </div>
+
+                <div class="pyt-reminder">
+                    The use of Doji Coins is definitive and irreversible. Your profit split upgrade will be active within 24 hours. You will receive a notification once the upgrade is confirmed.
+                </div>
+
+                <button class="form-btn" type="button" onclick="ProfitSplitModal.close()">CLOSE</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div>
+</div>
+
+<!-- ══ PAYOUT DETAIL MODAL ══ -->
+<div class="modal-overlay" id="payoutDetailModal" role="dialog" aria-modal="true">
+    <div class="modal modal-psl">
+        <canvas class="modal-dot-canvas" aria-hidden="true"></canvas>
+        <div class="modal-content">
+            <button class="modal-close" onclick="PayoutDetailModal.close()" aria-label="Close">&times;</button>
+
+            <div class="pyt-header">
+                <div class="pyt-avail-label">PAYOUT DETAILS</div>
+                <div class="pyd-title">PAYOUT <span id="pydNum">#—</span></div>
+            </div>
+
+            <div class="pyt-recap" style="margin-bottom:20px">
+                <div class="pyt-recap-row">
+                    <span class="pyt-recap-lbl">SOURCE</span>
+                    <span class="pyt-recap-val psl-recap-ref" id="pydSource">—</span>
+                </div>
+                <div class="pyt-recap-row">
+                    <span class="pyt-recap-lbl">AMOUNT</span>
+                    <span class="pyt-recap-val" id="pydAmount" style="color:var(--accent)">—</span>
+                </div>
+                <div class="pyt-recap-row">
+                    <span class="pyt-recap-lbl">METHOD</span>
+                    <span class="pyt-recap-val" id="pydMethod">—</span>
+                </div>
+                <div class="pyt-recap-row">
+                    <span class="pyt-recap-lbl">REQUESTED</span>
+                    <span class="pyt-recap-val" id="pydRequested">—</span>
+                </div>
+                <div class="pyt-recap-row" id="pydProcessedRow" style="display:none">
+                    <span class="pyt-recap-lbl">PROCESSED</span>
+                    <span class="pyt-recap-val" id="pydProcessed">—</span>
+                </div>
+            </div>
+
+            <div class="form-label" style="margin-bottom:12px">PROGRESS</div>
+            <div class="pyd-vprog" id="pydVprog"></div>
+
+            <div class="disc-cta-row" style="margin-top:20px">
+                <button class="form-btn disc-btn-ghost" type="button" onclick="PayoutDetailModal.close()">CLOSE</button>
+                <button class="form-btn" id="pydCertBtn" type="button" onclick="PayoutDetailModal.downloadCert()" style="display:none">
+                    DOWNLOAD CERTIFICATE
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

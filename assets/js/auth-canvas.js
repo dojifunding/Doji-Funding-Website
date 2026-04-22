@@ -190,7 +190,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        ['loginModal', 'signupModal'].forEach(function (id) {
+        ['loginModal', 'signupModal', 'payoutModal', 'profitSplitModal', 'discountModal', 'purchaseModal', 'payoutDetailModal'].forEach(function (id) {
             var el = document.getElementById(id);
             if (!el) return;
             new MutationObserver(function () {

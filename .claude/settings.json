@@ -1,0 +1,16 @@
+{
+  "model": "claude-sonnet-4-6",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.prompt // \"\"' | grep -qiE \"(architect|system design|major refactor|infrastructure|scalabilit|deep reasoning|redesign complet|fundamental change|database schema|migration plan|tech stack|security audit|performance overhaul)\" && printf '{\"systemMessage\":\"[OPUS 4.6 SUGGESTED] Architectural or complex task detected — for deeper reasoning, switch with: /model claude-opus-4-6\"}' || printf '{}'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

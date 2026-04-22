@@ -200,6 +200,42 @@ function getRecentCoinsDays($userId, $days = 3) {
 }
 
 /**
+ * Get full wallet transaction history for a user
+ */
+function getAllWalletTransactions($userId) {
+    $db = getDB();
+    if (!$db) return [];
+    try {
+        $stmt = $db->prepare('SELECT type, amount, description, created_at
+            FROM wallet_transactions
+            WHERE user_id = ?
+            ORDER BY created_at DESC');
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll();
+    } catch (PDOException $e) {
+        return [];
+    }
+}
+
+/**
+ * Get full coins log history for a user
+ */
+function getAllCoinsTransactions($userId) {
+    $db = getDB();
+    if (!$db) return [];
+    try {
+        $stmt = $db->prepare('SELECT source, amount, description, created_at
+            FROM coins_log
+            WHERE user_id = ?
+            ORDER BY created_at DESC');
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll();
+    } catch (PDOException $e) {
+        return [];
+    }
+}
+
+/**
  * Get last N wallet movements for a user
  */
 function getWalletMovements($userId, $limit = 3) {
@@ -216,6 +252,26 @@ function getWalletMovements($userId, $limit = 3) {
         $stmt->execute();
         return $stmt->fetchAll();
     } catch (PDOException $e) {
+        return [];
+    }
+}
+
+/**
+ * Get per-symbol trade aggregates for a user's challenges
+ */
+function getUserChallengeAssets($userId) {
+    $db = getDB();
+    if (!$db) return [];
+    try {
+        $stmt = $db->prepare('SELECT ca.challenge_id, ca.symbol, ca.trades, ca.lots, ca.pnl, ca.win_rate
+            FROM challenge_assets ca
+            INNER JOIN challenges c ON c.id = ca.challenge_id
+            WHERE c.user_id = ?
+            ORDER BY ca.challenge_id, ca.pnl DESC');
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll();
+    } catch (PDOException $e) {
+        /* table may not exist yet; return empty gracefully */
         return [];
     }
 }
