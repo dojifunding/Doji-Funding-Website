@@ -188,25 +188,49 @@ nav.nav, .mobile-menu { display: none !important; }
     background: rgba(215,25,33,0.08);
 }
 
-/* ── Nav status indicator dots ── */
-.nav-status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    position: relative;
-    flex-shrink: 0;
+/* ── Nav status indicator badge (dot + number) ── */
+.nav-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     margin-left: auto;
+    flex-shrink: 0;
+    font-family: var(--f-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    padding: 2px 5px 2px 4px;
+    border-radius: 2px;
+    position: relative;
+}
+.nav-status-badge-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
 }
 /* Pending / in-progress: amber breathe */
-.nav-status-dot--pending {
+.nav-status-badge--pending {
+    color: #D4A017;
+    border: 1px solid rgba(212,160,23,0.40);
+    background: rgba(212,160,23,0.07);
+}
+.nav-status-badge--pending .nav-status-badge-dot {
     background: #D4A017;
     animation: dot-breathe 2.2s ease-in-out infinite;
 }
 /* Urgent / action-required: red ping ripple */
-.nav-status-dot--urgent {
+.nav-status-badge--urgent {
+    color: var(--error);
+    border: 1px solid rgba(215,25,33,0.40);
+    background: rgba(215,25,33,0.07);
+}
+.nav-status-badge--urgent .nav-status-badge-dot {
     background: var(--error);
 }
-.nav-status-dot--urgent::before {
+.nav-status-badge--urgent .nav-status-badge-dot::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -393,8 +417,29 @@ nav.nav, .mobile-menu { display: none !important; }
     padding: 0 3px;
     line-height: 1;
     pointer-events: none;
+    animation: badge-breathe 2.4s ease-in-out infinite;
 }
-.dash-topbar-badge-urgent { background: var(--error); color: #ffffff; }
+.dash-topbar-badge-urgent {
+    background: var(--error);
+    color: #ffffff;
+    animation: none;
+}
+.dash-topbar-badge-urgent::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 1.5px solid var(--error);
+    animation: badge-ring-ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes badge-breathe {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%       { transform: scale(0.87); opacity: 0.7; }
+}
+@keyframes badge-ring-ping {
+    0%         { transform: scale(1); opacity: 0.75; }
+    80%, 100%  { transform: scale(2.5); opacity: 0; }
+}
 
 .dash-topbar-logout {
     padding: 5px 12px;
