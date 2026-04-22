@@ -1868,14 +1868,91 @@ window.CompTab = (function () {
     function _startDetail() { _stopDetail(); _tickDetail(); _detailTick = setInterval(_tickDetail,1000); }
     function _stopDetail()  { if(_detailTick){clearInterval(_detailTick);_detailTick=null;} }
 
-    /* ── Grid countdown tick ── */
-    function _tick() {
-        if (_viewOpen) return;
-        document.querySelectorAll('[data-comp-end]').forEach(function(el){
-            var t=_pd(el.getAttribute('data-comp-end')); if(t) el.textContent=_cd(t).inline;
+    /* ── Flip Clock ── */
+    function _fcVals(target) {
+        var diff=Math.floor((target-new Date())/1000); if(diff<=0) return null;
+        var d=Math.floor(diff/86400); diff-=d*86400;
+        var h=Math.floor(diff/3600);  diff-=h*3600;
+        var m=Math.floor(diff/60);    diff-=m*60;
+        var p2=function(n){return('0'+n).slice(-2);};
+        return {d:d,h:p2(h),m:p2(m),s:p2(diff)};
+    }
+    function _fcCardHTML(digit) {
+        return '<div class="flip-card" data-fc-val="'+digit+'">'
+            +'<div class="flip-top-half"><div class="flip-inner">'+digit+'</div></div>'
+            +'<div class="flip-bot-half"><div class="flip-inner">'+digit+'</div></div>'
+            +'</div>';
+    }
+    function _fcUnitHTML(val,lbl,key) {
+        var c=''; for(var i=0;i<val.length;i++) c+=_fcCardHTML(val[i]);
+        return '<div class="flip-unit" data-fc-unit="'+key+'"><div class="flip-unit-panels">'+c+'</div>'
+            +'<div class="flip-unit-lbl">'+lbl+'</div></div>';
+    }
+    function _fcBuildHTML(vals) {
+        var dStr=vals.d>0?String(vals.d):'', p=[];
+        if(dStr){p.push(_fcUnitHTML(dStr,'DAYS','D'));p.push('<span class="flip-sep">:</span>');}
+        p.push(_fcUnitHTML(vals.h,'HRS','H')); p.push('<span class="flip-sep">:</span>');
+        p.push(_fcUnitHTML(vals.m,'MIN','M')); p.push('<span class="flip-sep">:</span>');
+        p.push(_fcUnitHTML(vals.s,'SEC','S'));
+        return p.join('');
+    }
+    function _fcFlip(card,nv) {
+        var ov=card.getAttribute('data-fc-val'); if(ov===nv) return;
+        card.setAttribute('data-fc-val',nv);
+        var bi=card.querySelector('.flip-bot-half .flip-inner'); if(bi) bi.textContent=nv;
+        var tf=document.createElement('div'); tf.className='flip-top-flap';
+        tf.innerHTML='<div class="flip-inner">'+ov+'</div>';
+        var bf=document.createElement('div'); bf.className='flip-bot-flap';
+        bf.innerHTML='<div class="flip-inner">'+nv+'</div>';
+        card.appendChild(tf); card.appendChild(bf);
+        setTimeout(function(){
+            var ti=card.querySelector('.flip-top-half .flip-inner'); if(ti) ti.textContent=nv;
+            if(card.contains(tf)) card.removeChild(tf);
+            if(card.contains(bf)) card.removeChild(bf);
+        },420);
+    }
+    function _fcUpdateUnit(unit,val) {
+        var cards=unit.querySelectorAll('.flip-card');
+        for(var i=0;i<cards.length&&i<val.length;i++) _fcFlip(cards[i],val[i]);
+    }
+    function _fcTick() {
+        if(_viewOpen) return;
+        document.querySelectorAll('.flip-clock[data-fc-target]').forEach(function(clock){
+            var target=_pd(clock.getAttribute('data-fc-target')); if(!target) return;
+            var vals=_fcVals(target); if(!vals) return;
+            var dStr=vals.d>0?String(vals.d):'';
+            var prevDLen=parseInt(clock.getAttribute('data-fc-dlen')||'0',10);
+            if(dStr.length!==prevDLen){
+                clock.innerHTML=_fcBuildHTML(vals);
+                clock.setAttribute('data-fc-dlen',String(dStr.length)); return;
+            }
+            var us={}; clock.querySelectorAll('.flip-unit').forEach(function(u){us[u.getAttribute('data-fc-unit')]=u;});
+            if(dStr&&us['D']) _fcUpdateUnit(us['D'],dStr);
+            if(us['H']) _fcUpdateUnit(us['H'],vals.h);
+            if(us['M']) _fcUpdateUnit(us['M'],vals.m);
+            if(us['S']) _fcUpdateUnit(us['S'],vals.s);
         });
     }
-    function _startTick() { if(_gridTick)return; _tick(); _gridTick=setInterval(_tick,1000); }
+    function _fcInit() {
+        document.querySelectorAll('[data-flip-end]').forEach(function(wrap){
+            if(wrap.querySelector('.flip-clock')) return;
+            var endStr=wrap.getAttribute('data-flip-end'), status=wrap.getAttribute('data-flip-status')||'live';
+            if(!endStr) return;
+            var target=_pd(endStr); if(!target) return;
+            var vals=_fcVals(target); if(!vals) return;
+            var dStr=vals.d>0?String(vals.d):'';
+            var clock=document.createElement('div');
+            clock.className='flip-clock flip-clock--'+status;
+            clock.setAttribute('data-fc-target',endStr);
+            clock.setAttribute('data-fc-dlen',String(dStr.length));
+            clock.innerHTML=_fcBuildHTML(vals);
+            var cdEl=wrap.querySelector('.comp-block-cd');
+            if(cdEl) wrap.replaceChild(clock,cdEl); else wrap.insertBefore(clock,wrap.firstChild);
+        });
+    }
+
+    /* ── Grid tick ── */
+    function _startTick() { if(_gridTick)return; _fcInit(); _fcTick(); _gridTick=setInterval(_fcTick,1000); }
     function _stopTick()  { if(_gridTick){clearInterval(_gridTick);_gridTick=null;} }
 
     /* ── Sub-tab filter ── */
@@ -1914,6 +1991,7 @@ window.CompTab = (function () {
 
     /* ── Init ── */
     function init() {
+        _fcInit();
         document.querySelectorAll('.comp-subtab-btn').forEach(function(btn){
             btn.addEventListener('click', function(){
                 document.querySelectorAll('.comp-subtab-btn').forEach(function(b){b.classList.remove('comp-subtab-btn--active');});

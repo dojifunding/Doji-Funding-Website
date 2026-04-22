@@ -3005,8 +3005,8 @@ foreach ($challenges as $ch) {
                     <div class="comp-block-body">
                         <!-- Left: countdown clock + entry type -->
                         <div class="comp-block-left">
-                            <div class="comp-block-cd-wrap">
-                                <div class="comp-block-cd comp-block-cd--<?= $_b['status'] ?>"<?= $_bCdEnd ? ' data-comp-end="'.htmlspecialchars($_bCdEnd).'"' : '' ?>><?= $_bCdVal ?></div>
+                            <div class="comp-block-cd-wrap"<?= $_bCdEnd ? ' data-flip-end="'.htmlspecialchars($_bCdEnd).'"' : '' ?> data-flip-status="<?= $_b['status'] ?>">
+                                <div class="comp-block-cd comp-block-cd--<?= $_b['status'] ?>"><?= $_bCdVal ?></div>
                                 <div class="comp-block-cd-lbl"><?= $_bCdLbl ?></div>
                             </div>
                             <div class="comp-block-entry-badge comp-block-entry-badge--<?= $_b['type'] ?>">
