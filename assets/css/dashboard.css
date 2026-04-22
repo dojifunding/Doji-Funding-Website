@@ -188,6 +188,41 @@ nav.nav, .mobile-menu { display: none !important; }
     background: rgba(215,25,33,0.08);
 }
 
+/* ── Nav status indicator dots ── */
+.nav-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+/* Pending / in-progress: amber breathe */
+.nav-status-dot--pending {
+    background: #D4A017;
+    animation: dot-breathe 2.2s ease-in-out infinite;
+}
+/* Urgent / action-required: red ping ripple */
+.nav-status-dot--urgent {
+    background: var(--error);
+}
+.nav-status-dot--urgent::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--error);
+    animation: dot-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes dot-breathe {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%       { transform: scale(1.45); opacity: 0.55; }
+}
+@keyframes dot-ping {
+    0%         { transform: scale(1); opacity: 0.8; }
+    80%, 100%  { transform: scale(2.8); opacity: 0; }
+}
+
 /* Sub-menu */
 .dash-nav-chevron { margin-left: auto; flex-shrink: 0; transition: transform 0.18s; opacity: 0.3; }
 .dash-nav-group.open > .dash-nav-item .dash-nav-chevron { transform: rotate(180deg); opacity: 0.7; }

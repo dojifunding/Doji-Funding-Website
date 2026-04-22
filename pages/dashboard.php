@@ -281,7 +281,7 @@ foreach ($challenges as $ch) {
                 <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                 <span>Challenges</span>
                 <?php if (($overview['active_challenges'] ?? 0) > 0): ?>
-                <span class="dash-nav-badge"><?= $overview['active_challenges'] ?></span>
+                <span class="nav-status-dot nav-status-dot--pending"></span>
                 <?php endif; ?>
             </button>
             <button class="dash-nav-item" data-tab="configurator">
@@ -295,11 +295,10 @@ foreach ($challenges as $ch) {
             <button class="dash-nav-item" data-tab="payouts">
                 <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
                 <span>Payouts</span>
-                <?php if ($notifPayoutPending > 0): ?>
-                <span class="dash-nav-badge"><?= $notifPayoutPending ?></span>
-                <?php endif; ?>
                 <?php if ($notifPayoutAction > 0): ?>
-                <span class="dash-nav-badge dash-nav-badge-action"><?= $notifPayoutAction ?></span>
+                <span class="nav-status-dot nav-status-dot--urgent"></span>
+                <?php elseif ($notifPayoutPending > 0): ?>
+                <span class="nav-status-dot nav-status-dot--pending"></span>
                 <?php endif; ?>
             </button>
 
