@@ -3046,6 +3046,101 @@ foreach ($challenges as $ch) {
                 <?php endforeach; ?>
                 </div><!-- /.comp-blocks -->
 
+                <?php
+                /* ── Drawer data ── */
+                $_dJoined  = array_values(array_filter($competitions_all, function($_c) use ($comp_joined_ids) {
+                    return in_array($_c['id'], $comp_joined_ids);
+                }));
+                $_dExpired = array_values(array_filter($competitions_all, function($_c) {
+                    return $_c['status'] === 'ended';
+                }));
+                // Sort expired: free first, then paid
+                usort($_dExpired, function($a,$b){ return strcmp($a['type'],$b['type']); });
+                $__chevron = '<svg class="comp-drawer-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>';
+                ?>
+                <!-- Collapsible drawers -->
+                <div class="comp-drawers" id="compDrawers">
+
+                <?php if (!empty($_dJoined)): ?>
+                <div class="comp-drawer" id="drawerJoined">
+                    <button class="comp-drawer-btn" onclick="CompTab.toggleDrawer('drawerJoined')">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        JOINED
+                        <span class="comp-drawer-count"><?= count($_dJoined) ?></span>
+                        <?= $__chevron ?>
+                    </button>
+                    <div class="comp-drawer-body" hidden>
+                        <div class="comp-cgrid">
+                        <?php foreach ($_dJoined as $_dc):
+                            $_dcEntry  = $_dc['type']==='free' ? 'FREE' : '$'.number_format($_dc['entry'],0);
+                            $_dcStLbl  = $_dc['status']==='live' ? 'ONGOING' : ($_dc['status']==='upcoming' ? 'UPCOMING' : 'ENDED');
+                        ?>
+                        <div class="comp-card">
+                            <div class="comp-card-top">
+                                <span class="comp-status comp-status--<?= $_dc['status'] ?>"><span class="comp-status-dot comp-status-dot--<?= $_dc['status'] ?>"></span><?= $_dcStLbl ?></span>
+                                <span class="comp-block-joined-tag" style="margin-left:auto">JOINED</span>
+                            </div>
+                            <div class="comp-card-name"><?= htmlspecialchars($_dc['name']) ?></div>
+                            <div class="comp-card-edition"><?= htmlspecialchars($_dc['edition']) ?></div>
+                            <div class="comp-card-meta">
+                                <span class="comp-card-tag<?= $_dc['type']==='free' ? ' comp-card-tag--free' : '' ?>"><?= $_dcEntry ?></span>
+                                <span class="comp-card-dot">·</span>
+                                <span><?= number_format($_dc['participants']) ?> TRADERS</span>
+                                <span class="comp-card-dot">·</span>
+                                <span><?= htmlspecialchars($_dc['platform']) ?></span>
+                            </div>
+                            <div class="comp-card-foot">
+                                <span class="comp-card-dates"><?= date('M d', strtotime($_dc['starts'])) ?> – <?= date('M d, Y', strtotime($_dc['ends'])) ?></span>
+                                <button class="comp-btn comp-btn--sm comp-btn--primary" onclick="CompTab.openView(<?= $_dc['id'] ?>)">VIEW</button>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($_dExpired)): ?>
+                <div class="comp-drawer" id="drawerExpired">
+                    <button class="comp-drawer-btn" onclick="CompTab.toggleDrawer('drawerExpired')">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        EXPIRED
+                        <span class="comp-drawer-count"><?= count($_dExpired) ?></span>
+                        <?= $__chevron ?>
+                    </button>
+                    <div class="comp-drawer-body" hidden>
+                        <div class="comp-cgrid">
+                        <?php foreach ($_dExpired as $_dc):
+                            $_dcEntry  = $_dc['type']==='free' ? 'FREE' : '$'.number_format($_dc['entry'],0);
+                            $_dcJoined = in_array($_dc['id'], $comp_joined_ids);
+                        ?>
+                        <div class="comp-card">
+                            <div class="comp-card-top">
+                                <span class="comp-status comp-status--ended"><span class="comp-status-dot comp-status-dot--ended"></span>ENDED</span>
+                                <?php if ($_dcJoined): ?><span class="comp-block-joined-tag" style="margin-left:auto">JOINED</span><?php endif; ?>
+                            </div>
+                            <div class="comp-card-name"><?= htmlspecialchars($_dc['name']) ?></div>
+                            <div class="comp-card-edition"><?= htmlspecialchars($_dc['edition']) ?></div>
+                            <div class="comp-card-meta">
+                                <span class="comp-card-tag<?= $_dc['type']==='free' ? ' comp-card-tag--free' : '' ?>"><?= $_dcEntry ?></span>
+                                <span class="comp-card-dot">·</span>
+                                <span><?= number_format($_dc['participants']) ?> TRADERS</span>
+                                <span class="comp-card-dot">·</span>
+                                <span><?= htmlspecialchars($_dc['platform']) ?></span>
+                            </div>
+                            <div class="comp-card-foot">
+                                <span class="comp-card-dates"><?= date('M d', strtotime($_dc['starts'])) ?> – <?= date('M d, Y', strtotime($_dc['ends'])) ?></span>
+                                <button class="comp-btn comp-btn--sm comp-btn--primary" onclick="CompTab.openView(<?= $_dc['id'] ?>)">VIEW</button>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                </div><!-- /.comp-drawers -->
+
                 <!-- Detail view (injected by CompTab.openView) -->
                 <div id="compDetailView" hidden></div>
 

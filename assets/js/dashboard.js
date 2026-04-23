@@ -1915,11 +1915,28 @@ window.CompTab = (function () {
         var cards=unit.querySelectorAll('.flip-card');
         for(var i=0;i<cards.length&&i<val.length;i++) _fcFlip(cards[i],val[i]);
     }
+    function _fcNewEnd() {
+        /* Demo helper: generate an end-date string 30 days from now */
+        var t=new Date(Date.now()+30*86400*1000);
+        var p=function(n){return('0'+n).slice(-2);};
+        return t.getFullYear()+'-'+p(t.getMonth()+1)+'-'+p(t.getDate())+' '+p(t.getHours())+':'+p(t.getMinutes())+':'+p(t.getSeconds());
+    }
     function _fcTick() {
         if(_viewOpen) return;
         document.querySelectorAll('.flip-clock[data-fc-target]').forEach(function(clock){
             var target=_pd(clock.getAttribute('data-fc-target')); if(!target) return;
-            var vals=_fcVals(target); if(!vals) return;
+            var vals=_fcVals(target);
+            if(!vals) {
+                /* Demo: auto-restart with a new 30-day window */
+                var newStr=_fcNewEnd();
+                clock.setAttribute('data-fc-target',newStr);
+                var wrap=clock.closest('[data-flip-end]');
+                if(wrap) wrap.setAttribute('data-flip-end',newStr);
+                vals=_fcVals(_pd(newStr)); if(!vals) return;
+                clock.innerHTML=_fcBuildHTML(vals);
+                clock.setAttribute('data-fc-dlen',String(vals.d>0?String(vals.d).length:0));
+                return;
+            }
             var dStr=vals.d>0?String(vals.d):'';
             var prevDLen=parseInt(clock.getAttribute('data-fc-dlen')||'0',10);
             if(dStr.length!==prevDLen){
@@ -1955,6 +1972,15 @@ window.CompTab = (function () {
     function _startTick() { if(_gridTick)return; _fcInit(); _fcTick(); _gridTick=setInterval(_fcTick,1000); }
     function _stopTick()  { if(_gridTick){clearInterval(_gridTick);_gridTick=null;} }
 
+    /* ── Drawer toggle ── */
+    function toggleDrawer(id) {
+        var el=document.getElementById(id); if(!el) return;
+        var body=el.querySelector('.comp-drawer-body');
+        var open=el.classList.contains('comp-drawer--open');
+        el.classList.toggle('comp-drawer--open',!open);
+        if(body) body.hidden=open;
+    }
+
     /* ── Sub-tab filter ── */
     function _filter(f) {
         document.querySelectorAll('#compGrid .comp-card').forEach(function(card){
@@ -1973,7 +1999,9 @@ window.CompTab = (function () {
         if (!detail) { detail=document.createElement('div'); detail.id='compDetailView'; tab.appendChild(detail); }
         detail.innerHTML = _buildDetail(comp, lb);
         var blocks = document.getElementById('compBlocks');
+        var drawers = document.getElementById('compDrawers');
         if (blocks) blocks.hidden = true;
+        if (drawers) drawers.hidden = true;
         detail.hidden = false;
         _startDetail();
     }
@@ -1983,7 +2011,9 @@ window.CompTab = (function () {
         var detail = document.getElementById('compDetailView');
         if (detail) detail.hidden = true;
         var blocks = document.getElementById('compBlocks');
+        var drawers = document.getElementById('compDrawers');
         if (blocks) blocks.hidden = false;
+        if (drawers) drawers.hidden = false;
     }
 
     function openPrizepool(id) { /* TBD */ }
@@ -1999,6 +2029,10 @@ window.CompTab = (function () {
                 _filter(btn.getAttribute('data-comp-filter'));
             });
         });
+        /* Re-sync clocks when browser tab regains focus */
+        document.addEventListener('visibilitychange', function(){
+            if(!document.hidden && !_viewOpen) _fcTick();
+        });
         var tabEl = document.getElementById('tab-competitions');
         if (tabEl) {
             new MutationObserver(function(){
@@ -2009,5 +2043,5 @@ window.CompTab = (function () {
     }
 
     document.addEventListener('DOMContentLoaded', init);
-    return { openView:openView, closeView:closeView, openPrizepool:openPrizepool, openInfo:openInfo };
+    return { openView:openView, closeView:closeView, openPrizepool:openPrizepool, openInfo:openInfo, toggleDrawer:toggleDrawer };
 }());
