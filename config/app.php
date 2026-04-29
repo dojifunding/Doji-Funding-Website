@@ -12,7 +12,7 @@ define('SITE_TAGLINE', 'Trade Your Way. Get Funded.');
 define('SITE_YEAR', '2026');
 
 // Version (for cache busting CSS/JS/images)
-define('ASSET_VERSION', '426');
+define('ASSET_VERSION', '427');
 
 // Branding
 define('BRAND_COLOR_GREEN', '#10B981');

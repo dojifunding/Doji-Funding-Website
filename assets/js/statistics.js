@@ -558,25 +558,31 @@ const StatisticsTab = (function () {
         /* 4. Trading DNA Radar ────────────────────────── */
         var dna    = dnaScores(metrics, data.trades);
         var dnaAvg = dna.reduce(function (s, v) { return s + v; }, 0) / dna.length;
-        var dnaLetterMap = [
-            { min: 9.5, letter: 'S', color: '#10B981' },
+        var _dnaGradeMap = [
+            { min: 9.5, letter: 'S',  color: '#10B981' },
             { min: 8.5, letter: 'A+', color: '#10B981' },
-            { min: 7.5, letter: 'A', color: '#10B981' },
+            { min: 7.5, letter: 'A',  color: '#10B981' },
             { min: 6.5, letter: 'B+', color: '#D4A843' },
-            { min: 5.5, letter: 'B', color: '#D4A843' },
+            { min: 5.5, letter: 'B',  color: '#D4A843' },
             { min: 4.5, letter: 'C+', color: '#D4A843' },
-            { min: 3.5, letter: 'C', color: '#999999' },
-            { min: 0,   letter: 'D', color: '#D71921' },
+            { min: 3.5, letter: 'C',  color: '#999999' },
+            { min: 0,   letter: 'D',  color: '#D71921' },
         ];
-        var dnaGrade = dnaLetterMap.find(function (g) { return dnaAvg >= g.min; }) || dnaLetterMap[dnaLetterMap.length - 1];
-        var dnaDescMap = { S: '[ ELITE TRADER ]', 'A+': '[ EXCEPTIONAL ]', A: '[ EXCELLENT ]', 'B+': '[ VERY GOOD ]', B: '[ GOOD ]', 'C+': '[ AVERAGE ]', C: '[ BELOW AVERAGE ]', D: '[ NEEDS IMPROVEMENT ]' };
-        var dnaGradeEl    = document.getElementById('statDnaGrade');
-        var dnaGradeLblEl = document.getElementById('statDnaGradeLbl');
-        var dnaGradeDescEl = document.getElementById('statDnaGradeDesc');
-        if (dnaGradeEl)    { dnaGradeEl.textContent = dnaGrade.letter; dnaGradeEl.style.color = dnaGrade.color; }
-        if (dnaGradeLblEl) { dnaGradeLblEl.textContent = dnaAvg.toFixed(1) + ' / 10'; }
-        if (dnaGradeDescEl) { dnaGradeDescEl.textContent = dnaDescMap[dnaGrade.letter] || ''; }
-        setSegs('statDnaSegs', dnaAvg * 10, 'stat-seg-on');   /* 0–10 → 0–100% */
+        var _dnaDescMap = { S: '[ ELITE TRADER ]', 'A+': '[ EXCEPTIONAL ]', A: '[ EXCELLENT ]', 'B+': '[ VERY GOOD ]', B: '[ GOOD ]', 'C+': '[ AVERAGE ]', C: '[ BELOW AVERAGE ]', D: '[ NEEDS IMPROVEMENT ]' };
+        var _dnaGrade   = _dnaGradeMap.find(function (g) { return dnaAvg >= g.min; }) || _dnaGradeMap[_dnaGradeMap.length - 1];
+        var _dnaSegClass = { '#10B981': 'stat-seg-on', '#D4A843': 'stat-seg-on-amber', '#999999': 'stat-seg-on-gray', '#D71921': 'stat-seg-on-red' }[_dnaGrade.color] || 'stat-seg-on';
+        var _dnaRadarBg  = { '#10B981': 'rgba(16,185,129,0.12)', '#D4A843': 'rgba(212,168,67,0.12)', '#999999': 'rgba(153,153,153,0.12)', '#D71921': 'rgba(215,25,33,0.12)' }[_dnaGrade.color] || 'rgba(16,185,129,0.12)';
+        function _applyDnaGrade(gradeId, lblId, descId, segsId) {
+            var gEl = document.getElementById(gradeId);
+            var lEl = document.getElementById(lblId);
+            var dEl = document.getElementById(descId);
+            if (gEl) { gEl.textContent = _dnaGrade.letter; gEl.style.color = _dnaGrade.color; }
+            if (lEl)   lEl.textContent = dnaAvg.toFixed(1) + ' / 10';
+            if (dEl)   dEl.textContent = _dnaDescMap[_dnaGrade.letter] || '';
+            setSegs(segsId, dnaAvg * 10, _dnaSegClass);
+        }
+        _applyDnaGrade('statDnaGrade', 'statDnaGradeLbl', 'statDnaGradeDesc', 'statDnaSegs');
+        _applyDnaGrade('ovDnaGrade',   'ovDnaGradeLbl',   'ovDnaGradeDesc',   'ovDnaSegs');
 
         var cvDna = getCanvas('chartDna');
         if (cvDna) _charts.dna = new Chart(cvDna, {
@@ -585,9 +591,9 @@ const StatisticsTab = (function () {
                 labels: ['DISCIPLINE', 'CONSISTENCY', 'RISK MGMT', 'EXECUTION', 'PATIENCE', 'EDGE'],
                 datasets: [{
                     data: dna,
-                    borderColor: '#10B981', borderWidth: 1.5,
-                    backgroundColor: 'rgba(16,185,129,0.10)',
-                    pointBackgroundColor: '#10B981',
+                    borderColor: _dnaGrade.color, borderWidth: 1.5,
+                    backgroundColor: _dnaRadarBg,
+                    pointBackgroundColor: _dnaGrade.color,
                     pointBorderColor: '#000',
                     pointRadius: 3, pointHoverRadius: 5,
                 }]
@@ -605,7 +611,8 @@ const StatisticsTab = (function () {
                             color: c.tick,
                         }
                     }
-                }
+                },
+                plugins: { legend: { display: false } }
             }
         });
 
@@ -1110,6 +1117,34 @@ const StatisticsTab = (function () {
                 if (_tabEl.classList.contains('active')) activate();
             }).observe(_tabEl, { attributes: true, attributeFilter: ['class'] });
         }
+
+        /* Populate overview DNA card immediately — no Chart.js needed, pure math */
+        (function () {
+            var _d   = buildData();
+            var _m   = computeMetrics(_d);
+            var _dna = dnaScores(_m, _d.trades);
+            var _avg = _dna.reduce(function (s, v) { return s + v; }, 0) / _dna.length;
+            var _lm  = [
+                { min: 9.5, letter: 'S',  color: '#10B981' },
+                { min: 8.5, letter: 'A+', color: '#10B981' },
+                { min: 7.5, letter: 'A',  color: '#10B981' },
+                { min: 6.5, letter: 'B+', color: '#D4A843' },
+                { min: 5.5, letter: 'B',  color: '#D4A843' },
+                { min: 4.5, letter: 'C+', color: '#D4A843' },
+                { min: 3.5, letter: 'C',  color: '#999999' },
+                { min: 0,   letter: 'D',  color: '#D71921' },
+            ];
+            var _dm  = { S: '[ ELITE TRADER ]', 'A+': '[ EXCEPTIONAL ]', A: '[ EXCELLENT ]', 'B+': '[ VERY GOOD ]', B: '[ GOOD ]', 'C+': '[ AVERAGE ]', C: '[ BELOW AVERAGE ]', D: '[ NEEDS IMPROVEMENT ]' };
+            var _dg  = _lm.find(function (g) { return _avg >= g.min; }) || _lm[_lm.length - 1];
+            var e1 = document.getElementById('ovDnaGrade');
+            var e2 = document.getElementById('ovDnaGradeLbl');
+            var e3 = document.getElementById('ovDnaGradeDesc');
+            if (e1) { e1.textContent = _dg.letter; e1.style.color = _dg.color; }
+            if (e2)   e2.textContent = _avg.toFixed(1) + ' / 10';
+            if (e3)   e3.textContent = _dm[_dg.letter] || '';
+            var _ovSegCls = { '#10B981': 'stat-seg-on', '#D4A843': 'stat-seg-on-amber', '#999999': 'stat-seg-on-gray', '#D71921': 'stat-seg-on-red' }[_dg.color] || 'stat-seg-on';
+            setSegs('ovDnaSegs', _avg * 10, _ovSegCls);
+        }());
 
         /* Re-apply Chart.js palette + redraw when data-theme changes on <html> */
         new MutationObserver(function () {
