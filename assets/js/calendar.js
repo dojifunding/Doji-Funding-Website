@@ -188,15 +188,8 @@ const CalendarTab = (function () {
         var offset      = (firstDow + 6) % 7;   /* Mon-based: Mon=0 … Sun=6 */
         var daysInMonth = new Date(_year, _month + 1, 0).getDate();
 
-        /* find max |dayPnl| in this month for tint scaling */
         var mn     = _month + 1;
         var prefix = _year + '-' + (mn < 10 ? '0' : '') + mn;
-        var maxAbs = 1;
-        Object.keys(byDay).forEach(function (dk) {
-            if (dk.slice(0, 7) !== prefix) return;
-            var v = Math.abs(byDay[dk].reduce(function (s, t) { return s + t.pnl; }, 0));
-            if (v > maxAbs) maxAbs = v;
-        });
 
         var html = '';
         for (var i = 0; i < offset; i++) {
@@ -214,24 +207,21 @@ const CalendarTab = (function () {
             var hasTrades = trades && !isFuture;
 
             var cls = 'cal-cell';
-            if (isToday)   cls += ' cal-cell--today';
-            if (isFuture)  cls += ' cal-cell--future';
-
-            /* tinted background via inline rgba */
-            var bgStyle = '';
+            if (isToday)  cls += ' cal-cell--today';
+            if (isFuture) cls += ' cal-cell--future';
             if (hasTrades) {
-                var rgb       = dayPnl >= 0 ? '16,185,129' : '215,25,33';
-                var alpha     = 0.04 + (Math.abs(dayPnl) / maxAbs) * 0.16;
-                bgStyle = ' style="background-color:rgba(' + rgb + ',' + alpha.toFixed(3) + ');"';
+                if (Math.abs(dayPnl) < 5)   cls += ' cal-cell--be';
+                else if (dayPnl > 0)        cls += ' cal-cell--profit';
+                else                        cls += ' cal-cell--loss';
             }
 
-            var pnlHtml    = hasTrades ? '<div class="cal-cell-pnl ' + (dayPnl >= 0 ? 'green' : 'red') + '">' + fmtPnl(dayPnl) + '</div>' : '';
-            var countHtml  = hasTrades ? '<div class="cal-cell-trades">' + trades.length + ' TR</div>' : '';
-            var dayNumCls  = 'cal-cell-day' + (isWeekend ? ' cal-cell-day--we' : '');
+            var pnlHtml   = hasTrades ? '<div class="cal-cell-pnl">' + fmtPnl(dayPnl) + '</div>' : '';
+            var countHtml = hasTrades ? '<div class="cal-cell-trades">' + trades.length + ' TR</div>' : '';
+            var dayNumCls = 'cal-cell-day' + (isWeekend ? ' cal-cell-day--we' : '');
 
             html += '<div class="' + cls + '"'
                   + (hasTrades ? ' data-dk="' + dk + '" tabindex="0"' : '')
-                  + bgStyle + '>'
+                  + '>'
                   + '<div class="' + dayNumCls + '">' + d + '</div>'
                   + pnlHtml + countHtml
                   + '</div>';

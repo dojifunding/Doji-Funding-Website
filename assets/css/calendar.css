@@ -159,66 +159,83 @@
 }
 .cal-dow--we { opacity: 0.5; }
 
-/* ── Calendar grid — raised 3D tiles ─────────────────────── */
+/* ── Calendar grid ────────────────────────────────────────── */
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 3px;
   margin-bottom: 16px;
 }
+
+/* Base cell — NO TRADE (mirrors .tp-cal-cell--none) */
 .cal-cell {
   position: relative;
   min-height: 76px;
   padding: 8px 9px;
-  border: 1px solid var(--border);
   border-radius: 4px;
-  background: var(--surface);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06),
-              0 1px 0 rgba(0,0,0,0.5),
-              0 3px 8px rgba(0,0,0,0.25);
-  transition: box-shadow 0.12s, transform 0.08s, border-color 0.12s;
+  border: 1px solid transparent;
+  background: rgba(255,255,255,0.055);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.55),
+              inset 0 1px 0 rgba(255,255,255,0.07);
+  transition: box-shadow 0.12s, transform 0.08s;
   display: flex;
   flex-direction: column;
 }
 
-/* interactive cells (have trades) */
-.cal-cell[data-dk] {
-  cursor: pointer;
+/* WIN day (mirrors .tp-cal-cell--win) */
+.cal-cell--profit {
+  background: linear-gradient(150deg, #1fd99a 0%, #0d9e6a 100%);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.50),
+              0 0 10px rgba(16,185,129,0.25),
+              inset 0 1px 0 rgba(255,255,255,0.32);
+  border-color: rgba(16,185,129,0.25);
 }
+
+/* LOSS day (mirrors .tp-cal-cell--loss) */
+.cal-cell--loss {
+  background: linear-gradient(150deg, #ef3d47 0%, #a8111a 100%);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.50),
+              0 0 10px rgba(215,25,33,0.25),
+              inset 0 1px 0 rgba(255,255,255,0.20);
+  border-color: rgba(215,25,33,0.25);
+}
+
+/* BREAKEVEN day (mirrors .tp-cal-cell--be) */
+.cal-cell--be {
+  background: linear-gradient(150deg, #5a6270 0%, #3a4149 100%);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.50),
+              inset 0 1px 0 rgba(255,255,255,0.14);
+}
+
+/* interactive cells */
+.cal-cell[data-dk]       { cursor: pointer; }
 .cal-cell[data-dk]:hover {
-  border-color: var(--border-vis);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.09),
-              0 1px 0 rgba(0,0,0,0.5),
-              0 5px 14px rgba(0,0,0,0.35);
   transform: translateY(-1px);
+  filter: brightness(1.12);
 }
 .cal-cell[data-dk]:active {
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.55),
-              inset 0 1px 2px rgba(0,0,0,0.3);
   transform: translateY(1px);
+  filter: brightness(0.88);
 }
 
 /* empty offset cells */
 .cal-cell--empty {
   background: transparent !important;
-  border-color: transparent !important;
   box-shadow: none !important;
+  border-color: transparent !important;
   pointer-events: none;
 }
 /* today highlight */
 .cal-cell--today {
-  border-color: var(--accent) !important;
-  box-shadow: inset 0 1px 0 rgba(16,185,129,0.2),
-              0 1px 0 rgba(0,0,0,0.5),
-              0 3px 8px rgba(0,0,0,0.25),
-              0 0 0 1px rgba(16,185,129,0.15) !important;
+  border-color: rgba(16,185,129,0.6) !important;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.50),
+              0 0 0 1px rgba(16,185,129,0.3),
+              inset 0 1px 0 rgba(255,255,255,0.15) !important;
 }
 /* future cells */
 .cal-cell--future {
-  opacity: 0.22;
+  opacity: 0.25;
   pointer-events: none;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03),
-              0 1px 0 rgba(0,0,0,0.3) !important;
 }
 
 /* day number */
@@ -228,9 +245,14 @@
   font-weight: 600;
   color: var(--text-sec);
   line-height: 1;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
-.cal-cell--today .cal-cell-day { color: var(--accent); }
+/* white day number on colored cells */
+.cal-cell--profit .cal-cell-day,
+.cal-cell--loss   .cal-cell-day,
+.cal-cell--be     .cal-cell-day { color: rgba(255,255,255,0.75); }
+.cal-cell--today .cal-cell-day  { color: var(--accent); }
+.cal-cell--profit.cal-cell--today .cal-cell-day,
+.cal-cell--loss.cal-cell--today  .cal-cell-day { color: #FFFFFF; }
 
 /* P&L value */
 .cal-cell-pnl {
@@ -241,10 +263,13 @@
   padding-top: 6px;
   line-height: 1;
   letter-spacing: -0.01em;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  color: var(--text-pri);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
-.cal-cell-pnl.green { color: var(--success); }
-.cal-cell-pnl.red   { color: var(--error); }
+/* white P&L text on colored cells */
+.cal-cell--profit .cal-cell-pnl,
+.cal-cell--loss   .cal-cell-pnl,
+.cal-cell--be     .cal-cell-pnl { color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
 
 /* trade count */
 .cal-cell-trades {
@@ -254,6 +279,9 @@
   color: var(--text-dis);
   margin-top: 3px;
 }
+.cal-cell--profit .cal-cell-trades,
+.cal-cell--loss   .cal-cell-trades,
+.cal-cell--be     .cal-cell-trades { color: rgba(255,255,255,0.5); }
 
 /* ── Day detail panel — Trading Activity card style ───────── */
 .cal-detail {
@@ -385,25 +413,22 @@
   --success: #10B981; --error: #D71921;
 }
 [data-theme="light"] .cal-cell {
-  background: #1A1A1A;
-  border-color: #2A2A2A;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07),
-              0 1px 0 rgba(0,0,0,0.6),
-              0 3px 8px rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.06);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
   --text-sec: #888888; --text-dis: #555555;
-  --success: #10B981; --error: #D71921;
 }
-[data-theme="light"] .cal-cell[data-dk]:hover {
-  background: #222222 !important;
-  border-color: #3A3A3A;
-  transform: translateY(-1px);
+[data-theme="light"] .cal-cell--profit {
+  background: linear-gradient(150deg, #1fd99a 0%, #0d9e6a 100%);
+}
+[data-theme="light"] .cal-cell--loss {
+  background: linear-gradient(150deg, #ef3d47 0%, #a8111a 100%);
 }
 [data-theme="light"] .cal-cell--empty {
   background: transparent !important;
-  border-color: transparent !important;
   box-shadow: none !important;
+  border-color: transparent !important;
 }
-[data-theme="light"] .cal-cell--today { border-color: var(--accent) !important; }
+[data-theme="light"] .cal-cell--today { border-color: rgba(16,185,129,0.7) !important; }
 [data-theme="light"] .cal-detail {
   background: #000000;
   border-color: #2A2A2A;
