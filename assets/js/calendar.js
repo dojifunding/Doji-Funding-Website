@@ -6,11 +6,14 @@
 const CalendarTab = (function () {
     'use strict';
 
-    var _filter  = 'all';
-    var _year    = new Date().getFullYear();
-    var _month   = new Date().getMonth();   /* 0-indexed */
-    var _ready   = false;
-    var _byDay   = {};                      /* cached daily trade map */
+    var _filter        = 'all';
+    var _year          = new Date().getFullYear();
+    var _month         = new Date().getMonth();   /* 0-indexed */
+    var _ready         = false;
+    var _byDay         = {};                      /* cached daily trade map */
+    var _journalDk     = null;                    /* currently open day key */
+    var _autoSaveTimer = null;
+    var _savedMsgTimer = null;
 
     var PAIRS   = ['EURUSD','GBPUSD','NAS100','US30','XAUUSD','USDJPY','AUDUSD','GBPJPY','SP500','USDCAD'];
     var MONTHS  = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE',
@@ -151,6 +154,56 @@ const CalendarTab = (function () {
         return h + 'h' + (m > 0 ? m + 'm' : '');
     }
 
+    /* ── Journal (localStorage) ─────────────────────────────── */
+    function jKey(dk) { return 'doji-journal-' + dk; }
+
+    function loadJournal(dk) {
+        var noteEl = document.getElementById('calJournalNote');
+        if (!noteEl) return;
+        var raw = null;
+        try { raw = localStorage.getItem(jKey(dk)); } catch (e) {}
+        var data = raw ? JSON.parse(raw) : { mood: 0, note: '' };
+        noteEl.value = data.note || '';
+        document.querySelectorAll('.cal-mood-btn').forEach(function (btn) {
+            btn.classList.remove('cal-mood-btn--active');
+        });
+        if (data.mood) {
+            var activeBtn = document.querySelector('.cal-mood-btn[data-mood="' + data.mood + '"]');
+            if (activeBtn) activeBtn.classList.add('cal-mood-btn--active');
+        }
+        var savedEl = document.getElementById('calJournalSaved');
+        if (savedEl) savedEl.textContent = '';
+    }
+
+    function saveJournal() {
+        if (!_journalDk) return;
+        var noteEl    = document.getElementById('calJournalNote');
+        var activeBtn = document.querySelector('.cal-mood-btn--active');
+        var savedEl   = document.getElementById('calJournalSaved');
+        var data = {
+            mood: activeBtn ? parseInt(activeBtn.getAttribute('data-mood'), 10) : 0,
+            note: noteEl ? noteEl.value : ''
+        };
+        try { localStorage.setItem(jKey(_journalDk), JSON.stringify(data)); } catch (e) {}
+        if (savedEl) {
+            savedEl.textContent = '[ SAVED ]';
+            clearTimeout(_savedMsgTimer);
+            _savedMsgTimer = setTimeout(function () { if (savedEl) savedEl.textContent = ''; }, 2000);
+        }
+        /* update indicator dot on the cell without full re-render */
+        var cellEl = document.querySelector('[data-dk="' + _journalDk + '"]');
+        if (cellEl) {
+            var hasContent = data.mood > 0 || (data.note && data.note.trim().length > 0);
+            var dot = cellEl.querySelector('.cal-cell-jrnl');
+            if (hasContent) {
+                if (!dot) { dot = document.createElement('div'); dot.className = 'cal-cell-jrnl'; cellEl.appendChild(dot); }
+                dot.setAttribute('data-mood', String(data.mood));
+            } else if (dot) {
+                dot.parentNode.removeChild(dot);
+            }
+        }
+    }
+
     /* ── Render KPI strip ────────────────────────────────────── */
     function renderKpis(byDay) {
         var k = monthKpis(byDay, _year, _month);
@@ -238,10 +291,23 @@ const CalendarTab = (function () {
             var cntHtml  = hasTr ? '<div class="cal-cell-trades">' + trades.length + ' TR</div>' : '';
             var dnCls    = 'cal-cell-day' + (isWknd ? ' cal-cell-day--we' : '');
 
+            /* journal indicator dot */
+            var jrnlHtml = '';
+            if (hasTr) {
+                var jRaw = null;
+                try { jRaw = localStorage.getItem('doji-journal-' + dk); } catch (e) {}
+                if (jRaw) {
+                    var jData = JSON.parse(jRaw);
+                    if (jData && (jData.mood > 0 || (jData.note && jData.note.trim().length > 0))) {
+                        jrnlHtml = '<div class="cal-cell-jrnl" data-mood="' + (jData.mood || 0) + '"></div>';
+                    }
+                }
+            }
+
             html += '<div class="' + cls + '"'
                   + (hasTr ? ' data-dk="' + dk + '" tabindex="0"' : '') + '>'
                   + '<div class="' + dnCls + '">' + d + '</div>'
-                  + pnlHtml + cntHtml + '</div>';
+                  + jrnlHtml + pnlHtml + cntHtml + '</div>';
 
             col++;
             if (col === 7) {
@@ -275,6 +341,9 @@ const CalendarTab = (function () {
         var list    = document.getElementById('calDetailList');
         var summary = document.getElementById('calDetailSummary');
         if (!panel) return;
+
+        _journalDk = dk;
+        loadJournal(dk);
 
         var trades  = (_byDay[dk] || []);
         var dt      = new Date(dk + 'T12:00:00');
@@ -364,7 +433,33 @@ const CalendarTab = (function () {
         if (closeBtn) closeBtn.addEventListener('click', function () {
             var panel = document.getElementById('calDetail');
             if (panel) panel.style.display = 'none';
+            _journalDk = null;
         });
+
+        /* journal — mood buttons */
+        document.querySelectorAll('.cal-mood-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var wasActive = this.classList.contains('cal-mood-btn--active');
+                document.querySelectorAll('.cal-mood-btn').forEach(function (b) {
+                    b.classList.remove('cal-mood-btn--active');
+                });
+                if (!wasActive) this.classList.add('cal-mood-btn--active');
+                saveJournal();
+            });
+        });
+
+        /* journal — textarea auto-save (debounced 1.2 s) */
+        var journalNote = document.getElementById('calJournalNote');
+        if (journalNote) {
+            journalNote.addEventListener('input', function () {
+                clearTimeout(_autoSaveTimer);
+                _autoSaveTimer = setTimeout(saveJournal, 1200);
+            });
+        }
+
+        /* journal — manual save button */
+        var journalSaveBtn = document.getElementById('calJournalSave');
+        if (journalSaveBtn) journalSaveBtn.addEventListener('click', saveJournal);
 
         /* activate when tab becomes visible */
         var tabEl = document.getElementById('tab-calendar');

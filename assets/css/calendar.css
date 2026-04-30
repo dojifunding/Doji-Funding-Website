@@ -540,3 +540,134 @@
   .cal-dow { font-size: 8px; }
   .cal-dow-hdr, .cal-grid { grid-template-columns: repeat(7, 1fr) 44px; }
 }
+
+/* ── Journal indicator dot on calendar cells ──────────────── */
+.cal-cell-jrnl {
+  position: absolute;
+  top: 5px; right: 5px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  pointer-events: none;
+}
+.cal-cell-jrnl[data-mood="1"] { background: #ef4444; }
+.cal-cell-jrnl[data-mood="2"] { background: #f59e0b; }
+.cal-cell-jrnl[data-mood="3"] { background: #909090; }
+.cal-cell-jrnl[data-mood="4"] { background: #34d399; }
+.cal-cell-jrnl[data-mood="5"] { background: #10b981; }
+
+/* ── Journal section inside detail panel ─────────────────── */
+.cal-journal {
+  padding: 14px 16px 16px;
+  border-top: 1px solid var(--border);
+  background: rgba(0,0,0,0.20);
+}
+.cal-journal-hdr {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.cal-journal-lbl {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--text-dis);
+}
+.cal-journal-saved {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  color: var(--success);
+  min-width: 60px;
+}
+.cal-journal-moods {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.cal-mood-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border-vis);
+  background: none;
+  color: var(--text-dis);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.12s, color 0.12s, background 0.12s, transform 0.08s, box-shadow 0.12s;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 2px 0 rgba(0,0,0,0.40);
+}
+.cal-mood-btn:hover  { border-color: var(--text-sec); color: var(--text-sec); transform: translateY(-1px); }
+.cal-mood-btn:active { transform: translateY(1px); }
+
+.cal-mood-btn--active[data-mood="1"] {
+  background: rgba(239,68,68,0.15); border-color: #ef4444; color: #ef4444;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 2px 0 rgba(0,0,0,0.40), 0 0 10px rgba(239,68,68,0.28);
+}
+.cal-mood-btn--active[data-mood="2"] {
+  background: rgba(245,158,11,0.12); border-color: #f59e0b; color: #f59e0b;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 2px 0 rgba(0,0,0,0.40), 0 0 10px rgba(245,158,11,0.22);
+}
+.cal-mood-btn--active[data-mood="3"] {
+  background: rgba(144,144,144,0.10); border-color: #909090; color: #909090;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 2px 0 rgba(0,0,0,0.40);
+}
+.cal-mood-btn--active[data-mood="4"] {
+  background: rgba(52,211,153,0.12); border-color: #34d399; color: #34d399;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 2px 0 rgba(0,0,0,0.40), 0 0 10px rgba(52,211,153,0.22);
+}
+.cal-mood-btn--active[data-mood="5"] {
+  background: rgba(16,185,129,0.15); border-color: #10b981; color: #10b981;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 2px 0 rgba(0,0,0,0.40), 0 0 12px rgba(16,185,129,0.30);
+}
+
+.cal-journal-note {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 76px;
+  resize: vertical;
+  background: rgba(0,0,0,0.40);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px 12px;
+  font-family: 'Chivo Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+  color: var(--text-pri);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.50);
+  outline: none;
+  transition: border-color 0.12s;
+}
+.cal-journal-note:focus { border-color: var(--border-vis); }
+.cal-journal-note::placeholder {
+  color: var(--text-dis);
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+.cal-journal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.cal-journal-save-btn {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 6px 18px;
+  border: 1px solid var(--border-vis);
+  border-radius: 2px;
+  background: none;
+  color: var(--text-sec);
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, transform 0.08s, box-shadow 0.10s;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 2px 0 rgba(0,0,0,0.40);
+}
+.cal-journal-save-btn:hover  { border-color: var(--accent); color: var(--accent); }
+.cal-journal-save-btn:active { transform: translateY(1px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 1px 0 rgba(0,0,0,0.40); }

@@ -3636,6 +3636,65 @@ foreach ($challenges as $ch) {
                     </div>
                     <div class="cal-detail-list" id="calDetailList"></div>
                     <div class="cal-detail-summary" id="calDetailSummary"></div>
+
+                    <!-- Journal section -->
+                    <div class="cal-journal">
+                        <div class="cal-journal-hdr">
+                            <span class="cal-journal-lbl">JOURNAL</span>
+                            <span class="cal-journal-saved" id="calJournalSaved"></span>
+                        </div>
+                        <div class="cal-journal-moods">
+                            <!-- Mood 1 — Terrible -->
+                            <button class="cal-mood-btn" data-mood="1" title="Terrible">
+                                <svg viewBox="0 0 22 22" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="9.5"/>
+                                    <circle cx="8" cy="9" r="0.8" fill="currentColor" stroke="none"/>
+                                    <circle cx="14" cy="9" r="0.8" fill="currentColor" stroke="none"/>
+                                    <path d="M6.5 15 Q11 11 15.5 15"/>
+                                </svg>
+                            </button>
+                            <!-- Mood 2 — Bad -->
+                            <button class="cal-mood-btn" data-mood="2" title="Bad">
+                                <svg viewBox="0 0 22 22" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="9.5"/>
+                                    <circle cx="8" cy="9" r="0.8" fill="currentColor" stroke="none"/>
+                                    <circle cx="14" cy="9" r="0.8" fill="currentColor" stroke="none"/>
+                                    <path d="M7.5 14.5 Q11 12.5 14.5 14.5"/>
+                                </svg>
+                            </button>
+                            <!-- Mood 3 — Neutral -->
+                            <button class="cal-mood-btn" data-mood="3" title="Neutral">
+                                <svg viewBox="0 0 22 22" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="9.5"/>
+                                    <circle cx="8" cy="9" r="0.8" fill="currentColor" stroke="none"/>
+                                    <circle cx="14" cy="9" r="0.8" fill="currentColor" stroke="none"/>
+                                    <path d="M7.5 13.5 L14.5 13.5"/>
+                                </svg>
+                            </button>
+                            <!-- Mood 4 — Good -->
+                            <button class="cal-mood-btn" data-mood="4" title="Good">
+                                <svg viewBox="0 0 22 22" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="9.5"/>
+                                    <circle cx="8" cy="9" r="0.8" fill="currentColor" stroke="none"/>
+                                    <circle cx="14" cy="9" r="0.8" fill="currentColor" stroke="none"/>
+                                    <path d="M7.5 13 Q11 15.5 14.5 13"/>
+                                </svg>
+                            </button>
+                            <!-- Mood 5 — Great -->
+                            <button class="cal-mood-btn" data-mood="5" title="Great">
+                                <svg viewBox="0 0 22 22" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="9.5"/>
+                                    <path d="M6.5 9 Q8 7.5 9.5 9"/>
+                                    <path d="M12.5 9 Q14 7.5 15.5 9"/>
+                                    <path d="M6 13 Q11 17.5 16 13"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <textarea class="cal-journal-note" id="calJournalNote" rows="3" placeholder="WRITE YOUR TRADING NOTES FOR THIS DAY..."></textarea>
+                        <div class="cal-journal-footer">
+                            <button class="cal-journal-save-btn" id="calJournalSave">SAVE</button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ══ ECONOMIC CALENDAR (coming soon) ══ -->
