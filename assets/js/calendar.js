@@ -586,21 +586,23 @@ var EconCalendar = (function () {
         var key = year + '-' + month;
         if (_cache[key]) { cb(null, _cache[key]); return; }
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', '/api/economic-calendar.php?year=' + year + '&month=' + month, true);
-        xhr.timeout = 12000;
+        xhr.open('GET', 'api/economic-calendar.php?year=' + year + '&month=' + month, true);
+        xhr.timeout = 15000;
         xhr.onload = function () {
             if (xhr.status === 200) {
                 try {
                     var data = JSON.parse(xhr.responseText);
+                    if (data.error) console.warn('[EconCal] API error:', data.error, data.debug || '');
                     _cache[key] = data;
                     cb(null, data);
                 } catch (e) { cb(e, null); }
             } else {
+                console.warn('[EconCal] HTTP', xhr.status);
                 cb(new Error('HTTP ' + xhr.status), null);
             }
         };
-        xhr.onerror   = function () { cb(new Error('network'), null); };
-        xhr.ontimeout = function () { cb(new Error('timeout'), null); };
+        xhr.onerror   = function () { console.warn('[EconCal] network error'); cb(new Error('network'), null); };
+        xhr.ontimeout = function () { console.warn('[EconCal] timeout');       cb(new Error('timeout'),  null); };
         xhr.send();
     }
 
@@ -629,12 +631,22 @@ var EconCalendar = (function () {
             d.setDate(d.getDate() + 1);
         }
 
-        var pending = months.length;
+        var pending   = months.length;
+        var fetchErr  = null;
         months.forEach(function (key) {
             var parts = key.split('-');
-            fetchMonth(parseInt(parts[0], 10), parseInt(parts[1], 10), function () {
+            fetchMonth(parseInt(parts[0], 10), parseInt(parts[1], 10), function (err, data) {
+                if (err) fetchErr = err;
+                else if (data && data.error && data.error !== 'not_current_month') fetchErr = data.error;
                 pending--;
-                if (pending === 0) renderEvents(cachedEvents());
+                if (pending === 0) {
+                    var evts = cachedEvents();
+                    if (!evts.length && fetchErr) {
+                        body.innerHTML = '<div class="econ-empty">[ UNABLE TO LOAD FEED — CHECK CONSOLE ]</div>';
+                    } else {
+                        renderEvents(evts);
+                    }
+                }
             });
         });
     }
