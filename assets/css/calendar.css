@@ -183,22 +183,22 @@
   flex-direction: column;
 }
 
-/* WIN day (mirrors .tp-cal-cell--win) */
+/* WIN day */
 .cal-cell--profit {
-  background: linear-gradient(150deg, #1fd99a 0%, #0d9e6a 100%);
+  background: linear-gradient(150deg, rgba(31,217,154,0.45) 0%, rgba(13,158,106,0.55) 100%);
   box-shadow: 0 2px 0 rgba(0,0,0,0.50),
-              0 0 10px rgba(16,185,129,0.25),
-              inset 0 1px 0 rgba(255,255,255,0.32);
-  border-color: rgba(16,185,129,0.25);
+              0 0 8px rgba(16,185,129,0.15),
+              inset 0 1px 0 rgba(255,255,255,0.18);
+  border-color: rgba(16,185,129,0.20);
 }
 
-/* LOSS day (mirrors .tp-cal-cell--loss) */
+/* LOSS day */
 .cal-cell--loss {
-  background: linear-gradient(150deg, #ef3d47 0%, #a8111a 100%);
+  background: linear-gradient(150deg, rgba(239,61,71,0.45) 0%, rgba(168,17,26,0.55) 100%);
   box-shadow: 0 2px 0 rgba(0,0,0,0.50),
-              0 0 10px rgba(215,25,33,0.25),
-              inset 0 1px 0 rgba(255,255,255,0.20);
-  border-color: rgba(215,25,33,0.25);
+              0 0 8px rgba(215,25,33,0.15),
+              inset 0 1px 0 rgba(255,255,255,0.12);
+  border-color: rgba(215,25,33,0.20);
 }
 
 /* BREAKEVEN day (mirrors .tp-cal-cell--be) */
@@ -297,18 +297,18 @@
   flex-direction: column;
 }
 .cal-cell-week--profit {
-  background: linear-gradient(150deg, #1fd99a 0%, #0d9e6a 100%);
+  background: linear-gradient(150deg, rgba(31,217,154,0.45) 0%, rgba(13,158,106,0.55) 100%);
   box-shadow: 0 2px 0 rgba(0,0,0,0.50),
-              0 0 10px rgba(16,185,129,0.25),
-              inset 0 1px 0 rgba(255,255,255,0.32);
-  border-color: rgba(16,185,129,0.3);
+              0 0 10px rgba(16,185,129,0.15),
+              inset 0 1px 0 rgba(255,255,255,0.18);
+  border-color: rgba(16,185,129,0.20);
 }
 .cal-cell-week--loss {
-  background: linear-gradient(150deg, #ef3d47 0%, #a8111a 100%);
+  background: linear-gradient(150deg, rgba(239,61,71,0.45) 0%, rgba(168,17,26,0.55) 100%);
   box-shadow: 0 2px 0 rgba(0,0,0,0.50),
-              0 0 10px rgba(215,25,33,0.25),
-              inset 0 1px 0 rgba(255,255,255,0.20);
-  border-color: rgba(215,25,33,0.3);
+              0 0 10px rgba(215,25,33,0.15),
+              inset 0 1px 0 rgba(255,255,255,0.12);
+  border-color: rgba(215,25,33,0.20);
 }
 .cal-cell-week-lbl {
   font-family: 'Chivo Mono', monospace;
@@ -336,8 +336,8 @@
 
 /* light mode week cell */
 [data-theme="light"] .cal-cell-week            { background: rgba(0,0,0,0.04); border-color: #C8C8C8; }
-[data-theme="light"] .cal-cell-week--profit    { background: linear-gradient(150deg, #1fd99a 0%, #0d9e6a 100%); }
-[data-theme="light"] .cal-cell-week--loss      { background: linear-gradient(150deg, #ef3d47 0%, #a8111a 100%); }
+[data-theme="light"] .cal-cell-week--profit    { background: linear-gradient(150deg, rgba(31,217,154,0.45) 0%, rgba(13,158,106,0.55) 100%); }
+[data-theme="light"] .cal-cell-week--loss      { background: linear-gradient(150deg, rgba(239,61,71,0.45) 0%, rgba(168,17,26,0.55) 100%); }
 
 /* ── Day detail panel — Trading Activity card style ───────── */
 .cal-detail {
