@@ -3697,12 +3697,56 @@ foreach ($challenges as $ch) {
                     </div>
                 </div>
 
-                <!-- ══ ECONOMIC CALENDAR (coming soon) ══ -->
-                <div class="dash-coming-soon" style="margin-top:48px">
-                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <div class="dash-cs-title">ECONOMIC CALENDAR</div>
-                    <div class="dash-cs-status">[ COMING SOON ]</div>
-                    <div class="dash-cs-desc">High-impact macro events, central bank decisions, and NFP releases — overlaid on your trading days.</div>
+                <!-- ══ ECONOMIC CALENDAR ══ -->
+                <div class="econ-cal" id="econCal">
+
+                    <!-- Header: title + week navigation -->
+                    <div class="econ-cal-hdr">
+                        <span class="econ-cal-title">ECONOMIC CALENDAR</span>
+                        <div class="econ-week-nav">
+                            <button class="econ-nav-btn" id="econPrevWeek">&#9668;</button>
+                            <span class="econ-week-label" id="econWeekLabel">—</span>
+                            <button class="econ-nav-btn" id="econNextWeek">&#9658;</button>
+                        </div>
+                    </div>
+
+                    <!-- Filters: currency + impact -->
+                    <div class="econ-cal-filters">
+                        <div class="econ-currency-filters">
+                            <button class="econ-filter-btn econ-filter-active" data-currency="ALL">ALL</button>
+                            <button class="econ-filter-btn" data-currency="USD">🇺🇸 USD</button>
+                            <button class="econ-filter-btn" data-currency="EUR">🇪🇺 EUR</button>
+                            <button class="econ-filter-btn" data-currency="GBP">🇬🇧 GBP</button>
+                            <button class="econ-filter-btn" data-currency="JPY">🇯🇵 JPY</button>
+                            <button class="econ-filter-btn" data-currency="AUD">🇦🇺 AUD</button>
+                            <button class="econ-filter-btn" data-currency="CAD">🇨🇦 CAD</button>
+                            <button class="econ-filter-btn" data-currency="CHF">🇨🇭 CHF</button>
+                            <button class="econ-filter-btn" data-currency="NZD">🇳🇿 NZD</button>
+                        </div>
+                        <div class="econ-impact-filters">
+                            <button class="econ-impact-btn econ-impact-active" data-impact="high">HIGH</button>
+                            <button class="econ-impact-btn econ-impact-active" data-impact="medium">MED</button>
+                            <button class="econ-impact-btn econ-impact-active" data-impact="low">LOW</button>
+                        </div>
+                    </div>
+
+                    <!-- Column headers -->
+                    <div class="econ-col-hdrs">
+                        <span class="econ-col-hdr">TIME</span>
+                        <span class="econ-col-hdr">CURRENCY</span>
+                        <span class="econ-col-hdr"></span>
+                        <span class="econ-col-hdr">EVENT</span>
+                        <span class="econ-col-hdr econ-col-hdr--right">FORECAST</span>
+                        <span class="econ-col-hdr econ-col-hdr--right">PREVIOUS</span>
+                        <span class="econ-col-hdr econ-col-hdr--right">ACTUAL</span>
+                    </div>
+
+                    <!-- Dynamic event list -->
+                    <div class="econ-cal-body" id="econCalBody">
+                        <div class="econ-loading">[ LOADING... ]</div>
+                    </div>
+
+                    <div class="econ-cal-source">DATA · FOREX FACTORY</div>
                 </div>
 
             </div>

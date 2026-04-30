@@ -521,3 +521,239 @@ const CalendarTab = (function () {
 
     return { refresh: refresh };
 }());
+
+/* ═══════════════════════════════════════════════════════
+   ECONOMIC CALENDAR — Forex Factory feed proxy
+═══════════════════════════════════════════════════════ */
+var EconCalendar = (function () {
+    'use strict';
+
+    var _weekStart = null;
+    var _currency  = 'ALL';
+    var _impacts   = { high: true, medium: true, low: true };
+    var _cache     = {};
+    var _inited    = false;
+
+    var MONTHS_FULL  = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE',
+                        'JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+    var MONTHS_SHORT = ['JAN','FEB','MAR','APR','MAY','JUN',
+                        'JUL','AUG','SEP','OCT','NOV','DEC'];
+    var DAYS_FULL    = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+
+    var FLAGS = {
+        USD:'🇺🇸', EUR:'🇪🇺', GBP:'🇬🇧', JPY:'🇯🇵',
+        AUD:'🇦🇺', CAD:'🇨🇦', CHF:'🇨🇭', NZD:'🇳🇿',
+        CNY:'🇨🇳', CHN:'🇨🇳', SGD:'🇸🇬', KRW:'🇰🇷'
+    };
+
+    function pad2(n)  { return n < 10 ? '0' + n : '' + n; }
+    function esc(s)   { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    /* Monday of the week containing d */
+    function weekStart(d) {
+        var dt  = new Date(d);
+        var day = dt.getDay();
+        dt.setDate(dt.getDate() + (day === 0 ? -6 : 1 - day));
+        dt.setHours(0, 0, 0, 0);
+        return dt;
+    }
+
+    function weekLabel(ws) {
+        var we = new Date(ws);
+        we.setDate(we.getDate() + 6);
+        return MONTHS_SHORT[ws.getMonth()] + ' ' + ws.getDate()
+             + ' – '
+             + MONTHS_SHORT[we.getMonth()] + ' ' + we.getDate()
+             + ' ' + we.getFullYear();
+    }
+
+    /* "8:30am" → "08:30", "All Day" → "ALL DAY", "Tentative" → "TENT." */
+    function parseTime(str) {
+        if (!str || str === 'All Day')  return 'ALL DAY';
+        if (str === 'Tentative')        return 'TENT.';
+        var m = str.match(/^(\d+):(\d+)(am|pm)$/i);
+        if (!m) return str.toUpperCase();
+        var h = parseInt(m[1], 10), ap = m[3].toLowerCase();
+        if (ap === 'pm' && h !== 12) h += 12;
+        if (ap === 'am' && h === 12) h = 0;
+        return pad2(h) + ':' + m[2];
+    }
+
+    function fv(v) { return (v && v.trim()) ? esc(v) : '—'; }
+
+    /* XHR fetch for one month, result cached in _cache keyed 'YYYY-M' */
+    function fetchMonth(year, month, cb) {
+        var key = year + '-' + month;
+        if (_cache[key]) { cb(null, _cache[key]); return; }
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/api/economic-calendar.php?year=' + year + '&month=' + month, true);
+        xhr.timeout = 12000;
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    _cache[key] = data;
+                    cb(null, data);
+                } catch (e) { cb(e, null); }
+            } else {
+                cb(new Error('HTTP ' + xhr.status), null);
+            }
+        };
+        xhr.onerror   = function () { cb(new Error('network'), null); };
+        xhr.ontimeout = function () { cb(new Error('timeout'), null); };
+        xhr.send();
+    }
+
+    /* Collect all events cached so far (for instant re-filter) */
+    function cachedEvents() {
+        var out = [];
+        Object.keys(_cache).forEach(function (k) {
+            if (_cache[k] && _cache[k].events) out = out.concat(_cache[k].events);
+        });
+        return out;
+    }
+
+    /* ── Render ──────────────────────────────────────────── */
+    function render() {
+        var body    = document.getElementById('econCalBody');
+        var labelEl = document.getElementById('econWeekLabel');
+        if (!body) return;
+        if (labelEl) labelEl.textContent = weekLabel(_weekStart);
+        body.innerHTML = '<div class="econ-loading">[ LOADING... ]</div>';
+
+        /* collect which months the current week spans */
+        var months = [], d = new Date(_weekStart);
+        for (var i = 0; i < 7; i++) {
+            var key = d.getFullYear() + '-' + (d.getMonth() + 1);
+            if (months.indexOf(key) < 0) months.push(key);
+            d.setDate(d.getDate() + 1);
+        }
+
+        var pending = months.length;
+        months.forEach(function (key) {
+            var parts = key.split('-');
+            fetchMonth(parseInt(parts[0], 10), parseInt(parts[1], 10), function () {
+                pending--;
+                if (pending === 0) renderEvents(cachedEvents());
+            });
+        });
+    }
+
+    function renderEvents(events) {
+        var body = document.getElementById('econCalBody');
+        if (!body) return;
+
+        /* build 7 day-buckets Mon → Sun */
+        var days = [];
+        for (var i = 0; i < 7; i++) {
+            var dt = new Date(_weekStart);
+            dt.setDate(dt.getDate() + i);
+            days.push({
+                date: dt,
+                dk:   dt.getFullYear() + '-' + pad2(dt.getMonth() + 1) + '-' + pad2(dt.getDate()),
+                evts: []
+            });
+        }
+
+        /* distribute + filter */
+        events.forEach(function (ev) {
+            var imp = (ev.impact || '').toLowerCase().replace(/\s+/g, '-');
+            if (imp === 'non-economic' || imp === 'holiday') return;
+            var impKey = imp.replace('-economic', '');
+            if (!_impacts[impKey] && !_impacts[imp]) return;
+            if (_currency !== 'ALL' && ev.country !== _currency) return;
+            for (var j = 0; j < days.length; j++) {
+                if (days[j].dk === ev.date) { days[j].evts.push(ev); break; }
+            }
+        });
+
+        /* sort within each day by parsed time */
+        days.forEach(function (day) {
+            day.evts.sort(function (a, b) {
+                return parseTime(a.time) < parseTime(b.time) ? -1 : 1;
+            });
+        });
+
+        var html = '', hasAny = false;
+        days.forEach(function (day) {
+            if (!day.evts.length) return;
+            hasAny = true;
+            var dt = day.date;
+            html += '<div class="econ-day-hdr">'
+                  + DAYS_FULL[dt.getDay()] + ' · ' + dt.getDate()
+                  + ' ' + MONTHS_FULL[dt.getMonth()] + ' ' + dt.getFullYear()
+                  + '</div>';
+
+            day.evts.forEach(function (ev) {
+                var imp     = (ev.impact || '').toLowerCase().replace(/\s+/g, '-');
+                var hasAct  = ev.actual && ev.actual.trim();
+                var flag    = FLAGS[ev.country] || '';
+                html += '<div class="econ-event-row">'
+                      + '<span class="econ-time">'     + parseTime(ev.time) + '</span>'
+                      + '<span class="econ-currency"><span class="econ-flag">' + flag + '</span>' + esc(ev.country || '') + '</span>'
+                      + '<span class="econ-impact econ-impact--' + imp + '"></span>'
+                      + '<span class="econ-title">'    + esc(ev.title || '') + '</span>'
+                      + '<span class="econ-val econ-forecast">' + fv(ev.forecast) + '</span>'
+                      + '<span class="econ-val econ-previous">' + fv(ev.previous) + '</span>'
+                      + '<span class="econ-val econ-actual' + (hasAct ? ' econ-actual--live' : '') + '">' + fv(ev.actual) + '</span>'
+                      + '</div>';
+            });
+        });
+
+        body.innerHTML = hasAny
+            ? html
+            : '<div class="econ-empty">[ NO EVENTS MATCHING FILTERS ]</div>';
+    }
+
+    /* ── Init ────────────────────────────────────────────── */
+    function init() {
+        if (_inited) return;
+        _inited    = true;
+        _weekStart = weekStart(new Date());
+
+        var prev = document.getElementById('econPrevWeek');
+        var next = document.getElementById('econNextWeek');
+
+        if (prev) prev.addEventListener('click', function () {
+            _weekStart.setDate(_weekStart.getDate() - 7);
+            render();
+        });
+        if (next) next.addEventListener('click', function () {
+            _weekStart.setDate(_weekStart.getDate() + 7);
+            render();
+        });
+
+        document.querySelectorAll('.econ-filter-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.econ-filter-btn').forEach(function (b) {
+                    b.classList.remove('econ-filter-active');
+                });
+                this.classList.add('econ-filter-active');
+                _currency = this.getAttribute('data-currency');
+                renderEvents(cachedEvents());
+            });
+        });
+
+        document.querySelectorAll('.econ-impact-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var key = this.getAttribute('data-impact');
+                _impacts[key] = !_impacts[key];
+                this.classList.toggle('econ-impact-active', _impacts[key]);
+                renderEvents(cachedEvents());
+            });
+        });
+
+        render();
+    }
+
+    /* watch for calendar tab activation */
+    document.addEventListener('DOMContentLoaded', function () {
+        var tabEl = document.getElementById('tab-calendar');
+        if (!tabEl) return;
+        new MutationObserver(function () {
+            if (tabEl.classList.contains('active')) init();
+        }).observe(tabEl, { attributes: true, attributeFilter: ['class'] });
+    });
+
+    return { init: init };
+}());
