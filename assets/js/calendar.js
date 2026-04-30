@@ -165,7 +165,7 @@ const CalendarTab = (function () {
     }
 
     /* ── Journal (localStorage) ─────────────────────────────── */
-    function jKey(dk) { return 'doji-journal-' + dk; }
+    function jKey(dk) { return 'doji-journal-' + _filter + '-' + dk; }
 
     function escHtml(s) {
         return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -334,7 +334,7 @@ const CalendarTab = (function () {
             var jIcon = '', jNote = '';
             if (hasTr) {
                 var jRaw = null;
-                try { jRaw = localStorage.getItem('doji-journal-' + dk); } catch (e) {}
+                try { jRaw = localStorage.getItem(jKey(dk)); } catch (e) {}
                 if (jRaw) {
                     var ji = jrnlIndicator(JSON.parse(jRaw));
                     jIcon = ji.icon;
