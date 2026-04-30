@@ -158,7 +158,7 @@ nav.nav, .mobile-menu { display: none !important; }
     white-space: nowrap;
 }
 .dash-nav-item:hover { color: var(--text-pri); background: rgba(255,255,255,0.02); }
-.dash-nav-item.active { color: var(--text-disp); }
+.dash-nav-item.active { color: var(--text-disp); background: rgba(255,255,255,0.055); }
 .dash-nav-item.active::before {
     content: '';
     position: absolute;
