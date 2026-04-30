@@ -336,6 +336,8 @@
 
 /* light mode week cell — keep same dark surface as dark mode */
 [data-theme="light"] .cal-cell-week            { background: #0f1315; border-color: #2A2A2A; }
+[data-theme="light"] .cal-cell-week--profit    { background: linear-gradient(150deg, #1cb880 0%, #0d7a54 100%); }
+[data-theme="light"] .cal-cell-week--loss      { background: linear-gradient(150deg, #c4323b 0%, #8a191f 100%); }
 
 /* ── Day detail panel — Trading Activity card style ───────── */
 .cal-detail {
