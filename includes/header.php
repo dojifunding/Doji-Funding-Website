@@ -76,6 +76,7 @@ if (!headers_sent()) {
     <?php endif; ?>
     <?php if ($currentPage === 'dashboard'): ?>
     <link rel="stylesheet" href="assets/css/dashboard.css?v=<?= $v ?>">
+    <link rel="stylesheet" href="assets/css/calendar.css?v=<?= $v ?>">
     <?php endif; ?>
 
     <!-- Hero canvas positioning -->

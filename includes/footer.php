@@ -209,6 +209,7 @@ $v = ASSET_VERSION;
 <?php if ($currentPage === 'dashboard'): ?>
 <script defer src="assets/js/dashboard.js?v=<?= $v ?>"></script>
 <script defer src="assets/js/statistics.js?v=<?= $v ?>"></script>
+<script defer src="assets/js/calendar.js?v=<?= $v ?>"></script>
 <?php endif; ?>
 
 <!-- Visual Effects Engine -->

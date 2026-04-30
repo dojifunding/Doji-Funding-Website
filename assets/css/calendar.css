@@ -1,0 +1,335 @@
+
+/* ═══════════════════════════════════════════════════════════
+   CALENDAR TAB — TRADING JOURNAL
+═══════════════════════════════════════════════════════════ */
+
+/* ── Section header ───────────────────────────────────────── */
+.cal-section-hdr {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+.cal-section-title {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+.cal-section-sub {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 10px;
+  color: var(--text-sec);
+  letter-spacing: 0.06em;
+  margin-top: 5px;
+}
+
+/* ── Filter bar ───────────────────────────────────────────── */
+.cal-filterbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.cal-filter-btn {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-sec);
+  background: none;
+  border: 1px solid var(--border-vis);
+  padding: 5px 11px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.1s;
+  white-space: nowrap;
+}
+.cal-filter-btn:hover { color: var(--text-pri); border-color: var(--text-sec); }
+.cal-filter-active    { color: var(--accent) !important; border-color: var(--accent) !important; }
+.cal-filter-sep       { width: 1px; height: 18px; background: var(--border-vis); margin: 0 3px; align-self: center; flex-shrink: 0; }
+
+/* ── KPI strip ────────────────────────────────────────────── */
+.cal-kpis {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.cal-kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px 14px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 2px 8px rgba(0,0,0,0.2);
+}
+.cal-kpi-lbl {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-sec);
+  margin-bottom: 6px;
+}
+.cal-kpi-val {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-disp);
+  line-height: 1;
+}
+.cal-kpi-val.green { color: var(--success); }
+.cal-kpi-val.red   { color: var(--error); }
+
+/* ── Month navigation ─────────────────────────────────────── */
+.cal-month-nav {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.cal-month-title {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--text-disp);
+  flex: 1;
+  text-align: center;
+}
+.cal-nav-btn {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 10px;
+  color: var(--text-sec);
+  background: none;
+  border: 1px solid var(--border-vis);
+  border-radius: 2px;
+  padding: 5px 11px;
+  cursor: pointer;
+  transition: all 0.1s;
+  flex-shrink: 0;
+}
+.cal-nav-btn:hover { color: var(--text-pri); border-color: var(--text-sec); }
+
+/* ── Day-of-week header ───────────────────────────────────── */
+.cal-dow-hdr {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 3px;
+}
+.cal-dow {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--text-dis);
+  text-align: center;
+  padding: 4px 0;
+}
+.cal-dow--we { opacity: 0.5; }
+
+/* ── Calendar grid ────────────────────────────────────────── */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 16px;
+}
+.cal-cell {
+  position: relative;
+  min-height: 76px;
+  padding: 8px 9px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.15s;
+  display: flex;
+  flex-direction: column;
+}
+.cal-cell[data-dk]       { cursor: pointer; }
+.cal-cell[data-dk]:hover { border-color: var(--border-vis); filter: brightness(1.15); }
+.cal-cell--empty {
+  background: transparent !important;
+  border-color: transparent !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  pointer-events: none;
+}
+.cal-cell--today  { border-color: var(--accent) !important; }
+.cal-cell--future { opacity: 0.22; pointer-events: none; }
+.cal-cell-day {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-sec);
+  line-height: 1;
+}
+.cal-cell--today .cal-cell-day { color: var(--accent); }
+.cal-cell-pnl {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: auto;
+  padding-top: 6px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.cal-cell-pnl.green { color: var(--success); }
+.cal-cell-pnl.red   { color: var(--error); }
+.cal-cell-trades {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: var(--text-dis);
+  margin-top: 3px;
+}
+
+/* ── Day detail panel ─────────────────────────────────────── */
+.cal-detail {
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.cal-detail-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.cal-detail-title {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-disp);
+}
+.cal-detail-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-sec);
+  cursor: pointer;
+  padding: 0 2px;
+  transition: color 0.1s;
+}
+.cal-detail-close:hover { color: var(--text-pri); }
+.cal-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border-vis);
+}
+.cal-detail-list .ov-activity-row { background: var(--surface); }
+.cal-detail-empty-row {
+  background: var(--surface);
+  font-family: 'Chivo Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--text-dis);
+  text-align: center;
+  padding: 24px;
+}
+.cal-trade-row {
+  gap: 10px !important;
+  padding: 10px 14px !important;
+}
+.cal-trade-pair {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-pri);
+  letter-spacing: 0.04em;
+  min-width: 64px;
+  flex-shrink: 0;
+}
+.cal-trade-time {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 10px;
+  color: var(--text-sec);
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.cal-trade-dur {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dis);
+  letter-spacing: 0.04em;
+  flex: 1;
+}
+.cal-detail-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.cal-ds-item {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-sec);
+}
+.cal-ds-sep    { color: var(--border-vis); }
+.cal-ds-spacer { flex: 1; }
+.cal-ds-total  { font-family: 'Chivo Mono', monospace; font-size: 13px; font-weight: 700; }
+.cal-ds-total.green { color: var(--success); }
+.cal-ds-total.red   { color: var(--error); }
+
+/* ── Light mode ───────────────────────────────────────────── */
+[data-theme="light"] .cal-kpi {
+  background: #111111;
+  border-color: #2A2A2A;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 0 rgba(0,0,0,0.5), 0 6px 20px rgba(0,0,0,0.28);
+  --text-sec: #999999; --text-dis: #666666;
+  --text-pri: #E8E8E8; --text-disp: #FFFFFF;
+  --success: #10B981; --error: #D71921;
+}
+[data-theme="light"] .cal-cell              { background: rgba(255,255,255,0.65); border-color: #C8C8C8; }
+[data-theme="light"] .cal-cell[data-dk]:hover { filter: brightness(0.93); }
+[data-theme="light"] .cal-cell--empty       { background: transparent !important; border-color: transparent !important; }
+[data-theme="light"] .cal-cell--today       { border-color: var(--accent) !important; }
+[data-theme="light"] .cal-detail {
+  border-color: #2A2A2A;
+  --text-sec: #999999; --text-dis: #666666;
+  --text-pri: #E8E8E8; --text-disp: #FFFFFF;
+  --surface: #111111; --border: #222222;
+  --border-vis: #2A2A2A; --success: #10B981; --error: #D71921;
+}
+[data-theme="light"] .cal-detail-hdr        { background: #0D0D0D; border-color: #2A2A2A; }
+[data-theme="light"] .cal-detail-list       { background: #2A2A2A; }
+[data-theme="light"] .cal-detail-list .ov-activity-row { background: #111111; }
+[data-theme="light"] .cal-detail-empty-row  { background: #111111; }
+[data-theme="light"] .cal-detail-summary    { background: #0D0D0D; border-color: #222222; }
+[data-theme="light"] .cal-filter-btn        { border-color: #C8C8C8; color: #555; }
+[data-theme="light"] .cal-filter-btn:hover  { border-color: var(--accent); color: #222; }
+[data-theme="light"] .cal-month-title       { color: var(--text-primary); }
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 900px)  { .cal-kpis { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 640px)  {
+  .cal-kpis { grid-template-columns: repeat(2, 1fr); }
+  .cal-cell { min-height: 56px; padding: 6px 7px; }
+  .cal-cell-pnl { font-size: 10px; }
+  .cal-cell-trades { display: none; }
+}
+@media (max-width: 420px)  {
+  .cal-cell { min-height: 44px; padding: 4px 5px; }
+  .cal-cell-pnl { font-size: 9px; }
+  .cal-cell-day { font-size: 9px; }
+  .cal-dow { font-size: 8px; }
+}

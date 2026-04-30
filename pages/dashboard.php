@@ -80,7 +80,7 @@ function compTimeUntil(string $startsStr): string {
 // ── Competitions demo data ──
 $competitions_all = [
     ['id'=>1,  'name'=>'Monthly Traders Cup',   'edition'=>'April 2026',    'type'=>'free', 'entry'=>0,    'organizer'=>'Doji Funding','starts'=>'2026-04-01 00:00:00','ends'=>'2026-04-30 23:59:59','participants'=>247,'platform'=>'DXtrade','status'=>'live',    'category'=>'monthly',      'prize_pool'=>5000, 'featured'=>true],
-    ['id'=>2,  'name'=>'Elite Challenge Series','edition'=>'Season 3',      'type'=>'paid', 'entry'=>25,   'organizer'=>'Doji Funding','starts'=>'2026-04-25 00:00:00','ends'=>'2026-05-25 23:59:59','participants'=>89, 'platform'=>'DXtrade','status'=>'upcoming','category'=>'championship', 'prize_pool'=>25000,'featured'=>false],
+    ['id'=>2,  'name'=>'Elite Challenge Series','edition'=>'Season 3',      'type'=>'paid', 'entry'=>25,   'organizer'=>'Doji Funding','starts'=>'2026-04-25 00:00:00','ends'=>'2026-05-25 23:59:59','participants'=>89, 'platform'=>'DXtrade','status'=>'live',    'category'=>'championship', 'prize_pool'=>25000,'featured'=>false],
     ['id'=>101,'name'=>'Monthly Traders Cup',   'edition'=>'March 2026',    'type'=>'free', 'entry'=>0,    'organizer'=>'Doji Funding','starts'=>'2026-03-01 00:00:00','ends'=>'2026-03-31 23:59:59','participants'=>312,'platform'=>'DXtrade','status'=>'ended',   'category'=>'monthly',      'prize_pool'=>5000, 'featured'=>false],
     ['id'=>102,'name'=>'Monthly Traders Cup',   'edition'=>'February 2026', 'type'=>'free', 'entry'=>0,    'organizer'=>'Doji Funding','starts'=>'2026-02-01 00:00:00','ends'=>'2026-02-28 23:59:59','participants'=>289,'platform'=>'DXtrade','status'=>'ended',   'category'=>'monthly',      'prize_pool'=>5000, 'featured'=>false],
     ['id'=>103,'name'=>'Monthly Traders Cup',   'edition'=>'January 2026',  'type'=>'free', 'entry'=>0,    'organizer'=>'Doji Funding','starts'=>'2026-01-01 00:00:00','ends'=>'2026-01-31 23:59:59','participants'=>201,'platform'=>'DXtrade','status'=>'ended',   'category'=>'monthly',      'prize_pool'=>5000, 'featured'=>false],
@@ -96,56 +96,56 @@ if (!$comp_featured) { foreach ($competitions_all as $_c) { if ($_c['status'] ==
 // ── Competition leaderboards demo data ──
 $comp_leaderboards = [
     1 => [
-        ['rank'=>1, 'uid'=>101,'name'=>'Rahul K',    'country'=>'IN','trades'=>179,'wr'=>75, 'profit'=>1988536.90,'gain'=>1988.54],
-        ['rank'=>2, 'uid'=>102,'name'=>'Mahendra J', 'country'=>'IN','trades'=>200,'wr'=>100,'profit'=>1701383.56,'gain'=>1701.38],
-        ['rank'=>3, 'uid'=>103,'name'=>'Dikshit S',  'country'=>'IN','trades'=>257,'wr'=>67, 'profit'=>1105219.28,'gain'=>1105.22],
-        ['rank'=>4, 'uid'=>104,'name'=>'Raushan K',  'country'=>'IN','trades'=>88, 'wr'=>52, 'profit'=>1008061.40,'gain'=>1008.06],
-        ['rank'=>5, 'uid'=>105,'name'=>'Manoj S',    'country'=>'—', 'trades'=>117,'wr'=>71, 'profit'=>770878.12, 'gain'=>770.88],
-        ['rank'=>6, 'uid'=>106,'name'=>'Alex T',     'country'=>'US','trades'=>94, 'wr'=>63, 'profit'=>621450.00, 'gain'=>621.45],
-        ['rank'=>7, 'uid'=>107,'name'=>'Chen W',     'country'=>'CN','trades'=>143,'wr'=>69, 'profit'=>543200.00, 'gain'=>543.20],
-        ['rank'=>8, 'uid'=>108,'name'=>'Sofia M',    'country'=>'ES','trades'=>112,'wr'=>58, 'profit'=>489300.00, 'gain'=>489.30],
-        ['rank'=>9, 'uid'=>109,'name'=>'Yuki T',     'country'=>'JP','trades'=>87, 'wr'=>72, 'profit'=>412500.00, 'gain'=>412.50],
-        ['rank'=>10,'uid'=>110,'name'=>'Lucas B',    'country'=>'BR','trades'=>201,'wr'=>55, 'profit'=>387600.00, 'gain'=>387.60],
-        ['rank'=>11,'uid'=>111,'name'=>'Emma K',     'country'=>'DE','trades'=>76, 'wr'=>68, 'profit'=>312400.00, 'gain'=>312.40],
-        ['rank'=>12,'uid'=>0,  'name'=>'You',        'country'=>'FR','trades'=>45, 'wr'=>62, 'profit'=>198750.00, 'gain'=>198.75,'me'=>true],
-        ['rank'=>13,'uid'=>112,'name'=>'Omar A',     'country'=>'AE','trades'=>63, 'wr'=>49, 'profit'=>167300.00, 'gain'=>167.30],
-        ['rank'=>14,'uid'=>113,'name'=>'Ivan P',     'country'=>'RU','trades'=>98, 'wr'=>54, 'profit'=>143200.00, 'gain'=>143.20],
-        ['rank'=>15,'uid'=>114,'name'=>'Fatima Z',   'country'=>'MA','trades'=>55, 'wr'=>65, 'profit'=>121800.00, 'gain'=>121.80],
+        ['rank'=>1, 'uid'=>101,'name'=>'Rahul K',    'country'=>'IN','trades'=>179,'winRate'=>75, 'profitPct'=>1988.54,'profit'=>1988536.90,'pair'=>'XAUUSD','avgWin'=>14850,'avgLoss'=>7070,'avgHold'=>45, 'avgRR'=>2.10],
+        ['rank'=>2, 'uid'=>102,'name'=>'Mahendra J', 'country'=>'IN','trades'=>200,'winRate'=>100,'profitPct'=>1701.38,'profit'=>1701383.56,'pair'=>'NAS100','avgWin'=>8510, 'avgLoss'=>3040,'avgHold'=>30, 'avgRR'=>2.80],
+        ['rank'=>3, 'uid'=>103,'name'=>'Dikshit S',  'country'=>'IN','trades'=>257,'winRate'=>67, 'profitPct'=>1105.22,'profit'=>1105219.28,'pair'=>'EURUSD','avgWin'=>6420, 'avgLoss'=>3570,'avgHold'=>65, 'avgRR'=>1.80],
+        ['rank'=>4, 'uid'=>104,'name'=>'Raushan K',  'country'=>'IN','trades'=>88, 'winRate'=>52, 'profitPct'=>1008.06,'profit'=>1008061.40,'pair'=>'GBPUSD','avgWin'=>22050,'avgLoss'=>8820,'avgHold'=>90, 'avgRR'=>2.50],
+        ['rank'=>5, 'uid'=>105,'name'=>'Manoj S',    'country'=>'—', 'trades'=>117,'winRate'=>71, 'profitPct'=>770.88, 'profit'=>770878.12, 'pair'=>'XAUUSD','avgWin'=>9280, 'avgLoss'=>4220,'avgHold'=>55, 'avgRR'=>2.20],
+        ['rank'=>6, 'uid'=>106,'name'=>'Alex T',     'country'=>'US','trades'=>94, 'winRate'=>63, 'profitPct'=>621.45, 'profit'=>621450.00, 'pair'=>'USDJPY','avgWin'=>10490,'avgLoss'=>5520,'avgHold'=>75, 'avgRR'=>1.90],
+        ['rank'=>7, 'uid'=>107,'name'=>'Chen W',     'country'=>'CN','trades'=>143,'winRate'=>69, 'profitPct'=>543.20, 'profit'=>543200.00, 'pair'=>'EURUSD','avgWin'=>5510, 'avgLoss'=>2760,'avgHold'=>40, 'avgRR'=>2.00],
+        ['rank'=>8, 'uid'=>108,'name'=>'Sofia M',    'country'=>'ES','trades'=>112,'winRate'=>58, 'profitPct'=>489.30, 'profit'=>489300.00, 'pair'=>'GBPUSD','avgWin'=>7530, 'avgLoss'=>3270,'avgHold'=>120,'avgRR'=>2.30],
+        ['rank'=>9, 'uid'=>109,'name'=>'Yuki T',     'country'=>'JP','trades'=>87, 'winRate'=>72, 'profitPct'=>412.50, 'profit'=>412500.00, 'pair'=>'USDJPY','avgWin'=>6590, 'avgLoss'=>2540,'avgHold'=>35, 'avgRR'=>2.60],
+        ['rank'=>10,'uid'=>110,'name'=>'Lucas B',    'country'=>'BR','trades'=>201,'winRate'=>55, 'profitPct'=>387.60, 'profit'=>387600.00, 'pair'=>'EURUSD','avgWin'=>3510, 'avgLoss'=>2060,'avgHold'=>85, 'avgRR'=>1.70],
+        ['rank'=>11,'uid'=>111,'name'=>'Emma K',     'country'=>'DE','trades'=>76, 'winRate'=>68, 'profitPct'=>312.40, 'profit'=>312400.00, 'pair'=>'NAS100','avgWin'=>6050, 'avgLoss'=>2520,'avgHold'=>50, 'avgRR'=>2.40],
+        ['rank'=>12,'uid'=>0,  'name'=>'You',        'country'=>'FR','trades'=>45, 'winRate'=>62, 'profitPct'=>198.75, 'profit'=>198750.00, 'pair'=>'XAUUSD','avgWin'=>7120, 'avgLoss'=>3650,'avgHold'=>70, 'avgRR'=>1.95,'me'=>true],
+        ['rank'=>13,'uid'=>112,'name'=>'Omar A',     'country'=>'AE','trades'=>63, 'winRate'=>49, 'profitPct'=>167.30, 'profit'=>167300.00, 'pair'=>'GBPUSD','avgWin'=>5420, 'avgLoss'=>2460,'avgHold'=>110,'avgRR'=>2.20],
+        ['rank'=>14,'uid'=>113,'name'=>'Ivan P',     'country'=>'RU','trades'=>98, 'winRate'=>54, 'profitPct'=>143.20, 'profit'=>143200.00, 'pair'=>'EURUSD','avgWin'=>2710, 'avgLoss'=>1510,'avgHold'=>95, 'avgRR'=>1.80],
+        ['rank'=>15,'uid'=>114,'name'=>'Fatima Z',   'country'=>'MA','trades'=>55, 'winRate'=>65, 'profitPct'=>121.80, 'profit'=>121800.00, 'pair'=>'XAUUSD','avgWin'=>3410, 'avgLoss'=>1620,'avgHold'=>60, 'avgRR'=>2.10],
     ],
     2 => [],
     101 => [
-        ['rank'=>1, 'uid'=>115,'name'=>'Pierre D',   'country'=>'FR','trades'=>156,'wr'=>78, 'profit'=>2341200.00,'gain'=>2341.20],
-        ['rank'=>2, 'uid'=>116,'name'=>'Ankit S',    'country'=>'IN','trades'=>189,'wr'=>82, 'profit'=>1987400.00,'gain'=>1987.40],
-        ['rank'=>3, 'uid'=>117,'name'=>'Kim J',      'country'=>'KR','trades'=>134,'wr'=>71, 'profit'=>1654300.00,'gain'=>1654.30],
-        ['rank'=>4, 'uid'=>118,'name'=>'Liu W',      'country'=>'CN','trades'=>167,'wr'=>66, 'profit'=>1234500.00,'gain'=>1234.50],
-        ['rank'=>5, 'uid'=>119,'name'=>'Maria G',    'country'=>'MX','trades'=>142,'wr'=>73, 'profit'=>987600.00, 'gain'=>987.60],
-        ['rank'=>6, 'uid'=>120,'name'=>'David N',    'country'=>'NG','trades'=>118,'wr'=>69, 'profit'=>812300.00, 'gain'=>812.30],
-        ['rank'=>7, 'uid'=>121,'name'=>'Sarah M',    'country'=>'GB','trades'=>95, 'wr'=>77, 'profit'=>698400.00, 'gain'=>698.40],
-        ['rank'=>8, 'uid'=>0,  'name'=>'You',        'country'=>'FR','trades'=>67, 'wr'=>59, 'profit'=>534200.00, 'gain'=>534.20,'me'=>true],
-        ['rank'=>9, 'uid'=>122,'name'=>'Hassan A',   'country'=>'SA','trades'=>89, 'wr'=>61, 'profit'=>456700.00, 'gain'=>456.70],
-        ['rank'=>10,'uid'=>123,'name'=>'Priya R',    'country'=>'IN','trades'=>112,'wr'=>74, 'profit'=>389100.00, 'gain'=>389.10],
+        ['rank'=>1, 'uid'=>115,'name'=>'Pierre D',   'country'=>'FR','trades'=>156,'winRate'=>78, 'profitPct'=>2341.20,'profit'=>2341200.00,'pair'=>'XAUUSD','avgWin'=>19240,'avgLoss'=>8020,'avgHold'=>55, 'avgRR'=>2.40],
+        ['rank'=>2, 'uid'=>116,'name'=>'Ankit S',    'country'=>'IN','trades'=>189,'winRate'=>82, 'profitPct'=>1987.40,'profit'=>1987400.00,'pair'=>'EURUSD','avgWin'=>12820,'avgLoss'=>4750,'avgHold'=>40, 'avgRR'=>2.70],
+        ['rank'=>3, 'uid'=>117,'name'=>'Kim J',      'country'=>'KR','trades'=>134,'winRate'=>71, 'profitPct'=>1654.30,'profit'=>1654300.00,'pair'=>'NAS100','avgWin'=>17390,'avgLoss'=>7900,'avgHold'=>50, 'avgRR'=>2.20],
+        ['rank'=>4, 'uid'=>118,'name'=>'Liu W',      'country'=>'CN','trades'=>167,'winRate'=>66, 'profitPct'=>1234.50,'profit'=>1234500.00,'pair'=>'USDJPY','avgWin'=>11200,'avgLoss'=>5890,'avgHold'=>70, 'avgRR'=>1.90],
+        ['rank'=>5, 'uid'=>119,'name'=>'Maria G',    'country'=>'MX','trades'=>142,'winRate'=>73, 'profitPct'=>987.60, 'profit'=>987600.00, 'pair'=>'EURUSD','avgWin'=>9530, 'avgLoss'=>4140,'avgHold'=>45, 'avgRR'=>2.30],
+        ['rank'=>6, 'uid'=>120,'name'=>'David N',    'country'=>'NG','trades'=>118,'winRate'=>69, 'profitPct'=>812.30, 'profit'=>812300.00, 'pair'=>'XAUUSD','avgWin'=>9980, 'avgLoss'=>4990,'avgHold'=>60, 'avgRR'=>2.00],
+        ['rank'=>7, 'uid'=>121,'name'=>'Sarah M',    'country'=>'GB','trades'=>95, 'winRate'=>77, 'profitPct'=>698.40, 'profit'=>698400.00, 'pair'=>'GBPUSD','avgWin'=>9550, 'avgLoss'=>3410,'avgHold'=>35, 'avgRR'=>2.80],
+        ['rank'=>8, 'uid'=>0,  'name'=>'You',        'country'=>'FR','trades'=>67, 'winRate'=>59, 'profitPct'=>534.20, 'profit'=>534200.00, 'pair'=>'EURUSD','avgWin'=>13510,'avgLoss'=>7510,'avgHold'=>80, 'avgRR'=>1.80,'me'=>true],
+        ['rank'=>9, 'uid'=>122,'name'=>'Hassan A',   'country'=>'SA','trades'=>89, 'winRate'=>61, 'profitPct'=>456.70, 'profit'=>456700.00, 'pair'=>'USDJPY','avgWin'=>8410, 'avgLoss'=>4010,'avgHold'=>90, 'avgRR'=>2.10],
+        ['rank'=>10,'uid'=>123,'name'=>'Priya R',    'country'=>'IN','trades'=>112,'winRate'=>74, 'profitPct'=>389.10, 'profit'=>389100.00, 'pair'=>'XAUUSD','avgWin'=>4700, 'avgLoss'=>1880,'avgHold'=>42, 'avgRR'=>2.50],
     ],
     102 => [
-        ['rank'=>1, 'uid'=>124,'name'=>'Kenji T',    'country'=>'JP','trades'=>178,'wr'=>81, 'profit'=>2156700.00,'gain'=>2156.70],
-        ['rank'=>2, 'uid'=>125,'name'=>'Amara D',    'country'=>'SN','trades'=>145,'wr'=>76, 'profit'=>1876400.00,'gain'=>1876.40],
-        ['rank'=>3, 'uid'=>126,'name'=>'Carlos V',   'country'=>'CO','trades'=>198,'wr'=>68, 'profit'=>1543200.00,'gain'=>1543.20],
-        ['rank'=>4, 'uid'=>127,'name'=>'Nadia B',    'country'=>'TN','trades'=>134,'wr'=>72, 'profit'=>1234800.00,'gain'=>1234.80],
-        ['rank'=>5, 'uid'=>128,'name'=>'Ryan C',     'country'=>'AU','trades'=>167,'wr'=>65, 'profit'=>987300.00, 'gain'=>987.30],
+        ['rank'=>1, 'uid'=>124,'name'=>'Kenji T',    'country'=>'JP','trades'=>178,'winRate'=>81, 'profitPct'=>2156.70,'profit'=>2156700.00,'pair'=>'XAUUSD','avgWin'=>14960,'avgLoss'=>5750,'avgHold'=>38, 'avgRR'=>2.60],
+        ['rank'=>2, 'uid'=>125,'name'=>'Amara D',    'country'=>'SN','trades'=>145,'winRate'=>76, 'profitPct'=>1876.40,'profit'=>1876400.00,'pair'=>'EURUSD','avgWin'=>17030,'avgLoss'=>7400,'avgHold'=>55, 'avgRR'=>2.30],
+        ['rank'=>3, 'uid'=>126,'name'=>'Carlos V',   'country'=>'CO','trades'=>198,'winRate'=>68, 'profitPct'=>1543.20,'profit'=>1543200.00,'pair'=>'GBPUSD','avgWin'=>11460,'avgLoss'=>6030,'avgHold'=>65, 'avgRR'=>1.90],
+        ['rank'=>4, 'uid'=>127,'name'=>'Nadia B',    'country'=>'TN','trades'=>134,'winRate'=>72, 'profitPct'=>1234.80,'profit'=>1234800.00,'pair'=>'NAS100','avgWin'=>12800,'avgLoss'=>6100,'avgHold'=>75, 'avgRR'=>2.10],
+        ['rank'=>5, 'uid'=>128,'name'=>'Ryan C',     'country'=>'AU','trades'=>167,'winRate'=>65, 'profitPct'=>987.30, 'profit'=>987300.00, 'pair'=>'USDJPY','avgWin'=>9100, 'avgLoss'=>5060,'avgHold'=>85, 'avgRR'=>1.80],
     ],
     103 => [
-        ['rank'=>1, 'uid'=>129,'name'=>'Ming L',     'country'=>'CN','trades'=>201,'wr'=>79, 'profit'=>2345600.00,'gain'=>2345.60],
-        ['rank'=>2, 'uid'=>130,'name'=>'Aisha M',    'country'=>'NG','trades'=>167,'wr'=>83, 'profit'=>1987200.00,'gain'=>1987.20],
-        ['rank'=>3, 'uid'=>131,'name'=>'Thomas B',   'country'=>'FR','trades'=>189,'wr'=>71, 'profit'=>1654800.00,'gain'=>1654.80],
+        ['rank'=>1, 'uid'=>129,'name'=>'Ming L',     'country'=>'CN','trades'=>201,'winRate'=>79, 'profitPct'=>2345.60,'profit'=>2345600.00,'pair'=>'XAUUSD','avgWin'=>14770,'avgLoss'=>5910,'avgHold'=>42, 'avgRR'=>2.50],
+        ['rank'=>2, 'uid'=>130,'name'=>'Aisha M',    'country'=>'NG','trades'=>167,'winRate'=>83, 'profitPct'=>1987.20,'profit'=>1987200.00,'pair'=>'NAS100','avgWin'=>14340,'avgLoss'=>4630,'avgHold'=>30, 'avgRR'=>3.10],
+        ['rank'=>3, 'uid'=>131,'name'=>'Thomas B',   'country'=>'FR','trades'=>189,'winRate'=>71, 'profitPct'=>1654.80,'profit'=>1654800.00,'pair'=>'EURUSD','avgWin'=>12330,'avgLoss'=>6170,'avgHold'=>55, 'avgRR'=>2.00],
     ],
     201 => [
-        ['rank'=>1, 'uid'=>132,'name'=>'Viktor S',   'country'=>'UA','trades'=>123,'wr'=>84, 'profit'=>987400.00, 'gain'=>987.40],
-        ['rank'=>2, 'uid'=>133,'name'=>'Jun K',       'country'=>'KR','trades'=>145,'wr'=>78, 'profit'=>756300.00, 'gain'=>756.30],
-        ['rank'=>3, 'uid'=>134,'name'=>'Lena M',     'country'=>'DE','trades'=>98, 'wr'=>71, 'profit'=>534200.00, 'gain'=>534.20],
+        ['rank'=>1, 'uid'=>132,'name'=>'Viktor S',   'country'=>'UA','trades'=>123,'winRate'=>84, 'profitPct'=>987.40, 'profit'=>987400.00, 'pair'=>'XAUUSD','avgWin'=>9560, 'avgLoss'=>2990,'avgHold'=>28, 'avgRR'=>3.20],
+        ['rank'=>2, 'uid'=>133,'name'=>'Jun K',       'country'=>'KR','trades'=>145,'winRate'=>78, 'profitPct'=>756.30, 'profit'=>756300.00, 'pair'=>'NAS100','avgWin'=>6690, 'avgLoss'=>2480,'avgHold'=>40, 'avgRR'=>2.70],
+        ['rank'=>3, 'uid'=>134,'name'=>'Lena M',     'country'=>'DE','trades'=>98, 'winRate'=>71, 'profitPct'=>534.20, 'profit'=>534200.00, 'pair'=>'EURUSD','avgWin'=>7680, 'avgLoss'=>3660,'avgHold'=>60, 'avgRR'=>2.10],
     ],
     202 => [
-        ['rank'=>1, 'uid'=>135,'name'=>'Andre F',    'country'=>'BR','trades'=>112,'wr'=>82, 'profit'=>876500.00, 'gain'=>876.50],
-        ['rank'=>2, 'uid'=>136,'name'=>'Mei X',      'country'=>'CN','trades'=>98, 'wr'=>77, 'profit'=>654300.00, 'gain'=>654.30],
-        ['rank'=>3, 'uid'=>137,'name'=>'James O',    'country'=>'GH','trades'=>87, 'wr'=>69, 'profit'=>432100.00, 'gain'=>432.10],
+        ['rank'=>1, 'uid'=>135,'name'=>'Andre F',    'country'=>'BR','trades'=>112,'winRate'=>82, 'profitPct'=>876.50, 'profit'=>876500.00, 'pair'=>'XAUUSD','avgWin'=>9540, 'avgLoss'=>3290,'avgHold'=>32, 'avgRR'=>2.90],
+        ['rank'=>2, 'uid'=>136,'name'=>'Mei X',      'country'=>'CN','trades'=>98, 'winRate'=>77, 'profitPct'=>654.30, 'profit'=>654300.00, 'pair'=>'EURUSD','avgWin'=>8670, 'avgLoss'=>3470,'avgHold'=>45, 'avgRR'=>2.50],
+        ['rank'=>3, 'uid'=>137,'name'=>'James O',    'country'=>'GH','trades'=>87, 'winRate'=>69, 'profitPct'=>432.10, 'profit'=>432100.00, 'pair'=>'GBPUSD','avgWin'=>7200, 'avgLoss'=>3600,'avgHold'=>65, 'avgRR'=>2.00],
     ],
 ];
 
@@ -231,15 +231,30 @@ foreach (($payouts ?? []) as $_p) {
 }
 // Moody's-style investment grade scale based on total payouts
 // BBB and above = Investment Grade threshold
-if      ($gradePayoutTotal === 0.0)   { $gradeLetter = 'NR';  $gradeLabel = 'NOT RATED';    $gradeColor = 'var(--text-dis)'; $gradeTarget = 0;      $gradeIsIG = false; }
-elseif  ($gradePayoutTotal < 1000)    { $gradeLetter = 'B';   $gradeLabel = 'SPECULATIVE';  $gradeColor = '#888888';         $gradeTarget = 1000;   $gradeIsIG = false; }
-elseif  ($gradePayoutTotal < 5000)    { $gradeLetter = 'BB';  $gradeLabel = 'UPPER SPEC.';  $gradeColor = 'var(--warning)';  $gradeTarget = 5000;   $gradeIsIG = false; }
-elseif  ($gradePayoutTotal < 25000)   { $gradeLetter = 'BBB'; $gradeLabel = 'INV. GRADE';   $gradeColor = 'var(--info)';     $gradeTarget = 25000;  $gradeIsIG = true;  }
-elseif  ($gradePayoutTotal < 100000)  { $gradeLetter = 'A';   $gradeLabel = 'UPPER MEDIUM'; $gradeColor = 'var(--success)';  $gradeTarget = 100000; $gradeIsIG = true;  }
-elseif  ($gradePayoutTotal < 500000)  { $gradeLetter = 'AA';  $gradeLabel = 'HIGH GRADE';   $gradeColor = '#10E8A8';         $gradeTarget = 500000; $gradeIsIG = true;  }
-else                                  { $gradeLetter = 'AAA'; $gradeLabel = 'PRIME';        $gradeColor = 'var(--warning)';  $gradeTarget = 0;      $gradeIsIG = true;  }
-$gradeProg      = $gradeTarget > 0 ? min(100, ($gradePayoutTotal / $gradeTarget) * 100) : 100;
-$gradeLetterLen = strlen($gradeLetter); // 2 = NR/BB/AA, 3 = BBB/AAA
+// ── Payout tier system — overview Grade card + Lifetime Payout certificate ──
+if      ($gradePayoutTotal === 0.0)    { $gradeLetter = '—';        $gradeLabel = 'UNRANKED';    $gradeColor = 'var(--text-dis)'; $gradeTarget = 1000;    $gradeIsIG = false; }
+elseif  ($gradePayoutTotal < 1000)     { $gradeLetter = 'BRONZE';   $gradeLabel = 'RISING';      $gradeColor = '#CD7F32';         $gradeTarget = 1000;    $gradeIsIG = false; }
+elseif  ($gradePayoutTotal < 5000)     { $gradeLetter = 'SILVER';   $gradeLabel = 'CONSISTENT';  $gradeColor = '#94A3B8';         $gradeTarget = 5000;    $gradeIsIG = false; }
+elseif  ($gradePayoutTotal < 25000)    { $gradeLetter = 'GOLD';     $gradeLabel = 'ESTABLISHED'; $gradeColor = '#FBBF24';         $gradeTarget = 25000;   $gradeIsIG = false; }
+elseif  ($gradePayoutTotal < 100000)   { $gradeLetter = 'PLATINUM'; $gradeLabel = 'ADVANCED';    $gradeColor = '#E2E8F0';         $gradeTarget = 100000;  $gradeIsIG = true;  }
+elseif  ($gradePayoutTotal < 500000)   { $gradeLetter = 'DIAMOND';  $gradeLabel = 'ELITE';       $gradeColor = '#67E8F9';         $gradeTarget = 500000;  $gradeIsIG = true;  }
+elseif  ($gradePayoutTotal < 1000000)  { $gradeLetter = 'MASTER';   $gradeLabel = 'PINNACLE';    $gradeColor = '#A78BFA';         $gradeTarget = 1000000; $gradeIsIG = true;  }
+else                                   { $gradeLetter = 'LEGEND';   $gradeLabel = 'LEGENDARY';   $gradeColor = '#F97316';         $gradeTarget = 0;       $gradeIsIG = true;  }
+$gradeProg      = $gradeTarget > 0 && $gradePayoutTotal > 0 ? min(100, ($gradePayoutTotal / $gradeTarget) * 100) : ($gradeTarget === 0 && $gradePayoutTotal > 0 ? 100 : 0);
+$gradeLetterLen = strlen($gradeLetter);
+
+// ── Moody's credit notation — Statistics → Trading DNA card ──
+if      ($gradePayoutTotal === 0.0)    { $moodysLetter = 'NR';  $moodysLabel = 'NOT RATED';    $moodysColor = 'var(--text-dis)'; $moodysIsIG = false; }
+elseif  ($gradePayoutTotal < 1000)     { $moodysLetter = 'B';   $moodysLabel = 'SPECULATIVE';  $moodysColor = '#888888';         $moodysIsIG = false; }
+elseif  ($gradePayoutTotal < 5000)     { $moodysLetter = 'BB';  $moodysLabel = 'UPPER SPEC.';  $moodysColor = 'var(--warning)';  $moodysIsIG = false; }
+elseif  ($gradePayoutTotal < 25000)    { $moodysLetter = 'BBB'; $moodysLabel = 'INV. GRADE';   $moodysColor = 'var(--info)';     $moodysIsIG = true;  }
+elseif  ($gradePayoutTotal < 100000)   { $moodysLetter = 'A';   $moodysLabel = 'UPPER MEDIUM'; $moodysColor = 'var(--success)';  $moodysIsIG = true;  }
+elseif  ($gradePayoutTotal < 500000)   { $moodysLetter = 'AA';  $moodysLabel = 'HIGH GRADE';   $moodysColor = '#10E8A8';         $moodysIsIG = true;  }
+else                                   { $moodysLetter = 'AAA'; $moodysLabel = 'PRIME';         $moodysColor = 'var(--warning)';  $moodysIsIG = true;  }
+$moodysLetterLen = strlen($moodysLetter);
+$_moodysScoreMap = ['NR'=>0.0,'B'=>1.5,'BB'=>3.0,'BBB'=>5.0,'A'=>6.5,'AA'=>8.0,'AAA'=>10.0];
+$moodysScore     = $_moodysScoreMap[$moodysLetter] ?? 0.0;
+$moodysScoreSegs = (int)round($moodysScore);
 
 // 4. Doji Wallet balance + last movements
 $walletBalance   = (float)($profile['wallet_balance'] ?? 0);
@@ -900,6 +915,17 @@ foreach ($challenges as $ch) {
             </div>
             <?php endif; ?>
 
+            <?php if (!($profile['is_public'] ?? 0)): ?>
+            <div class="dash-kyc-banner dash-kyc-banner--lb" id="dashPublicBanner" style="display:none">
+                <span class="dash-kyc-banner-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg></span>
+                <div class="dash-kyc-banner-text">
+                    <strong>You're not on the leaderboard yet</strong>
+                    Enable your public profile to compete for tier ranks, earn badges, and show off your stats.
+                </div>
+                <button class="dash-kyc-banner-btn" onclick="Dashboard.switchTab('settings'); Dashboard.showProfileSection('public')">Enable Public Profile &rarr;</button>
+            </div>
+            <?php endif; ?>
+
             <!-- ══ TAB: OVERVIEW ══ -->
             <div class="dash-tab active" id="tab-overview">
 
@@ -1200,12 +1226,12 @@ foreach ($challenges as $ch) {
                     <div class="stat-card">
                         <div class="stat-card-lbl">GRADE</div>
                         <div class="stat-grade-body">
-                            <div class="stat-grade-letter<?= $gradeLetterLen >= 3 ? ' sz3' : ($gradeLetterLen === 2 ? ' sz2' : '') ?>" style="color:<?= $gradeColor ?>"><?= $gradeLetter ?></div>
+                            <div class="stat-grade-letter<?= $gradeLetterLen >= 8 ? ' sz-tier-lg' : ($gradeLetterLen >= 4 ? ' sz-tier' : ($gradeLetterLen === 3 ? ' sz3' : ($gradeLetterLen === 2 ? ' sz2' : ''))) ?>" style="color:<?= $gradeColor ?>"><?= $gradeLetter ?></div>
                             <div class="stat-grade-meta">
                                 <div class="stat-grade-label-row">
                                     <span class="stat-grade-label" style="color:<?= $gradeColor ?>"><?= $gradeLabel ?></span>
                                     <?php if ($gradeIsIG): ?>
-                                    <span class="stat-grade-ig-badge">IG</span>
+                                    <span class="stat-grade-ig-badge">ELITE</span>
                                     <?php endif; ?>
                                 </div>
                                 <div class="stat-grade-kpis">
@@ -1315,49 +1341,18 @@ foreach ($challenges as $ch) {
                         </div>
                     </div>
 
-                    <!-- 6. TRADING SESSION -->
-                    <div class="stat-card">
-                        <div class="stat-card-lbl">TRADING SESSION</div>
-                        <?php
-                        // Segmented bars: 20 cells per session
-                        $_sesData = [
-                            ['LONDON',   $sesLondonPct],
-                            ['NEW YORK', $sesNYPct],
-                            ['ASIA',     $sesAsiaPct],
-                        ];
-                        ?>
-                        <?php if ($sesTotal > 0): ?>
-                        <div class="stat-ses-rows">
-                            <?php foreach ($_sesData as $_s): ?>
-                            <?php $_segsOn = (int)round($_s[1] / 100 * 20); ?>
-                            <div class="stat-ses-row">
-                                <span class="stat-ses-name"><?= $_s[0] ?></span>
-                                <div class="seg-bar seg-bar-ses">
-                                    <?php for ($__i = 0; $__i < 20; $__i++): ?>
-                                    <div class="seg-bar-cell<?= $__i < $_segsOn ? ' filled' : '' ?>"></div>
-                                    <?php endfor; ?>
-                                </div>
-                                <span class="stat-ses-pct"><?= $_s[1] ?>%</span>
+                    <!-- 6. TRADING DNA -->
+                    <div class="stat-card stat-card--dna">
+                        <div class="stat-card-lbl">TRADING DNA</div>
+                        <div class="stat-dna-result stat-dna-result--flush">
+                            <div class="stat-dna-letter" id="ovDnaGrade">—</div>
+                            <div class="stat-dna-detail">
+                                <div class="stat-dna-score" id="ovDnaGradeLbl">— / 10</div>
+                                <div class="stat-dna-desc" id="ovDnaGradeDesc">—</div>
+                                <div class="stat-seg-bar stat-seg-bar-sm" id="ovDnaSegs"><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div></div>
                             </div>
-                            <?php endforeach; ?>
                         </div>
-                        <?php else: ?>
-                        <div class="stat-no-data">NO DATA YET</div>
-                        <div class="stat-ses-rows" style="opacity:0.15;pointer-events:none">
-                            <?php foreach ([['LONDON',40],['NEW YORK',35],['ASIA',25]] as $_s): ?>
-                            <?php $_segsOn = (int)round($_s[1] / 100 * 20); ?>
-                            <div class="stat-ses-row">
-                                <span class="stat-ses-name"><?= $_s[0] ?></span>
-                                <div class="seg-bar seg-bar-ses">
-                                    <?php for ($__i = 0; $__i < 20; $__i++): ?>
-                                    <div class="seg-bar-cell<?= $__i < $_segsOn ? ' filled' : '' ?>"></div>
-                                    <?php endfor; ?>
-                                </div>
-                                <span class="stat-ses-pct">—</span>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <?php endif; ?>
+                        <div class="stat-dna-ov-sub">$<?= number_format($gradePayoutTotal, 0) ?> TOTAL PAYOUTS · <?= $gradePayoutCount ?> PAYOUT<?= $gradePayoutCount !== 1 ? 'S' : '' ?></div>
                     </div>
 
                 </div><!-- /.stat-grid -->
@@ -2281,6 +2276,33 @@ foreach ($challenges as $ch) {
                             </div>
                         </div>
 
+                        <!-- Section: Public Profile -->
+                        <div class="dash-psection" id="psec-public">
+                            <div class="dash-psection-head">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+                                Public Profile
+                            </div>
+                            <div class="dash-psection-body">
+                                <input type="hidden" id="publicProfileCsrf" value="<?= generateCsrf() ?>">
+                                <div class="dash-pub-row">
+                                    <div class="dash-pub-info">
+                                        <div class="dash-pub-title">Leaderboard Visibility</div>
+                                        <div class="dash-pub-desc">When public, your trading stats, rank, and username appear in the community leaderboard. Your personal details remain private.</div>
+                                    </div>
+                                    <div class="dash-pub-ctrl">
+                                        <button class="dash-pub-toggle<?= ($profile['is_public'] ?? 0) ? ' is-on' : '' ?>"
+                                                id="pubProfileToggle"
+                                                onclick="Dashboard.togglePublicProfile()"
+                                                aria-pressed="<?= ($profile['is_public'] ?? 0) ? 'true' : 'false' ?>">
+                                            <span class="dash-pub-toggle-knob"></span>
+                                        </button>
+                                        <span class="dash-pub-status" id="pubProfileStatus"><?= ($profile['is_public'] ?? 0) ? 'PUBLIC' : 'PRIVATE' ?></span>
+                                    </div>
+                                </div>
+                                <div class="dash-pub-msg" id="pubProfileMsg"></div>
+                            </div>
+                        </div>
+
                         <!-- Section: KYC Documents -->
                         <div class="dash-psection" id="psec-verification">
                             <div class="dash-psection-head">
@@ -3148,32 +3170,481 @@ foreach ($challenges as $ch) {
 
             <!-- ══ TAB: LEADERBOARD ══ -->
             <div class="dash-tab" id="tab-leaderboard">
-                <div class="dash-coming-soon">
-                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><rect x="2" y="14" width="6" height="8" rx="1"/><rect x="9" y="9" width="6" height="13" rx="1"/><rect x="16" y="11" width="6" height="11" rx="1"/></svg>
-                    <div class="dash-cs-title">LEADERBOARD</div>
-                    <div class="dash-cs-status">[ COMING SOON ]</div>
-                    <div class="dash-cs-desc">Global trader rankings by profit, consistency score, and payout volume. Updated in real time.</div>
+
+                <!-- Header -->
+                <div class="lb-hdr">
+                    <div class="lb-hdr-left">
+                        <div class="lb-live-dot"></div>
+                        <div>
+                            <div class="lb-hdr-ttl">GLOBAL TRADER RANKINGS</div>
+                            <div class="lb-hdr-sub" id="lbHdrSub">TOP 50 FUNDED ACCOUNTS · RANKED BY PROFIT % · UPDATED DAILY</div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Stats strip -->
+                <div class="lb-stats">
+                    <div class="lb-stat lb-stat--1">
+                        <div class="lb-stat-lbl">HIGHEST TOTAL PAYOUT</div>
+                        <div class="lb-stat-val" id="lbStatTotalPayout">—</div>
+                        <div class="lb-stat-sub" id="lbStatTotalPayoutName">—</div>
+                    </div>
+                    <div class="lb-stat lb-stat--2">
+                        <div class="lb-stat-lbl">LONGEST FUNDED</div>
+                        <div class="lb-stat-val" id="lbStatDuration">—</div>
+                        <div class="lb-stat-sub" id="lbStatDurationName">—</div>
+                    </div>
+                    <div class="lb-stat lb-stat--3">
+                        <div class="lb-stat-lbl">HIGHEST PAYOUT</div>
+                        <div class="lb-stat-val" id="lbStatHighPayout">—</div>
+                        <div class="lb-stat-sub" id="lbStatHighPayoutName">—</div>
+                    </div>
+                    <div class="lb-stat lb-stat--4">
+                        <div class="lb-stat-lbl">HIGHEST PAYOUT COUNT</div>
+                        <div class="lb-stat-val" id="lbStatPayoutCount">—</div>
+                        <div class="lb-stat-sub" id="lbStatPayoutCountName">—</div>
+                    </div>
+                </div>
+
+                <!-- Tier filter -->
+                <div class="lb-filter-bar lb-filter-bar--tier">
+                    <span class="lb-filter-lbl">TIER</span>
+                    <div class="lb-pills" id="lbTierPills">
+                        <button class="lb-pill lb-tier-pill active" data-tier="all">All Tiers</button>
+                        <button class="lb-pill lb-tier-pill" data-tier="legend"   style="--tier-c:#EC4899">LEGEND</button>
+                        <button class="lb-pill lb-tier-pill" data-tier="masters"  style="--tier-c:#F97316">MASTERS</button>
+                        <button class="lb-pill lb-tier-pill" data-tier="diamond"  style="--tier-c:#06B6D4">DIAMOND</button>
+                        <button class="lb-pill lb-tier-pill" data-tier="platinum" style="--tier-c:#8B5CF6">PLATINUM</button>
+                        <button class="lb-pill lb-tier-pill" data-tier="gold"     style="--tier-c:#D4A843">GOLD</button>
+                        <button class="lb-pill lb-tier-pill" data-tier="silver"   style="--tier-c:#9CA3AF">SILVER</button>
+                        <button class="lb-pill lb-tier-pill" data-tier="bronze"   style="--tier-c:#CD7F32">BRONZE</button>
+                    </div>
+                </div>
+
+                <!-- Size filter -->
+                <div class="lb-filter-bar">
+                    <span class="lb-filter-lbl">ACCOUNT SIZE</span>
+                    <div class="lb-pills" id="lbSizePills">
+                        <button class="lb-pill active" data-size="all">All Sizes</button>
+                        <button class="lb-pill" data-size="5000">$5K</button>
+                        <button class="lb-pill" data-size="10000">$10K</button>
+                        <button class="lb-pill" data-size="15000">$15K</button>
+                        <button class="lb-pill" data-size="20000">$20K</button>
+                        <button class="lb-pill" data-size="25000">$25K</button>
+                        <button class="lb-pill" data-size="30000">$30K</button>
+                        <button class="lb-pill" data-size="35000">$35K</button>
+                        <button class="lb-pill" data-size="40000">$40K</button>
+                        <button class="lb-pill" data-size="45000">$45K</button>
+                        <button class="lb-pill" data-size="50000">$50K</button>
+                        <button class="lb-pill" data-size="60000">$60K</button>
+                        <button class="lb-pill" data-size="70000">$70K</button>
+                        <button class="lb-pill" data-size="80000">$80K</button>
+                        <button class="lb-pill" data-size="90000">$90K</button>
+                        <button class="lb-pill" data-size="100000">$100K</button>
+                        <button class="lb-pill" data-size="125000">$125K</button>
+                        <button class="lb-pill" data-size="150000">$150K</button>
+                        <button class="lb-pill" data-size="175000">$175K</button>
+                        <button class="lb-pill" data-size="200000">$200K</button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="lb-scroll">
+                    <table class="lb-table">
+                        <thead>
+                            <tr>
+                                <th class="lb-th lb-th-rank">RANK</th>
+                                <th class="lb-th lb-th-trader">TRADER</th>
+                                <th class="lb-th">COUNTRY</th>
+                                <th class="lb-th lb-td-tier">TIER</th>
+                                <th class="lb-th lb-th-r lb-th-score">SCORE</th>
+                                <th class="lb-th lb-th-r">PROFIT</th>
+                                <th class="lb-th lb-th-r">PROFIT %</th>
+                                <th class="lb-th lb-th-r">WIN RATE</th>
+                                <th class="lb-th">ASSET</th>
+                                <th class="lb-th lb-th-r">AVG. WIN</th>
+                                <th class="lb-th lb-th-r">AVG. LOSS</th>
+                                <th class="lb-th lb-th-r">AVG. HOLD</th>
+                                <th class="lb-th lb-th-r">AVG. R:R</th>
+                                <th class="lb-th lb-th-r">TRADES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lbBody"></tbody>
+                    </table>
+                    <div class="lb-empty" id="lbEmpty" style="display:none">[ NO TRADERS FOR THIS ACCOUNT SIZE ]</div>
+                </div>
+
+                <!-- My rank bar (visible when user is filtered out) -->
+                <div class="lb-my-bar" id="lbMyBar" style="display:none"></div>
+
             </div>
 
             <!-- ══ TAB: CERTIFICATES ══ -->
+            <!-- ══ TAB: CERTIFICATES ══ -->
             <div class="dash-tab" id="tab-certificates">
-                <div class="dash-coming-soon">
-                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
-                    <div class="dash-cs-title">CERTIFICATES</div>
-                    <div class="dash-cs-status">[ COMING SOON ]</div>
-                    <div class="dash-cs-desc">Download your official funded trader certificates, challenge completion diplomas, and milestone badges.</div>
+                <?php
+                $certEvals   = array_values(array_filter($challenges, fn($c) => in_array($c['status'], ['passed', 'funded'])));
+                $certFunded  = array_values(array_filter($challenges, fn($c) => $c['status'] === 'funded'));
+                $certDone    = array_values(array_filter($payouts ?? [], fn($p) => $p['status'] === 'completed'));
+                $certTotal   = array_sum(array_column($certDone, 'amount'));
+                $certCompEnd = array_values(array_filter($competitions_all, fn($c) => in_array($c['id'], $comp_joined_ids) && $c['status'] === 'ended'));
+                $certCount   = count($certEvals) + count($certFunded) + count($certDone) + count($certCompEnd) + 1;
+                ?>
+
+                <!-- Header -->
+                <div class="cert-hdr">
+                    <div class="cert-hdr-left">
+                        <div class="cert-hdr-title">ACHIEVEMENT CERTIFICATES</div>
+                        <div class="cert-hdr-sub">Official documentation of your trading milestones</div>
+                    </div>
+                    <div class="cert-hdr-count">
+                        <span class="cert-hdr-count-val"><?= $certCount ?></span>
+                        <span class="cert-hdr-count-lbl">CERTIFICATES</span>
+                    </div>
                 </div>
+
+                <!-- ── EVALUATIONS ── -->
+                <?php if (!empty($certEvals)): ?>
+                <div class="cert-section">
+                    <div class="cert-section-hdr">
+                        <span class="cert-section-dot" style="background:#10B981"></span>
+                        EVALUATIONS
+                        <span class="cert-section-count"><?= count($certEvals) ?></span>
+                    </div>
+                    <div class="cert-grid">
+                        <?php foreach ($certEvals as $c):
+                            $szLbl  = '$' . number_format((int)$c['account_size']);
+                            $tyLbl  = $c['type'] === 'one_step' ? '1-STEP' : '2-STEP';
+                            $dtLbl  = date('d M Y', strtotime($c['created_at'] ?? 'now'));
+                            $cid    = 'EVAL-' . str_pad($c['id'], 4, '0', STR_PAD_LEFT);
+                        ?>
+                        <div class="cert-card" style="--cert-accent:#10B981">
+                            <div class="cert-card-top">
+                                <span class="cert-badge" style="color:#10B981;border-color:rgba(16,185,129,.28);background:rgba(16,185,129,.07)">
+                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                    EVALUATION PASSED
+                                </span>
+                                <span class="cert-card-id"><?= $cid ?></span>
+                            </div>
+                            <div class="cert-card-val"><?= formatMoneyShort($c['account_size']) ?></div>
+                            <div class="cert-card-type"><?= $tyLbl ?> EVALUATION</div>
+                            <div class="cert-card-meta">
+                                <span><?= strtoupper($c['platform']) ?></span>
+                                <span class="cert-meta-sep">·</span>
+                                <span><?= $dtLbl ?></span>
+                            </div>
+                            <div class="cert-card-actions">
+                                <button class="cert-btn cert-btn--share" onclick="CertTab.share('eval',<?= $c['id'] ?>,'<?= addslashes($szLbl) ?> Evaluation Passed','<?= addslashes($tyLbl) ?> · <?= addslashes(strtoupper($c['platform'])) ?> · <?= addslashes($dtLbl) ?>')">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                    SHARE
+                                </button>
+                                <button class="cert-btn cert-btn--pdf" onclick="CertTab.download('eval',<?= $c['id'] ?>,'<?= addslashes($szLbl) ?> Evaluation Passed','<?= addslashes($tyLbl) ?> · <?= addslashes(strtoupper($c['platform'])) ?> · <?= addslashes($dtLbl) ?>')">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    DOWNLOAD PDF
+                                </button>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- ── FUNDED ACCOUNTS ── -->
+                <?php if (!empty($certFunded)): ?>
+                <div class="cert-section">
+                    <div class="cert-section-hdr">
+                        <span class="cert-section-dot" style="background:#0EA5E9"></span>
+                        FUNDED ACCOUNTS
+                        <span class="cert-section-count"><?= count($certFunded) ?></span>
+                    </div>
+                    <div class="cert-grid">
+                        <?php foreach ($certFunded as $c):
+                            $szLbl  = '$' . number_format((int)$c['account_size']);
+                            $tyLbl  = $c['type'] === 'one_step' ? '1-STEP' : '2-STEP';
+                            $pfmt   = ($c['total_profit'] >= 0 ? '+' : '') . formatMoney($c['total_profit']);
+                            $dtLbl  = date('d M Y', strtotime($c['created_at'] ?? 'now'));
+                            $cid    = 'FUND-' . str_pad($c['id'], 4, '0', STR_PAD_LEFT);
+                        ?>
+                        <div class="cert-card" style="--cert-accent:#0EA5E9">
+                            <div class="cert-card-top">
+                                <span class="cert-badge" style="color:#0EA5E9;border-color:rgba(14,165,233,.28);background:rgba(14,165,233,.07)">
+                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                                    FUNDED ACCOUNT
+                                </span>
+                                <span class="cert-card-id"><?= $cid ?></span>
+                            </div>
+                            <div class="cert-card-val"><?= formatMoneyShort($c['account_size']) ?></div>
+                            <div class="cert-card-type"><?= $tyLbl ?> FUNDED</div>
+                            <div class="cert-card-meta">
+                                <span><?= strtoupper($c['platform']) ?></span>
+                                <span class="cert-meta-sep">·</span>
+                                <span class="cert-meta-green"><?= $pfmt ?></span>
+                            </div>
+                            <div class="cert-card-actions">
+                                <button class="cert-btn cert-btn--share" onclick="CertTab.share('funded',<?= $c['id'] ?>,'<?= addslashes($szLbl) ?> Funded Account','<?= addslashes($tyLbl) ?> · P&amp;L <?= addslashes($pfmt) ?>')">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                    SHARE
+                                </button>
+                                <button class="cert-btn cert-btn--pdf" onclick="CertTab.download('funded',<?= $c['id'] ?>,'<?= addslashes($szLbl) ?> Funded Account','<?= addslashes($tyLbl) ?> · <?= addslashes(strtoupper($c['platform'])) ?> · P&amp;L <?= addslashes($pfmt) ?>')">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    DOWNLOAD PDF
+                                </button>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- ── COMPETITIONS ── -->
+                <?php if (!empty($certCompEnd)): ?>
+                <div class="cert-section">
+                    <div class="cert-section-hdr">
+                        <span class="cert-section-dot" style="background:#F59E0B"></span>
+                        COMPETITIONS
+                        <span class="cert-section-count"><?= count($certCompEnd) ?></span>
+                    </div>
+                    <div class="cert-grid">
+                        <?php foreach ($certCompEnd as $comp):
+                            $compLb  = $comp_leaderboards[$comp['id']] ?? [];
+                            $myRank  = null;
+                            foreach ($compLb as $entry) { if (!empty($entry['me'])) { $myRank = $entry['rank']; break; } }
+                            $sfx     = $myRank ? ($myRank===1?'ST':($myRank===2?'ND':($myRank===3?'RD':'TH'))) : '';
+                            $edLbl   = htmlspecialchars($comp['edition']);
+                            $dtLbl   = date('d M Y', strtotime($comp['ends']));
+                            $cid     = 'COMP-' . str_pad($comp['id'], 4, '0', STR_PAD_LEFT);
+                        ?>
+                        <div class="cert-card" style="--cert-accent:#F59E0B">
+                            <div class="cert-card-top">
+                                <span class="cert-badge" style="color:#F59E0B;border-color:rgba(245,158,11,.28);background:rgba(245,158,11,.07)">
+                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+                                    COMPETITION
+                                </span>
+                                <span class="cert-card-id"><?= $cid ?></span>
+                            </div>
+                            <?php if ($myRank): ?>
+                            <div class="cert-card-val cert-rank-val"><?= $myRank ?><sup class="cert-rank-sfx"><?= $sfx ?></sup></div>
+                            <div class="cert-card-type">PLACE · <?= count($compLb) ?> TRADERS</div>
+                            <?php else: ?>
+                            <div class="cert-card-val" style="font-size:22px">PARTICIPANT</div>
+                            <div class="cert-card-type"><?= count($compLb) ?> TRADERS</div>
+                            <?php endif; ?>
+                            <div class="cert-card-meta">
+                                <span><?= $edLbl ?></span>
+                                <span class="cert-meta-sep">·</span>
+                                <span><?= $dtLbl ?></span>
+                            </div>
+                            <div class="cert-card-actions">
+                                <button class="cert-btn cert-btn--share" onclick="CertTab.share('comp',<?= $comp['id'] ?>,'<?= addslashes($comp['name']) ?>','<?= addslashes($edLbl) ?><?= $myRank ? ' · Rank #'.$myRank : '' ?>')">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                    SHARE
+                                </button>
+                                <button class="cert-btn cert-btn--pdf" onclick="CertTab.download('comp',<?= $comp['id'] ?>,'<?= addslashes($comp['name']) ?>','<?= addslashes($edLbl) ?><?= $myRank ? ' · Rank #'.$myRank : '' ?>')">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    DOWNLOAD PDF
+                                </button>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- ── PAYOUTS ── -->
+                <?php if (!empty($certDone)): ?>
+                <div class="cert-section">
+                    <div class="cert-section-hdr">
+                        <span class="cert-section-dot" style="background:#8B5CF6"></span>
+                        PAYOUTS
+                        <span class="cert-section-count"><?= count($certDone) ?></span>
+                    </div>
+                    <div class="cert-grid">
+                        <?php foreach ($certDone as $p):
+                            $amtLbl = '$' . number_format($p['amount'], 0);
+                            $acLbl  = '$' . number_format((int)$p['account_size']);
+                            $dtLbl  = date('d M Y', strtotime($p['processed_at'] ?? $p['requested_at']));
+                            $tyLbl  = ($p['challenge_type'] ?? '') === 'one_step' ? '1-STEP' : '2-STEP';
+                            $mtLbl  = strtoupper(str_replace('_', ' ', $p['method'] ?? ''));
+                            $cid    = 'PAY-' . str_pad($p['id'], 4, '0', STR_PAD_LEFT);
+                        ?>
+                        <div class="cert-card" style="--cert-accent:#8B5CF6">
+                            <div class="cert-card-top">
+                                <span class="cert-badge" style="color:#8B5CF6;border-color:rgba(139,92,246,.28);background:rgba(139,92,246,.07)">
+                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                    PAYOUT COMPLETED
+                                </span>
+                                <span class="cert-card-id"><?= $cid ?></span>
+                            </div>
+                            <div class="cert-card-val"><?= $amtLbl ?></div>
+                            <div class="cert-card-type"><?= $tyLbl ?> · <?= $acLbl ?> ACCOUNT</div>
+                            <div class="cert-card-meta">
+                                <span><?= $mtLbl ?></span>
+                                <span class="cert-meta-sep">·</span>
+                                <span><?= $dtLbl ?></span>
+                            </div>
+                            <div class="cert-card-actions">
+                                <button class="cert-btn cert-btn--share" onclick="CertTab.share('payout',<?= $p['id'] ?>,'Payout <?= addslashes($amtLbl) ?>','<?= addslashes($amtLbl) ?> received on <?= addslashes($dtLbl) ?>')">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                    SHARE
+                                </button>
+                                <button class="cert-btn cert-btn--pdf" onclick="CertTab.download('payout',<?= $p['id'] ?>,'Payout <?= addslashes($amtLbl) ?>','<?= addslashes($tyLbl) ?> · <?= addslashes($acLbl) ?> · <?= addslashes($dtLbl) ?>')">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    DOWNLOAD PDF
+                                </button>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- ── LIFETIME PAYOUT ── -->
+                <div class="cert-section">
+                    <div class="cert-section-hdr">
+                        <span class="cert-section-dot" style="background:#10B981"></span>
+                        LIFETIME PAYOUT
+                        <span class="cert-section-count">1</span>
+                    </div>
+                    <div class="cert-grid">
+                        <?php
+                        $ltLocked = $certTotal <= 0;
+                        $ltAccent = $ltLocked ? 'rgba(255,255,255,0.25)' : $gradeColor;
+                        ?>
+                        <div class="cert-card<?= $ltLocked ? ' cert-card--locked' : '' ?>" style="--cert-accent:<?= $ltAccent ?>">
+                            <div class="cert-card-top">
+                                <span class="cert-badge" style="color:<?= $ltAccent ?>;border-color:<?= $ltLocked ? 'rgba(255,255,255,0.12)' : 'rgba(16,185,129,.28)' ?>;background:<?= $ltLocked ? 'rgba(255,255,255,0.04)' : 'rgba(16,185,129,.07)' ?>">
+                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                    LIFETIME PAYOUT
+                                </span>
+                                <span class="cert-card-id">LT-0001</span>
+                            </div>
+                            <?php if ($ltLocked): ?>
+                            <div class="cert-card-val" style="font-size:22px;opacity:.35">LOCKED</div>
+                            <div class="cert-card-type" style="opacity:.35">NO COMPLETED PAYOUTS</div>
+                            <?php else: ?>
+                            <div class="cert-card-val">$<?= number_format($certTotal, 0) ?></div>
+                            <div class="cert-card-type"><?= $gradeLetter ?> · <?= $gradeLabel ?></div>
+                            <?php endif; ?>
+                            <div class="cert-card-meta">
+                                <span><?= count($certDone) ?> PAYOUT<?= count($certDone)!==1?'S':'' ?> COMPLETED</span>
+                                <?php if (!$ltLocked): ?>
+                                <span class="cert-meta-sep">·</span>
+                                <span>GRADE <?= $gradeLetter ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="cert-card-actions">
+                                <button class="cert-btn cert-btn--share" <?= $ltLocked?'disabled':'' ?>
+                                    onclick="CertTab.share('lifetime',0,'Lifetime Payout $<?= number_format($certTotal,0) ?>','Grade <?= $gradeLetter ?> — <?= addslashes($gradeLabel) ?> · <?= count($certDone) ?> payouts')">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                    SHARE
+                                </button>
+                                <button class="cert-btn cert-btn--pdf" <?= $ltLocked?'disabled':'' ?>
+                                    onclick="CertTab.download('lifetime',0,'Lifetime Payout $<?= number_format($certTotal,0) ?>','Grade <?= $gradeLetter ?> · <?= addslashes($gradeLabel) ?>')">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    DOWNLOAD PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- ══ TAB: CALENDAR ══ -->
             <div class="dash-tab" id="tab-calendar">
-                <div class="dash-coming-soon">
-                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    <div class="dash-cs-title">CALENDAR</div>
-                    <div class="dash-cs-status">[ COMING SOON ]</div>
-                    <div class="dash-cs-desc">Economic events, payout schedule, competition dates, and your personal trading milestones — all in one view.</div>
+
+                <!-- ══ TRADING JOURNAL ══ -->
+                <div class="cal-section-hdr">
+                    <div>
+                        <div class="cal-section-title">TRADING JOURNAL</div>
+                        <div class="cal-section-sub">[ DEMO DATA — REAL TRADES FEED COMING SOON ]</div>
+                    </div>
                 </div>
+
+                <!-- Filter bar -->
+                <div class="cal-filterbar">
+                    <button class="cal-filter-btn cal-filter-active" data-filter="all">ALL</button>
+                    <button class="cal-filter-btn" data-filter="evaluation">EVALUATION</button>
+                    <button class="cal-filter-btn" data-filter="funded">FUNDED</button>
+                    <?php if (!empty($challenges)): ?>
+                    <div class="cal-filter-sep"></div>
+                    <?php foreach ($challenges as $sc):
+                        $dotCls = $statDotClass[$sc['status']] ?? 'stat-dot-gray';
+                    ?>
+                    <button class="cal-filter-btn" data-filter="acct-<?= (int)$sc['id'] ?>">
+                        <span class="stat-acct-dot <?= $dotCls ?>"></span><?= htmlspecialchars(challengeAcctRef($sc['type'], $sc['account_size'], $userId, $acctIndexMap[(int)$sc['id']] ?? 1)) ?>
+                    </button>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Monthly KPI strip -->
+                <div class="cal-kpis">
+                    <div class="cal-kpi">
+                        <div class="cal-kpi-lbl">MONTHLY P&amp;L</div>
+                        <div class="cal-kpi-val" id="calKpiPnl">—</div>
+                    </div>
+                    <div class="cal-kpi">
+                        <div class="cal-kpi-lbl">WIN RATE</div>
+                        <div class="cal-kpi-val" id="calKpiWr">—</div>
+                    </div>
+                    <div class="cal-kpi">
+                        <div class="cal-kpi-lbl">BEST DAY</div>
+                        <div class="cal-kpi-val" id="calKpiBest">—</div>
+                    </div>
+                    <div class="cal-kpi">
+                        <div class="cal-kpi-lbl">WORST DAY</div>
+                        <div class="cal-kpi-val" id="calKpiWorst">—</div>
+                    </div>
+                    <div class="cal-kpi">
+                        <div class="cal-kpi-lbl">TRADING DAYS</div>
+                        <div class="cal-kpi-val" id="calKpiDays">—</div>
+                    </div>
+                    <div class="cal-kpi">
+                        <div class="cal-kpi-lbl">TOTAL TRADES</div>
+                        <div class="cal-kpi-val" id="calKpiTrades">—</div>
+                    </div>
+                </div>
+
+                <!-- Month navigation -->
+                <div class="cal-month-nav">
+                    <button class="cal-nav-btn" id="calPrev">&#9668;</button>
+                    <div class="cal-month-title" id="calMonthTitle">—</div>
+                    <button class="cal-nav-btn" id="calNext">&#9658;</button>
+                </div>
+
+                <!-- Day-of-week header -->
+                <div class="cal-dow-hdr">
+                    <div class="cal-dow">MON</div>
+                    <div class="cal-dow">TUE</div>
+                    <div class="cal-dow">WED</div>
+                    <div class="cal-dow">THU</div>
+                    <div class="cal-dow">FRI</div>
+                    <div class="cal-dow cal-dow--we">SAT</div>
+                    <div class="cal-dow cal-dow--we">SUN</div>
+                </div>
+
+                <!-- Calendar grid (rendered by calendar.js) -->
+                <div class="cal-grid" id="calGrid"></div>
+
+                <!-- Day detail panel -->
+                <div class="cal-detail" id="calDetail" style="display:none">
+                    <div class="cal-detail-hdr">
+                        <div class="cal-detail-title" id="calDetailTitle">—</div>
+                        <button class="cal-detail-close" id="calDetailClose">&#215;</button>
+                    </div>
+                    <div class="cal-detail-list" id="calDetailList"></div>
+                    <div class="cal-detail-summary" id="calDetailSummary"></div>
+                </div>
+
+                <!-- ══ ECONOMIC CALENDAR (coming soon) ══ -->
+                <div class="dash-coming-soon" style="margin-top:48px">
+                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <div class="dash-cs-title">ECONOMIC CALENDAR</div>
+                    <div class="dash-cs-status">[ COMING SOON ]</div>
+                    <div class="dash-cs-desc">High-impact macro events, central bank decisions, and NFP releases — overlaid on your trading days.</div>
+                </div>
+
             </div>
 
             <!-- ══ TAB: AFFILIATE ══ -->
@@ -3207,6 +3678,14 @@ foreach ($challenges as $ch) {
             </div>
 
         </main>
+    </div>
+
+    <!-- ══ TRADER PROFILE OVERLAY ══ -->
+    <div class="tp-overlay" id="tpOverlay" style="display:none" onclick="TraderProfile.close(event)">
+        <div class="tp-panel">
+            <button class="tp-close" onclick="TraderProfile.close(null)">&times;</button>
+            <div class="tp-body" id="tpBody"></div>
+        </div>
     </div>
 
     <!-- Mobile tab bar -->
