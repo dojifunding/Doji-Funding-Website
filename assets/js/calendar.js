@@ -182,9 +182,7 @@ const CalendarTab = (function () {
 
         var noteHtml = '';
         if (hasNote) {
-            var txt = data.note.trim();
-            var snippet = txt.length > 24 ? txt.slice(0, 23) + '…' : txt;
-            noteHtml = '<div class="cal-cell-note">' + escHtml(snippet) + '</div>';
+            noteHtml = '<div class="cal-cell-note">' + escHtml(data.note.trim()) + '</div>';
         }
         return { icon: iconHtml, note: noteHtml };
     }
