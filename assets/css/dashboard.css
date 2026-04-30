@@ -151,20 +151,25 @@ nav.nav, .mobile-menu { display: none !important; }
     background: none;
     border: none;
     cursor: pointer;
-    transition: color 0.12s;
+    transition: color 0.12s, background 0.12s, box-shadow 0.12s;
     text-align: left;
     width: 100%;
     position: relative;
     white-space: nowrap;
 }
-.dash-nav-item:hover { color: var(--text-pri); background: rgba(255,255,255,0.02); }
-.dash-nav-item.active { color: var(--text-disp); background: rgba(255,255,255,0.055); }
+.dash-nav-item:hover { color: var(--text-pri); background: rgba(255,255,255,0.03); }
+.dash-nav-item.active {
+    color: #FFFFFF;
+    background: linear-gradient(150deg, #1cb880 0%, #0d7a54 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22),
+                0 0 8px rgba(16,185,129,0.20);
+}
 .dash-nav-item.active::before {
     content: '';
     position: absolute;
     left: 0; top: 4px; bottom: 4px;
     width: 2px;
-    background: var(--accent);
+    background: rgba(255,255,255,0.5);
 }
 .dash-nav-icon { flex-shrink: 0; opacity: 0.55; }
 .dash-nav-item.active .dash-nav-icon { opacity: 0.9; }
@@ -6907,14 +6912,9 @@ input[type="range"] { accent-color: #10B981 !important; }
                 0 2px 6px rgba(0,0,0,0.45);
 }
 
-/* ── Sidebar nav items — hover lift, active indent ── */
+/* ── Sidebar nav items — hover lift ── */
 .dash-nav-item:hover {
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-}
-.dash-nav-item.active {
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04),
-                inset 0 -1px 0 rgba(0,0,0,0.2);
-    background: rgba(255,255,255,0.03);
 }
 
 /* ── Badges / tags — subtle raised ── */
