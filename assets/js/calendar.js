@@ -20,6 +20,16 @@ const CalendarTab = (function () {
                    'JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
     var DAYS    = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
 
+    /* small face SVGs for calendar cells — use currentColor, sized 16px */
+    var JRNL_FACES = [
+        '',
+        '<svg viewBox="0 0 22 22" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="9.5"/><circle cx="8" cy="9" r="0.9" fill="currentColor" stroke="none"/><circle cx="14" cy="9" r="0.9" fill="currentColor" stroke="none"/><path d="M6.5 15 Q11 11 15.5 15"/></svg>',
+        '<svg viewBox="0 0 22 22" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="9.5"/><circle cx="8" cy="9" r="0.9" fill="currentColor" stroke="none"/><circle cx="14" cy="9" r="0.9" fill="currentColor" stroke="none"/><path d="M7.5 14.5 Q11 12.5 14.5 14.5"/></svg>',
+        '<svg viewBox="0 0 22 22" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="9.5"/><circle cx="8" cy="9" r="0.9" fill="currentColor" stroke="none"/><circle cx="14" cy="9" r="0.9" fill="currentColor" stroke="none"/><path d="M7.5 13.5 L14.5 13.5"/></svg>',
+        '<svg viewBox="0 0 22 22" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="9.5"/><circle cx="8" cy="9" r="0.9" fill="currentColor" stroke="none"/><circle cx="14" cy="9" r="0.9" fill="currentColor" stroke="none"/><path d="M7.5 13 Q11 15.5 14.5 13"/></svg>',
+        '<svg viewBox="0 0 22 22" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="9.5"/><path d="M6.5 9 Q8 7.5 9.5 9"/><path d="M12.5 9 Q14 7.5 15.5 9"/><path d="M6 13 Q11 17.5 16 13"/></svg>'
+    ];
+
     /* ── Seeded LCG RNG (identical to statistics.js) ────────── */
     function makeRng(seed) {
         var s = seed >>> 0;
@@ -157,6 +167,28 @@ const CalendarTab = (function () {
     /* ── Journal (localStorage) ─────────────────────────────── */
     function jKey(dk) { return 'doji-journal-' + dk; }
 
+    function escHtml(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function jrnlIndicator(data) {
+        var hasMood = data && data.mood > 0 && data.mood <= 5;
+        var hasNote = data && data.note && data.note.trim().length > 0;
+        if (!hasMood && !hasNote) return { icon: '', note: '' };
+
+        var iconHtml = hasMood
+            ? '<div class="cal-cell-jrnl" data-mood="' + data.mood + '">' + JRNL_FACES[data.mood] + '</div>'
+            : '<div class="cal-cell-jrnl cal-cell-jrnl--dot" data-mood="0"></div>';
+
+        var noteHtml = '';
+        if (hasNote) {
+            var txt = data.note.trim();
+            var snippet = txt.length > 24 ? txt.slice(0, 23) + '…' : txt;
+            noteHtml = '<div class="cal-cell-note">' + escHtml(snippet) + '</div>';
+        }
+        return { icon: iconHtml, note: noteHtml };
+    }
+
     function loadJournal(dk) {
         var noteEl = document.getElementById('calJournalNote');
         if (!noteEl) return;
@@ -190,16 +222,25 @@ const CalendarTab = (function () {
             clearTimeout(_savedMsgTimer);
             _savedMsgTimer = setTimeout(function () { if (savedEl) savedEl.textContent = ''; }, 2000);
         }
-        /* update indicator dot on the cell without full re-render */
+        /* update cell live: replace face icon + note snippet */
         var cellEl = document.querySelector('[data-dk="' + _journalDk + '"]');
         if (cellEl) {
-            var hasContent = data.mood > 0 || (data.note && data.note.trim().length > 0);
-            var dot = cellEl.querySelector('.cal-cell-jrnl');
-            if (hasContent) {
-                if (!dot) { dot = document.createElement('div'); dot.className = 'cal-cell-jrnl'; cellEl.appendChild(dot); }
-                dot.setAttribute('data-mood', String(data.mood));
-            } else if (dot) {
-                dot.parentNode.removeChild(dot);
+            var oldIcon = cellEl.querySelector('.cal-cell-jrnl');
+            var oldNote = cellEl.querySelector('.cal-cell-note');
+            if (oldIcon) oldIcon.parentNode.removeChild(oldIcon);
+            if (oldNote) oldNote.parentNode.removeChild(oldNote);
+
+            var ji = jrnlIndicator(data);
+            if (ji.icon) {
+                var t1 = document.createElement('div');
+                t1.innerHTML = ji.icon;
+                var dayEl = cellEl.querySelector('.cal-cell-day');
+                cellEl.insertBefore(t1.firstChild, dayEl ? dayEl.nextSibling : null);
+            }
+            if (ji.note) {
+                var t2 = document.createElement('div');
+                t2.innerHTML = ji.note;
+                cellEl.appendChild(t2.firstChild);
             }
         }
     }
@@ -291,23 +332,22 @@ const CalendarTab = (function () {
             var cntHtml  = hasTr ? '<div class="cal-cell-trades">' + trades.length + ' TR</div>' : '';
             var dnCls    = 'cal-cell-day' + (isWknd ? ' cal-cell-day--we' : '');
 
-            /* journal indicator dot */
-            var jrnlHtml = '';
+            /* journal indicator (face + note snippet) */
+            var jIcon = '', jNote = '';
             if (hasTr) {
                 var jRaw = null;
                 try { jRaw = localStorage.getItem('doji-journal-' + dk); } catch (e) {}
                 if (jRaw) {
-                    var jData = JSON.parse(jRaw);
-                    if (jData && (jData.mood > 0 || (jData.note && jData.note.trim().length > 0))) {
-                        jrnlHtml = '<div class="cal-cell-jrnl" data-mood="' + (jData.mood || 0) + '"></div>';
-                    }
+                    var ji = jrnlIndicator(JSON.parse(jRaw));
+                    jIcon = ji.icon;
+                    jNote = ji.note;
                 }
             }
 
             html += '<div class="' + cls + '"'
                   + (hasTr ? ' data-dk="' + dk + '" tabindex="0"' : '') + '>'
                   + '<div class="' + dnCls + '">' + d + '</div>'
-                  + jrnlHtml + pnlHtml + cntHtml + '</div>';
+                  + jIcon + pnlHtml + cntHtml + jNote + '</div>';
 
             col++;
             if (col === 7) {

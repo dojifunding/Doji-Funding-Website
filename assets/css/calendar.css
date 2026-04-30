@@ -541,20 +541,44 @@
   .cal-dow-hdr, .cal-grid { grid-template-columns: repeat(7, 1fr) 44px; }
 }
 
-/* ── Journal indicator dot on calendar cells ──────────────── */
+/* ── Journal indicator on calendar cells ──────────────────── */
 .cal-cell-jrnl {
   position: absolute;
+  top: 3px; right: 3px;
+  width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+  color: rgba(255,255,255,0.45);
+}
+.cal-cell-jrnl[data-mood="1"] { color: #ef4444; }
+.cal-cell-jrnl[data-mood="2"] { color: #f59e0b; }
+.cal-cell-jrnl[data-mood="3"] { color: #909090; }
+.cal-cell-jrnl[data-mood="4"] { color: #34d399; }
+.cal-cell-jrnl[data-mood="5"] { color: #10b981; }
+/* note-only variant (no mood selected) */
+.cal-cell-jrnl--dot {
   top: 5px; right: 5px;
   width: 5px; height: 5px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.35);
-  pointer-events: none;
+  background: rgba(255,255,255,0.40);
 }
-.cal-cell-jrnl[data-mood="1"] { background: #ef4444; }
-.cal-cell-jrnl[data-mood="2"] { background: #f59e0b; }
-.cal-cell-jrnl[data-mood="3"] { background: #909090; }
-.cal-cell-jrnl[data-mood="4"] { background: #34d399; }
-.cal-cell-jrnl[data-mood="5"] { background: #10b981; }
+/* truncated note text at cell bottom */
+.cal-cell-note {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.02em;
+  color: var(--text-dis);
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  margin-top: 3px;
+  opacity: 0.80;
+}
+.cal-cell--profit .cal-cell-note,
+.cal-cell--loss   .cal-cell-note,
+.cal-cell--be     .cal-cell-note { color: rgba(255,255,255,0.55); }
 
 /* ── Journal section inside detail panel ─────────────────── */
 .cal-journal {
