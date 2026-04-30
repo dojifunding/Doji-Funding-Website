@@ -3622,6 +3622,7 @@ foreach ($challenges as $ch) {
                     <div class="cal-dow">FRI</div>
                     <div class="cal-dow cal-dow--we">SAT</div>
                     <div class="cal-dow cal-dow--we">SUN</div>
+                    <div class="cal-dow cal-dow--wk">WEEK</div>
                 </div>
 
                 <!-- Calendar grid (rendered by calendar.js) -->

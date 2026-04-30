@@ -145,24 +145,25 @@
 /* ── Day-of-week header ───────────────────────────────────── */
 .cal-dow-hdr {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, 1fr) 72px;
   gap: 3px;
   margin-bottom: 3px;
 }
 .cal-dow {
   font-family: 'Chivo Mono', monospace;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.1em;
   color: var(--text-dis);
   text-align: center;
   padding: 4px 0;
 }
-.cal-dow--we { opacity: 0.5; }
+.cal-dow--we  { opacity: 0.5; }
+.cal-dow--wk  { color: var(--text-dis); opacity: 0.7; }
 
 /* ── Calendar grid ────────────────────────────────────────── */
 .cal-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, 1fr) 72px;
   gap: 3px;
   margin-bottom: 16px;
 }
@@ -170,8 +171,8 @@
 /* Base cell — NO TRADE (mirrors .tp-cal-cell--none) */
 .cal-cell {
   position: relative;
-  min-height: 76px;
-  padding: 8px 9px;
+  min-height: 84px;
+  padding: 10px 10px;
   border-radius: 4px;
   border: 1px solid transparent;
   background: rgba(255,255,255,0.055);
@@ -241,7 +242,7 @@
 /* day number */
 .cal-cell-day {
   font-family: 'Chivo Mono', monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-sec);
   line-height: 1;
@@ -257,7 +258,7 @@
 /* P&L value */
 .cal-cell-pnl {
   font-family: 'Chivo Mono', monospace;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   margin-top: auto;
   padding-top: 6px;
@@ -274,14 +275,69 @@
 /* trade count */
 .cal-cell-trades {
   font-family: 'Chivo Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 0.08em;
+  font-size: 10px;
+  letter-spacing: 0.06em;
   color: var(--text-dis);
-  margin-top: 3px;
+  margin-top: 4px;
 }
 .cal-cell--profit .cal-cell-trades,
 .cal-cell--loss   .cal-cell-trades,
 .cal-cell--be     .cal-cell-trades { color: rgba(255,255,255,0.5); }
+
+/* ── Week summary cell ────────────────────────────────────── */
+.cal-cell-week {
+  min-height: 84px;
+  padding: 10px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border-vis);
+  background: rgba(255,255,255,0.03);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.55),
+              inset 0 1px 0 rgba(255,255,255,0.05);
+  display: flex;
+  flex-direction: column;
+}
+.cal-cell-week--profit {
+  background: linear-gradient(150deg, #1fd99a 0%, #0d9e6a 100%);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.50),
+              0 0 10px rgba(16,185,129,0.25),
+              inset 0 1px 0 rgba(255,255,255,0.32);
+  border-color: rgba(16,185,129,0.3);
+}
+.cal-cell-week--loss {
+  background: linear-gradient(150deg, #ef3d47 0%, #a8111a 100%);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.50),
+              0 0 10px rgba(215,25,33,0.25),
+              inset 0 1px 0 rgba(255,255,255,0.20);
+  border-color: rgba(215,25,33,0.3);
+}
+.cal-cell-week-lbl {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-dis);
+  line-height: 1;
+}
+.cal-cell-week--profit .cal-cell-week-lbl,
+.cal-cell-week--loss   .cal-cell-week-lbl { color: rgba(255,255,255,0.65); }
+.cal-cell-week-pnl {
+  font-family: 'Chivo Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: auto;
+  padding-top: 6px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--text-pri);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.cal-cell-week--profit .cal-cell-week-pnl,
+.cal-cell-week--loss   .cal-cell-week-pnl { color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+
+/* light mode week cell */
+[data-theme="light"] .cal-cell-week            { background: rgba(0,0,0,0.04); border-color: #C8C8C8; }
+[data-theme="light"] .cal-cell-week--profit    { background: linear-gradient(150deg, #1fd99a 0%, #0d9e6a 100%); }
+[data-theme="light"] .cal-cell-week--loss      { background: linear-gradient(150deg, #ef3d47 0%, #a8111a 100%); }
 
 /* ── Day detail panel — Trading Activity card style ───────── */
 .cal-detail {
@@ -471,13 +527,16 @@
 @media (max-width: 900px)  { .cal-kpis { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 640px)  {
   .cal-kpis { grid-template-columns: repeat(2, 1fr); }
-  .cal-cell { min-height: 56px; padding: 6px 7px; }
-  .cal-cell-pnl { font-size: 10px; }
+  .cal-cell, .cal-cell-week { min-height: 62px; padding: 7px 7px; }
+  .cal-cell-pnl { font-size: 11px; }
+  .cal-cell-week-pnl { font-size: 10px; }
   .cal-cell-trades { display: none; }
+  .cal-dow-hdr, .cal-grid { grid-template-columns: repeat(7, 1fr) 52px; }
 }
 @media (max-width: 420px)  {
-  .cal-cell { min-height: 44px; padding: 4px 5px; }
-  .cal-cell-pnl { font-size: 9px; }
-  .cal-cell-day { font-size: 9px; }
+  .cal-cell, .cal-cell-week { min-height: 50px; padding: 5px 5px; }
+  .cal-cell-pnl { font-size: 10px; }
+  .cal-cell-day { font-size: 10px; }
   .cal-dow { font-size: 8px; }
+  .cal-dow-hdr, .cal-grid { grid-template-columns: repeat(7, 1fr) 44px; }
 }

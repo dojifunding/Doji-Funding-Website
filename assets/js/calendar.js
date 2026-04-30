@@ -174,6 +174,18 @@ const CalendarTab = (function () {
         set('calKpiTrades',   k.totalTrades);
     }
 
+    /* ── Render one week-summary cell ───────────────────────── */
+    function weekCell(pnl, hasActivity) {
+        if (!hasActivity) {
+            return '<div class="cal-cell-week"><div class="cal-cell-week-lbl">WK</div></div>';
+        }
+        var mod = Math.abs(pnl) < 5 ? '' : (pnl > 0 ? ' cal-cell-week--profit' : ' cal-cell-week--loss');
+        return '<div class="cal-cell-week' + mod + '">'
+             + '<div class="cal-cell-week-lbl">WK</div>'
+             + '<div class="cal-cell-week-pnl">' + fmtPnl(pnl) + '</div>'
+             + '</div>';
+    }
+
     /* ── Render calendar grid ────────────────────────────────── */
     function renderCalendar(byDay) {
         var grid  = document.getElementById('calGrid');
@@ -187,44 +199,63 @@ const CalendarTab = (function () {
         var firstDow    = new Date(_year, _month, 1).getDay();
         var offset      = (firstDow + 6) % 7;   /* Mon-based: Mon=0 … Sun=6 */
         var daysInMonth = new Date(_year, _month + 1, 0).getDate();
+        var mn          = _month + 1;
 
-        var mn     = _month + 1;
-        var prefix = _year + '-' + (mn < 10 ? '0' : '') + mn;
+        var html        = '';
+        var col         = 0;    /* 0–6: current column in the 7-day row */
+        var weekPnl     = 0;
+        var weekActive  = false;
 
-        var html = '';
+        /* emit offset empty cells, flushing any completed week rows */
         for (var i = 0; i < offset; i++) {
             html += '<div class="cal-cell cal-cell--empty"></div>';
+            col++;
+            if (col === 7) { html += weekCell(0, false); col = 0; weekPnl = 0; weekActive = false; }
         }
 
+        /* emit day cells */
         for (var d = 1; d <= daysInMonth; d++) {
-            var dk      = _year + '-' + (mn < 10 ? '0' : '') + mn + '-' + (d < 10 ? '0' : '') + d;
-            var trades  = byDay[dk];
-            var dayDt   = new Date(_year, _month, d);
-            var isFuture  = dayDt > today;
-            var isToday   = dk === todayDk;
-            var isWeekend = dayDt.getDay() === 0 || dayDt.getDay() === 6;
-            var dayPnl    = trades ? trades.reduce(function (s, t) { return s + t.pnl; }, 0) : 0;
-            var hasTrades = trades && !isFuture;
+            var dk       = _year + '-' + (mn < 10 ? '0' : '') + mn + '-' + (d < 10 ? '0' : '') + d;
+            var trades   = byDay[dk];
+            var dayDt    = new Date(_year, _month, d);
+            var isFuture = dayDt > today;
+            var isToday  = dk === todayDk;
+            var isWknd   = dayDt.getDay() === 0 || dayDt.getDay() === 6;
+            var dayPnl   = trades ? trades.reduce(function (s, t) { return s + t.pnl; }, 0) : 0;
+            var hasTr    = !!(trades && !isFuture);
+
+            if (hasTr) { weekPnl += dayPnl; weekActive = true; }
 
             var cls = 'cal-cell';
             if (isToday)  cls += ' cal-cell--today';
             if (isFuture) cls += ' cal-cell--future';
-            if (hasTrades) {
-                if (Math.abs(dayPnl) < 5)   cls += ' cal-cell--be';
-                else if (dayPnl > 0)        cls += ' cal-cell--profit';
-                else                        cls += ' cal-cell--loss';
+            if (hasTr) {
+                if (Math.abs(dayPnl) < 5) cls += ' cal-cell--be';
+                else cls += dayPnl > 0 ? ' cal-cell--profit' : ' cal-cell--loss';
             }
 
-            var pnlHtml   = hasTrades ? '<div class="cal-cell-pnl">' + fmtPnl(dayPnl) + '</div>' : '';
-            var countHtml = hasTrades ? '<div class="cal-cell-trades">' + trades.length + ' TR</div>' : '';
-            var dayNumCls = 'cal-cell-day' + (isWeekend ? ' cal-cell-day--we' : '');
+            var pnlHtml  = hasTr ? '<div class="cal-cell-pnl">' + fmtPnl(dayPnl) + '</div>' : '';
+            var cntHtml  = hasTr ? '<div class="cal-cell-trades">' + trades.length + ' TR</div>' : '';
+            var dnCls    = 'cal-cell-day' + (isWknd ? ' cal-cell-day--we' : '');
 
             html += '<div class="' + cls + '"'
-                  + (hasTrades ? ' data-dk="' + dk + '" tabindex="0"' : '')
-                  + '>'
-                  + '<div class="' + dayNumCls + '">' + d + '</div>'
-                  + pnlHtml + countHtml
-                  + '</div>';
+                  + (hasTr ? ' data-dk="' + dk + '" tabindex="0"' : '') + '>'
+                  + '<div class="' + dnCls + '">' + d + '</div>'
+                  + pnlHtml + cntHtml + '</div>';
+
+            col++;
+            if (col === 7) {
+                html += weekCell(weekPnl, weekActive);
+                col = 0; weekPnl = 0; weekActive = false;
+            }
+        }
+
+        /* flush last partial row */
+        if (col > 0) {
+            for (var j = col; j < 7; j++) {
+                html += '<div class="cal-cell cal-cell--empty"></div>';
+            }
+            html += weekCell(weekPnl, weekActive);
         }
 
         grid.innerHTML = html;
