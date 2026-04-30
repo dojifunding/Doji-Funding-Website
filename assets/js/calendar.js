@@ -702,7 +702,7 @@ var EconCalendar = (function () {
                 var flag    = FLAGS[ev.country] || '';
                 html += '<div class="econ-event-row">'
                       + '<span class="econ-time">'     + parseTime(ev.time) + '</span>'
-                      + '<span class="econ-currency"><span class="econ-flag">' + flag + '</span>' + esc(ev.country || '') + '</span>'
+                      + '<span class="econ-currency" data-currency="' + esc(ev.country || '') + '"><span class="econ-flag">' + flag + '</span>' + esc(ev.country || '') + '</span>'
                       + '<span class="econ-impact econ-impact--' + imp + '"></span>'
                       + '<span class="econ-title">'    + esc(ev.title || '') + '</span>'
                       + '<span class="econ-val econ-forecast">' + fv(ev.forecast) + '</span>'
