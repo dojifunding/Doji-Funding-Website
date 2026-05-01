@@ -539,8 +539,8 @@
     gap: 24px;
     align-items: flex-start;
 }
-.cal-split-left  { flex: 0 0 64%; min-width: 0; }
-.cal-split-right { flex: 1 1 0; min-width: 0; max-width: 400px; }
+.cal-split-left  { flex: 1 1 0; min-width: 0; }
+.cal-split-right { flex: 0 0 455px; min-width: 0; }
 
 @media (max-width: 1499px) {
     .cal-split-layout { flex-direction: column; }
