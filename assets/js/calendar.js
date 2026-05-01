@@ -639,13 +639,19 @@ var EconCalendar = (function () {
         return out;
     }
 
+    /* true when the displayed week contains today */
+    function isCurrentWeek() {
+        return weekStart(new Date()).getTime() === _weekStart.getTime();
+    }
+
     /* ── Render ──────────────────────────────────────────── */
-    function render() {
+    /* silent=true → skip the LOADING indicator (used by auto-refresh) */
+    function render(silent) {
         var body    = document.getElementById('econCalBody');
         var labelEl = document.getElementById('econWeekLabel');
         if (!body) return;
         if (labelEl) labelEl.textContent = weekLabel(_weekStart);
-        body.innerHTML = '<div class="econ-loading">[ LOADING... ]</div>';
+        if (!silent) body.innerHTML = '<div class="econ-loading">[ LOADING... ]</div>';
 
         /* collect which months the current week spans */
         var months = [], d = new Date(_weekStart);
@@ -694,10 +700,8 @@ var EconCalendar = (function () {
         /* distribute + filter */
         events.forEach(function (ev) {
             var imp = (ev.impact || '').toLowerCase().replace(/\s+/g, '-');
-            /* normalise holiday → non-economic */
             var impKey = (imp === 'holiday') ? 'non-economic' : imp;
             if (!_impacts[impKey]) return;
-            /* event type filter */
             if (!_eventTypes[classifyEvent(ev.title || '')]) return;
             if (_currencies[0] !== 'ALL' && _currencies.indexOf(ev.country) < 0) return;
             for (var j = 0; j < days.length; j++) {
@@ -712,21 +716,47 @@ var EconCalendar = (function () {
             });
         });
 
+        /* ── find next upcoming event ── */
+        var now     = new Date();
+        var todayDk = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate());
+        var nowHHMM = pad2(now.getHours()) + ':' + pad2(now.getMinutes());
+        var nextDk  = null, nextEi = -1;
+
+        outer: for (var ni = 0; ni < days.length; ni++) {
+            var nd = days[ni];
+            if (nd.dk < todayDk) continue;
+            for (var nj = 0; nj < nd.evts.length; nj++) {
+                var nev = nd.evts[nj];
+                if (nev.actual && nev.actual.trim()) continue; /* already released */
+                if (nd.dk === todayDk) {
+                    var nt = parseTime(nev.time);
+                    if (nt === 'ALL DAY' || nt === 'TENT.' || nt >= nowHHMM) {
+                        nextDk = nd.dk; nextEi = nj; break outer;
+                    }
+                } else {
+                    nextDk = nd.dk; nextEi = nj; break outer;
+                }
+            }
+        }
+
         var html = '', hasAny = false;
         days.forEach(function (day) {
             if (!day.evts.length) return;
             hasAny = true;
+            var isToday = (day.dk === todayDk);
             var dt = day.date;
-            html += '<div class="econ-day-hdr">'
+            html += '<div class="econ-day-hdr' + (isToday ? ' econ-day-hdr--today' : '') + '"'
+                  + (isToday ? ' data-today="1"' : '') + '>'
                   + DAYS_FULL[dt.getDay()] + ' · ' + dt.getDate()
                   + ' ' + MONTHS_FULL[dt.getMonth()] + ' ' + dt.getFullYear()
+                  + (isToday ? ' <span class="econ-today-badge">TODAY</span>' : '')
                   + '</div>';
 
-            day.evts.forEach(function (ev) {
+            day.evts.forEach(function (ev, ei) {
+                var isNext  = (day.dk === nextDk && ei === nextEi);
                 var imp     = (ev.impact || '').toLowerCase().replace(/\s+/g, '-');
                 var hasAct  = ev.actual && ev.actual.trim();
-                var flag    = FLAGS[ev.country] || '';
-                html += '<div class="econ-event-row">'
+                html += '<div class="econ-event-row' + (isNext ? ' econ-event-row--next' : '') + '">'
                       + '<span class="econ-time">'     + parseTime(ev.time) + '</span>'
                       + '<span class="econ-currency" data-currency="' + esc(ev.country || '') + '">' + esc(ev.country || '') + '</span>'
                       + '<span class="econ-impact econ-impact--' + imp + '"></span>'
@@ -741,6 +771,27 @@ var EconCalendar = (function () {
         body.innerHTML = hasAny
             ? html
             : '<div class="econ-empty">[ NO EVENTS MATCHING FILTERS ]</div>';
+
+        /* auto-scroll to today on current week */
+        if (isCurrentWeek()) {
+            var todayHdr = body.querySelector('[data-today]');
+            if (todayHdr) setTimeout(function () {
+                todayHdr.scrollIntoView({ block: 'start', behavior: 'smooth' });
+            }, 60);
+        }
+    }
+
+    /* ── Auto-refresh every 5 min ───────────────────────── */
+    function scheduleRefresh() {
+        setInterval(function () {
+            /* invalidate cache for the displayed week's months, then silently re-render */
+            var d = new Date(_weekStart);
+            for (var i = 0; i < 7; i++) {
+                delete _cache[d.getFullYear() + '-' + (d.getMonth() + 1)];
+                d.setDate(d.getDate() + 1);
+            }
+            render(true);
+        }, 5 * 60 * 1000);
     }
 
     /* ── Init ────────────────────────────────────────────── */
@@ -816,6 +867,7 @@ var EconCalendar = (function () {
             });
         });
 
+        scheduleRefresh();
         render();
     }
 

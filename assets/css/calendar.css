@@ -1003,6 +1003,31 @@
 }
 .econ-day-hdr:first-child { border-top: none; }
 
+/* ── Today highlight ── */
+.econ-day-hdr--today {
+    color: #10B981;
+    border-top-color: rgba(16,185,129,0.22);
+}
+.econ-today-badge {
+    font-family: var(--f-mono);
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #10B981;
+    border: 1px solid rgba(16,185,129,0.38);
+    padding: 1px 6px;
+    border-radius: 2px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+/* ── Next upcoming event ── */
+.econ-event-row--next {
+    background: #162420;
+    box-shadow: inset 3px 0 0 #10B981, inset 0 1px 0 rgba(255,255,255,0.09);
+}
+.econ-event-row--next:hover { background: #1c2e28; }
+
 /* ── Event row — same surface as .cal-cell ── */
 .econ-event-row {
     display: grid;
@@ -1115,6 +1140,13 @@
 [data-theme="light"] .econ-cal-title { color: #1a5c96; }
 [data-theme="light"] .econ-col-hdrs  { background: #dbeaf6; border-bottom-color: rgba(99,179,237,0.25); }
 [data-theme="light"] .econ-day-hdr   { background: #cfe0f0; border-top-color: rgba(99,179,237,0.25); color: #3a7aad; }
+[data-theme="light"] .econ-day-hdr--today { color: #0a7a4a; border-top-color: rgba(16,185,129,0.30); }
+[data-theme="light"] .econ-today-badge    { color: #0a7a4a; border-color: rgba(16,185,129,0.45); }
+[data-theme="light"] .econ-event-row--next {
+    background: #e6f7f1;
+    box-shadow: inset 3px 0 0 #10B981, inset 0 1px 0 rgba(255,255,255,0.70);
+}
+[data-theme="light"] .econ-event-row--next:hover { background: #d6f0e8; }
 [data-theme="light"] .econ-cal-wrapper {
     box-shadow: 0 2px 12px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.08);
 }
