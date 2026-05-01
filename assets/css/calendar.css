@@ -811,7 +811,7 @@
     letter-spacing: 0.14em;
     color: var(--text-dis);
     flex-shrink: 0;
-    min-width: 34px;
+    min-width: 44px;
 }
 .econ-filter-lbl--right { margin-left: 6px; }
 .econ-currency-filters { display: flex; gap: 5px; flex-wrap: wrap; }

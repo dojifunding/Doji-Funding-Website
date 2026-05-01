@@ -3719,7 +3719,18 @@ foreach ($challenges as $ch) {
                     <!-- Filters -->
                     <div class="econ-cal-filters">
 
-                        <!-- Row 1: currency + impact -->
+                        <!-- Row 1: impact -->
+                        <div class="econ-filter-row">
+                            <span class="econ-filter-lbl">IMPACT</span>
+                            <div class="econ-impact-filters">
+                                <button class="econ-impact-btn econ-impact-active" data-impact="high">HIGH</button>
+                                <button class="econ-impact-btn econ-impact-active" data-impact="medium">MED</button>
+                                <button class="econ-impact-btn econ-impact-active" data-impact="low">LOW</button>
+                                <button class="econ-impact-btn econ-impact-active" data-impact="non-economic">N/ECO</button>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: currency -->
                         <div class="econ-filter-row">
                             <span class="econ-filter-lbl">CCY</span>
                             <div class="econ-currency-filters">
@@ -3734,16 +3745,9 @@ foreach ($challenges as $ch) {
                                 <button class="econ-filter-btn" data-currency="NZD">NZD</button>
                                 <button class="econ-filter-btn" data-currency="CNY">CNY</button>
                             </div>
-                            <span class="econ-filter-lbl econ-filter-lbl--right">IMPACT</span>
-                            <div class="econ-impact-filters">
-                                <button class="econ-impact-btn econ-impact-active" data-impact="high">HIGH</button>
-                                <button class="econ-impact-btn econ-impact-active" data-impact="medium">MED</button>
-                                <button class="econ-impact-btn econ-impact-active" data-impact="low">LOW</button>
-                                <button class="econ-impact-btn econ-impact-active" data-impact="non-economic">N/ECO</button>
-                            </div>
                         </div>
 
-                        <!-- Row 2: event types -->
+                        <!-- Row 3: event types -->
                         <div class="econ-filter-row">
                             <span class="econ-filter-lbl">TYPE</span>
                             <div class="econ-type-filters">
