@@ -874,6 +874,15 @@
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(77,208,225,0.25);
 }
 
+/* CNY — orange-red */
+.econ-filter-btn[data-currency="CNY"] {
+    background: rgba(232,112,64,0.07); border-color: rgba(232,112,64,0.22); color: rgba(232,112,64,0.55);
+}
+.econ-filter-btn[data-currency="CNY"].econ-filter-active {
+    background: rgba(232,112,64,0.18); border-color: rgba(232,112,64,0.55); color: #E87040;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(232,112,64,0.25);
+}
+
 /* ALL — green */
 .econ-filter-btn[data-currency="ALL"].econ-filter-active {
     background: rgba(16,185,129,0.18); border-color: rgba(16,185,129,0.55); color: #10B981;
@@ -890,9 +899,14 @@
     color: #F59E0B;
 }
 .econ-impact-btn[data-impact="low"].econ-impact-active {
-    background: rgba(255,255,255,0.05);
-    border-color: var(--border-vis);
-    color: var(--text-sec);
+    background: rgba(220,190,30,0.10);
+    border-color: rgba(220,190,30,0.40);
+    color: #DCC81E;
+}
+.econ-impact-btn[data-impact="non-economic"].econ-impact-active {
+    background: rgba(150,160,170,0.10);
+    border-color: rgba(150,160,170,0.38);
+    color: #96A0AA;
 }
 
 /* ── Column headers ── */
@@ -977,7 +991,7 @@
 .econ-currency[data-currency="CHF"] { color: #b0bec5; }
 .econ-currency[data-currency="NZD"] { color: #4dd0e1; }
 .econ-currency[data-currency="CNY"],
-.econ-currency[data-currency="CHN"] { color: #ff8a65; }
+.econ-currency[data-currency="CHN"] { color: #E87040; }
 
 .econ-flag { font-size: 13px; line-height: 1; }
 
@@ -990,10 +1004,10 @@
 }
 .econ-impact--high        { background: #E84040; box-shadow: 0 0 6px rgba(232,64,64,0.55); }
 .econ-impact--medium      { background: #F0A030; box-shadow: 0 0 4px rgba(240,160,48,0.30); }
-.econ-impact--low         { background: #6c757d; }
+.econ-impact--low         { background: #DCC81E; box-shadow: 0 0 4px rgba(220,200,30,0.30); }
 .econ-impact--non-economic,
 .econ-impact--holiday,
-.econ-impact--none        { background: rgba(255,255,255,0.10); }
+.econ-impact--none        { background: #6c757d; }
 
 .econ-title {
     font-family: var(--f-sans);

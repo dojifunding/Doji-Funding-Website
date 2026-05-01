@@ -3722,11 +3722,13 @@ foreach ($challenges as $ch) {
                             <button class="econ-filter-btn" data-currency="CAD">CAD</button>
                             <button class="econ-filter-btn" data-currency="CHF">CHF</button>
                             <button class="econ-filter-btn" data-currency="NZD">NZD</button>
+                            <button class="econ-filter-btn" data-currency="CNY">CNY</button>
                         </div>
                         <div class="econ-impact-filters">
                             <button class="econ-impact-btn econ-impact-active" data-impact="high">HIGH</button>
                             <button class="econ-impact-btn econ-impact-active" data-impact="medium">MED</button>
                             <button class="econ-impact-btn econ-impact-active" data-impact="low">LOW</button>
+                            <button class="econ-impact-btn econ-impact-active" data-impact="non-economic">N/ECO</button>
                         </div>
                     </div>
 

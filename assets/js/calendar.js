@@ -530,7 +530,7 @@ var EconCalendar = (function () {
 
     var _weekStart = null;
     var _currencies = ['ALL']; /* array; ['ALL'] means no filter */
-    var _impacts   = { high: true, medium: true, low: true };
+    var _impacts   = { high: true, medium: true, low: true, 'non-economic': true };
     var _cache     = {};
     var _inited    = false;
 
@@ -670,9 +670,9 @@ var EconCalendar = (function () {
         /* distribute + filter */
         events.forEach(function (ev) {
             var imp = (ev.impact || '').toLowerCase().replace(/\s+/g, '-');
-            if (imp === 'non-economic' || imp === 'holiday') return;
-            var impKey = imp.replace('-economic', '');
-            if (!_impacts[impKey] && !_impacts[imp]) return;
+            /* normalise holiday → non-economic */
+            var impKey = (imp === 'holiday') ? 'non-economic' : imp;
+            if (!_impacts[impKey]) return;
             if (_currencies[0] !== 'ALL' && _currencies.indexOf(ev.country) < 0) return;
             for (var j = 0; j < days.length; j++) {
                 if (days[j].dk === ev.date) { days[j].evts.push(ev); break; }
