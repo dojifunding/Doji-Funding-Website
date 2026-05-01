@@ -772,11 +772,15 @@ var EconCalendar = (function () {
             ? html
             : '<div class="econ-empty">[ NO EVENTS MATCHING FILTERS ]</div>';
 
-        /* auto-scroll to today on current week */
-        if (isCurrentWeek()) {
-            var todayHdr = body.querySelector('[data-today]');
-            if (todayHdr) setTimeout(function () {
-                todayHdr.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        /* scroll within the body div to the next event — never scrolls the page */
+        if (nextDk !== null) {
+            setTimeout(function () {
+                var nextRow = body.querySelector('.econ-event-row--next');
+                if (nextRow) {
+                    var rowTop  = nextRow.getBoundingClientRect().top;
+                    var bodyTop = body.getBoundingClientRect().top;
+                    body.scrollTop += (rowTop - bodyTop) - 48;
+                }
             }, 60);
         }
     }
