@@ -960,7 +960,8 @@
     grid-template-columns: 62px 76px 16px 1fr 78px 78px 78px;
     gap: 0 10px;
     padding: 6px 18px;
-    border-bottom: 1px solid var(--border-vis);
+    background: #111d28;
+    border-bottom: 1px solid rgba(99,179,237,0.10);
 }
 .econ-col-hdr {
     font-family: var(--f-mono);
@@ -986,9 +987,11 @@
     font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.16em;
-    color: var(--text-dis);
-    padding: 10px 18px 5px;
-    border-top: 1px solid var(--border-sub);
+    color: #7aafd4;
+    padding: 8px 18px 6px;
+    background: #0f1a24;
+    border-top: 1px solid rgba(99,179,237,0.10);
+    border-bottom: 1px solid rgba(0,0,0,0.30);
 }
 .econ-day-hdr:first-child { border-top: none; }
 
@@ -1102,3 +1105,5 @@
     background: #d4e5f4;
     border-bottom-color: rgba(99,179,237,0.3);
 }
+[data-theme="light"] .econ-col-hdrs { background: #dbeaf6; border-bottom-color: rgba(99,179,237,0.25); }
+[data-theme="light"] .econ-day-hdr  { background: #cfe0f0; border-top-color: rgba(99,179,237,0.25); color: #3a7aad; }
