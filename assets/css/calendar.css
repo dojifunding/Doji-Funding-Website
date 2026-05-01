@@ -533,6 +533,21 @@
 }
 [data-theme="light"] .econ-event-row:hover { background: #e4f0fb; box-shadow: none; }
 
+/* ── Split layout — journal left / eco calendar right ─────── */
+.cal-split-layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+.cal-split-left  { flex: 0 0 57%; min-width: 0; }
+.cal-split-right { flex: 1 1 0; min-width: 0; }
+
+@media (max-width: 1499px) {
+    .cal-split-layout { flex-direction: column; }
+    .cal-split-left,
+    .cal-split-right  { flex: none; width: 100%; }
+}
+
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 900px)  { .cal-kpis { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 640px)  {

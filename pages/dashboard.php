@@ -3552,7 +3552,10 @@ foreach ($challenges as $ch) {
 
             <!-- ══ TAB: CALENDAR ══ -->
             <div class="dash-tab" id="tab-calendar">
+            <div class="cal-split-layout">
 
+                <!-- ══ LEFT: TRADING JOURNAL ══ -->
+                <div class="cal-split-left">
                 <!-- ══ TRADING JOURNAL ══ -->
                 <div class="cal-section-hdr">
                     <div>
@@ -3697,7 +3700,10 @@ foreach ($challenges as $ch) {
                     </div>
                 </div>
 
-                <!-- ══ ECONOMIC CALENDAR ══ -->
+                </div><!-- /cal-split-left -->
+
+                <!-- ══ RIGHT: ECONOMIC CALENDAR ══ -->
+                <div class="cal-split-right">
                 <div class="econ-cal" id="econCal">
 
                     <!-- Header: title + week navigation -->
@@ -3774,8 +3780,10 @@ foreach ($challenges as $ch) {
 
                     <div class="econ-cal-source">DATA · FOREX FACTORY</div>
                 </div>
+                </div><!-- /cal-split-right -->
 
-            </div>
+            </div><!-- /cal-split-layout -->
+            </div><!-- /tab-calendar -->
 
             <!-- ══ TAB: AFFILIATE ══ -->
             <div class="dash-tab" id="tab-affiliate">
