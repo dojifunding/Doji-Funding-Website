@@ -573,6 +573,23 @@ var EconCalendar = (function () {
     function pad2(n)  { return n < 10 ? '0' + n : '' + n; }
     function esc(s)   { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+    /* strip units/suffixes and parse numeric value for beat/miss comparison */
+    function parseNum(s) {
+        if (!s || !s.trim() || s === '—') return NaN;
+        return parseFloat(s.replace(/[%KMBkbm,\s]/g, ''));
+    }
+
+    /* compare actual vs forecast → 'beat', 'miss', or 'live' (neutral) */
+    function actualClass(ev) {
+        if (!ev.actual || !ev.actual.trim()) return '';
+        var a = parseNum(ev.actual);
+        var f = parseNum(ev.forecast);
+        if (!isNaN(a) && !isNaN(f) && a !== f) {
+            return a > f ? ' econ-actual--beat' : ' econ-actual--miss';
+        }
+        return ' econ-actual--live';
+    }
+
     /* Monday of the week containing d */
     function weekStart(d) {
         var dt  = new Date(d);
@@ -755,7 +772,6 @@ var EconCalendar = (function () {
             day.evts.forEach(function (ev, ei) {
                 var isNext  = (day.dk === nextDk && ei === nextEi);
                 var imp     = (ev.impact || '').toLowerCase().replace(/\s+/g, '-');
-                var hasAct  = ev.actual && ev.actual.trim();
                 html += '<div class="econ-event-row' + (isNext ? ' econ-event-row--next' : '') + '">'
                       + '<span class="econ-time">'     + parseTime(ev.time) + '</span>'
                       + '<span class="econ-currency" data-currency="' + esc(ev.country || '') + '">' + esc(ev.country || '') + '</span>'
@@ -763,7 +779,7 @@ var EconCalendar = (function () {
                       + '<span class="econ-title">'    + esc(ev.title || '') + '</span>'
                       + '<span class="econ-val econ-forecast">' + fv(ev.forecast) + '</span>'
                       + '<span class="econ-val econ-previous">' + fv(ev.previous) + '</span>'
-                      + '<span class="econ-val econ-actual' + (hasAct ? ' econ-actual--live' : '') + '">' + fv(ev.actual) + '</span>'
+                      + '<span class="econ-val econ-actual' + actualClass(ev) + '">' + fv(ev.actual) + '</span>'
                       + '</div>';
             });
         });

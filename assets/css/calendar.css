@@ -1114,7 +1114,11 @@
     letter-spacing: 0.02em;
     white-space: nowrap;
 }
-.econ-actual--live { color: #e8e8e8; font-weight: 600; }
+.econ-forecast { color: #c8d0d9; }
+.econ-previous { color: #5a6472; }
+.econ-actual--live { color: #e2e8f0; font-weight: 600; }
+.econ-actual--beat { color: #22c55e; font-weight: 700; }
+.econ-actual--miss { color: #ef4444; font-weight: 700; }
 
 /* ── States ── */
 .econ-loading,
@@ -1159,5 +1163,8 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.08);
 }
 [data-theme="light"] .econ-week-label { color: #1a5c96; }
-[data-theme="light"] .econ-val-actual--beat { color: #0a7a4a; }
-[data-theme="light"] .econ-val-actual--miss { color: #c0392b; }
+[data-theme="light"] .econ-forecast         { color: #374151; }
+[data-theme="light"] .econ-previous         { color: #9ca3af; }
+[data-theme="light"] .econ-actual--live     { color: #111827; }
+[data-theme="light"] .econ-actual--beat     { color: #15803d; }
+[data-theme="light"] .econ-actual--miss     { color: #dc2626; }
