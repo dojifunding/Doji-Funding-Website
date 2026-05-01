@@ -529,7 +529,7 @@ var EconCalendar = (function () {
     'use strict';
 
     var _weekStart = null;
-    var _currency  = 'ALL';
+    var _currencies = ['ALL']; /* array; ['ALL'] means no filter */
     var _impacts   = { high: true, medium: true, low: true };
     var _cache     = {};
     var _inited    = false;
@@ -673,7 +673,7 @@ var EconCalendar = (function () {
             if (imp === 'non-economic' || imp === 'holiday') return;
             var impKey = imp.replace('-economic', '');
             if (!_impacts[impKey] && !_impacts[imp]) return;
-            if (_currency !== 'ALL' && ev.country !== _currency) return;
+            if (_currencies[0] !== 'ALL' && _currencies.indexOf(ev.country) < 0) return;
             for (var j = 0; j < days.length; j++) {
                 if (days[j].dk === ev.date) { days[j].evts.push(ev); break; }
             }
@@ -737,11 +737,37 @@ var EconCalendar = (function () {
 
         document.querySelectorAll('.econ-filter-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
+                var cur = this.getAttribute('data-currency');
+
+                if (cur === 'ALL') {
+                    /* ALL resets everything */
+                    _currencies = ['ALL'];
+                } else {
+                    /* remove ALL from selection */
+                    var idx = _currencies.indexOf('ALL');
+                    if (idx > -1) _currencies.splice(idx, 1);
+
+                    /* toggle this currency */
+                    var pos = _currencies.indexOf(cur);
+                    if (pos > -1) {
+                        _currencies.splice(pos, 1);
+                    } else {
+                        _currencies.push(cur);
+                    }
+
+                    /* if nothing selected, fall back to ALL */
+                    if (_currencies.length === 0) _currencies = ['ALL'];
+                }
+
+                /* sync active classes */
                 document.querySelectorAll('.econ-filter-btn').forEach(function (b) {
-                    b.classList.remove('econ-filter-active');
+                    var bc = b.getAttribute('data-currency');
+                    var active = _currencies[0] === 'ALL'
+                        ? bc === 'ALL'
+                        : _currencies.indexOf(bc) > -1;
+                    b.classList.toggle('econ-filter-active', active);
                 });
-                this.classList.add('econ-filter-active');
-                _currency = this.getAttribute('data-currency');
+
                 renderEvents(cachedEvents());
             });
         });
