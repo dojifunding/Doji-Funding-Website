@@ -772,6 +772,13 @@ var EconCalendar = (function () {
             ? html
             : '<div class="econ-empty">[ NO EVENTS MATCHING FILTERS ]</div>';
 
+        /* scroll within the body div to the next event — offsetTop is relative to the container */
+        if (nextDk !== null) {
+            setTimeout(function () {
+                var nextRow = body.querySelector('.econ-event-row--next');
+                if (nextRow) body.scrollTop = Math.max(0, nextRow.offsetTop - 48);
+            }, 60);
+        }
     }
 
     /* ── Auto-refresh every 5 min ───────────────────────── */

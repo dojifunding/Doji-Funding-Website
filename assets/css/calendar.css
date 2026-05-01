@@ -984,6 +984,7 @@
 .econ-cal-body {
     max-height: 480px;
     overflow-y: auto;
+    position: relative;
 }
 .econ-cal-body::-webkit-scrollbar       { width: 4px; }
 .econ-cal-body::-webkit-scrollbar-track { background: transparent; }
