@@ -530,7 +530,12 @@ var EconCalendar = (function () {
 
     var _weekStart = null;
     var _currencies = ['ALL']; /* array; ['ALL'] means no filter */
-    var _impacts   = { high: true, medium: true, low: true, 'non-economic': true };
+    var _impacts     = { high: true, medium: true, low: true, 'non-economic': true };
+    var _eventTypes  = {
+        'growth': true, 'inflation': true, 'employment': true, 'central-bank': true,
+        'bonds': true, 'housing': true, 'consumer-surveys': true, 'business-surveys': true,
+        'speeches': true, 'misc': true
+    };
     var _cache     = {};
     var _inited    = false;
 
@@ -545,6 +550,25 @@ var EconCalendar = (function () {
         AUD:'🇦🇺', CAD:'🇨🇦', CHF:'🇨🇭', NZD:'🇳🇿',
         CNY:'🇨🇳', CHN:'🇨🇳', SGD:'🇸🇬', KRW:'🇰🇷'
     };
+
+    /* Event type classification by title keyword — order matters (speeches first) */
+    var TYPE_RULES = [
+        ['speeches',         /speaks?|speech|testimony|press\s*conf|remarks?|appearance|interview|comment\b/i],
+        ['central-bank',     /rate\s*decision|interest\s*rate|fomc|monetary\s*policy|quantitative|overnight\s*rate|cash\s*rate|repo\s*rate|\bminutes\b|mpc\s*(decision|meeting)|bank\s*rate\s*decision/i],
+        ['employment',       /employ|unemploy|non.farm|payroll|jobless|claimant|labor|labour|\bwages?\b|earnings|adp\s*(national|employ)|participation\s*rate/i],
+        ['inflation',        /\bcpi\b|\bppi\b|\bpce\b|\brpi\b|hicp|\bwpi\b|inflation|price\s*index|deflator|core\s*price/i],
+        ['bonds',            /treasury|bond\s*auction|bill\s*auction|note\s*auction|yield\s*curve/i],
+        ['housing',          /housing|home\s*sales|building\s*permit|construction\s*spend|mortgage|property\s*price|\bhpi\b|house\s*price/i],
+        ['consumer-surveys', /consumer\s*conf|consumer\s*sent|consumer\s*clim|michigan|gfk|consumer\s*spend|retail\s*sales/i],
+        ['business-surveys', /\bpmi\b|\bism\b|\bzew\b|\bifo\b|tankan|business\s*conf|business\s*clim|business\s*outlook|manufacturing\s*index|services\s*index|composite\s*index/i],
+        ['growth',           /\bgdp\b|\bgnp\b|trade\s*bal|current\s*account|industrial\s*prod|factory\s*order|durable\s*good|manufacturing\s*output|business\s*invest/i]
+    ];
+    function classifyEvent(title) {
+        for (var i = 0; i < TYPE_RULES.length; i++) {
+            if (TYPE_RULES[i][1].test(title)) return TYPE_RULES[i][0];
+        }
+        return 'misc';
+    }
 
     function pad2(n)  { return n < 10 ? '0' + n : '' + n; }
     function esc(s)   { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -673,6 +697,8 @@ var EconCalendar = (function () {
             /* normalise holiday → non-economic */
             var impKey = (imp === 'holiday') ? 'non-economic' : imp;
             if (!_impacts[impKey]) return;
+            /* event type filter */
+            if (!_eventTypes[classifyEvent(ev.title || '')]) return;
             if (_currencies[0] !== 'ALL' && _currencies.indexOf(ev.country) < 0) return;
             for (var j = 0; j < days.length; j++) {
                 if (days[j].dk === ev.date) { days[j].evts.push(ev); break; }
@@ -777,6 +803,15 @@ var EconCalendar = (function () {
                 var key = this.getAttribute('data-impact');
                 _impacts[key] = !_impacts[key];
                 this.classList.toggle('econ-impact-active', _impacts[key]);
+                renderEvents(cachedEvents());
+            });
+        });
+
+        document.querySelectorAll('.econ-type-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var key = this.getAttribute('data-type');
+                _eventTypes[key] = !_eventTypes[key];
+                this.classList.toggle('econ-type-active', _eventTypes[key]);
                 renderEvents(cachedEvents());
             });
         });

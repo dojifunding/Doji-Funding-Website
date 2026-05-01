@@ -3710,26 +3710,50 @@ foreach ($challenges as $ch) {
                         </div>
                     </div>
 
-                    <!-- Filters: currency + impact -->
+                    <!-- Filters -->
                     <div class="econ-cal-filters">
-                        <div class="econ-currency-filters">
-                            <button class="econ-filter-btn econ-filter-active" data-currency="ALL">ALL</button>
-                            <button class="econ-filter-btn" data-currency="USD">USD</button>
-                            <button class="econ-filter-btn" data-currency="EUR">EUR</button>
-                            <button class="econ-filter-btn" data-currency="GBP">GBP</button>
-                            <button class="econ-filter-btn" data-currency="JPY">JPY</button>
-                            <button class="econ-filter-btn" data-currency="AUD">AUD</button>
-                            <button class="econ-filter-btn" data-currency="CAD">CAD</button>
-                            <button class="econ-filter-btn" data-currency="CHF">CHF</button>
-                            <button class="econ-filter-btn" data-currency="NZD">NZD</button>
-                            <button class="econ-filter-btn" data-currency="CNY">CNY</button>
+
+                        <!-- Row 1: currency + impact -->
+                        <div class="econ-filter-row">
+                            <span class="econ-filter-lbl">CCY</span>
+                            <div class="econ-currency-filters">
+                                <button class="econ-filter-btn econ-filter-active" data-currency="ALL">ALL</button>
+                                <button class="econ-filter-btn" data-currency="USD">USD</button>
+                                <button class="econ-filter-btn" data-currency="EUR">EUR</button>
+                                <button class="econ-filter-btn" data-currency="GBP">GBP</button>
+                                <button class="econ-filter-btn" data-currency="JPY">JPY</button>
+                                <button class="econ-filter-btn" data-currency="AUD">AUD</button>
+                                <button class="econ-filter-btn" data-currency="CAD">CAD</button>
+                                <button class="econ-filter-btn" data-currency="CHF">CHF</button>
+                                <button class="econ-filter-btn" data-currency="NZD">NZD</button>
+                                <button class="econ-filter-btn" data-currency="CNY">CNY</button>
+                            </div>
+                            <span class="econ-filter-lbl econ-filter-lbl--right">IMPACT</span>
+                            <div class="econ-impact-filters">
+                                <button class="econ-impact-btn econ-impact-active" data-impact="high">HIGH</button>
+                                <button class="econ-impact-btn econ-impact-active" data-impact="medium">MED</button>
+                                <button class="econ-impact-btn econ-impact-active" data-impact="low">LOW</button>
+                                <button class="econ-impact-btn econ-impact-active" data-impact="non-economic">N/ECO</button>
+                            </div>
                         </div>
-                        <div class="econ-impact-filters">
-                            <button class="econ-impact-btn econ-impact-active" data-impact="high">HIGH</button>
-                            <button class="econ-impact-btn econ-impact-active" data-impact="medium">MED</button>
-                            <button class="econ-impact-btn econ-impact-active" data-impact="low">LOW</button>
-                            <button class="econ-impact-btn econ-impact-active" data-impact="non-economic">N/ECO</button>
+
+                        <!-- Row 2: event types -->
+                        <div class="econ-filter-row">
+                            <span class="econ-filter-lbl">TYPE</span>
+                            <div class="econ-type-filters">
+                                <button class="econ-type-btn econ-type-active" data-type="growth">GROWTH</button>
+                                <button class="econ-type-btn econ-type-active" data-type="inflation">INFLATION</button>
+                                <button class="econ-type-btn econ-type-active" data-type="employment">EMPLOYMENT</button>
+                                <button class="econ-type-btn econ-type-active" data-type="central-bank">CENTRAL BANK</button>
+                                <button class="econ-type-btn econ-type-active" data-type="bonds">BONDS</button>
+                                <button class="econ-type-btn econ-type-active" data-type="housing">HOUSING</button>
+                                <button class="econ-type-btn econ-type-active" data-type="consumer-surveys">CONSUMER</button>
+                                <button class="econ-type-btn econ-type-active" data-type="business-surveys">BUSINESS</button>
+                                <button class="econ-type-btn econ-type-active" data-type="speeches">SPEECHES</button>
+                                <button class="econ-type-btn econ-type-active" data-type="misc">MISC</button>
+                            </div>
                         </div>
+
                     </div>
 
                     <!-- Column headers -->
