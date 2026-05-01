@@ -828,78 +828,85 @@
 
 /* ── Currency buttons: color always visible, muted when inactive ── */
 
-/* USD / EUR — blue */
-.econ-filter-btn[data-currency="USD"],
-.econ-filter-btn[data-currency="EUR"] {
+/* USD — blue */
+.econ-filter-btn[data-currency="USD"] {
     background: rgba(91,156,246,0.07); border-color: rgba(91,156,246,0.22); color: rgba(91,156,246,0.55);
 }
-.econ-filter-btn[data-currency="USD"].econ-filter-active,
-.econ-filter-btn[data-currency="EUR"].econ-filter-active {
+.econ-filter-btn[data-currency="USD"].econ-filter-active {
     background: rgba(91,156,246,0.18); border-color: rgba(91,156,246,0.55); color: #5b9cf6;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(91,156,246,0.25);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(91,156,246,0.28);
 }
 
-/* GBP — light blue */
+/* EUR — violet */
+.econ-filter-btn[data-currency="EUR"] {
+    background: rgba(167,139,250,0.07); border-color: rgba(167,139,250,0.22); color: rgba(167,139,250,0.55);
+}
+.econ-filter-btn[data-currency="EUR"].econ-filter-active {
+    background: rgba(167,139,250,0.18); border-color: rgba(167,139,250,0.55); color: #a78bfa;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(167,139,250,0.28);
+}
+
+/* GBP — rose */
 .econ-filter-btn[data-currency="GBP"] {
-    background: rgba(123,196,226,0.07); border-color: rgba(123,196,226,0.22); color: rgba(123,196,226,0.55);
+    background: rgba(244,114,182,0.07); border-color: rgba(244,114,182,0.22); color: rgba(244,114,182,0.55);
 }
 .econ-filter-btn[data-currency="GBP"].econ-filter-active {
-    background: rgba(123,196,226,0.18); border-color: rgba(123,196,226,0.55); color: #7bc4e2;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(123,196,226,0.25);
+    background: rgba(244,114,182,0.18); border-color: rgba(244,114,182,0.55); color: #f472b6;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(244,114,182,0.28);
 }
 
 /* JPY — red */
 .econ-filter-btn[data-currency="JPY"] {
-    background: rgba(249,117,117,0.07); border-color: rgba(249,117,117,0.22); color: rgba(249,117,117,0.55);
+    background: rgba(248,113,113,0.07); border-color: rgba(248,113,113,0.22); color: rgba(248,113,113,0.55);
 }
 .econ-filter-btn[data-currency="JPY"].econ-filter-active {
-    background: rgba(249,117,117,0.18); border-color: rgba(249,117,117,0.55); color: #f97575;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(249,117,117,0.25);
+    background: rgba(248,113,113,0.18); border-color: rgba(248,113,113,0.55); color: #f87171;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(248,113,113,0.28);
 }
 
-/* AUD — cyan */
+/* AUD — emerald */
 .econ-filter-btn[data-currency="AUD"] {
-    background: rgba(79,195,247,0.07); border-color: rgba(79,195,247,0.22); color: rgba(79,195,247,0.55);
+    background: rgba(52,211,153,0.07); border-color: rgba(52,211,153,0.22); color: rgba(52,211,153,0.55);
 }
 .econ-filter-btn[data-currency="AUD"].econ-filter-active {
-    background: rgba(79,195,247,0.18); border-color: rgba(79,195,247,0.55); color: #4fc3f7;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(79,195,247,0.25);
+    background: rgba(52,211,153,0.18); border-color: rgba(52,211,153,0.55); color: #34d399;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(52,211,153,0.28);
 }
 
 /* CAD — orange */
 .econ-filter-btn[data-currency="CAD"] {
-    background: rgba(255,138,101,0.07); border-color: rgba(255,138,101,0.22); color: rgba(255,138,101,0.55);
+    background: rgba(251,146,60,0.07); border-color: rgba(251,146,60,0.22); color: rgba(251,146,60,0.55);
 }
 .econ-filter-btn[data-currency="CAD"].econ-filter-active {
-    background: rgba(255,138,101,0.18); border-color: rgba(255,138,101,0.55); color: #ff8a65;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(255,138,101,0.25);
+    background: rgba(251,146,60,0.18); border-color: rgba(251,146,60,0.55); color: #fb923c;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(251,146,60,0.28);
 }
 
-/* CHF — grey */
+/* CHF — cool grey */
 .econ-filter-btn[data-currency="CHF"] {
-    background: rgba(176,190,197,0.07); border-color: rgba(176,190,197,0.22); color: rgba(176,190,197,0.55);
+    background: rgba(148,163,184,0.07); border-color: rgba(148,163,184,0.22); color: rgba(148,163,184,0.55);
 }
 .econ-filter-btn[data-currency="CHF"].econ-filter-active {
-    background: rgba(176,190,197,0.18); border-color: rgba(176,190,197,0.55); color: #b0bec5;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 6px rgba(176,190,197,0.18);
+    background: rgba(148,163,184,0.18); border-color: rgba(148,163,184,0.55); color: #94a3b8;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 6px rgba(148,163,184,0.20);
 }
 
-/* NZD — teal */
+/* NZD — cyan */
 .econ-filter-btn[data-currency="NZD"] {
-    background: rgba(77,208,225,0.07); border-color: rgba(77,208,225,0.22); color: rgba(77,208,225,0.55);
+    background: rgba(34,211,238,0.07); border-color: rgba(34,211,238,0.22); color: rgba(34,211,238,0.55);
 }
 .econ-filter-btn[data-currency="NZD"].econ-filter-active {
-    background: rgba(77,208,225,0.18); border-color: rgba(77,208,225,0.55); color: #4dd0e1;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(77,208,225,0.25);
+    background: rgba(34,211,238,0.18); border-color: rgba(34,211,238,0.55); color: #22d3ee;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(34,211,238,0.28);
 }
 
-/* CNY — orange-red */
+/* CNY — amber */
 .econ-filter-btn[data-currency="CNY"] {
-    background: rgba(232,112,64,0.07); border-color: rgba(232,112,64,0.22); color: rgba(232,112,64,0.55);
+    background: rgba(251,191,36,0.07); border-color: rgba(251,191,36,0.22); color: rgba(251,191,36,0.55);
 }
 .econ-filter-btn[data-currency="CNY"].econ-filter-active {
-    background: rgba(232,112,64,0.18); border-color: rgba(232,112,64,0.55); color: #E87040;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(232,112,64,0.25);
+    background: rgba(251,191,36,0.18); border-color: rgba(251,191,36,0.55); color: #fbbf24;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 8px rgba(251,191,36,0.28);
 }
 
 /* ALL — green */
@@ -1032,15 +1039,15 @@
     white-space: nowrap;
 }
 .econ-currency[data-currency="USD"] { color: #5b9cf6; }
-.econ-currency[data-currency="EUR"] { color: #5b9cf6; }
-.econ-currency[data-currency="GBP"] { color: #7bc4e2; }
-.econ-currency[data-currency="JPY"] { color: #f97575; }
-.econ-currency[data-currency="AUD"] { color: #4fc3f7; }
-.econ-currency[data-currency="CAD"] { color: #ff8a65; }
-.econ-currency[data-currency="CHF"] { color: #b0bec5; }
-.econ-currency[data-currency="NZD"] { color: #4dd0e1; }
+.econ-currency[data-currency="EUR"] { color: #a78bfa; }
+.econ-currency[data-currency="GBP"] { color: #f472b6; }
+.econ-currency[data-currency="JPY"] { color: #f87171; }
+.econ-currency[data-currency="AUD"] { color: #34d399; }
+.econ-currency[data-currency="CAD"] { color: #fb923c; }
+.econ-currency[data-currency="CHF"] { color: #94a3b8; }
+.econ-currency[data-currency="NZD"] { color: #22d3ee; }
 .econ-currency[data-currency="CNY"],
-.econ-currency[data-currency="CHN"] { color: #E87040; }
+.econ-currency[data-currency="CHN"] { color: #fbbf24; }
 
 .econ-flag { font-size: 13px; line-height: 1; }
 
