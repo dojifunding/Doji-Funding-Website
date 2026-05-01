@@ -3714,14 +3714,14 @@ foreach ($challenges as $ch) {
                     <div class="econ-cal-filters">
                         <div class="econ-currency-filters">
                             <button class="econ-filter-btn econ-filter-active" data-currency="ALL">ALL</button>
-                            <button class="econ-filter-btn" data-currency="USD">🇺🇸 USD</button>
-                            <button class="econ-filter-btn" data-currency="EUR">🇪🇺 EUR</button>
-                            <button class="econ-filter-btn" data-currency="GBP">🇬🇧 GBP</button>
-                            <button class="econ-filter-btn" data-currency="JPY">🇯🇵 JPY</button>
-                            <button class="econ-filter-btn" data-currency="AUD">🇦🇺 AUD</button>
-                            <button class="econ-filter-btn" data-currency="CAD">🇨🇦 CAD</button>
-                            <button class="econ-filter-btn" data-currency="CHF">🇨🇭 CHF</button>
-                            <button class="econ-filter-btn" data-currency="NZD">🇳🇿 NZD</button>
+                            <button class="econ-filter-btn" data-currency="USD">USD</button>
+                            <button class="econ-filter-btn" data-currency="EUR">EUR</button>
+                            <button class="econ-filter-btn" data-currency="GBP">GBP</button>
+                            <button class="econ-filter-btn" data-currency="JPY">JPY</button>
+                            <button class="econ-filter-btn" data-currency="AUD">AUD</button>
+                            <button class="econ-filter-btn" data-currency="CAD">CAD</button>
+                            <button class="econ-filter-btn" data-currency="CHF">CHF</button>
+                            <button class="econ-filter-btn" data-currency="NZD">NZD</button>
                         </div>
                         <div class="econ-impact-filters">
                             <button class="econ-impact-btn econ-impact-active" data-impact="high">HIGH</button>

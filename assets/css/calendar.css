@@ -790,22 +790,79 @@
     font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.10em;
-    background: none;
-    border: 1px solid var(--border-sub);
+    background: #151a1d;
+    border: 1px solid var(--border-vis);
     color: var(--text-dis);
-    padding: 3px 8px;
+    padding: 4px 9px;
     border-radius: 2px;
     cursor: pointer;
-    transition: border-color 0.1s, color 0.1s, background 0.1s;
+    transition: border-color 0.1s, color 0.1s, background 0.1s, box-shadow 0.1s;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07),
+                0 1px 0 rgba(0,0,0,0.45),
+                0 2px 5px rgba(0,0,0,0.2);
     white-space: nowrap;
 }
 .econ-filter-btn:hover,
-.econ-impact-btn:hover { color: var(--text-pri); border-color: var(--border-vis); }
+.econ-impact-btn:hover { color: var(--text-pri); border-color: rgba(255,255,255,0.25); }
+.econ-filter-btn:active,
+.econ-impact-btn:active { box-shadow: inset 0 2px 5px rgba(0,0,0,0.55); transform: translateY(1px); }
 
-.econ-filter-btn.econ-filter-active {
-    background: rgba(16,185,129,0.10);
-    border-color: rgba(16,185,129,0.38);
+/* ALL */
+.econ-filter-btn[data-currency="ALL"].econ-filter-active {
+    background: rgba(16,185,129,0.12);
+    border-color: rgba(16,185,129,0.45);
     color: #10B981;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 6px rgba(16,185,129,0.20);
+}
+/* USD / EUR */
+.econ-filter-btn[data-currency="USD"].econ-filter-active,
+.econ-filter-btn[data-currency="EUR"].econ-filter-active {
+    background: rgba(91,156,246,0.12);
+    border-color: rgba(91,156,246,0.45);
+    color: #5b9cf6;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 6px rgba(91,156,246,0.20);
+}
+/* GBP */
+.econ-filter-btn[data-currency="GBP"].econ-filter-active {
+    background: rgba(123,196,226,0.12);
+    border-color: rgba(123,196,226,0.45);
+    color: #7bc4e2;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 6px rgba(123,196,226,0.20);
+}
+/* JPY */
+.econ-filter-btn[data-currency="JPY"].econ-filter-active {
+    background: rgba(249,117,117,0.12);
+    border-color: rgba(249,117,117,0.45);
+    color: #f97575;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 6px rgba(249,117,117,0.20);
+}
+/* AUD */
+.econ-filter-btn[data-currency="AUD"].econ-filter-active {
+    background: rgba(79,195,247,0.12);
+    border-color: rgba(79,195,247,0.45);
+    color: #4fc3f7;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 6px rgba(79,195,247,0.20);
+}
+/* CAD */
+.econ-filter-btn[data-currency="CAD"].econ-filter-active {
+    background: rgba(255,138,101,0.12);
+    border-color: rgba(255,138,101,0.45);
+    color: #ff8a65;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 6px rgba(255,138,101,0.20);
+}
+/* CHF */
+.econ-filter-btn[data-currency="CHF"].econ-filter-active {
+    background: rgba(176,190,197,0.12);
+    border-color: rgba(176,190,197,0.45);
+    color: #b0bec5;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 6px rgba(176,190,197,0.15);
+}
+/* NZD */
+.econ-filter-btn[data-currency="NZD"].econ-filter-active {
+    background: rgba(77,208,225,0.12);
+    border-color: rgba(77,208,225,0.45);
+    color: #4dd0e1;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 0 6px rgba(77,208,225,0.20);
 }
 .econ-impact-btn[data-impact="high"].econ-impact-active {
     background: rgba(215,25,33,0.10);
