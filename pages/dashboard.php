@@ -4,6 +4,7 @@
  * Layout: fixed sidebar + fixed topbar + scrollable content (Phidias-style)
  */
 ?>
+<?php require_once __DIR__ . '/../includes/pixel-icons.php'; ?>
 <style>
 /* Nothing Style — supprime grain/bruit/scanlines */
 body::before  { opacity: 0 !important; animation: none !important; }
@@ -79,8 +80,9 @@ function compTimeUntil(string $startsStr): string {
 
 // ── Competitions demo data ──
 $competitions_all = [
-    ['id'=>1,  'name'=>'Monthly Traders Cup',   'edition'=>'April 2026',    'type'=>'free', 'entry'=>0,    'organizer'=>'Doji Funding','starts'=>'2026-04-01 00:00:00','ends'=>'2026-04-30 23:59:59','participants'=>247,'platform'=>'DXtrade','status'=>'live',    'category'=>'monthly',      'prize_pool'=>5000, 'featured'=>true],
+    ['id'=>1,  'name'=>'Monthly Traders Cup',   'edition'=>'May 2026',      'type'=>'free', 'entry'=>0,    'organizer'=>'Doji Funding','starts'=>'2026-05-01 00:00:00','ends'=>'2026-05-31 23:59:59','participants'=>0,  'platform'=>'DXtrade','status'=>'live',    'category'=>'monthly',      'prize_pool'=>5000, 'featured'=>true],
     ['id'=>2,  'name'=>'Elite Challenge Series','edition'=>'Season 3',      'type'=>'paid', 'entry'=>25,   'organizer'=>'Doji Funding','starts'=>'2026-04-25 00:00:00','ends'=>'2026-05-25 23:59:59','participants'=>89, 'platform'=>'DXtrade','status'=>'live',    'category'=>'championship', 'prize_pool'=>25000,'featured'=>false],
+    ['id'=>100,'name'=>'Monthly Traders Cup',   'edition'=>'April 2026',    'type'=>'free', 'entry'=>0,    'organizer'=>'Doji Funding','starts'=>'2026-04-01 00:00:00','ends'=>'2026-04-30 23:59:59','participants'=>247,'platform'=>'DXtrade','status'=>'ended',   'category'=>'monthly',      'prize_pool'=>5000, 'featured'=>false],
     ['id'=>101,'name'=>'Monthly Traders Cup',   'edition'=>'March 2026',    'type'=>'free', 'entry'=>0,    'organizer'=>'Doji Funding','starts'=>'2026-03-01 00:00:00','ends'=>'2026-03-31 23:59:59','participants'=>312,'platform'=>'DXtrade','status'=>'ended',   'category'=>'monthly',      'prize_pool'=>5000, 'featured'=>false],
     ['id'=>102,'name'=>'Monthly Traders Cup',   'edition'=>'February 2026', 'type'=>'free', 'entry'=>0,    'organizer'=>'Doji Funding','starts'=>'2026-02-01 00:00:00','ends'=>'2026-02-28 23:59:59','participants'=>289,'platform'=>'DXtrade','status'=>'ended',   'category'=>'monthly',      'prize_pool'=>5000, 'featured'=>false],
     ['id'=>103,'name'=>'Monthly Traders Cup',   'edition'=>'January 2026',  'type'=>'free', 'entry'=>0,    'organizer'=>'Doji Funding','starts'=>'2026-01-01 00:00:00','ends'=>'2026-01-31 23:59:59','participants'=>201,'platform'=>'DXtrade','status'=>'ended',   'category'=>'monthly',      'prize_pool'=>5000, 'featured'=>false],
@@ -383,26 +385,26 @@ foreach ($challenges as $ch) {
         <!-- Nav -->
         <nav class="dash-nav">
             <button class="dash-nav-item active" data-tab="overview">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                <?= pix('grid', 16, 16, 'dash-nav-icon') ?>
                 <span>Dashboard</span>
             </button>
             <button class="dash-nav-item" data-tab="challenges">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                <?= pix('layers', 16, 16, 'dash-nav-icon') ?>
                 <span>Challenges</span>
                 <?php if (($overview['active_challenges'] ?? 0) > 0): ?>
                 <span class="nav-status-badge nav-status-badge--pending"><span class="nav-status-badge-dot"></span><?= $overview['active_challenges'] ?></span>
                 <?php endif; ?>
             </button>
             <button class="dash-nav-item" data-tab="configurator">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M20 12h2M2 12h2M12 20v2M12 2v2"/></svg>
+                <?= pix('gear', 16, 16, 'dash-nav-icon') ?>
                 <span>Configurator</span>
             </button>
             <button class="dash-nav-item" data-tab="wallet">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H5a3 3 0 00-3 3v1"/><circle cx="17" cy="14" r="1" fill="currentColor"/></svg>
+                <?= pix('wallet', 16, 16, 'dash-nav-icon') ?>
                 <span>WALLET</span>
             </button>
             <button class="dash-nav-item" data-tab="payouts">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+                <?= pix('dollar', 16, 16, 'dash-nav-icon') ?>
                 <span>Payouts</span>
                 <?php if ($notifPayoutAction > 0): ?>
                 <span class="nav-status-badge nav-status-badge--urgent"><span class="nav-status-badge-dot"></span><?= $notifPayoutAction ?></span>
@@ -412,43 +414,43 @@ foreach ($challenges as $ch) {
             </button>
 
             <button class="dash-nav-item" data-tab="statistics">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+                <?= pix('bar-chart', 16, 16, 'dash-nav-icon') ?>
                 <span>Statistics</span>
             </button>
             <button class="dash-nav-item" data-tab="competitions">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M6 9H3.5a1.5 1.5 0 010-3H6"/><path d="M18 9h2.5a1.5 1.5 0 000-3H18"/><path d="M6 6h12v5a6 6 0 01-12 0V6z"/><path d="M12 17v4"/><path d="M8 21h8"/></svg>
+                <?= pix('trophy', 16, 16, 'dash-nav-icon') ?>
                 <span>Competitions</span>
             </button>
             <button class="dash-nav-item" data-tab="leaderboard">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><rect x="2" y="14" width="6" height="8" rx="1"/><rect x="9" y="9" width="6" height="13" rx="1"/><rect x="16" y="11" width="6" height="11" rx="1"/></svg>
+                <?= pix('columns', 16, 16, 'dash-nav-icon') ?>
                 <span>Leaderboard</span>
             </button>
             <button class="dash-nav-item" data-tab="certificates">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+                <?= pix('medal', 16, 16, 'dash-nav-icon') ?>
                 <span>Certificates</span>
             </button>
             <button class="dash-nav-item" data-tab="calendar">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <?= pix('calendar', 16, 16, 'dash-nav-icon') ?>
                 <span>Calendar</span>
             </button>
             <button class="dash-nav-item" data-tab="affiliate">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                <?= pix('share', 16, 16, 'dash-nav-icon') ?>
                 <span>Affiliate</span>
             </button>
             <button class="dash-nav-item" data-tab="testimonials">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <?= pix('star', 16, 16, 'dash-nav-icon') ?>
                 <span>Testimonials</span>
             </button>
             <button class="dash-nav-item" data-tab="support">
-                <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <?= pix('question', 16, 16, 'dash-nav-icon') ?>
                 <span>Support</span>
             </button>
 
             <div class="dash-nav-group" id="navGroupProfile">
                 <button class="dash-nav-item" data-tab="settings" id="navProfile">
-                    <svg class="dash-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <?= pix('user', 16, 16, 'dash-nav-icon') ?>
                     <span>Profile</span>
-                    <svg class="dash-nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
+                    <?= pix('chevron-down', 13, 13, 'dash-nav-chevron') ?>
                 </button>
                 <div class="dash-nav-sub" id="navSubProfile">
                     <a class="dash-nav-sub-item" data-section="profile" href="#">Profile</a>
@@ -475,9 +477,9 @@ foreach ($challenges as $ch) {
                 <span>Discord</span>
             </a>
             <a href="index.php" class="dash-back-link">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+                <?= pix('menu', 13, 13) ?>
                 dojifunding.com
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                <?= pix('external', 11, 11) ?>
             </a>
         </div>
 
@@ -492,37 +494,37 @@ foreach ($challenges as $ch) {
             <!-- LEFT — user + actions -->
             <div class="dash-topbar-left">
                 <button class="dash-topbar-hamburger" id="dashHamburger" aria-label="Menu">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    <?= pix('menu', 16, 16) ?>
                 </button>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <?= pix('user', 14, 14, '') ?>
                 <span class="dash-topbar-username"><?= htmlspecialchars(strtolower($user['first_name'] . $user['last_name'])) ?></span>
                 <span id="dashFirstName" style="display:none"><?= htmlspecialchars($profile['first_name'] ?? $user['first_name'] ?? '') ?></span>
                 <span id="dashUsername" style="display:none"><?= htmlspecialchars($profile['username'] ?? '') ?></span>
                 <button class="dash-topbar-new-challenge" onclick="Dashboard.switchTab('configurator')">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <?= pix('plus', 11, 11) ?>
                     New Challenge
                 </button>
                 <!-- icon-button group -->
                 <div class="dash-topbar-actions">
                     <!-- Notifications -->
                     <button class="dash-topbar-icon-btn" onclick="Dashboard.switchTab('payouts')" title="Notifications" aria-label="Notifications">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        <?= pix('bell', 15, 15) ?>
                         <?php if ($notifTotal > 0): ?>
                         <span class="dash-topbar-badge <?= $notifPayoutAction > 0 ? 'dash-topbar-badge-urgent' : '' ?>"><?= $notifTotal ?></span>
                         <?php endif; ?>
                     </button>
                     <!-- Language -->
                     <button class="dash-topbar-icon-btn dash-topbar-lang-btn" id="dashLangBtn" title="Switch language" aria-label="Switch language">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        <?= pix('globe', 13, 13) ?>
                         <span class="dash-topbar-lang-txt" id="dashLangTxt">EN</span>
                     </button>
                     <!-- Support -->
                     <button class="dash-topbar-icon-btn" onclick="Dashboard.switchTab('support')" title="Support" aria-label="Support">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <?= pix('question', 15, 15) ?>
                     </button>
                     <!-- Logout -->
                     <button class="dash-topbar-icon-btn" onclick="AuthModal.logout()" title="Log out" aria-label="Log out">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        <?= pix('logout', 15, 15) ?>
                     </button>
                 </div>
             </div>
@@ -897,7 +899,7 @@ foreach ($challenges as $ch) {
 
             <?php if ($kycStatus === 'rejected'): ?>
             <div class="dash-kyc-banner rejected">
-                <span class="dash-kyc-banner-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+                <span class="dash-kyc-banner-icon"><?= pix('info', 18, 18) ?></span>
                 <div class="dash-kyc-banner-text">
                     <strong>Verification Rejected</strong>
                     Your identity document was not accepted. Please resubmit with a valid government-issued ID.
@@ -906,7 +908,7 @@ foreach ($challenges as $ch) {
             </div>
             <?php elseif ($kycStatus === 'none'): ?>
             <div class="dash-kyc-banner">
-                <span class="dash-kyc-banner-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+                <span class="dash-kyc-banner-icon"><?= pix('shield', 18, 18) ?></span>
                 <div class="dash-kyc-banner-text">
                     <strong>Identity Verification Required</strong>
                     Verify your identity to unlock payouts and funded accounts.
@@ -917,7 +919,7 @@ foreach ($challenges as $ch) {
 
             <?php if (!($profile['is_public'] ?? 0)): ?>
             <div class="dash-kyc-banner dash-kyc-banner--lb" id="dashPublicBanner" style="display:none">
-                <span class="dash-kyc-banner-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg></span>
+                <span class="dash-kyc-banner-icon"><?= pix('trophy', 18, 18) ?></span>
                 <div class="dash-kyc-banner-text">
                     <strong>You're not on the leaderboard yet</strong>
                     Enable your public profile to compete for tier ranks, earn badges, and show off your stats.
@@ -1078,7 +1080,7 @@ foreach ($challenges as $ch) {
                             <div class="cred-row">
                                 <span class="cred-val" data-cred-field="credLogin">—</span>
                                 <button class="cred-btn" onclick="ChallengeCredentials.copy('login', this)" title="Copy login">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                    <?= pix('copy', 11, 11) ?>
                                 </button>
                             </div>
                         </div>
@@ -1090,14 +1092,14 @@ foreach ($challenges as $ch) {
                                 <span class="cred-val cred-val-pass" data-cred-field="credMasterPass">—</span>
                                 <button class="cred-btn cred-master-eye-btn" id="ovCredMasterToggle"
                                         onclick="ChallengeCredentials.toggleMaster()" title="Show / hide">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <?= pix('eye', 11, 11) ?>
                                 </button>
                                 <button class="cred-btn" onclick="ChallengeCredentials.copy('master_password', this)" title="Copy">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                    <?= pix('copy', 11, 11) ?>
                                 </button>
                                 <button class="cred-btn cred-btn-reset"
                                         onclick="ChallengeCredentials.resetMaster()" title="Reset password">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+                                    <?= pix('refresh', 11, 11) ?>
                                 </button>
                             </div>
                         </div>
@@ -1108,7 +1110,7 @@ foreach ($challenges as $ch) {
                             <div class="cred-row">
                                 <span class="cred-val" data-cred-field="credInvestorPass">—</span>
                                 <button class="cred-btn" onclick="ChallengeCredentials.copy('investor_password', this)" title="Copy">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                    <?= pix('copy', 11, 11) ?>
                                 </button>
                             </div>
                         </div>
@@ -1119,7 +1121,7 @@ foreach ($challenges as $ch) {
                             <div class="cred-row">
                                 <span class="cred-val" data-cred-field="credServer">—</span>
                                 <button class="cred-btn" onclick="ChallengeCredentials.copy('server', this)" title="Copy">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                    <?= pix('copy', 11, 11) ?>
                                 </button>
                             </div>
                         </div>
@@ -1445,7 +1447,7 @@ foreach ($challenges as $ch) {
                             <div class="cred-row">
                                 <span class="cred-val" id="credLogin">—</span>
                                 <button class="cred-btn" onclick="ChallengeCredentials.copy('login', this)" title="Copy login">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                    <?= pix('copy', 11, 11) ?>
                                 </button>
                             </div>
                         </div>
@@ -1457,14 +1459,14 @@ foreach ($challenges as $ch) {
                                 <span class="cred-val cred-val-pass" id="credMasterPass">—</span>
                                 <button class="cred-btn cred-master-eye-btn" id="credMasterToggle"
                                         onclick="ChallengeCredentials.toggleMaster()" title="Show / hide">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <?= pix('eye', 11, 11) ?>
                                 </button>
                                 <button class="cred-btn" onclick="ChallengeCredentials.copy('master_password', this)" title="Copy">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                    <?= pix('copy', 11, 11) ?>
                                 </button>
                                 <button class="cred-btn cred-btn-reset"
                                         onclick="ChallengeCredentials.resetMaster()" title="Reset password">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+                                    <?= pix('refresh', 11, 11) ?>
                                 </button>
                             </div>
                         </div>
@@ -1475,7 +1477,7 @@ foreach ($challenges as $ch) {
                             <div class="cred-row">
                                 <span class="cred-val" id="credInvestorPass">—</span>
                                 <button class="cred-btn" onclick="ChallengeCredentials.copy('investor_password', this)" title="Copy">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                    <?= pix('copy', 11, 11) ?>
                                 </button>
                             </div>
                         </div>
@@ -1486,7 +1488,7 @@ foreach ($challenges as $ch) {
                             <div class="cred-row">
                                 <span class="cred-val" id="credServer">—</span>
                                 <button class="cred-btn" onclick="ChallengeCredentials.copy('server', this)" title="Copy">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                    <?= pix('copy', 11, 11) ?>
                                 </button>
                             </div>
                         </div>
@@ -1572,23 +1574,23 @@ foreach ($challenges as $ch) {
                         <div class="ov-info-id-row">
                             <span class="ov-info-id" id="chKpiId">—</span>
                             <button class="ov-copy-btn" id="chKpiCopyBtn" onclick="ChallengeCredentials.copyChId(this)" title="Copy reference">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                <?= pix('copy', 12, 12) ?>
                             </button>
                         </div>
                         <div class="ov-info-actions">
                             <button class="ov-action-btn ov-action-payout" id="chKpiPayoutBtn" style="display:none"
                                     onclick="ChallengeCredentials.goToPayouts()">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                <?= pix('dollar', 11, 11) ?>
                                 Payout
                             </button>
                             <button class="ov-action-btn ov-action-reset" id="chKpiResetBtn" style="display:none"
                                     onclick="ChallengeCredentials.resetChallenge()">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5.02"/></svg>
+                                <?= pix('refresh', 11, 11) ?>
                                 Reset
                             </button>
                             <button class="ov-action-btn ov-action-delete" id="chKpiDeleteBtn"
                                     onclick="ChallengeCredentials.deleteChallenge()">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                                <?= pix('trash', 11, 11) ?>
                                 Delete
                             </button>
                         </div>
@@ -1678,7 +1680,7 @@ foreach ($challenges as $ch) {
                 </div>
                 <?php else: ?>
                 <div class="dash-empty">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    <?= pix('layers', 40, 40) ?>
                     <h3>No Challenges Yet</h3>
                     <p>Use the configurator to set up your first challenge</p>
                     <button class="dash-action-btn" onclick="Dashboard.switchTab('configurator')">Configure a Challenge</button>
@@ -1713,7 +1715,7 @@ foreach ($challenges as $ch) {
                 <div class="wlt-grid">
 
                     <!-- ─ DOJI WALLET card ─ -->
-                    <div class="wlt-card">
+                    <div class="wlt-card" style="--wlt-accent:#10B981">
                         <div class="wlt-card-head">
                             <div class="wlt-card-title">DOJI WALLET</div>
                             <div class="wlt-card-bal-row">
@@ -1778,7 +1780,7 @@ foreach ($challenges as $ch) {
                     </div>
 
                     <!-- ─ DOJI COINS card ─ -->
-                    <div class="wlt-card">
+                    <div class="wlt-card" style="--wlt-accent:#D4A843">
                         <div class="wlt-card-head">
                             <div class="wlt-card-title">DOJI COINS</div>
                             <div class="wlt-card-bal-row">
@@ -1838,6 +1840,135 @@ foreach ($challenges as $ch) {
                     </div>
 
                 </div>
+
+                <!-- ══ ACHIEVEMENTS ══ -->
+                <?php
+                $_achIcons = [
+                    'platform'    => pix('user',       18, 18),
+                    'volume'      => pix('pulse',      18, 18),
+                    'challenge'   => pix('trophy',     18, 18),
+                    'payout'      => pix('dollar',     18, 18),
+                    'streak'      => pix('lightning',  18, 18),
+                    'competition' => pix('medal',      18, 18),
+                    'social'      => pix('users',      18, 18),
+                    'loyalty'     => pix('shield',     18, 18),
+                ];
+                $_achColors = [
+                    'platform'    => '#6366F1',
+                    'volume'      => '#10B981',
+                    'challenge'   => '#D4A843',
+                    'payout'      => '#0EA5E9',
+                    'streak'      => '#EF4444',
+                    'competition' => '#8B5CF6',
+                    'social'      => '#F97316',
+                    'loyalty'     => '#EC4899',
+                ];
+                $_achievements = [
+                    /* PLATFORM */
+                    ['key'=>'welcome',          'cat'=>'platform',    'title'=>'FIRST STEPS',      'desc'=>'Create your Doji Funding account',           'dc'=>50],
+                    ['key'=>'profile_complete', 'cat'=>'platform',    'title'=>'READY TO TRADE',   'desc'=>'Complete your trader profile',               'dc'=>100],
+                    ['key'=>'kyc_done',         'cat'=>'platform',    'title'=>'VERIFIED TRADER',  'desc'=>'Pass KYC identity verification',             'dc'=>200],
+                    /* VOLUME */
+                    ['key'=>'lots_10',          'cat'=>'volume',      'title'=>'FIRST LOTS',       'desc'=>'Trade 10 cumulative lots',                   'dc'=>100],
+                    ['key'=>'lots_50',          'cat'=>'volume',      'title'=>'ACTIVE TRADER',    'desc'=>'Trade 50 cumulative lots',                   'dc'=>250],
+                    ['key'=>'lots_100',         'cat'=>'volume',      'title'=>'HIGH VOLUME',      'desc'=>'Trade 100 cumulative lots',                  'dc'=>500],
+                    ['key'=>'lots_500',         'cat'=>'volume',      'title'=>'POWER TRADER',     'desc'=>'Trade 500 cumulative lots',                  'dc'=>2500],
+                    ['key'=>'lots_1000',        'cat'=>'volume',      'title'=>'ELITE VOLUME',     'desc'=>'Trade 1,000 cumulative lots',                'dc'=>5000],
+                    /* CHALLENGE */
+                    ['key'=>'first_challenge',  'cat'=>'challenge',   'title'=>'CHALLENGER',       'desc'=>'Purchase your first challenge',              'dc'=>100],
+                    ['key'=>'pass_1step',       'cat'=>'challenge',   'title'=>'1-STEP PASSED',    'desc'=>'Pass a 1-Step evaluation',                   'dc'=>500],
+                    ['key'=>'pass_2step',       'cat'=>'challenge',   'title'=>'2-STEP PASSED',    'desc'=>'Pass a 2-Step evaluation',                   'dc'=>750],
+                    ['key'=>'first_funded',     'cat'=>'challenge',   'title'=>'FUNDED!',          'desc'=>'Receive your first funded account',          'dc'=>1000],
+                    ['key'=>'multi_funded',     'cat'=>'challenge',   'title'=>'MULTI-ACCOUNT',    'desc'=>'Manage 3 or more funded accounts',           'dc'=>2000],
+                    /* PAYOUT */
+                    ['key'=>'first_payout',     'cat'=>'payout',      'title'=>'FIRST PAYMENT',    'desc'=>'Receive your first payout',                  'dc'=>250],
+                    ['key'=>'payout_1k',        'cat'=>'payout',      'title'=>'$1K PAID OUT',     'desc'=>'Cumulative $1,000 paid out',                 'dc'=>500],
+                    ['key'=>'payout_5k',        'cat'=>'payout',      'title'=>'$5K PAID OUT',     'desc'=>'Cumulative $5,000 paid out',                 'dc'=>1500],
+                    ['key'=>'payout_10k',       'cat'=>'payout',      'title'=>'$10K PAID OUT',    'desc'=>'Cumulative $10,000 paid out',                'dc'=>3000],
+                    ['key'=>'payout_50k',       'cat'=>'payout',      'title'=>'$50K PAID OUT',    'desc'=>'Cumulative $50,000 paid out',                'dc'=>10000],
+                    /* STREAK */
+                    ['key'=>'streak_3',         'cat'=>'streak',      'title'=>'CONSISTENT',       'desc'=>'3 consecutive profitable trading days',      'dc'=>150],
+                    ['key'=>'streak_5',         'cat'=>'streak',      'title'=>'ON A ROLL',        'desc'=>'5 consecutive days (activates 3× coins)',    'dc'=>300],
+                    ['key'=>'streak_10',        'cat'=>'streak',      'title'=>'UNSTOPPABLE',      'desc'=>'10 consecutive profitable trading days',     'dc'=>1000],
+                    ['key'=>'streak_20',        'cat'=>'streak',      'title'=>'LEGEND',           'desc'=>'20 consecutive profitable trading days',     'dc'=>5000],
+                    /* COMPETITION */
+                    ['key'=>'comp_entry',       'cat'=>'competition', 'title'=>'COMPETITOR',       'desc'=>'Enter your first competition',               'dc'=>100],
+                    ['key'=>'comp_top10',       'cat'=>'competition', 'title'=>'TOP 10',           'desc'=>'Finish in the top 10 of a competition',      'dc'=>1000],
+                    ['key'=>'comp_podium',      'cat'=>'competition', 'title'=>'PODIUM',           'desc'=>'Finish in the top 3 of a competition',       'dc'=>2500],
+                    ['key'=>'comp_winner',      'cat'=>'competition', 'title'=>'CHAMPION',         'desc'=>'Win a competition',                          'dc'=>5000],
+                    /* SOCIAL */
+                    ['key'=>'referral_1',       'cat'=>'social',      'title'=>'FIRST REFERRAL',   'desc'=>'Refer your first successful trader',         'dc'=>500],
+                    ['key'=>'referral_5',       'cat'=>'social',      'title'=>'AMBASSADOR',       'desc'=>'Refer 5 successful traders',                 'dc'=>2500],
+                    ['key'=>'referral_10',      'cat'=>'social',      'title'=>'TOP AFFILIATE',    'desc'=>'Refer 10 successful traders',                'dc'=>6000],
+                    /* LOYALTY */
+                    ['key'=>'days_30',          'cat'=>'loyalty',     'title'=>'MONTH IN',         'desc'=>'30 days active on the platform',             'dc'=>200],
+                    ['key'=>'days_90',          'cat'=>'loyalty',     'title'=>'THREE MONTHS',     'desc'=>'90 days active on the platform',             'dc'=>500],
+                    ['key'=>'days_365',         'cat'=>'loyalty',     'title'=>'ONE YEAR',         'desc'=>'One full year with Doji Funding',            'dc'=>2500],
+                ];
+                $_unlockedAch = [];
+                try {
+                    $_achDb = getDB();
+                    if ($_achDb) {
+                        $_s = $_achDb->prepare('SELECT achievement_key FROM achievements WHERE user_id = ?');
+                        $_s->execute([$userId]);
+                        $_unlockedAch = array_column($_s->fetchAll(PDO::FETCH_ASSOC), 'achievement_key');
+                    }
+                } catch (Exception $_e) {}
+                $_achTotal    = count($_achievements);
+                $_achUnlocked = count($_unlockedAch);
+                $_achPct      = $_achTotal > 0 ? round(($_achUnlocked / $_achTotal) * 100) : 0;
+                $_catCounts   = [];
+                foreach ($_achievements as $_a) {
+                    $_catCounts[$_a['cat']] = ($_catCounts[$_a['cat']] ?? 0) + 1;
+                }
+                ?>
+                <div class="wlt-ach-section">
+
+                    <div class="wlt-ach-header">
+                        <div>
+                            <div class="wlt-ach-ttl">ACHIEVEMENTS</div>
+                            <div class="wlt-ach-meta"><?= $_achUnlocked ?> / <?= $_achTotal ?> UNLOCKED · EARN DOJI COINS BY COMPLETING MILESTONES</div>
+                        </div>
+                        <div class="wlt-ach-progress">
+                            <div class="wlt-ach-prog-bar">
+                                <div class="wlt-ach-prog-fill" style="width:<?= $_achPct ?>%"></div>
+                            </div>
+                            <div class="wlt-ach-prog-pct"><?= $_achPct ?>%</div>
+                        </div>
+                    </div>
+
+                    <div class="wlt-ach-cats" id="wltAchCats">
+                        <button class="wlt-ach-cat active" data-cat="all">ALL <span><?= $_achTotal ?></span></button>
+                        <?php foreach ($_catCounts as $_cat => $_cnt): ?>
+                        <button class="wlt-ach-cat" data-cat="<?= $_cat ?>" style="--ach-c:<?= $_achColors[$_cat] ?>">
+                            <?= strtoupper($_cat) ?> <span><?= $_cnt ?></span>
+                        </button>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div class="wlt-ach-grid" id="wltAchGrid">
+                        <?php foreach ($_achievements as $_ach):
+                            $_on    = in_array($_ach['key'], $_unlockedAch);
+                            $_color = $_achColors[$_ach['cat']];
+                            $_icon  = $_achIcons[$_ach['cat']];
+                        ?>
+                        <div class="wlt-ach-card<?= $_on ? ' wlt-ach-on' : '' ?>"
+                             style="--ach-c:<?= $_color ?>"
+                             data-cat="<?= $_ach['cat'] ?>">
+                            <div class="wlt-ach-card-icon"><?= $_icon ?></div>
+                            <div class="wlt-ach-card-cat"><?= strtoupper($_ach['cat']) ?></div>
+                            <div class="wlt-ach-card-title"><?= $_ach['title'] ?></div>
+                            <div class="wlt-ach-card-desc"><?= htmlspecialchars($_ach['desc']) ?></div>
+                            <div class="wlt-ach-card-reward">+<?= number_format($_ach['dc']) ?> DC</div>
+                            <?php if (!$_on): ?>
+                            <div class="wlt-ach-card-lock"><?= pix('lock', 12, 12) ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                </div>
+
             </div>
 
             <!-- ══ TAB: PAYOUTS ══ -->
@@ -1891,19 +2022,19 @@ foreach ($challenges as $ch) {
 
                 <!-- Stats bar -->
                 <div class="pyo-stats-bar">
-                    <div class="pyo-stat">
+                    <div class="pyo-stat" style="--ps-c:#10B981">
                         <span class="pyo-stat-lbl">TOTAL EARNED</span>
-                        <span class="pyo-stat-val green"><?= formatMoney($overview['total_payout_amount']) ?></span>
+                        <span class="pyo-stat-val"><?= formatMoney($overview['total_payout_amount']) ?></span>
                     </div>
-                    <div class="pyo-stat">
+                    <div class="pyo-stat" style="--ps-c:#0EA5E9">
                         <span class="pyo-stat-lbl">PAYOUTS</span>
                         <span class="pyo-stat-val"><?= $payoutTotal ?></span>
                     </div>
-                    <div class="pyo-stat">
+                    <div class="pyo-stat" style="--ps-c:#8B5CF6">
                         <span class="pyo-stat-lbl">COMPLETED</span>
                         <span class="pyo-stat-val"><?= count(array_filter($payouts, fn($p) => $p['status'] === 'completed')) ?></span>
                     </div>
-                    <div class="pyo-stat">
+                    <div class="pyo-stat" style="--ps-c:#D4A843">
                         <span class="pyo-stat-lbl">PENDING</span>
                         <span class="pyo-stat-val"><?= count(array_filter($payouts, fn($p) => $p['status'] === 'pending')) ?></span>
                     </div>
@@ -1989,13 +2120,13 @@ foreach ($challenges as $ch) {
                                             data-payout="<?= $poJson ?>"
                                             onclick="PayoutDetailModal.open(this)"
                                             title="View Details">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        <?= pix('eye', 14, 14) ?>
                                     </button>
                                     <button class="pyo-act-btn pyo-act-dl" type="button"
                                             data-payout="<?= $poJson ?>"
                                             onclick="PayoutDetailModal.download(JSON.parse(this.dataset.payout))"
                                             title="Download Details">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                        <?= pix('download', 14, 14) ?>
                                     </button>
                                 </td>
                             </tr>
@@ -2012,7 +2143,7 @@ foreach ($challenges as $ch) {
                 </div>
                 <?php else: ?>
                 <div class="dash-empty">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.3"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+                    <?= pix('dollar', 40, 40) ?>
                     <h3>No Payouts Yet</h3>
                     <p>Complete a funded challenge to request your first payout</p>
                 </div>
@@ -2031,11 +2162,11 @@ foreach ($challenges as $ch) {
                             <div class="dash-user-card-email"><?= htmlspecialchars($profile['email'] ?? '') ?></div>
                             <div class="dash-user-card-badge <?= $kycClass[$kycStatus] ?>">
                                 <?php if ($kycStatus === 'approved'): ?>
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Verified Trader
+                                <?= pix('check', 11, 11) ?> Verified Trader
                                 <?php elseif ($kycStatus === 'pending'): ?>
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Under Review
+                                <?= pix('clock', 11, 11) ?> Under Review
                                 <?php else: ?>
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Not Verified
+                                <?= pix('info', 11, 11) ?> Not Verified
                                 <?php endif; ?>
                             </div>
                             <?php if (!empty($user['created_at'])): ?>
@@ -2057,7 +2188,7 @@ foreach ($challenges as $ch) {
                         <!-- Section: Personal Information -->
                         <div class="dash-psection" id="psec-profile">
                             <div class="dash-psection-head">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                <?= pix('user', 16, 16) ?>
                                 Personal Information
                             </div>
                             <div class="dash-psection-body">
@@ -2230,7 +2361,7 @@ foreach ($challenges as $ch) {
                         <!-- Section: Security -->
                         <div class="dash-psection" id="psec-security">
                             <div class="dash-psection-head">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                <?= pix('shield', 16, 16) ?>
                                 Security
                             </div>
                             <div class="dash-psection-body">
@@ -2239,7 +2370,7 @@ foreach ($challenges as $ch) {
                                 <div class="dash-2fa-banner">
                                     <div class="dash-2fa-left">
                                         <div class="dash-2fa-icon">
-                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+                                            <?= pix('lock', 22, 22) ?>
                                         </div>
                                         <div>
                                             <div class="dash-2fa-title">Two-Factor Authentication (2FA)</div>
@@ -2279,7 +2410,7 @@ foreach ($challenges as $ch) {
                         <!-- Section: Public Profile -->
                         <div class="dash-psection" id="psec-public">
                             <div class="dash-psection-head">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+                                <?= pix('globe', 16, 16) ?>
                                 Public Profile
                             </div>
                             <div class="dash-psection-body">
@@ -2306,7 +2437,7 @@ foreach ($challenges as $ch) {
                         <!-- Section: KYC Documents -->
                         <div class="dash-psection" id="psec-verification">
                             <div class="dash-psection-head">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                <?= pix('file', 16, 16) ?>
                                 My Documents
                                 <span class="dash-psection-badge <?= $kycClass[$kycStatus] ?>"><?= $kycLabels[$kycStatus] ?></span>
                             </div>
@@ -2322,7 +2453,7 @@ foreach ($challenges as $ch) {
                                                 <div class="dash-doc-card-sub">Front side of document</div>
                                             </div>
                                             <?php if ($kycStatus === 'approved'): ?>
-                                            <span class="dash-doc-verified"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Verified</span>
+                                            <span class="dash-doc-verified"><?= pix('check', 11, 11) ?> Verified</span>
                                             <?php elseif ($kycStatus === 'pending'): ?>
                                             <span class="dash-doc-pending">Under Review</span>
                                             <?php endif; ?>
@@ -2342,7 +2473,7 @@ foreach ($challenges as $ch) {
                                             <div class="dash-upload">
                                                 <input type="file" name="kyc_document" accept=".jpg,.jpeg,.png,.pdf" required>
                                                 <div class="dash-upload-label">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                                    <?= pix('upload', 20, 20) ?>
                                                     <span>Click to upload or drag &amp; drop</span>
                                                     <span class="dash-upload-sub">JPG, PNG, PDF — Max 5MB</span>
                                                 </div>
@@ -2361,7 +2492,7 @@ foreach ($challenges as $ch) {
                                                 <div class="dash-doc-card-sub">Back side of document</div>
                                             </div>
                                             <?php if ($kycStatus === 'approved'): ?>
-                                            <span class="dash-doc-verified"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Verified</span>
+                                            <span class="dash-doc-verified"><?= pix('check', 11, 11) ?> Verified</span>
                                             <?php elseif ($kycStatus === 'pending'): ?>
                                             <span class="dash-doc-pending">Under Review</span>
                                             <?php endif; ?>
@@ -2380,7 +2511,7 @@ foreach ($challenges as $ch) {
                                             <div class="dash-upload">
                                                 <input type="file" name="kyc_document" accept=".jpg,.jpeg,.png,.pdf" required>
                                                 <div class="dash-upload-label">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                                    <?= pix('upload', 20, 20) ?>
                                                     <span>Click to upload or drag &amp; drop</span>
                                                     <span class="dash-upload-sub">JPG, PNG, PDF — Max 5MB</span>
                                                 </div>
@@ -2399,7 +2530,7 @@ foreach ($challenges as $ch) {
                                                 <div class="dash-doc-card-sub">Less than 90 days old</div>
                                             </div>
                                             <?php if ($kycStatus === 'approved'): ?>
-                                            <span class="dash-doc-verified"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Verified</span>
+                                            <span class="dash-doc-verified"><?= pix('check', 11, 11) ?> Verified</span>
                                             <?php elseif ($kycStatus === 'pending'): ?>
                                             <span class="dash-doc-pending">Under Review</span>
                                             <?php endif; ?>
@@ -2411,7 +2542,7 @@ foreach ($challenges as $ch) {
                                                 <li>Bank statement</li>
                                             </ul>
                                             <div class="dash-doc-rejected-item">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                                <?= pix('close', 12, 12) ?>
                                                 Internet/phone bills not accepted
                                             </div>
                                         </div>
@@ -2422,7 +2553,7 @@ foreach ($challenges as $ch) {
                                             <div class="dash-upload">
                                                 <input type="file" name="kyc_document" accept=".jpg,.jpeg,.png,.pdf" required>
                                                 <div class="dash-upload-label">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                                    <?= pix('upload', 20, 20) ?>
                                                     <span>Click to upload or drag &amp; drop</span>
                                                     <span class="dash-upload-sub">JPG, PNG, PDF — Max 5MB</span>
                                                 </div>
@@ -2440,7 +2571,7 @@ foreach ($challenges as $ch) {
                         <!-- Section: Referral -->
                         <div class="dash-psection">
                             <div class="dash-psection-head">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                                <?= pix('users', 16, 16) ?>
                                 Referral Program
                             </div>
                             <div class="dash-psection-body">
@@ -2459,7 +2590,7 @@ foreach ($challenges as $ch) {
                         <!-- Section: Bank Accounts -->
                         <div class="dash-psection" id="psec-bank">
                             <div class="dash-psection-head">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="1"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                                <?= pix('briefcase', 16, 16) ?>
                                 Bank Accounts
                                 <span class="dash-psection-badge" style="background:rgba(255,255,255,0.06);color:var(--dash-text3);margin-left:auto">Coming Soon</span>
                             </div>
@@ -2471,7 +2602,7 @@ foreach ($challenges as $ch) {
                         <!-- Section: Credit Cards -->
                         <div class="dash-psection" id="psec-cards">
                             <div class="dash-psection-head">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                                <?= pix('credit-card', 16, 16) ?>
                                 Credit Cards
                                 <span class="dash-psection-badge" style="background:rgba(255,255,255,0.06);color:var(--dash-text3);margin-left:auto">Coming Soon</span>
                             </div>
@@ -2483,7 +2614,7 @@ foreach ($challenges as $ch) {
                         <!-- Section: Crypto Wallets -->
                         <div class="dash-psection" id="psec-crypto">
                             <div class="dash-psection-head">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.5 9.5c0-1.1.9-2 2-2h1a2 2 0 010 4h-3a2 2 0 010 4h1a2 2 0 002-2M12 7v10"/></svg>
+                                <?= pix('dollar', 16, 16) ?>
                                 Crypto Wallets
                                 <span class="dash-psection-badge" style="background:rgba(255,255,255,0.06);color:var(--dash-text3);margin-left:auto">Coming Soon</span>
                             </div>
@@ -2495,7 +2626,7 @@ foreach ($challenges as $ch) {
                         <!-- Section: Payment History -->
                         <div class="dash-psection" id="psec-payments">
                             <div class="dash-psection-head">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+                                <?= pix('dollar', 16, 16) ?>
                                 Payment History
                                 <span class="dash-psection-badge" style="background:rgba(255,255,255,0.06);color:var(--dash-text3);margin-left:auto">Coming Soon</span>
                             </div>
@@ -2507,7 +2638,7 @@ foreach ($challenges as $ch) {
                         <!-- Section: Discord -->
                         <div class="dash-psection" id="psec-discord">
                             <div class="dash-psection-head">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                                <?= pix('message', 16, 16) ?>
                                 Discord
                                 <span class="dash-psection-badge" style="background:rgba(255,255,255,0.06);color:var(--dash-text3);margin-left:auto">Coming Soon</span>
                             </div>
@@ -2519,7 +2650,7 @@ foreach ($challenges as $ch) {
                         <!-- Section: Feature Suggestions -->
                         <div class="dash-psection" id="psec-suggestions">
                             <div class="dash-psection-head">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                <?= pix('info', 16, 16) ?>
                                 Feature Suggestions
                                 <span class="dash-psection-badge" style="background:rgba(255,255,255,0.06);color:var(--dash-text3);margin-left:auto">Coming Soon</span>
                             </div>
@@ -2531,7 +2662,7 @@ foreach ($challenges as $ch) {
                         <!-- Section: Preferences -->
                         <div class="dash-psection" id="psec-preferences">
                             <div class="dash-psection-head">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+                                <?= pix('wifi', 16, 16) ?>
                                 Preferences
                                 <span class="dash-psection-badge" style="background:rgba(255,255,255,0.06);color:var(--dash-text3);margin-left:auto">Coming Soon</span>
                             </div>
@@ -2599,7 +2730,7 @@ foreach ($challenges as $ch) {
                             <span class="mode-name">Affiliate</span>
                             <span class="mode-desc mode-desc-locked">Unlocks with sales</span>
                             <span class="mode-lock">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                <?= pix('lock', 11, 11) ?>
                             </span>
                         </button>
                         <div class="mode-card mode-card-competitor" data-mode="competitor" onclick="Configurator.applyMode('competitor')">
@@ -2651,7 +2782,7 @@ foreach ($challenges as $ch) {
                         </div>
                         <div id="promoMsg"></div>
                         <button class="share-btn" onclick="Configurator.share()">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                            <?= pix('link', 14, 14) ?>
                             Share Configuration
                         </button>
                         <div id="shareMsg"></div>
@@ -3003,6 +3134,31 @@ foreach ($challenges as $ch) {
                 }
                 $__blocks = array_filter([$_compFree, $_compPaid]);
                 ?>
+                <?php
+                $_cLiveCount = count(array_filter($competitions_all, fn($_c) => $_c['status']==='live'));
+                $_cUpCount   = count(array_filter($competitions_all, fn($_c) => $_c['status']==='upcoming'));
+                $_cParts     = array_sum(array_column($competitions_all, 'participants'));
+                $_cTotal     = count($competitions_all);
+                ?>
+                <div class="comp-stats-strip">
+                    <div class="comp-stat" style="--cs-c:#10B981">
+                        <div class="comp-stat-val"><?= $_cLiveCount ?></div>
+                        <div class="comp-stat-lbl">LIVE NOW</div>
+                    </div>
+                    <div class="comp-stat" style="--cs-c:#D4A017">
+                        <div class="comp-stat-val"><?= $_cUpCount ?></div>
+                        <div class="comp-stat-lbl">UPCOMING</div>
+                    </div>
+                    <div class="comp-stat" style="--cs-c:#0EA5E9">
+                        <div class="comp-stat-val"><?= number_format($_cParts) ?></div>
+                        <div class="comp-stat-lbl">PARTICIPANTS</div>
+                    </div>
+                    <div class="comp-stat" style="--cs-c:#8B5CF6">
+                        <div class="comp-stat-val"><?= $_cTotal ?></div>
+                        <div class="comp-stat-lbl">TOTAL EDITIONS</div>
+                    </div>
+                </div>
+
                 <!-- Two competition blocks -->
                 <div class="comp-blocks" id="compBlocks">
                 <?php foreach ($__blocks as $_b):
@@ -3011,7 +3167,8 @@ foreach ($challenges as $ch) {
                     $_bCdVal = $_b['status']==='live' ? compTimeLeft($_b['ends']) : ($_b['status']==='upcoming' ? compTimeUntil($_b['starts']) : '00:00:00');
                     $_bJoined = in_array($_b['id'], $comp_joined_ids);
                 ?>
-                <div class="comp-block comp-block--<?= $_b['status'] ?>">
+                <?php $_bAccent = $_b['status']==='live' ? '#10B981' : ($_b['status']==='upcoming' ? '#D4A017' : '#6B7280'); ?>
+                <div class="comp-block comp-block--<?= $_b['status'] ?>" style="--comp-accent:<?= $_bAccent ?>">
                     <!-- Header -->
                     <div class="comp-block-hdr">
                         <div class="comp-block-hdr-left">
@@ -3052,15 +3209,15 @@ foreach ($challenges as $ch) {
                     <!-- Footer: 3 buttons -->
                     <div class="comp-block-footer">
                         <button class="comp-btn comp-btn--primary" onclick="CompTab.openView(<?= $_b['id'] ?>)">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <?= pix('eye', 11, 11) ?>
                             VIEW
                         </button>
                         <button class="comp-btn" onclick="CompTab.openPrizepool(<?= $_b['id'] ?>)">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                            <?= pix('dollar', 11, 11) ?>
                             PRIZEPOOL
                         </button>
                         <button class="comp-btn" onclick="CompTab.openInfo(<?= $_b['id'] ?>)">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <?= pix('info', 11, 11) ?>
                             INFO
                         </button>
                     </div>
@@ -3078,7 +3235,7 @@ foreach ($challenges as $ch) {
                 }));
                 // Sort expired: free first, then paid
                 usort($_dExpired, function($a,$b){ return strcmp($a['type'],$b['type']); });
-                $__chevron = '<svg class="comp-drawer-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>';
+                $__chevron = pix('chevron-down', 12, 12, 'comp-drawer-chev');
                 ?>
                 <!-- Collapsible drawers -->
                 <div class="comp-drawers" id="compDrawers">
@@ -3086,7 +3243,7 @@ foreach ($challenges as $ch) {
                 <?php if (!empty($_dJoined)): ?>
                 <div class="comp-drawer" id="drawerJoined">
                     <button class="comp-drawer-btn" onclick="CompTab.toggleDrawer('drawerJoined')">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <?= pix('user', 12, 12) ?>
                         JOINED
                         <span class="comp-drawer-count"><?= count($_dJoined) ?></span>
                         <?= $__chevron ?>
@@ -3096,8 +3253,9 @@ foreach ($challenges as $ch) {
                         <?php foreach ($_dJoined as $_dc):
                             $_dcEntry  = $_dc['type']==='free' ? 'FREE' : '$'.number_format($_dc['entry'],0);
                             $_dcStLbl  = $_dc['status']==='live' ? 'ONGOING' : ($_dc['status']==='upcoming' ? 'UPCOMING' : 'ENDED');
+                            $_dcColor  = $_dc['status']==='live' ? '#10B981' : ($_dc['status']==='upcoming' ? '#D4A017' : '#6B7280');
                         ?>
-                        <div class="comp-card">
+                        <div class="comp-card" style="--comp-c:<?= $_dcColor ?>">
                             <div class="comp-card-top">
                                 <span class="comp-status comp-status--<?= $_dc['status'] ?>"><span class="comp-status-dot comp-status-dot--<?= $_dc['status'] ?>"></span><?= $_dcStLbl ?></span>
                                 <span class="comp-block-joined-tag" style="margin-left:auto">JOINED</span>
@@ -3125,7 +3283,7 @@ foreach ($challenges as $ch) {
                 <?php if (!empty($_dExpired)): ?>
                 <div class="comp-drawer" id="drawerExpired">
                     <button class="comp-drawer-btn" onclick="CompTab.toggleDrawer('drawerExpired')">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <?= pix('clock', 12, 12) ?>
                         EXPIRED
                         <span class="comp-drawer-count"><?= count($_dExpired) ?></span>
                         <?= $__chevron ?>
@@ -3136,7 +3294,7 @@ foreach ($challenges as $ch) {
                             $_dcEntry  = $_dc['type']==='free' ? 'FREE' : '$'.number_format($_dc['entry'],0);
                             $_dcJoined = in_array($_dc['id'], $comp_joined_ids);
                         ?>
-                        <div class="comp-card">
+                        <div class="comp-card" style="--comp-c:#6B7280">
                             <div class="comp-card-top">
                                 <span class="comp-status comp-status--ended"><span class="comp-status-dot comp-status-dot--ended"></span>ENDED</span>
                                 <?php if ($_dcJoined): ?><span class="comp-block-joined-tag" style="margin-left:auto">JOINED</span><?php endif; ?>
@@ -3321,7 +3479,7 @@ foreach ($challenges as $ch) {
                         <div class="cert-card" style="--cert-accent:#10B981">
                             <div class="cert-card-top">
                                 <span class="cert-badge" style="color:#10B981;border-color:rgba(16,185,129,.28);background:rgba(16,185,129,.07)">
-                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <?= pix('check', 9, 9) ?>
                                     EVALUATION PASSED
                                 </span>
                                 <span class="cert-card-id"><?= $cid ?></span>
@@ -3335,11 +3493,11 @@ foreach ($challenges as $ch) {
                             </div>
                             <div class="cert-card-actions">
                                 <button class="cert-btn cert-btn--share" onclick="CertTab.share('eval',<?= $c['id'] ?>,'<?= addslashes($szLbl) ?> Evaluation Passed','<?= addslashes($tyLbl) ?> · <?= addslashes(strtoupper($c['platform'])) ?> · <?= addslashes($dtLbl) ?>')">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                    <?= pix('share', 11, 11) ?>
                                     SHARE
                                 </button>
                                 <button class="cert-btn cert-btn--pdf" onclick="CertTab.download('eval',<?= $c['id'] ?>,'<?= addslashes($szLbl) ?> Evaluation Passed','<?= addslashes($tyLbl) ?> · <?= addslashes(strtoupper($c['platform'])) ?> · <?= addslashes($dtLbl) ?>')">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    <?= pix('download', 11, 11) ?>
                                     DOWNLOAD PDF
                                 </button>
                             </div>
@@ -3368,7 +3526,7 @@ foreach ($challenges as $ch) {
                         <div class="cert-card" style="--cert-accent:#0EA5E9">
                             <div class="cert-card-top">
                                 <span class="cert-badge" style="color:#0EA5E9;border-color:rgba(14,165,233,.28);background:rgba(14,165,233,.07)">
-                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                                    <?= pix('layers', 9, 9) ?>
                                     FUNDED ACCOUNT
                                 </span>
                                 <span class="cert-card-id"><?= $cid ?></span>
@@ -3382,11 +3540,11 @@ foreach ($challenges as $ch) {
                             </div>
                             <div class="cert-card-actions">
                                 <button class="cert-btn cert-btn--share" onclick="CertTab.share('funded',<?= $c['id'] ?>,'<?= addslashes($szLbl) ?> Funded Account','<?= addslashes($tyLbl) ?> · P&amp;L <?= addslashes($pfmt) ?>')">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                    <?= pix('share', 11, 11) ?>
                                     SHARE
                                 </button>
                                 <button class="cert-btn cert-btn--pdf" onclick="CertTab.download('funded',<?= $c['id'] ?>,'<?= addslashes($szLbl) ?> Funded Account','<?= addslashes($tyLbl) ?> · <?= addslashes(strtoupper($c['platform'])) ?> · P&amp;L <?= addslashes($pfmt) ?>')">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    <?= pix('download', 11, 11) ?>
                                     DOWNLOAD PDF
                                 </button>
                             </div>
@@ -3417,7 +3575,7 @@ foreach ($challenges as $ch) {
                         <div class="cert-card" style="--cert-accent:#F59E0B">
                             <div class="cert-card-top">
                                 <span class="cert-badge" style="color:#F59E0B;border-color:rgba(245,158,11,.28);background:rgba(245,158,11,.07)">
-                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+                                    <?= pix('medal', 9, 9) ?>
                                     COMPETITION
                                 </span>
                                 <span class="cert-card-id"><?= $cid ?></span>
@@ -3436,11 +3594,11 @@ foreach ($challenges as $ch) {
                             </div>
                             <div class="cert-card-actions">
                                 <button class="cert-btn cert-btn--share" onclick="CertTab.share('comp',<?= $comp['id'] ?>,'<?= addslashes($comp['name']) ?>','<?= addslashes($edLbl) ?><?= $myRank ? ' · Rank #'.$myRank : '' ?>')">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                    <?= pix('share', 11, 11) ?>
                                     SHARE
                                 </button>
                                 <button class="cert-btn cert-btn--pdf" onclick="CertTab.download('comp',<?= $comp['id'] ?>,'<?= addslashes($comp['name']) ?>','<?= addslashes($edLbl) ?><?= $myRank ? ' · Rank #'.$myRank : '' ?>')">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    <?= pix('download', 11, 11) ?>
                                     DOWNLOAD PDF
                                 </button>
                             </div>
@@ -3470,7 +3628,7 @@ foreach ($challenges as $ch) {
                         <div class="cert-card" style="--cert-accent:#8B5CF6">
                             <div class="cert-card-top">
                                 <span class="cert-badge" style="color:#8B5CF6;border-color:rgba(139,92,246,.28);background:rgba(139,92,246,.07)">
-                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                    <?= pix('dollar', 9, 9) ?>
                                     PAYOUT COMPLETED
                                 </span>
                                 <span class="cert-card-id"><?= $cid ?></span>
@@ -3484,11 +3642,11 @@ foreach ($challenges as $ch) {
                             </div>
                             <div class="cert-card-actions">
                                 <button class="cert-btn cert-btn--share" onclick="CertTab.share('payout',<?= $p['id'] ?>,'Payout <?= addslashes($amtLbl) ?>','<?= addslashes($amtLbl) ?> received on <?= addslashes($dtLbl) ?>')">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                    <?= pix('share', 11, 11) ?>
                                     SHARE
                                 </button>
                                 <button class="cert-btn cert-btn--pdf" onclick="CertTab.download('payout',<?= $p['id'] ?>,'Payout <?= addslashes($amtLbl) ?>','<?= addslashes($tyLbl) ?> · <?= addslashes($acLbl) ?> · <?= addslashes($dtLbl) ?>')">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    <?= pix('download', 11, 11) ?>
                                     DOWNLOAD PDF
                                 </button>
                             </div>
@@ -3513,7 +3671,7 @@ foreach ($challenges as $ch) {
                         <div class="cert-card<?= $ltLocked ? ' cert-card--locked' : '' ?>" style="--cert-accent:<?= $ltAccent ?>">
                             <div class="cert-card-top">
                                 <span class="cert-badge" style="color:<?= $ltAccent ?>;border-color:<?= $ltLocked ? 'rgba(255,255,255,0.12)' : 'rgba(16,185,129,.28)' ?>;background:<?= $ltLocked ? 'rgba(255,255,255,0.04)' : 'rgba(16,185,129,.07)' ?>">
-                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                    <?= pix('star', 9, 9) ?>
                                     LIFETIME PAYOUT
                                 </span>
                                 <span class="cert-card-id">LT-0001</span>
@@ -3535,12 +3693,12 @@ foreach ($challenges as $ch) {
                             <div class="cert-card-actions">
                                 <button class="cert-btn cert-btn--share" <?= $ltLocked?'disabled':'' ?>
                                     onclick="CertTab.share('lifetime',0,'Lifetime Payout $<?= number_format($certTotal,0) ?>','Grade <?= $gradeLetter ?> — <?= addslashes($gradeLabel) ?> · <?= count($certDone) ?> payouts')">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                    <?= pix('share', 11, 11) ?>
                                     SHARE
                                 </button>
                                 <button class="cert-btn cert-btn--pdf" <?= $ltLocked?'disabled':'' ?>
                                     onclick="CertTab.download('lifetime',0,'Lifetime Payout $<?= number_format($certTotal,0) ?>','Grade <?= $gradeLetter ?> · <?= addslashes($gradeLabel) ?>')">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                    <?= pix('download', 11, 11) ?>
                                     DOWNLOAD PDF
                                 </button>
                             </div>
@@ -3791,32 +3949,490 @@ foreach ($challenges as $ch) {
 
             <!-- ══ TAB: AFFILIATE ══ -->
             <div class="dash-tab" id="tab-affiliate">
-                <div class="dash-coming-soon">
-                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                    <div class="dash-cs-title">AFFILIATE</div>
-                    <div class="dash-cs-status">[ COMING SOON ]</div>
-                    <div class="dash-cs-desc">Your referral link, commission tracking, conversion stats, and payout requests — all from your affiliate dashboard.</div>
-                </div>
+<?php
+// Demo affiliate data (replace with real DB data when live)
+$aff_status      = 'active';   // 'none' | 'pending' | 'active'
+$aff_tier        = 'standard'; // 'standard' | 'silver' | 'gold'
+$aff_rate        = 15;
+$aff_link        = 'https://dojifunding.com?ref=DOJI-' . strtoupper(substr($profile['referral_code'] ?? 'XXXXX', 0, 8));
+$aff_clicks      = 284;
+$aff_conversions = 12;
+$aff_earnings    = 448.20;
+$aff_pending     = 112.05;
+$aff_cookie_days = 30;
+
+// Referral (parrainage) demo data
+$ref_count       = 7;
+$ref_coins       = 7;
+$ref_referrals   = [
+    ['name'=>'T. Martin',   'date'=>'2025-04-18', 'status'=>'purchased', 'coins'=>1],
+    ['name'=>'A. Dupont',   'date'=>'2025-03-29', 'status'=>'purchased', 'coins'=>1],
+    ['name'=>'K. Osei',     'date'=>'2025-03-11', 'status'=>'purchased', 'coins'=>1],
+    ['name'=>'L. Ferreira', 'date'=>'2025-02-27', 'status'=>'purchased', 'coins'=>1],
+    ['name'=>'M. Fontaine', 'date'=>'2025-02-03', 'status'=>'purchased', 'coins'=>1],
+    ['name'=>'C. Bouchard', 'date'=>'2025-01-20', 'status'=>'purchased', 'coins'=>1],
+    ['name'=>'R. Nkosi',    'date'=>'2025-01-07', 'status'=>'purchased', 'coins'=>1],
+];
+$tier_map = [
+    'standard' => ['label'=>'STANDARD', 'rate'=>15, 'min'=>0,   'max'=>50,  'color'=>'#6B7280'],
+    'silver'   => ['label'=>'SILVER',   'rate'=>20, 'min'=>50,  'max'=>150, 'color'=>'#9BA8B5'],
+    'gold'     => ['label'=>'GOLD',     'rate'=>25, 'min'=>150, 'max'=>null,'color'=>'#D4A843'],
+];
+$tier = $tier_map[$aff_tier];
+?>
+                <div class="aff-split">
+
+                    <!-- ──────── LEFT: PARRAINAGE ──────── -->
+                    <div class="aff-panel aff-panel--left">
+
+                        <div class="aff-panel-hdr">
+                            <div class="aff-panel-icon">
+                                <?= pix('users', 16, 16) ?>
+                            </div>
+                            <div>
+                                <div class="aff-panel-title">PARRAINAGE</div>
+                                <div class="aff-panel-sub">REFER FRIENDS · EARN DOJI COINS</div>
+                            </div>
+                        </div>
+
+                        <!-- Stats row -->
+                        <div class="aff-kpi-row">
+                            <div class="aff-kpi" style="--kpi-c:#0EA5E9">
+                                <div class="aff-kpi-val"><?= $ref_count ?></div>
+                                <div class="aff-kpi-lbl">FRIENDS REFERRED</div>
+                            </div>
+                            <div class="aff-kpi" style="--kpi-c:#D4A843">
+                                <div class="aff-kpi-val"><?= $ref_coins ?></div>
+                                <div class="aff-kpi-lbl">COINS EARNED</div>
+                            </div>
+                            <div class="aff-kpi" style="--kpi-c:#8B5CF6">
+                                <div class="aff-kpi-val">1:1</div>
+                                <div class="aff-kpi-lbl">COIN / REFERRAL</div>
+                            </div>
+                        </div>
+
+                        <!-- Referral code block -->
+                        <div class="aff-block">
+                            <div class="aff-block-lbl">YOUR REFERRAL CODE</div>
+                            <?php if (!empty($profile['referral_code'])): ?>
+                            <div class="aff-code-row">
+                                <span class="aff-code-val" id="refCodeText"><?= htmlspecialchars($profile['referral_code']) ?></span>
+                                <button class="aff-copy-btn" onclick="AffDash.copyText('refCodeText', this)">COPY</button>
+                            </div>
+                            <div class="aff-block-hint">Share this code — your friend enters it at checkout and you both benefit.</div>
+                            <?php else: ?>
+                            <div class="aff-block-hint" style="color:var(--text-dis)">Your code will be generated after your first challenge purchase.</div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Share link -->
+                        <?php if (!empty($profile['referral_code'])): ?>
+                        <div class="aff-block">
+                            <div class="aff-block-lbl">SHARE LINK</div>
+                            <div class="aff-code-row">
+                                <span class="aff-code-val aff-code-url" id="refLinkText">dojifunding.com?ref=<?= htmlspecialchars($profile['referral_code']) ?></span>
+                                <button class="aff-copy-btn" onclick="AffDash.copyText('refLinkText', this)">COPY</button>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
+                        <!-- How it works -->
+                        <div class="aff-block">
+                            <div class="aff-block-lbl">HOW IT WORKS</div>
+                            <div class="aff-steps-list">
+                                <div class="aff-step-row">
+                                    <div class="aff-step-num">01</div>
+                                    <div class="aff-step-txt">Share your referral code or link with friends</div>
+                                </div>
+                                <div class="aff-step-row">
+                                    <div class="aff-step-num">02</div>
+                                    <div class="aff-step-txt">Friend enters the code at checkout when purchasing a challenge</div>
+                                </div>
+                                <div class="aff-step-row">
+                                    <div class="aff-step-num">03</div>
+                                    <div class="aff-step-txt">You receive <span style="color:var(--accent)">+1 Doji Coin</span> automatically — no limit</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Referral history -->
+                        <div class="aff-block">
+                            <div class="aff-block-lbl">REFERRAL HISTORY</div>
+                            <div class="aff-history">
+                                <?php foreach ($ref_referrals as $r): ?>
+                                <div class="aff-hist-row">
+                                    <div class="aff-hist-name"><?= htmlspecialchars($r['name']) ?></div>
+                                    <div class="aff-hist-date"><?= date('d M Y', strtotime($r['date'])) ?></div>
+                                    <div class="aff-hist-status aff-hist-ok">PURCHASED</div>
+                                    <div class="aff-hist-coin" style="color:var(--accent)">+<?= $r['coins'] ?> <?= pix('coin', 10, 10) ?></div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+
+                    </div><!-- /aff-panel left -->
+
+                    <!-- ──────── RIGHT: AFFILIATION ──────── -->
+                    <div class="aff-panel aff-panel--right">
+
+                        <div class="aff-panel-hdr">
+                            <div class="aff-panel-icon">
+                                <?= pix('share', 16, 16) ?>
+                            </div>
+                            <div>
+                                <div class="aff-panel-title">AFFILIATION</div>
+                                <div class="aff-panel-sub">EARN COMMISSIONS ON EVERY REFERRAL</div>
+                            </div>
+                            <?php if ($aff_status === 'active'): ?>
+                            <span class="aff-status-badge aff-status-active">ACTIVE</span>
+                            <?php elseif ($aff_status === 'pending'): ?>
+                            <span class="aff-status-badge aff-status-pending">PENDING</span>
+                            <?php else: ?>
+                            <span class="aff-status-badge">NOT APPLIED</span>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Tier + rate -->
+                        <div class="aff-tier-strip">
+                            <?php foreach ($tier_map as $k => $t): ?>
+                            <div class="aff-tier-item <?= $k === $aff_tier ? 'aff-tier-active' : '' ?>" style="--tier-c:<?= $t['color'] ?>">
+                                <div class="aff-tier-name"><?= $t['label'] ?></div>
+                                <div class="aff-tier-rate"><?= $t['rate'] ?>%</div>
+                                <div class="aff-tier-range"><?= $t['min'] ?><?= $t['max'] ? '–'.$t['max'] : '+' ?> REF/MO</div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <!-- KPIs -->
+                        <div class="aff-kpi-row">
+                            <div class="aff-kpi" style="--kpi-c:#06B6D4">
+                                <div class="aff-kpi-val"><?= number_format($aff_clicks) ?></div>
+                                <div class="aff-kpi-lbl">LINK CLICKS</div>
+                            </div>
+                            <div class="aff-kpi" style="--kpi-c:#10B981">
+                                <div class="aff-kpi-val"><?= $aff_conversions ?></div>
+                                <div class="aff-kpi-lbl">CONVERSIONS</div>
+                            </div>
+                            <div class="aff-kpi" style="--kpi-c:#8B5CF6">
+                                <div class="aff-kpi-val"><?= $aff_cookie_days ?>D</div>
+                                <div class="aff-kpi-lbl">COOKIE</div>
+                            </div>
+                        </div>
+
+                        <!-- Earnings block -->
+                        <div class="aff-earnings-row">
+                            <div class="aff-earn-card" style="--earn-c:#10B981">
+                                <div class="aff-earn-lbl">TOTAL EARNED</div>
+                                <div class="aff-earn-val">$<?= number_format($aff_earnings, 2) ?></div>
+                            </div>
+                            <div class="aff-earn-card" style="--earn-c:#F59E0B">
+                                <div class="aff-earn-lbl">PENDING</div>
+                                <div class="aff-earn-val">$<?= number_format($aff_pending, 2) ?></div>
+                            </div>
+                            <div class="aff-earn-card" style="--earn-c:#0EA5E9">
+                                <div class="aff-earn-lbl">PAYOUT</div>
+                                <div class="aff-earn-val">WEEKLY</div>
+                            </div>
+                        </div>
+
+                        <!-- Affiliate link -->
+                        <div class="aff-block">
+                            <div class="aff-block-lbl">YOUR AFFILIATE LINK</div>
+                            <div class="aff-code-row">
+                                <span class="aff-code-val aff-code-url" id="affLinkText"><?= htmlspecialchars(str_replace('https://', '', $aff_link)) ?></span>
+                                <button class="aff-copy-btn" onclick="AffDash.copyText('affLinkText', this)">COPY</button>
+                            </div>
+                            <div class="aff-block-hint">30-day cookie tracking · works on all challenge purchases</div>
+                        </div>
+
+                        <!-- Promo assets -->
+                        <div class="aff-block">
+                            <div class="aff-block-lbl">PROMO ASSETS</div>
+                            <div class="aff-assets-grid">
+                                <div class="aff-asset-item">
+                                    <?= pix('table',   16, 16) ?>
+                                    <span>Banners</span>
+                                    <span class="aff-asset-tag">SOON</span>
+                                </div>
+                                <div class="aff-asset-item">
+                                    <?= pix('monitor', 16, 16) ?>
+                                    <span>Social Kit</span>
+                                    <span class="aff-asset-tag">SOON</span>
+                                </div>
+                                <div class="aff-asset-item">
+                                    <?= pix('tag',     16, 16) ?>
+                                    <span>Promo Codes</span>
+                                    <span class="aff-asset-tag">SOON</span>
+                                </div>
+                                <div class="aff-asset-item">
+                                    <?= pix('pen',     16, 16) ?>
+                                    <span>Ad Copy</span>
+                                    <span class="aff-asset-tag">SOON</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Commission details -->
+                        <div class="aff-block">
+                            <div class="aff-block-lbl">COMMISSION DETAILS</div>
+                            <div class="aff-comm-rows">
+                                <div class="aff-comm-row"><span>Current rate</span><span style="color:var(--accent)"><?= $tier['rate'] ?>%</span></div>
+                                <div class="aff-comm-row"><span>Cookie duration</span><span><?= $aff_cookie_days ?> days</span></div>
+                                <div class="aff-comm-row"><span>Payout cycle</span><span>Weekly</span></div>
+                                <div class="aff-comm-row"><span>Min. withdrawal</span><span>None</span></div>
+                                <div class="aff-comm-row"><span>Methods</span><span>Rise · Confirmo</span></div>
+                            </div>
+                        </div>
+
+                        <!-- CTA -->
+                        <?php if ($aff_status !== 'active'): ?>
+                        <div class="aff-cta-bar">
+                            <a href="affiliates.php" class="dash-btn dash-btn-primary" style="text-decoration:none">Apply to Affiliate Program</a>
+                            <a href="mailto:affiliates@dojifunding.com" class="dash-btn" style="text-decoration:none">Contact Team</a>
+                        </div>
+                        <?php else: ?>
+                        <div class="aff-cta-bar">
+                            <a href="affiliates.php" class="dash-btn" style="text-decoration:none">View Public Page</a>
+                            <a href="mailto:affiliates@dojifunding.com" class="dash-btn" style="text-decoration:none">Contact Manager</a>
+                        </div>
+                        <?php endif; ?>
+
+                    </div><!-- /aff-panel right -->
+
+                </div><!-- /aff-split -->
             </div>
 
             <!-- ══ TAB: TESTIMONIALS ══ -->
             <div class="dash-tab" id="tab-testimonials">
-                <div class="dash-coming-soon">
-                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    <div class="dash-cs-title">TESTIMONIALS</div>
-                    <div class="dash-cs-status">[ COMING SOON ]</div>
-                    <div class="dash-cs-desc">Share your trading journey and read success stories from the Doji Funding community. Your review matters.</div>
+                <!-- Stats strip (injected by JS) -->
+                <div class="tm-stats-strip" id="tmStatsStrip"></div>
+                <!-- Header + sort -->
+                <div class="tm-hdr">
+                    <div class="tm-hdr-left">
+                        <div class="tm-hdr-ttl">FUNDED TRADER PAYOUTS</div>
+                        <div class="tm-hdr-sub">VERIFIED WITHDRAWALS FROM REAL FUNDED ACCOUNTS · CLICK ANY CARD TO VIEW PROFILE</div>
+                    </div>
+                    <div class="tm-sort-pills" id="tmSortPills">
+                        <button class="tm-pill active" data-sort="amount">BY AMOUNT</button>
+                        <button class="tm-pill" data-sort="recent">MOST RECENT</button>
+                        <button class="tm-pill" data-sort="tier">BY TIER</button>
+                    </div>
+                </div>
+                <!-- Grid (injected by JS) -->
+                <div class="tm-grid" id="tmGrid">
+                    <div class="tm-empty">[ LOADING... ]</div>
                 </div>
             </div>
 
             <!-- ══ TAB: SUPPORT ══ -->
             <div class="dash-tab" id="tab-support">
-                <div class="dash-coming-soon">
-                    <svg class="dash-cs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="40" height="40" opacity=".2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    <div class="dash-cs-title">SUPPORT</div>
-                    <div class="dash-cs-status">[ COMING SOON ]</div>
-                    <div class="dash-cs-desc">Live chat, ticket system, and FAQ — get help from the Doji Funding team directly from your dashboard.</div>
+
+                <!-- Stats strip -->
+                <div class="sp-stats-strip">
+                    <div class="sp-stat" style="--sp-sc:#10B981">
+                        <div class="sp-stat-val">98.7%</div>
+                        <div class="sp-stat-lbl">RESOLUTION RATE</div>
+                    </div>
+                    <div class="sp-stat" style="--sp-sc:#0EA5E9">
+                        <div class="sp-stat-val">&lt; 2h</div>
+                        <div class="sp-stat-lbl">RESPONSE TIME</div>
+                    </div>
+                    <div class="sp-stat" style="--sp-sc:#D4A843">
+                        <div class="sp-stat-val">4.8 / 5</div>
+                        <div class="sp-stat-lbl">SATISFACTION</div>
+                    </div>
+                    <div class="sp-stat" style="--sp-sc:#8B5CF6">
+                        <div class="sp-stat-val">24 / 7</div>
+                        <div class="sp-stat-lbl">AVAILABILITY</div>
+                    </div>
                 </div>
+
+                <!-- Header -->
+                <div class="sp-hdr">
+                    <div class="sp-hdr-left">
+                        <div class="sp-hdr-ttl">GET HELP</div>
+                        <div class="sp-hdr-sub">CONTACT OUR TEAM · REPORT ISSUES · LEAVE A REVIEW</div>
+                    </div>
+                </div>
+
+                <!-- Quick access -->
+                <div class="sp-quick-grid">
+
+                    <button class="sp-quick-card" style="--sp-c:#10B981" onclick="SupportTab.openChat()">
+                        <div class="sp-quick-icon">
+                            <?= pix('message', 20, 20) ?>
+                        </div>
+                        <div class="sp-quick-body">
+                            <div class="sp-quick-ttl">LIVE CHAT</div>
+                            <div class="sp-quick-sub">Average response &lt; 2 min</div>
+                        </div>
+                        <div class="sp-quick-badge sp-badge--online">● ONLINE</div>
+                    </button>
+
+                    <button class="sp-quick-card" style="--sp-c:#8B5CF6" onclick="document.getElementById('spTicketsAnchor').scrollIntoView({behavior:'smooth'})">
+                        <div class="sp-quick-icon">
+                            <?= pix('calendar', 20, 20) ?>
+                        </div>
+                        <div class="sp-quick-body">
+                            <div class="sp-quick-ttl">MY TICKETS</div>
+                            <div class="sp-quick-sub">2 active · 4 total</div>
+                        </div>
+                        <div class="sp-quick-badge">2 OPEN</div>
+                    </button>
+
+                    <a class="sp-quick-card" style="--sp-c:#D4A843" href="<?= SITE_URL ?>/faq" target="_blank" rel="noopener">
+                        <div class="sp-quick-icon">
+                            <?= pix('question', 20, 20) ?>
+                        </div>
+                        <div class="sp-quick-body">
+                            <div class="sp-quick-ttl">BROWSE FAQ</div>
+                            <div class="sp-quick-sub">Instant answers to common questions</div>
+                        </div>
+                        <?= pix('arrow-ur', 14, 14) ?>
+                    </a>
+
+                </div>
+
+                <!-- Contact + Bug grid -->
+                <div class="sp-form-grid">
+
+                    <!-- Contact Support -->
+                    <div class="sp-card" style="--sp-c:#0EA5E9" id="spContactCard">
+                        <div class="sp-card-hdr">
+                            <?= pix('message', 16, 16, 'sp-card-icon') ?>
+                            <div>
+                                <div class="sp-card-ttl">CONTACT SUPPORT</div>
+                                <div class="sp-card-sub">Questions, account issues, payouts</div>
+                            </div>
+                        </div>
+                        <form class="sp-form" id="spContactForm" autocomplete="off">
+                            <div class="sp-row">
+                                <label class="sp-lbl">CATEGORY</label>
+                                <select class="sp-select" name="category">
+                                    <option value="account">Account &amp; Profile</option>
+                                    <option value="payout">Payout &amp; Withdrawals</option>
+                                    <option value="trading">Trading Rules &amp; Performance</option>
+                                    <option value="billing">Billing &amp; Challenges</option>
+                                    <option value="technical">Technical Issues</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="sp-row">
+                                <label class="sp-lbl">SUBJECT</label>
+                                <input type="text" class="sp-input" name="subject" placeholder="Brief summary of your issue…" maxlength="120">
+                            </div>
+                            <div class="sp-row">
+                                <label class="sp-lbl">MESSAGE</label>
+                                <textarea class="sp-textarea" name="message" rows="5" placeholder="Describe your issue in detail…" maxlength="2000"></textarea>
+                            </div>
+                            <div class="sp-form-foot">
+                                <button type="submit" class="sp-btn sp-btn--primary">SEND MESSAGE</button>
+                                <div class="sp-feedback" id="spContactFeedback"></div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Bug Report -->
+                    <div class="sp-card" style="--sp-c:#EF4444" id="spBugCard">
+                        <div class="sp-card-hdr">
+                            <?= pix('info', 16, 16, 'sp-card-icon') ?>
+                            <div>
+                                <div class="sp-card-ttl">REPORT A BUG</div>
+                                <div class="sp-card-sub">Dashboard errors, display issues, glitches</div>
+                            </div>
+                        </div>
+                        <form class="sp-form" id="spBugForm" autocomplete="off">
+                            <div class="sp-row">
+                                <label class="sp-lbl">TYPE</label>
+                                <select class="sp-select" name="bug_type">
+                                    <option value="bug">Bug / Error</option>
+                                    <option value="ui">UI / Display Issue</option>
+                                    <option value="data">Data Discrepancy</option>
+                                    <option value="feature">Feature Request</option>
+                                </select>
+                            </div>
+                            <div class="sp-row">
+                                <label class="sp-lbl">WHERE</label>
+                                <input type="text" class="sp-input" name="area" placeholder="e.g. Overview tab, Payouts section…" maxlength="120">
+                            </div>
+                            <div class="sp-row">
+                                <label class="sp-lbl">DESCRIPTION</label>
+                                <textarea class="sp-textarea" name="description" rows="5" placeholder="Steps to reproduce, expected vs actual behaviour…" maxlength="2000"></textarea>
+                            </div>
+                            <div class="sp-form-foot">
+                                <button type="submit" class="sp-btn sp-btn--danger">REPORT BUG</button>
+                                <div class="sp-feedback" id="spBugFeedback"></div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+                <!-- My Tickets -->
+                <div id="spTicketsAnchor" style="scroll-margin-top:72px"></div>
+                <div class="sp-tickets-hdr-row">
+                    <div>
+                        <div class="sp-tickets-ttl">MY TICKETS</div>
+                        <div class="sp-tickets-meta">4 TOTAL · 2 ACTIVE · 2 CLOSED</div>
+                    </div>
+                </div>
+                <div class="sp-tickets-list">
+
+                    <div class="sp-tkt-row">
+                        <div class="sp-tkt-id">#TKT-0042</div>
+                        <div class="sp-tkt-subj">Payout delay on Phase 2 funded account</div>
+                        <div class="sp-tkt-cat">PAYOUTS</div>
+                        <div class="sp-tkt-status sp-tkt-s--resolved">RESOLVED</div>
+                        <div class="sp-tkt-date">APR 28</div>
+                    </div>
+
+                    <div class="sp-tkt-row">
+                        <div class="sp-tkt-id">#TKT-0043</div>
+                        <div class="sp-tkt-subj">Clarification on max daily drawdown calculation</div>
+                        <div class="sp-tkt-cat">TRADING RULES</div>
+                        <div class="sp-tkt-status sp-tkt-s--resolved">CLOSED</div>
+                        <div class="sp-tkt-date">MAY 1</div>
+                    </div>
+
+                    <div class="sp-tkt-row">
+                        <div class="sp-tkt-id">#TKT-0044</div>
+                        <div class="sp-tkt-subj">Equity balance displaying incorrect value on dashboard</div>
+                        <div class="sp-tkt-cat">TECHNICAL</div>
+                        <div class="sp-tkt-status sp-tkt-s--progress">IN PROGRESS</div>
+                        <div class="sp-tkt-date">MAY 5</div>
+                    </div>
+
+                    <div class="sp-tkt-row">
+                        <div class="sp-tkt-id">#TKT-0045</div>
+                        <div class="sp-tkt-subj">Challenge fee charged twice for the same purchase</div>
+                        <div class="sp-tkt-cat">BILLING</div>
+                        <div class="sp-tkt-status sp-tkt-s--open">OPEN</div>
+                        <div class="sp-tkt-date">MAY 7</div>
+                    </div>
+
+                </div>
+
+                <!-- Rate us -->
+                <div class="sp-reviews-hdr">RATE DOJI FUNDING</div>
+                <div class="sp-reviews">
+                    <a href="https://www.trustpilot.com/review/dojifunding.com" target="_blank" rel="noopener" class="sp-review-card" style="--sp-c:#00B67A">
+                        <div class="sp-review-top">
+                            <div class="sp-review-name">Trustpilot</div>
+                            <div class="sp-stars"><?= pix('heart',14,14) ?><?= pix('heart',14,14) ?><?= pix('heart',14,14) ?><?= pix('heart',14,14) ?><?= pix('heart',14,14) ?></div>
+                        </div>
+                        <div class="sp-review-desc">Share your experience and help other traders discover Doji Funding.</div>
+                        <div class="sp-review-cta">LEAVE A REVIEW ↗</div>
+                    </a>
+                    <a href="https://propfirmmatch.com/prop-firms/doji-funding" target="_blank" rel="noopener" class="sp-review-card" style="--sp-c:#6366F1">
+                        <div class="sp-review-top">
+                            <div class="sp-review-name">PropFirmMatch</div>
+                            <div class="sp-stars"><?= pix('heart',14,14) ?><?= pix('heart',14,14) ?><?= pix('heart',14,14) ?><?= pix('heart',14,14) ?><?= pix('heart',14,14) ?></div>
+                        </div>
+                        <div class="sp-review-desc">Rate us on the leading prop firm comparison platform.</div>
+                        <div class="sp-review-cta">RATE US ↗</div>
+                    </a>
+                </div>
+
             </div>
 
         </main>
@@ -3833,23 +4449,23 @@ foreach ($challenges as $ch) {
     <!-- Mobile tab bar -->
     <div class="dash-mobile-tabs">
         <button class="dash-mobile-tab active" data-tab="overview">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            <?= pix('grid', 20, 20) ?>
             <span>Overview</span>
         </button>
         <button class="dash-mobile-tab" data-tab="challenges">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <?= pix('layers', 20, 20) ?>
             <span>Challenges</span>
         </button>
         <button class="dash-mobile-tab" data-tab="payouts">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 100 7h5a3.5 3.5 0 110 7H6"/></svg>
+            <?= pix('dollar', 20, 20) ?>
             <span>Payouts</span>
         </button>
         <button class="dash-mobile-tab" data-tab="settings">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <?= pix('user', 20, 20) ?>
             <span>Profile</span>
         </button>
         <button class="dash-mobile-tab" id="dashMobileMore">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+            <?= pix('more', 20, 20) ?>
             <span>More</span>
         </button>
     </div>
