@@ -32,22 +32,44 @@ const AuthModal = (function() {
         _trapHandler = null;
     }
 
-    // ─── iOS-safe scroll lock ───
+    // ─── Scroll lock (iOS-safe) ───
+    var _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
     function lockScroll() {
         const scrollY = window.scrollY;
-        document.body.style.overflow   = 'hidden';
-        document.body.style.position   = 'fixed';
-        document.body.style.width      = '100%';
-        document.body.style.top        = '-' + scrollY + 'px';
-        document.body.dataset.scrollY  = scrollY;
+        document.body.dataset.scrollY = scrollY;
+        if (_isIOS) {
+            // On iOS, position:fixed on body breaks keyboard + fixed-overlay scroll.
+            // Instead block touchmove on the background; the overlay itself scrolls.
+            document.body.style.overflow = 'hidden';
+            document.addEventListener('touchmove', _preventBgScroll, { passive: false });
+        } else {
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width    = '100%';
+            document.body.style.top      = '-' + scrollY + 'px';
+        }
     }
+
     function unlockScroll() {
         const scrollY = parseInt(document.body.dataset.scrollY || '0', 10);
-        document.body.style.overflow  = '';
-        document.body.style.position  = '';
-        document.body.style.width     = '';
-        document.body.style.top       = '';
+        document.body.style.overflow = '';
+        if (_isIOS) {
+            document.removeEventListener('touchmove', _preventBgScroll, { passive: false });
+        } else {
+            document.body.style.position = '';
+            document.body.style.width    = '';
+            document.body.style.top      = '';
+        }
         window.scrollTo(0, scrollY);
+    }
+
+    function _preventBgScroll(e) {
+        const overlay = document.querySelector('.modal-overlay.active');
+        if (!overlay) { e.preventDefault(); return; }
+        let t = e.target;
+        while (t && t !== overlay) t = t.parentElement;
+        if (!t) e.preventDefault();
     }
 
     // ─── Open modal ───
@@ -55,6 +77,7 @@ const AuthModal = (function() {
         close(); // close any open
         const id = type === 'login' ? 'loginModal' : 'signupModal';
         const overlay = document.getElementById(id);
+        if (!overlay) return;
         overlay.classList.add('active');
         lockScroll();
         // Focus first input + activate focus trap after animation

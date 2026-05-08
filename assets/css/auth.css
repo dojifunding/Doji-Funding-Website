@@ -389,7 +389,8 @@
     .modal-overlay.active {
         align-items: flex-start;
         justify-content: center;
-        padding: 12px;
+        padding: 12px 12px 48px;
+        padding-bottom: max(48px, env(safe-area-inset-bottom, 48px));
     }
 
     /* margin:auto centers when space available; becomes 0 when form overflows */
@@ -439,5 +440,5 @@
     .form-row-3 { grid-template-columns: 1fr 1fr; }
 }
 
-/* ── Disclaimer banner — always above modal overlay ── */
-.disclaimer-banner { z-index: 2050; }
+/* ── Disclaimer banner — below modal overlay so modal is fully accessible ── */
+.disclaimer-banner { z-index: 800; }

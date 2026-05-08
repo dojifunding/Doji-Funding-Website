@@ -127,6 +127,13 @@ const Dashboard = (function() {
         var greetingEl = document.getElementById('dashGreeting');
         if (greetingEl) greetingEl.style.display = tabName === 'overview' ? '' : 'none';
 
+        // Show leaderboard public-profile banner only on leaderboard tab
+        var lbBanner = document.getElementById('dashPublicBanner');
+        if (lbBanner) lbBanner.style.display = tabName === 'leaderboard' ? 'flex' : 'none';
+
+        // Init testimonials tab when first opened
+        if (tabName === 'testimonials' && typeof TestimonialsTab !== 'undefined') TestimonialsTab.init();
+
         // Update URL hash without scrolling
         history.replaceState(null, '', '#' + tabName);
 
@@ -172,6 +179,43 @@ const Dashboard = (function() {
         } catch (err) {
             msg.textContent = 'Connection error. Please try again.';
             msg.className = 'dash-form-msg err';
+        }
+    }
+
+    // ─── Public profile toggle ───
+    async function togglePublicProfile(forceOn) {
+        const toggle   = document.getElementById('pubProfileToggle');
+        const status   = document.getElementById('pubProfileStatus');
+        const msg      = document.getElementById('pubProfileMsg');
+        const csrf     = document.getElementById('publicProfileCsrf');
+        const banner   = document.getElementById('dashPublicBanner');
+
+        const currentlyOn = toggle ? toggle.classList.contains('is-on') : false;
+        const nextOn = forceOn === true ? true : !currentlyOn;
+
+        const fd = new FormData();
+        fd.append('csrf', csrf ? csrf.value : '');
+        fd.append('is_public', nextOn ? '1' : '0');
+
+        try {
+            const res  = await fetch('api/toggle-public-profile.php', { method: 'POST', body: fd });
+            const json = await res.json();
+            if (json.success) {
+                if (toggle) {
+                    toggle.classList.toggle('is-on', nextOn);
+                    toggle.setAttribute('aria-pressed', String(nextOn));
+                }
+                if (status) {
+                    status.textContent = nextOn ? 'PUBLIC' : 'PRIVATE';
+                    status.className = 'dash-pub-status ' + (nextOn ? 'is-public' : '');
+                }
+                if (banner) banner.style.display = nextOn ? 'none' : '';
+                if (msg) { msg.textContent = ''; }
+            } else {
+                if (msg) { msg.textContent = json.error || 'Error updating visibility.'; }
+            }
+        } catch {
+            if (msg) { msg.textContent = 'Connection error. Please try again.'; }
         }
     }
 
@@ -503,7 +547,7 @@ const Dashboard = (function() {
 
     document.addEventListener('DOMContentLoaded', init);
 
-    return { switchTab, filterChallenges, copyReferral, setTheme, toggleTheme, submitKycDoc, showProfileSection };
+    return { switchTab, filterChallenges, copyReferral, setTheme, toggleTheme, submitKycDoc, showProfileSection, togglePublicProfile };
 })();
 
 /* ═══════════════════════════════════════════════════
@@ -1722,6 +1766,8 @@ window.CompTab = (function () {
     /* ── State ── */
     var _gridTick   = null;
     var _detailTick = null;
+    var _podiumRaf  = null;
+    var _detailLb   = null;
     var _viewOpen   = false;
 
     /* ── Low-level helpers ── */
@@ -1733,9 +1779,9 @@ window.CompTab = (function () {
         return p.length >= 2 ? (p[0][0]+p[1][0]).toUpperCase() : (name||'X').slice(0,2).toUpperCase();
     }
     function _flag(code) {
-        if (!code || code === '—') return '—';
-        try { return Array.from(code.toUpperCase().slice(0,2)).map(function(c){ return String.fromCodePoint(c.charCodeAt(0)+127397); }).join(''); }
-        catch(e){ return code; }
+        if (!code || code === '—') return '<span style="color:var(--text-dis)">—</span>';
+        var iso = code.toLowerCase().slice(0, 2);
+        return '<img class="lb-flag-img" src="assets/img/flags/' + iso + '.svg" alt="' + iso.toUpperCase() + '" loading="lazy" onerror="this.replaceWith(document.createTextNode(this.alt))">';
     }
     function _fmtP(n)  { return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
     function _fmtG(n)  { var v=Number(n); return (v>=0?'+':'')+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+'%'; }
@@ -1761,42 +1807,166 @@ window.CompTab = (function () {
     }
     function _getLb(id) { var l=window.DojiCompLeaderboards||{}; return l[id]||[]; }
 
+    /* ── Leaderboard-style helpers (reused by _table) ── */
+    function _lbAv(uid, name, sz) {
+        var g = _grad(uid);
+        return '<span class="lb-av" style="width:'+sz+'px;height:'+sz+'px;background:linear-gradient(135deg,'+g[0]+','+g[1]+');font-size:'+Math.round(sz*.38)+'px">'+_esc(_ini(name))+'</span>';
+    }
+    function _fmtM(n) {
+        return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+    function _fmtHoldC(mins) {
+        mins = parseInt(mins, 10);
+        if (mins < 60) return mins+'m';
+        var h = Math.floor(mins/60), m = mins%60;
+        if (h < 24) return h+'h'+(m > 0 ? ' '+m+'m' : '');
+        var d = Math.floor(h/24), rh = h%24;
+        return d+'d'+(rh > 0 ? ' '+rh+'h' : '');
+    }
+    function _wrC(wr)  { if (wr >= 65) return 'lb-wr--hi'; if (wr >= 50) return 'lb-wr--mid'; return 'lb-wr--lo'; }
+    function _rrC(rr)  { if (rr >= 2.0) return 'lb-rr--hi'; if (rr >= 1.5) return 'lb-rr--mid'; return 'lb-rr--lo'; }
+    function _rkC(rank){ if (rank===1) return 'lb-rk--1'; if (rank===2) return 'lb-rk--2'; if (rank===3) return 'lb-rk--3'; if (rank<=10) return 'lb-rk--top'; return ''; }
+
+    /* ── Isometric voxel podium (canvas) — same style as HIW cards ── */
+    function _initPodiumCanvas() {
+        var canvas = document.getElementById('compPodiumCanvas');
+        if (!canvas) return;
+        var lb = _detailLb || [];
+
+        /* ── Responsive sizing from right-panel container ── */
+        var rightEl = canvas.closest ? canvas.closest('.comp-det-right') : null;
+        var cW = rightEl ? (rightEl.clientWidth  - 32) : 440;
+        var cH = rightEl ? (rightEl.clientHeight - 60) : 360; // subtract title+gap
+        var W = Math.max(260, Math.min(480, cW));
+        var H = Math.max(260, Math.min(460, cH || Math.round(W * 0.84)));
+        var ratio = W / 460; // scale factor (base design = 460px wide)
+
+        var sc  = 18 * ratio;          // isometric scale
+        var ds  = 3.5 * ratio;         // dot size
+        var avR = Math.round(26 * ratio); // avatar radius
+        var avOff = Math.round(28 * ratio); // offset above platform top
+
+        var dpr = Math.min(window.devicePixelRatio||1,2);
+        canvas.style.width=W+'px'; canvas.style.height=H+'px';
+        canvas.width=W*dpr; canvas.height=H*dpr;
+        var ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+
+        var cx=W/2, cy=H*0.65, angle=0.45;
+
+        /* 3 stepped platforms: 2nd left · 1st center (tallest) · 3rd right */
+        var plats=[
+            {bx:-6.5, h:3, col:'#C0C0C0', player:lb[1]||null},
+            {bx:0,    h:5, col:'#FFD700', player:lb[0]||null},
+            {bx:6.5,  h:2, col:'#CD7F32', player:lb[2]||null}
+        ];
+        var PW=4, PD=4;
+
+        /* Surface voxels for each platform */
+        var allDots=[];
+        plats.forEach(function(p){
+            for(var x=0;x<=PW;x++) for(var y=0;y<=p.h;y++) for(var z=0;z<=PD;z++){
+                if(x===0||x===PW||y===0||y===p.h||z===0||z===PD)
+                    allDots.push({wx:(x-PW/2)+p.bx, wy:y, wz:z-PD/2, c:p.col});
+            }
+        });
+
+        function proj(wx,wy,wz,a){
+            var rx=wx*Math.cos(a)+wz*Math.sin(a), rz=-wx*Math.sin(a)+wz*Math.cos(a);
+            return {sx:(rx-rz)*sc*0.866, sy:(rx+rz)*sc*0.5-wy*sc, depth:rx+rz-wy};
+        }
+
+        function drawAvatar(ax,ay,player){
+            if(!player) return;
+            var g=_grad(player.uid);
+            var gr=ctx.createLinearGradient(ax-avR,ay-avR,ax+avR,ay+avR);
+            gr.addColorStop(0,g[0]); gr.addColorStop(1,g[1]);
+            ctx.beginPath(); ctx.arc(ax,ay,avR,0,Math.PI*2);
+            ctx.fillStyle=gr; ctx.fill();
+            ctx.strokeStyle='rgba(255,255,255,0.22)'; ctx.lineWidth=1.5; ctx.stroke();
+            /* initials */
+            ctx.fillStyle='#fff';
+            ctx.font='bold '+Math.round(14*ratio)+'px monospace';
+            ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.fillText(_ini(player.name),ax,ay);
+            /* first name */
+            ctx.fillStyle='#E8E8E8';
+            ctx.font='600 '+Math.round(11*ratio)+'px monospace';
+            ctx.textBaseline='top';
+            ctx.fillText((player.name||'').split(' ')[0].slice(0,9).toUpperCase(),ax,ay+avR+6);
+            /* gain */
+            ctx.fillStyle='#10B981';
+            ctx.font='700 '+Math.round(11*ratio)+'px monospace';
+            ctx.fillText(_fmtG(player.gain),ax,ay+avR+6+Math.round(15*ratio));
+        }
+
+        function draw(){
+            ctx.clearRect(0,0,W,H);
+            var pd=allDots.map(function(d){
+                var p=proj(d.wx,d.wy,d.wz,angle);
+                return {sx:p.sx,sy:p.sy,depth:p.depth,c:d.c};
+            });
+            pd.sort(function(a,b){return a.depth-b.depth;});
+            pd.forEach(function(p){
+                ctx.shadowColor=p.c; ctx.shadowBlur=10;
+                ctx.fillStyle=p.c;
+                ctx.fillRect(cx+p.sx-ds/2,cy+p.sy-ds/2,ds,ds);
+            });
+            ctx.shadowBlur=0;
+            plats.forEach(function(p){
+                var tp=proj(p.bx,p.h,0,angle);
+                drawAvatar(cx+tp.sx, cy+tp.sy-avOff, p.player);
+            });
+        }
+
+        function tick(){ angle+=0.003; draw(); _podiumRaf=requestAnimationFrame(tick); }
+        if(_podiumRaf){cancelAnimationFrame(_podiumRaf);_podiumRaf=null;}
+        tick();
+    }
+
     /* ── Render: podium ── */
     function _podium(lb) {
         if (!lb.length) return '<div class="comp-podium-empty">[ NO PARTICIPANTS YET ]</div>';
-        function slot(p, cls, sz) {
-            if (!p) return '<div class="comp-podium-slot '+cls+'"></div>';
-            return '<div class="comp-podium-slot '+cls+'">'
-                +_av(p.uid,p.name,sz)
-                +'<div class="comp-podium-rank">#'+p.rank+'</div>'
-                +'<div class="comp-podium-name">'+_esc((p.name||'').split(' ')[0])+'</div>'
-                +'<div class="comp-podium-gain">'+_fmtG(p.gain)+'</div>'
-                +'</div>';
-        }
-        return '<div class="comp-podium">'+slot(lb[1],'comp-podium-slot--2',36)+slot(lb[0],'comp-podium-slot--1',50)+slot(lb[2],'comp-podium-slot--3',36)+'</div>';
+        return '<div class="comp-podium"><canvas class="comp-podium-canvas" id="compPodiumCanvas"></canvas></div>';
     }
 
-    /* ── Render: leaderboard table ── */
+    /* ── Render: leaderboard table (same 12-column layout as main LB) ── */
     function _table(lb) {
         if (!lb.length) return '<div class="comp-lb-empty">[ COMPETITION NOT YET STARTED ]</div>';
         var rows = lb.map(function(p) {
-            var isMe = p.me||p.isMe;
-            var medal = p.rank<=3 ? ['','🥇','🥈','🥉'][p.rank]+' ' : '';
-            return '<tr class="comp-lb-row'+(isMe?' comp-lb-row--me':'')+'">'
-                +'<td class="comp-lb-td comp-lb-td--rank">'+medal+p.rank+'</td>'
-                +'<td class="comp-lb-td comp-lb-td--name">'+_av(p.uid,p.name,26)
-                +'<span class="comp-lb-name-txt">'+_esc(p.name)+(isMe?' <span class="comp-lb-me">YOU</span>':'')+'</span></td>'
-                +'<td class="comp-lb-td">'+_flag(p.country)+'</td>'
-                +'<td class="comp-lb-td">'+p.trades+'</td>'
-                +'<td class="comp-lb-td">'+p.wr+'%</td>'
-                +'<td class="comp-lb-td comp-lb-td--profit">'+_fmtP(p.profit)+'</td>'
-                +'<td class="comp-lb-td comp-lb-td--gain">'+_fmtG(p.gain)+'</td>'
-                +'<td class="comp-lb-td comp-lb-td--arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></td>'
+            var isMe = p.me || p.isMe;
+            var wr   = Number(p.winRate || p.wr || 0);
+            var pct  = Number(p.profitPct || p.gain || 0);
+            var rr   = Number(p.avgRR || 0);
+            return '<tr class="lb-row'+(isMe?' lb-row--me':'')+'">'
+                +'<td class="lb-td lb-td-rank"><span class="lb-rk '+_rkC(p.rank)+'">'+p.rank+'</span></td>'
+                +'<td class="lb-td lb-td-trader">'+_lbAv(p.uid,p.name,26)
+                    +'<span class="lb-name">'+_esc(p.name)+(isMe?' <span class="lb-me-tag">YOU</span>':'')+'</span></td>'
+                +'<td class="lb-td lb-td-flag">'+_flag(p.country)+'</td>'
+                +'<td class="lb-td lb-td-r lb-profit">+'+_fmtM(p.profit)+'</td>'
+                +'<td class="lb-td lb-td-r"><span class="lb-pct-badge">+'+pct.toFixed(2)+'%</span></td>'
+                +'<td class="lb-td lb-td-r"><span class="lb-wr '+_wrC(wr)+'">'+wr+'%</span></td>'
+                +'<td class="lb-td lb-td-pair"><span class="lb-asset-badge">'+_esc(p.pair||'—')+'</span></td>'
+                +'<td class="lb-td lb-td-r lb-win">+'+_fmtM(p.avgWin||0)+'</td>'
+                +'<td class="lb-td lb-td-r lb-loss">−'+_fmtM(p.avgLoss||0)+'</td>'
+                +'<td class="lb-td lb-td-r lb-hold">'+_fmtHoldC(p.avgHold||0)+'</td>'
+                +'<td class="lb-td lb-td-r"><span class="lb-rr '+_rrC(rr)+'">'+rr.toFixed(2)+'</span></td>'
+                +'<td class="lb-td lb-td-r lb-trades">'+p.trades+'</td>'
                 +'</tr>';
         }).join('');
-        return '<table class="comp-lb-table"><thead><tr>'
-            +'<th>RANK</th><th>NAME</th><th>COUNTRY</th><th>TRADES</th><th>WIN RATIO</th><th>PROFIT</th><th>GAIN</th><th></th>'
-            +'</tr></thead><tbody>'+rows+'</tbody></table>';
+        return '<div class="lb-scroll"><table class="lb-table"><thead><tr>'
+            +'<th class="lb-th lb-th-rank">RANK</th>'
+            +'<th class="lb-th lb-th-trader">TRADER</th>'
+            +'<th class="lb-th">COUNTRY</th>'
+            +'<th class="lb-th lb-th-r">PROFIT</th>'
+            +'<th class="lb-th lb-th-r">PROFIT %</th>'
+            +'<th class="lb-th lb-th-r">WIN RATE</th>'
+            +'<th class="lb-th">ASSET</th>'
+            +'<th class="lb-th lb-th-r">AVG. WIN</th>'
+            +'<th class="lb-th lb-th-r">AVG. LOSS</th>'
+            +'<th class="lb-th lb-th-r">AVG. HOLD</th>'
+            +'<th class="lb-th lb-th-r">AVG. R:R</th>'
+            +'<th class="lb-th lb-th-r">TRADES</th>'
+            +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
     }
 
     /* ── Render: right sidebar ── */
@@ -1827,46 +1997,90 @@ window.CompTab = (function () {
     function _buildDetail(comp, lb) {
         var isLive = comp.status==='live', isUp = comp.status==='upcoming';
         var cdEnd  = isLive ? comp.ends : (isUp ? comp.starts : '');
-        var cdT    = _pd(cdEnd); var cdV = cdT ? _cd(cdT) : {d:'00',h:'00',m:'00',s:'00'};
         var cdLbl  = isLive ? 'ENDING IN' : (isUp ? 'STARTS IN' : 'ENDED');
         var stLbl  = isLive ? 'ONGOING' : comp.status.toUpperCase();
-        var cdAttr = cdEnd ? ' data-comp-detail-end="'+_esc(cdEnd)+'"' : '';
+        var cdT    = _pd(cdEnd);
+        var cdVals = cdT ? _fcVals(cdT) : null;
+        var dStr   = cdVals && cdVals.d > 0 ? String(cdVals.d) : '';
+        var fcHTML = cdVals && cdEnd
+            ? '<div class="flip-clock flip-clock--'+comp.status+' comp-det-fc" data-fc-target="'+_esc(cdEnd)+'" data-fc-dlen="'+dStr.length+'">'
+              +_fcBuildHTML(cdVals)+'</div>'
+            : '';
+        var isJoined = false; lb.forEach(function(p){if(p.me||p.isMe)isJoined=true;});
+        var isFree   = comp.type==='free';
+        var entryTxt = isFree ? 'FREE' : '$'+Number(comp.entry).toFixed(2);
+        var prizeVal = comp.prize_pool ? Number(comp.prize_pool) : 0;
+        var prizeStr = prizeVal ? '$'+prizeVal.toLocaleString('en-US') : 'TBD';
+        var startsStr= (comp.starts||'').slice(0,10);
+        var endsStr  = (comp.ends  ||'').slice(0,10);
         return '<div class="comp-detail">'
-            // header
             +'<div class="comp-detail-hdr">'
             +'<button class="comp-detail-back" onclick="CompTab.closeView()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg> BACK</button>'
-            +'<div class="comp-detail-hdr-title">'+_esc(comp.edition+' '+comp.name)+'</div>'
+            +'<div class="comp-detail-hdr-title">'+_esc(comp.name)+'</div>'
             +'<span class="comp-status comp-status--'+comp.status+'"><span class="comp-status-dot comp-status-dot--'+comp.status+'"></span>'+stLbl+'</span>'
             +'</div>'
-            // countdown blocks
-            +'<div class="comp-detail-cd"><div class="comp-detail-cd-lbl">'+cdLbl+'</div>'
-            +'<div class="comp-detail-cd-blocks"'+cdAttr+'>'
-            +'<div class="comp-cd-block"><div class="comp-cd-val" id="cdD">'+cdV.d+'</div><div class="comp-cd-unit">DAY</div></div>'
-            +'<div class="comp-cd-sep">:</div>'
-            +'<div class="comp-cd-block"><div class="comp-cd-val" id="cdH">'+cdV.h+'</div><div class="comp-cd-unit">HR</div></div>'
-            +'<div class="comp-cd-sep">:</div>'
-            +'<div class="comp-cd-block"><div class="comp-cd-val" id="cdM">'+cdV.m+'</div><div class="comp-cd-unit">MIN</div></div>'
-            +'<div class="comp-cd-sep">:</div>'
-            +'<div class="comp-cd-block"><div class="comp-cd-val" id="cdS">'+cdV.s+'</div><div class="comp-cd-unit">SEC</div></div>'
-            +'</div></div>'
-            // body
-            +'<div class="comp-detail-body">'
-            +'<div class="comp-detail-main">'+_podium(lb)+_table(lb)+'</div>'
-            +_sidebar(comp, lb)
-            +'</div></div>';
+            +'<div class="comp-det-layout">'
+            +'<div class="comp-det-left">'
+            +'<div class="comp-det-edition">'+_esc(comp.edition)+'</div>'
+            +'<div class="comp-det-name">'+_esc(comp.name)+'</div>'
+            +'<div class="comp-det-prize-banner">'
+            +'<div class="comp-det-prize-lbl">PRIZE POOL</div>'
+            +'<div class="comp-det-prize-val">'+prizeStr+'</div>'
+            +'</div>'
+            +'<div class="comp-det-dates">'
+            +'<div class="comp-det-date"><div class="comp-det-date-lbl">STARTS</div><div class="comp-det-date-val">'+_esc(startsStr)+'</div></div>'
+            +'<div class="comp-det-date"><div class="comp-det-date-lbl">ENDS</div><div class="comp-det-date-val">'+_esc(endsStr)+'</div></div>'
+            +'</div>'
+            +'<div class="comp-det-info">'
+            +'<div class="comp-det-info-block"><div class="comp-det-info-lbl">PARTICIPANTS</div><div class="comp-det-info-val">'+Number(comp.participants).toLocaleString()+'</div></div>'
+            +'<div class="comp-det-info-block"><div class="comp-det-info-lbl">ENTRY</div><div class="comp-det-info-val'+(isFree?' comp-det-info-val--free':'')+'">'  +entryTxt+'</div></div>'
+            +'<div class="comp-det-info-block"><div class="comp-det-info-lbl">PLATFORM</div><div class="comp-det-info-val">'+_esc(comp.platform)+'</div></div>'
+            +'<div class="comp-det-info-block"><div class="comp-det-info-lbl">ORGANIZER</div><div class="comp-det-info-val">'+_esc(comp.organizer)+'</div></div>'
+            +'</div>'
+            +'<div class="comp-det-actions">'
+            +'<button class="comp-det-ghost-btn" onclick="CompTab.openPrizepool('+comp.id+')">PRIZES</button>'
+            +'<button class="comp-det-ghost-btn" onclick="CompTab.openInfo('+comp.id+')">RULES</button>'
+            +'</div>'
+            +(isJoined
+                ? '<div class="comp-det-joined"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> JOINED</div>'
+                : '<button class="comp-det-join-btn">JOIN COMPETITION</button>')
+            +(fcHTML ? '<div class="comp-det-cd"><div class="comp-det-cd-lbl">'+cdLbl+'</div>'+fcHTML+'</div>' : '')
+            +'</div>'
+            +'<div class="comp-det-right">'
+            +'<div class="comp-det-lb-title">TOURNAMENT LEADERBOARD</div>'
+            +_podium(lb)
+            +'</div>'
+            +'</div>'
+            +'<div class="comp-det-rankings">'
+            +'<div class="comp-det-rankings-title">RANKINGS</div>'
+            +_table(lb)
+            +'</div>'
+            +'</div>';
     }
 
     /* ── Detail countdown tick ── */
     function _tickDetail() {
-        var blocks = document.querySelector('.comp-detail-cd-blocks');
-        if (!blocks) { _stopDetail(); return; }
-        var t = _pd(blocks.getAttribute('data-comp-detail-end')); if (!t) return;
-        var v = _cd(t);
-        var q = function(id,val){ var el=document.getElementById(id); if(el)el.textContent=val; };
-        q('cdD',v.d); q('cdH',v.h); q('cdM',v.m); q('cdS',v.s);
+        var clock = document.querySelector('#compDetailView .flip-clock[data-fc-target]');
+        if (!clock) { _stopDetail(); return; }
+        var target = _pd(clock.getAttribute('data-fc-target')); if (!target) return;
+        var vals = _fcVals(target); if (!vals) return;
+        var dStr = vals.d > 0 ? String(vals.d) : '';
+        var prevDLen = parseInt(clock.getAttribute('data-fc-dlen')||'0', 10);
+        if (dStr.length !== prevDLen) {
+            clock.innerHTML = _fcBuildHTML(vals);
+            clock.setAttribute('data-fc-dlen', String(dStr.length)); return;
+        }
+        var us = {}; clock.querySelectorAll('.flip-unit').forEach(function(u){ us[u.getAttribute('data-fc-unit')] = u; });
+        if (dStr && us['D']) _fcUpdateUnit(us['D'], dStr);
+        if (us['H']) _fcUpdateUnit(us['H'], vals.h);
+        if (us['M']) _fcUpdateUnit(us['M'], vals.m);
+        if (us['S']) _fcUpdateUnit(us['S'], vals.s);
     }
-    function _startDetail() { _stopDetail(); _tickDetail(); _detailTick = setInterval(_tickDetail,1000); }
-    function _stopDetail()  { if(_detailTick){clearInterval(_detailTick);_detailTick=null;} }
+    function _startDetail() { _stopDetail(); _tickDetail(); _detailTick = setInterval(_tickDetail,1000); requestAnimationFrame(_initPodiumCanvas); }
+    function _stopDetail()  {
+        if (_detailTick) { clearInterval(_detailTick); _detailTick = null; }
+        if (_podiumRaf)  { cancelAnimationFrame(_podiumRaf); _podiumRaf = null; }
+    }
 
     /* ── Flip Clock ── */
     function _fcVals(target) {
@@ -1994,6 +2208,7 @@ window.CompTab = (function () {
         var comp=_getComp(id); if(!comp)return;
         var lb=_getLb(id);
         _viewOpen = true;
+        _detailLb = lb;
         var tab    = document.getElementById('tab-competitions');
         var detail = document.getElementById('compDetailView');
         if (!detail) { detail=document.createElement('div'); detail.id='compDetailView'; tab.appendChild(detail); }
@@ -2044,4 +2259,1203 @@ window.CompTab = (function () {
 
     document.addEventListener('DOMContentLoaded', init);
     return { openView:openView, closeView:closeView, openPrizepool:openPrizepool, openInfo:openInfo, toggleDrawer:toggleDrawer };
+}());
+
+/* ══════════════════════════════════════════════════════════
+   LEADERBOARD TAB
+══════════════════════════════════════════════════════════ */
+const LeaderboardTab = (function() {
+    'use strict';
+
+    var GRADS = [
+        ['#10B981','#0EA5E9'],['#8B5CF6','#EC4899'],['#F59E0B','#EF4444'],
+        ['#06B6D4','#6366F1'],['#10B981','#84CC16'],['#F97316','#FBBF24'],
+        ['#6366F1','#A855F7'],['#EF4444','#F97316'],['#0EA5E9','#10B981'],
+        ['#EC4899','#8B5CF6'],['#14B8A6','#3B82F6'],['#A855F7','#06B6D4'],
+    ];
+
+    var LB_DATA = [];
+    var _loaded  = false;
+
+    /* Demo traders — shown until real public users exist */
+    var _DEMO = [
+        {rank:1,  uid:201, name:'Marcus T.',    country:'US', size:50000,  profit:17450, profitPct:34.90, winRate:74, pair:'XAU/USD', avgWin:312.50, avgLoss:145.20, avgHold:92,  avgRR:2.15, trades:67,  fundedDays:342, totalPayout:24800, highestPayout:8200,  payoutCount:12},
+        {rank:2,  uid:202, name:'Yuki N.',      country:'JP', size:25000,  profit:8225,  profitPct:32.90, winRate:71, pair:'USD/JPY', avgWin:198.40, avgLoss:102.30, avgHold:48,  avgRR:1.94, trades:52,  fundedDays:280, totalPayout:11600, highestPayout:4800,  payoutCount:10},
+        {rank:3,  uid:203, name:'Anya K.',      country:'DE', size:100000, profit:31200, profitPct:31.20, winRate:68, pair:'EUR/USD', avgWin:489.60, avgLoss:198.40, avgHold:135, avgRR:2.47, trades:88,  fundedDays:415, totalPayout:42500, highestPayout:18900, payoutCount:9},
+        {rank:4,  uid:204, name:'James O.',     country:'GB', size:50000,  profit:15100, profitPct:30.20, winRate:72, pair:'GBP/USD', avgWin:285.30, avgLoss:119.80, avgHold:78,  avgRR:2.38, trades:74,  fundedDays:356, totalPayout:21400, highestPayout:7100,  payoutCount:11},
+        {rank:5,  uid:205, name:'Sofia R.',     country:'BR', size:10000,  profit:2910,  profitPct:29.10, winRate:66, pair:'EUR/USD', avgWin:84.20,  avgLoss:42.50,  avgHold:64,  avgRR:1.98, trades:48,  fundedDays:187, totalPayout:4100,  highestPayout:1650,  payoutCount:7},
+        {rank:6,  uid:206, name:'Luca M.',      country:'IT', size:25000,  profit:7175,  profitPct:28.70, winRate:69, pair:'NAS100',  avgWin:176.40, avgLoss:88.30,  avgHold:210, avgRR:1.99, trades:56,  fundedDays:256, totalPayout:10200, highestPayout:4100,  payoutCount:9},
+        {rank:7,  uid:207, name:'Elena V.',     country:'RU', size:200000, profit:55200, profitPct:27.60, winRate:65, pair:'GBP/JPY', avgWin:922.50, avgLoss:398.60, avgHold:180, avgRR:2.31, trades:93,  fundedDays:521, totalPayout:78400, highestPayout:26500, payoutCount:14},
+        {rank:8,  uid:208, name:'Ahmed F.',     country:'AE', size:50000,  profit:13650, profitPct:27.30, winRate:67, pair:'XAU/USD', avgWin:278.40, avgLoss:130.20, avgHold:55,  avgRR:2.14, trades:71,  fundedDays:312, totalPayout:19200, highestPayout:6400,  payoutCount:10},
+        {rank:9,  uid:209, name:'Clara S.',     country:'SE', size:10000,  profit:2690,  profitPct:26.90, winRate:70, pair:'USD/JPY', avgWin:79.80,  avgLoss:38.40,  avgHold:36,  avgRR:2.08, trades:43,  fundedDays:145, totalPayout:3800,  highestPayout:1500,  payoutCount:6},
+        {rank:10, uid:210, name:'Noah B.',      country:'CA', size:100000, profit:26500, profitPct:26.50, winRate:63, pair:'NAS100',  avgWin:464.20, avgLoss:215.80, avgHold:285, avgRR:2.15, trades:79,  fundedDays:389, totalPayout:37600, highestPayout:12500, payoutCount:8},
+        {rank:11, uid:211, name:'Hana M.',      country:'JP', size:25000,  profit:6525,  profitPct:26.10, winRate:68, pair:'EUR/JPY', avgWin:168.30, avgLoss:84.90,  avgHold:72,  avgRR:1.98, trades:58,  fundedDays:234, totalPayout:9200,  highestPayout:3800,  payoutCount:8},
+        {rank:12, uid:212, name:'Pierre D.',    country:'FR', size:50000,  profit:12800, profitPct:25.60, winRate:64, pair:'EUR/USD', avgWin:259.80, avgLoss:128.50, avgHold:96,  avgRR:2.02, trades:72,  fundedDays:278, totalPayout:18100, highestPayout:5900,  payoutCount:10},
+        {rank:13, uid:213, name:'Tom H.',       country:'AU', size:50000,  profit:12450, profitPct:24.90, winRate:67, pair:'AUD/USD', avgWin:244.60, avgLoss:116.80, avgHold:83,  avgRR:2.09, trades:69,  fundedDays:265, totalPayout:17500, highestPayout:5600,  payoutCount:9},
+        {rank:14, uid:214, name:'Zara A.',      country:'ZA', size:5000,   profit:1235,  profitPct:24.70, winRate:65, pair:'XAU/USD', avgWin:42.80,  avgLoss:21.40,  avgHold:44,  avgRR:2.00, trades:38,  fundedDays:198, totalPayout:1740,  highestPayout:720,   payoutCount:7},
+        {rank:15, uid:215, name:'Felix W.',     country:'DE', size:100000, profit:24300, profitPct:24.30, winRate:62, pair:'DAX40',   avgWin:435.60, avgLoss:204.20, avgHold:198, avgRR:2.13, trades:82,  fundedDays:362, totalPayout:34200, highestPayout:11400, payoutCount:8},
+        {rank:16, uid:216, name:'Mei L.',       country:'SG', size:25000,  profit:5975,  profitPct:23.90, winRate:66, pair:'XAU/USD', avgWin:152.40, avgLoss:78.20,  avgHold:58,  avgRR:1.95, trades:54,  fundedDays:218, totalPayout:8400,  highestPayout:3400,  payoutCount:7},
+        {rank:17, uid:217, name:'Ryu T.',       country:'JP', size:10000,  profit:2360,  profitPct:23.60, winRate:63, pair:'USD/JPY', avgWin:71.50,  avgLoss:36.80,  avgHold:42,  avgRR:1.94, trades:46,  fundedDays:156, totalPayout:3300,  highestPayout:1350,  payoutCount:6},
+        {rank:18, uid:218, name:'Isabel C.',    country:'ES', size:50000,  profit:11700, profitPct:23.40, winRate:69, pair:'EUR/USD', avgWin:232.10, avgLoss:108.40, avgHold:76,  avgRR:2.14, trades:68,  fundedDays:245, totalPayout:16400, highestPayout:5200,  payoutCount:9},
+        {rank:19, uid:219, name:'Owen P.',      country:'GB', size:200000, profit:46400, profitPct:23.20, winRate:64, pair:'GBP/USD', avgWin:798.60, avgLoss:368.40, avgHold:165, avgRR:2.17, trades:90,  fundedDays:684, totalPayout:65800, highestPayout:22400, payoutCount:12},
+        {rank:20, uid:220, name:'Katya M.',     country:'PL', size:25000,  profit:5750,  profitPct:23.00, winRate:71, pair:'EUR/USD', avgWin:141.80, avgLoss:69.20,  avgHold:52,  avgRR:2.05, trades:57,  fundedDays:202, totalPayout:8100,  highestPayout:3200,  payoutCount:7},
+        {rank:21, uid:221, name:'Sam B.',       country:'US', size:5000,   profit:1140,  profitPct:22.80, winRate:67, pair:'NAS100',  avgWin:38.60,  avgLoss:19.20,  avgHold:178, avgRR:2.01, trades:41,  fundedDays:178, totalPayout:1600,  highestPayout:680,   payoutCount:6},
+        {rank:22, uid:222, name:'Lin X.',       country:'CN', size:100000, profit:22700, profitPct:22.70, winRate:61, pair:'XAU/USD', avgWin:412.80, avgLoss:198.60, avgHold:120, avgRR:2.08, trades:81,  fundedDays:334, totalPayout:32100, highestPayout:10800, payoutCount:8},
+        {rank:23, uid:223, name:'Priya S.',     country:'IN', size:20000,  profit:4480,  profitPct:22.40, winRate:65, pair:'USD/JPY', avgWin:134.40, avgLoss:69.60,  avgHold:38,  avgRR:1.93, trades:44,  fundedDays:142, totalPayout:5600,  highestPayout:2100,  payoutCount:6},
+        {rank:24, uid:224, name:'Nils J.',      country:'SE', size:50000,  profit:11100, profitPct:22.20, winRate:68, pair:'EUR/USD', avgWin:219.80, avgLoss:104.30, avgHold:68,  avgRR:2.11, trades:70,  fundedDays:224, totalPayout:15600, highestPayout:4900,  payoutCount:14},
+        {rank:25, uid:225, name:'Kenji Y.',     country:'JP', size:30000,  profit:6600,  profitPct:22.00, winRate:66, pair:'XAU/USD', avgWin:162.50, avgLoss:80.20,  avgHold:60,  avgRR:2.03, trades:56,  fundedDays:198, totalPayout:8300,  highestPayout:3100,  payoutCount:7},
+        {rank:26, uid:226, name:'Ana G.',       country:'MX', size:15000,  profit:3270,  profitPct:21.80, winRate:64, pair:'EUR/USD', avgWin:111.60, avgLoss:56.70,  avgHold:50,  avgRR:1.97, trades:39,  fundedDays:165, totalPayout:4100,  highestPayout:1650,  payoutCount:6},
+        {rank:27, uid:227, name:'Tobias F.',    country:'CH', size:90000,  profit:19440, profitPct:21.60, winRate:60, pair:'USD/CHF', avgWin:358.60, avgLoss:176.60, avgHold:148, avgRR:2.03, trades:78,  fundedDays:312, totalPayout:27500, highestPayout:9200,  payoutCount:9},
+        {rank:28, uid:228, name:'Maria E.',     country:'PT', size:20000,  profit:4300,  profitPct:21.50, winRate:67, pair:'EUR/USD', avgWin:129.60, avgLoss:64.80,  avgHold:45,  avgRR:2.00, trades:45,  fundedDays:134, totalPayout:5400,  highestPayout:2050,  payoutCount:5},
+        {rank:29, uid:229, name:'Chris L.',     country:'AU', size:60000,  profit:12840, profitPct:21.40, winRate:63, pair:'AUD/JPY', avgWin:257.80, avgLoss:129.80, avgHold:88,  avgRR:1.98, trades:67,  fundedDays:256, totalPayout:16100, highestPayout:5200,  payoutCount:8},
+        {rank:30, uid:230, name:'Valentina R.', country:'IT', size:30000,  profit:6390,  profitPct:21.30, winRate:70, pair:'EUR/USD', avgWin:153.10, avgLoss:73.40,  avgHold:55,  avgRR:2.08, trades:58,  fundedDays:189, totalPayout:7900,  highestPayout:2900,  payoutCount:7},
+        {rank:31, uid:231, name:'Ethan W.',     country:'US', size:200000, profit:42000, profitPct:21.00, winRate:62, pair:'NAS100',  avgWin:742.80, avgLoss:354.60, avgHold:302, avgRR:2.09, trades:86,  fundedDays:456, totalPayout:59400, highestPayout:20200, payoutCount:11},
+        {rank:32, uid:232, name:'Aiko T.',      country:'JP', size:45000,  profit:9405,  profitPct:20.90, winRate:65, pair:'USD/JPY', avgWin:280.80, avgLoss:143.10, avgHold:40,  avgRR:1.96, trades:47,  fundedDays:178, totalPayout:11800, highestPayout:3900,  payoutCount:7},
+        {rank:33, uid:233, name:'David K.',     country:'IL', size:60000,  profit:12480, profitPct:20.80, winRate:61, pair:'USD/JPY', avgWin:255.10, avgLoss:130.10, avgHold:92,  avgRR:1.96, trades:69,  fundedDays:234, totalPayout:15600, highestPayout:5000,  payoutCount:8},
+        {rank:34, uid:234, name:'Sophie B.',    country:'FR', size:35000,  profit:7245,  profitPct:20.70, winRate:68, pair:'EUR/GBP', avgWin:174.70, avgLoss:86.20,  avgHold:62,  avgRR:2.02, trades:57,  fundedDays:198, totalPayout:9100,  highestPayout:3200,  payoutCount:7},
+        {rank:35, uid:235, name:'Ivan P.',      country:'RU', size:90000,  profit:18360, profitPct:20.40, winRate:60, pair:'USD/JPY', avgWin:344.50, avgLoss:173.30, avgHold:136, avgRR:1.99, trades:76,  fundedDays:289, totalPayout:25800, highestPayout:8600,  payoutCount:8},
+        {rank:36, uid:236, name:'Mia H.',       country:'NO', size:15000,  profit:3045,  profitPct:20.30, winRate:66, pair:'EUR/USD', avgWin:104.40, avgLoss:53.40,  avgHold:46,  avgRR:1.96, trades:38,  fundedDays:145, totalPayout:3800,  highestPayout:1450,  payoutCount:5},
+        {rank:37, uid:237, name:'Oliver C.',    country:'CA', size:70000,  profit:14140, profitPct:20.20, winRate:64, pair:'USD/CAD', avgWin:286.40, avgLoss:145.90, avgHold:79,  avgRR:1.96, trades:68,  fundedDays:212, totalPayout:17800, highestPayout:5800,  payoutCount:7},
+        {rank:38, uid:238, name:'Fatima A.',    country:'MA', size:10000,  profit:2010,  profitPct:20.10, winRate:67, pair:'EUR/USD', avgWin:60.20,  avgLoss:30.60,  avgHold:43,  avgRR:1.97, trades:46,  fundedDays:134, totalPayout:2800,  highestPayout:1100,  payoutCount:5},
+        {rank:39, uid:239, name:'Ravi M.',      country:'IN', size:35000,  profit:6965,  profitPct:19.90, winRate:63, pair:'GBP/JPY', avgWin:170.20, avgLoss:87.40,  avgHold:58,  avgRR:1.95, trades:55,  fundedDays:167, totalPayout:8700,  highestPayout:3000,  payoutCount:6},
+        {rank:40, uid:240, name:'Emma L.',      country:'SE', size:70000,  profit:13720, profitPct:19.60, winRate:62, pair:'EUR/USD', avgWin:277.80, avgLoss:143.60, avgHold:85,  avgRR:1.93, trades:66,  fundedDays:198, totalPayout:17200, highestPayout:5500,  payoutCount:7},
+        {rank:41, uid:241, name:'Darius B.',    country:'RO', size:125000, profit:24000, profitPct:19.20, winRate:59, pair:'EUR/USD', avgWin:453.50, avgLoss:235.50, avgHold:128, avgRR:1.93, trades:74,  fundedDays:278, totalPayout:30400, highestPayout:10200, payoutCount:8},
+        {rank:42, uid:242, name:'Alicia F.',    country:'ES', size:40000,  profit:7560,  profitPct:18.90, winRate:65, pair:'EUR/USD', avgWin:183.00, avgLoss:93.80,  avgHold:60,  avgRR:1.95, trades:57,  fundedDays:167, totalPayout:9500,  highestPayout:3200,  payoutCount:6},
+        {rank:43, uid:243, name:'Max S.',       country:'DE', size:80000,  profit:15040, profitPct:18.80, winRate:61, pair:'DAX40',   avgWin:308.50, avgLoss:160.60, avgHold:178, avgRR:1.92, trades:65,  fundedDays:234, totalPayout:18900, highestPayout:6200,  payoutCount:7},
+        {rank:44, uid:244, name:'Li W.',        country:'CN', size:5000,   profit:935,   profitPct:18.70, winRate:64, pair:'XAU/USD', avgWin:32.40,  avgLoss:16.80,  avgHold:48,  avgRR:1.93, trades:36,  fundedDays:156, totalPayout:1320,  highestPayout:560,   payoutCount:5},
+        {rank:45, uid:245, name:'Björn E.',     country:'SE', size:45000,  profit:8370,  profitPct:18.60, winRate:63, pair:'EUR/USD', avgWin:253.80, avgLoss:131.40, avgHold:44,  avgRR:1.93, trades:44,  fundedDays:178, totalPayout:10500, highestPayout:3600,  payoutCount:6},
+        {rank:46, uid:246, name:'Carmen V.',    country:'CO', size:40000,  profit:7360,  profitPct:18.40, winRate:62, pair:'EUR/USD', avgWin:178.90, avgLoss:93.10,  avgHold:56,  avgRR:1.92, trades:56,  fundedDays:156, totalPayout:9200,  highestPayout:3100,  payoutCount:6},
+        {rank:47, uid:247, name:'Josh K.',      country:'AU', size:175000, profit:31850, profitPct:18.20, winRate:60, pair:'AUD/USD', avgWin:573.00, avgLoss:299.80, avgHold:182, avgRR:1.91, trades:82,  fundedDays:312, totalPayout:44900, highestPayout:15200, payoutCount:22},
+        {rank:48, uid:248, name:'Natalia P.',   country:'BR', size:80000,  profit:14480, profitPct:18.10, winRate:61, pair:'EUR/USD', avgWin:295.00, avgLoss:154.90, avgHold:78,  avgRR:1.90, trades:64,  fundedDays:218, totalPayout:18200, highestPayout:5900,  payoutCount:7},
+        {rank:49, uid:249, name:'Hugo M.',      country:'FR', size:150000, profit:27000, profitPct:18.00, winRate:58, pair:'EUR/USD', avgWin:513.90, avgLoss:274.20, avgHold:125, avgRR:1.87, trades:72,  fundedDays:289, totalPayout:34100, highestPayout:11400, payoutCount:8},
+        {rank:50, uid:250, name:'Léa F.',       country:'FR', size:50000,  profit:8850,  profitPct:17.70, winRate:60, pair:'EUR/GBP', avgWin:198.60, avgLoss:105.30, avgHold:72,  avgRR:1.88, trades:63,  fundedDays:168, totalPayout:11100, highestPayout:3800,  payoutCount:6},
+    ];
+
+    var _currentFilter = 'all';
+    var _currentTier   = 'all';
+
+    /* ── Tier configuration ── */
+    var _TIER_CFG = {
+        legend:   { label:'LEGEND',   color:'#EC4899', bg:'rgba(236,72,153,0.10)',  min:30 },
+        masters:  { label:'MASTERS',  color:'#F97316', bg:'rgba(249,115,22,0.10)',  min:27 },
+        diamond:  { label:'DIAMOND',  color:'#06B6D4', bg:'rgba(6,182,212,0.10)',   min:24 },
+        platinum: { label:'PLATINUM', color:'#8B5CF6', bg:'rgba(139,92,246,0.10)',  min:21 },
+        gold:     { label:'GOLD',     color:'#D4A843', bg:'rgba(212,168,67,0.10)',  min:19 },
+        silver:   { label:'SILVER',   color:'#9CA3AF', bg:'rgba(156,163,175,0.10)',min:17 },
+        bronze:   { label:'BRONZE',   color:'#CD7F32', bg:'rgba(205,127,50,0.10)',  min:0  },
+    };
+
+    function _tierKey(pct) {
+        if (pct >= 30) return 'legend';
+        if (pct >= 27) return 'masters';
+        if (pct >= 24) return 'diamond';
+        if (pct >= 21) return 'platinum';
+        if (pct >= 19) return 'gold';
+        if (pct >= 17) return 'silver';
+        return 'bronze';
+    }
+
+    function _tierBadge(key) {
+        var t = _TIER_CFG[key];
+        if (!t) return '';
+        return '<span class="lb-tier-badge lb-tier--'+key+'" style="color:'+t.color+';background:'+t.bg+';border-color:'+t.color+'">'+t.label+'</span>';
+    }
+
+    function _rng(seed) {
+        var s = seed >>> 0;
+        return function() { s = (Math.imul(1664525, s) + 1013904223) >>> 0; return s / 0xFFFFFFFF; };
+    }
+
+    function _lbScore(p) {
+        var rand = _rng(p.uid * 31337);
+        var wr   = Math.min(20, Math.round(p.winRate / 5));
+        var pf   = Math.min(20, Math.round((p.avgRR || (1.5 + rand() * 1.0)) * 8));
+        var rr   = Math.min(20, Math.round(((p.avgRR || 1.5) - 1.0) * 20));
+        var vol  = Math.min(20, Math.round(12 + rand() * 8));
+        var cons = Math.min(20, Math.round(10 + rand() * 10));
+        return wr + Math.min(20, pf) + Math.min(20, rr) + vol + cons;
+    }
+
+    /* ── Fetch real leaderboard data from API ── */
+    function _fetchData() {
+        var body  = document.getElementById('lbBody');
+        var empty = document.getElementById('lbEmpty');
+        if (body)  body.innerHTML = '<tr><td colspan="14" class="lb-loading">[ LOADING... ]</td></tr>';
+        if (empty) empty.style.display = 'none';
+
+        fetch('api/leaderboard.php')
+            .then(function(r) { return r.json(); })
+            .then(function(json) {
+                if (json.success && Array.isArray(json.data) && json.data.length) {
+                    LB_DATA = json.data;
+                    if (typeof TestimonialsTab !== 'undefined') TestimonialsTab.init();
+                }
+                filter(_currentFilter);
+            })
+            .catch(function() {
+                filter(_currentFilter);
+            });
+    }
+
+    /* ── Helpers ── */
+    function _esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    function _flag(code) {
+        if (!code || code === '—') return '<span class="lb-flag-empty">—</span>';
+        var iso = code.toLowerCase().slice(0, 2);
+        return '<img class="lb-flag-img" src="assets/img/flags/' + iso + '.svg" alt="' + iso.toUpperCase() + '" loading="lazy" onerror="this.replaceWith(document.createTextNode(this.alt))">';
+    }
+
+    function _grad(uid) { return GRADS[Math.abs(uid|0) % GRADS.length]; }
+
+    function _ini(name) {
+        var p = (name||'').trim().split(/\s+/);
+        return p.length >= 2 ? (p[0][0]+p[p.length-1][0]).toUpperCase() : (name||'X').slice(0,2).toUpperCase();
+    }
+
+    function _av(uid, name, sz) {
+        var g = _grad(uid);
+        return '<span class="lb-av" style="width:'+sz+'px;height:'+sz+'px;background:linear-gradient(135deg,'+g[0]+','+g[1]+');font-size:'+Math.round(sz*.38)+'px">'+_esc(_ini(name))+'</span>';
+    }
+
+    function _fmtMoney(n) {
+        return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    function _fmtHold(mins) {
+        mins = parseInt(mins, 10);
+        if (mins < 60) return mins+'m';
+        var h = Math.floor(mins/60), m = mins%60;
+        if (h < 24) return h+'h'+(m > 0 ? ' '+m+'m' : '');
+        var d = Math.floor(h/24), rh = h%24;
+        return d+'d'+(rh > 0 ? ' '+rh+'h' : '');
+    }
+
+    function _rankCls(rank) {
+        if (rank === 1) return 'lb-rk--1';
+        if (rank === 2) return 'lb-rk--2';
+        if (rank === 3) return 'lb-rk--3';
+        if (rank <= 10) return 'lb-rk--top';
+        return '';
+    }
+
+    function _wrCls(wr) {
+        if (wr >= 65) return 'lb-wr--hi';
+        if (wr >= 50) return 'lb-wr--mid';
+        return 'lb-wr--lo';
+    }
+
+    function _rrCls(rr) {
+        if (rr >= 2.0) return 'lb-rr--hi';
+        if (rr >= 1.5) return 'lb-rr--mid';
+        return 'lb-rr--lo';
+    }
+
+    /* ── Stats strip helpers ── */
+    function _fmtK(n) {
+        if (n >= 1000) {
+            var k = n / 1000;
+            return '$' + (k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)) + 'K';
+        }
+        return '$' + n;
+    }
+
+    function _fmtDays(d) {
+        if (d >= 365) {
+            var y = Math.floor(d / 365), m = Math.floor((d % 365) / 30);
+            return y + 'y' + (m > 0 ? ' ' + m + 'mo' : '');
+        }
+        if (d >= 30) return Math.floor(d / 30) + 'mo';
+        return d + 'd';
+    }
+
+    /* ── Stats strip ── */
+    function _updateStats(data) {
+        var elTP   = document.getElementById('lbStatTotalPayout');
+        var elTPn  = document.getElementById('lbStatTotalPayoutName');
+        var elDur  = document.getElementById('lbStatDuration');
+        var elDurn = document.getElementById('lbStatDurationName');
+        var elHP   = document.getElementById('lbStatHighPayout');
+        var elHPn  = document.getElementById('lbStatHighPayoutName');
+        var elPC   = document.getElementById('lbStatPayoutCount');
+        var elPCn  = document.getElementById('lbStatPayoutCountName');
+        if (!elTP) return;
+
+        if (!data.length) {
+            [elTP, elTPn, elDur, elDurn, elHP, elHPn, elPC, elPCn].forEach(function(el) { if (el) el.innerHTML = '—'; });
+            return;
+        }
+
+        var bestTP  = data.reduce(function(b, p) { return p.totalPayout   > b.totalPayout   ? p : b; });
+        var bestDur = data.reduce(function(b, p) { return p.fundedDays    > b.fundedDays    ? p : b; });
+        var bestHP  = data.reduce(function(b, p) { return p.highestPayout > b.highestPayout ? p : b; });
+        var bestPC  = data.reduce(function(b, p) { return p.payoutCount   > b.payoutCount   ? p : b; });
+
+        function _nameFlagHtml(p) {
+            return '<span class="lb-stat-sub-name">'+_esc(p.name)+'</span>'+_flag(p.country);
+        }
+
+        if (elTP)   elTP.textContent  = _fmtK(bestTP.totalPayout);
+        if (elTPn)  elTPn.innerHTML   = _nameFlagHtml(bestTP);
+        if (elDur)  elDur.textContent = _fmtDays(bestDur.fundedDays);
+        if (elDurn) elDurn.innerHTML  = _nameFlagHtml(bestDur);
+        if (elHP)   elHP.textContent  = _fmtK(bestHP.highestPayout);
+        if (elHPn)  elHPn.innerHTML   = _nameFlagHtml(bestHP);
+        if (elPC)   elPC.textContent  = bestPC.payoutCount;
+        if (elPCn)  elPCn.innerHTML   = _nameFlagHtml(bestPC);
+    }
+
+    /* ── Build table rows ── */
+    function _buildRows(data) {
+        if (!data.length) return '';
+        return data.map(function(p, i) {
+            var rank  = (_currentFilter === 'all' && _currentTier === 'all') ? p.rank : (i + 1);
+            var isMe  = !!p.me;
+            var tk    = _tierKey(p.profitPct);
+            var score = _lbScore(p);
+            var tc    = _TIER_CFG[tk].color;
+            return '<tr class="lb-row lb-row--clickable'+(isMe ? ' lb-row--me' : '')+'" onclick="TraderProfile.open('+p.uid+')">'
+                +'<td class="lb-td lb-td-rank"><span class="lb-rk '+_rankCls(rank)+'">'+rank+'</span></td>'
+                +'<td class="lb-td lb-td-trader">'+_av(p.uid, p.name, 26)
+                    +'<span class="lb-name">'+_esc(p.name)+(isMe ? ' <span class="lb-me-tag">YOU</span>' : '')+'</span></td>'
+                +'<td class="lb-td lb-td-flag">'+_flag(p.country)+'</td>'
+                +'<td class="lb-td lb-td-tier">'+_tierBadge(tk)+'</td>'
+                +'<td class="lb-td lb-td-r lb-td-score"><span class="lb-score lb-score--'+tk+'" style="color:'+tc+'">'+score+'</span></td>'
+                +'<td class="lb-td lb-td-r lb-profit">+'+_fmtMoney(p.profit)+'</td>'
+                +'<td class="lb-td lb-td-r"><span class="lb-pct-badge">+'+p.profitPct.toFixed(2)+'%</span></td>'
+                +'<td class="lb-td lb-td-r"><span class="lb-wr '+_wrCls(p.winRate)+'">'+p.winRate+'%</span></td>'
+                +'<td class="lb-td lb-td-pair"><span class="lb-asset-badge">'+_esc(p.pair)+'</span></td>'
+                +'<td class="lb-td lb-td-r lb-win">'+(p.avgWin  ? '+'+_fmtMoney(p.avgWin)  : '<span class="lb-dash">—</span>')+'</td>'
+                +'<td class="lb-td lb-td-r lb-loss">'+(p.avgLoss ? '−'+_fmtMoney(p.avgLoss) : '<span class="lb-dash">—</span>')+'</td>'
+                +'<td class="lb-td lb-td-r lb-hold">'+(p.avgHold ? _fmtHold(p.avgHold)       : '<span class="lb-dash">—</span>')+'</td>'
+                +'<td class="lb-td lb-td-r"><span class="lb-rr '+_rrCls(p.avgRR)+'">'+(p.avgRR ? p.avgRR.toFixed(2) : '—')+'</span></td>'
+                +'<td class="lb-td lb-td-r lb-trades">'+p.trades+'</td>'
+                +'</tr>';
+        }).join('');
+    }
+
+    /* ── Filter & render ── */
+    function filter(size) {
+        _currentFilter = size;
+
+        document.querySelectorAll('#lbSizePills .lb-pill').forEach(function(btn) {
+            var s = btn.dataset.size;
+            btn.classList.toggle('active', s === 'all' ? size === 'all' : parseInt(s) === size);
+        });
+
+        var data = LB_DATA;
+        if (size !== 'all') data = data.filter(function(p) { return p.size === size; });
+        if (_currentTier !== 'all') data = data.filter(function(p) { return _tierKey(p.profitPct) === _currentTier; });
+
+        var body   = document.getElementById('lbBody');
+        var empty  = document.getElementById('lbEmpty');
+        var subHdr = document.getElementById('lbHdrSub');
+        if (!body) return;
+
+        if (subHdr) {
+            if (size === 'all') {
+                var total = LB_DATA.length;
+                subHdr.textContent = (total ? 'TOP '+total : 'FUNDED ACCOUNTS') + ' · RANKED BY PROFIT % · UPDATED DAILY';
+            } else {
+                var sizeLabel = size >= 1000 ? '$'+(size/1000)+'K' : '$'+size;
+                subHdr.textContent = 'TOP '+data.length+' · '+sizeLabel+' ACCOUNTS · RANKED BY PROFIT %';
+            }
+        }
+
+        if (!data.length) {
+            body.innerHTML = '';
+            if (empty) {
+                empty.textContent = (!LB_DATA.length && _loaded)
+                    ? '[ NO PUBLIC TRADERS YET ]'
+                    : '[ NO TRADERS FOR THIS ACCOUNT SIZE ]';
+                empty.style.display = '';
+            }
+        } else {
+            if (empty) empty.style.display = 'none';
+            body.innerHTML = _buildRows(data);
+        }
+
+        _updateStats(data);
+
+        /* My bar — visible only when the user's size is not the active filter */
+        var myEntry = null;
+        for (var i = 0; i < LB_DATA.length; i++) { if (LB_DATA[i].me) { myEntry = LB_DATA[i]; break; } }
+        var bar = document.getElementById('lbMyBar');
+        if (!bar || !myEntry) return;
+
+        if (size === 'all' || myEntry.size === size) {
+            bar.style.display = 'none';
+        } else {
+            bar.style.display = '';
+            var sLbl = myEntry.size >= 1000 ? '$'+(myEntry.size/1000)+'K' : '$'+myEntry.size;
+            bar.innerHTML = '<div class="lb-bar-inner">'
+                +_av(0, myEntry.name, 22)
+                +'<div class="lb-bar-name">'+_esc(myEntry.name)+'</div>'
+                +'<div class="lb-bar-sep">·</div>'
+                +'<div class="lb-bar-stat"><span class="lb-bar-lbl">GLOBAL RANK</span><span class="lb-bar-val">#'+myEntry.rank+'</span></div>'
+                +'<div class="lb-bar-sep">·</div>'
+                +'<div class="lb-bar-stat"><span class="lb-bar-lbl">ACCOUNT</span><span class="lb-bar-val">'+sLbl+'</span></div>'
+                +'<div class="lb-bar-sep">·</div>'
+                +'<div class="lb-bar-stat"><span class="lb-bar-lbl">PROFIT %</span><span class="lb-bar-val lb-profit">+'+myEntry.profitPct.toFixed(2)+'%</span></div>'
+                +'<div class="lb-bar-sep">·</div>'
+                +'<div class="lb-bar-note">NOT IN THIS SIZE FILTER</div>'
+                +'</div>';
+        }
+    }
+
+    function filterTier(tier) {
+        _currentTier = tier;
+        document.querySelectorAll('#lbTierPills .lb-tier-pill').forEach(function(btn) {
+            btn.classList.toggle('active', btn.dataset.tier === tier);
+        });
+        filter(_currentFilter);
+    }
+
+    function getData(uid) {
+        for (var i = 0; i < LB_DATA.length; i++) { if (LB_DATA[i].uid === uid) return LB_DATA[i]; }
+        return null;
+    }
+
+    /* ── Init ── */
+    function init() {
+        // Always seed data so TestimonialsTab can render immediately
+        LB_DATA = _DEMO;
+        _loaded = true;
+
+        if (!document.getElementById('tab-leaderboard')) return;
+
+        var sizePills = document.getElementById('lbSizePills');
+        if (sizePills) {
+            sizePills.addEventListener('click', function(e) {
+                var btn = e.target.closest('.lb-pill');
+                if (!btn) return;
+                var s = btn.dataset.size;
+                filter(s === 'all' ? 'all' : parseInt(s, 10));
+            });
+        }
+
+        var tierPills = document.getElementById('lbTierPills');
+        if (tierPills) {
+            tierPills.addEventListener('click', function(e) {
+                var btn = e.target.closest('.lb-tier-pill');
+                if (!btn) return;
+                filterTier(btn.dataset.tier);
+            });
+        }
+
+        _fetchData();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+    return { filter: filter, filterTier: filterTier, getData: getData, getAll: function() { return LB_DATA; } };
+}());
+
+/* ══════════════════════════════════════════════════════════
+   TRADER PROFILE OVERLAY
+══════════════════════════════════════════════════════════ */
+window.TraderProfile = (function() {
+    'use strict';
+
+    var _TIER_CFG = {
+        legend:   { label:'LEGEND',   color:'#EC4899' },
+        masters:  { label:'MASTERS',  color:'#F97316' },
+        diamond:  { label:'DIAMOND',  color:'#06B6D4' },
+        platinum: { label:'PLATINUM', color:'#8B5CF6' },
+        gold:     { label:'GOLD',     color:'#D4A843' },
+        silver:   { label:'SILVER',   color:'#9CA3AF' },
+        bronze:   { label:'BRONZE',   color:'#CD7F32' },
+    };
+    var GRADS = [
+        ['#10B981','#0EA5E9'],['#8B5CF6','#EC4899'],['#F59E0B','#EF4444'],
+        ['#06B6D4','#6366F1'],['#10B981','#84CC16'],['#F97316','#FBBF24'],
+        ['#6366F1','#A855F7'],['#EF4444','#F97316'],['#0EA5E9','#10B981'],
+        ['#EC4899','#8B5CF6'],['#14B8A6','#3B82F6'],['#A855F7','#06B6D4'],
+    ];
+
+    function _rng(seed) {
+        var s = seed >>> 0;
+        return function() { s = (Math.imul(1664525, s) + 1013904223) >>> 0; return s / 0xFFFFFFFF; };
+    }
+
+    function _tierKey(pct) {
+        if (pct >= 30) return 'legend';
+        if (pct >= 27) return 'masters';
+        if (pct >= 24) return 'diamond';
+        if (pct >= 21) return 'platinum';
+        if (pct >= 19) return 'gold';
+        if (pct >= 17) return 'silver';
+        return 'bronze';
+    }
+
+    function _ini(name) {
+        var p = (name||'').trim().split(/\s+/);
+        return p.length >= 2 ? (p[0][0]+p[p.length-1][0]).toUpperCase() : (name||'X').slice(0,2).toUpperCase();
+    }
+
+    function _esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function _fmtMoney(n) {
+        return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+    function _fmtK(n) {
+        if (n >= 1000) { var k=n/1000; return '$'+(k%1===0?k.toFixed(0):k.toFixed(1))+'K'; }
+        return '$'+n;
+    }
+    function _fmtDays(d) {
+        if (d >= 365) { var y=Math.floor(d/365),m=Math.floor((d%365)/30); return y+'y'+(m>0?' '+m+'mo':''); }
+        if (d >= 30)  return Math.floor(d/30)+'mo';
+        return d+'d';
+    }
+
+    function _composite(p, rand) {
+        var wr   = Math.min(20, Math.round(p.winRate / 5));
+        var pf   = Math.min(20, Math.round((p.avgRR || (1.5 + rand()*1.0)) * 8));
+        var rr   = Math.min(20, Math.round(((p.avgRR || 1.5) - 1.0) * 20));
+        var vol  = Math.min(20, Math.round(12 + rand()*8));
+        var cons = Math.min(20, Math.round(10 + rand()*10));
+        return { wr:wr, pf:Math.min(20,pf), rr:Math.min(20,rr), vol:vol, cons:cons,
+                 total: wr+Math.min(20,pf)+Math.min(20,rr)+vol+cons };
+    }
+
+    function _equitySvg(p, rand) {
+        var W = 620, H = 130, pts = p.trades > 0 ? Math.min(80, p.trades) : 40;
+        var vals = [0];
+        for (var i = 1; i <= pts; i++) {
+            var last = vals[vals.length - 1];
+            vals.push(last + (rand() - 0.38) * 0.8);
+        }
+        var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
+        var range = mx - mn || 1;
+        var PAD = { t: 14, b: 18, l: 8, r: 8 };
+        function sY(v) { return PAD.t + (1 - (v - mn) / range) * (H - PAD.t - PAD.b); }
+        function sX(i) { return PAD.l + (i / pts) * (W - PAD.l - PAD.r); }
+
+        var path = 'M' + sX(0) + ' ' + sY(vals[0]);
+        for (var j = 1; j <= pts; j++) path += ' L' + sX(j) + ' ' + sY(vals[j]);
+        var floor  = H - PAD.b;
+        var area   = path + ' L' + sX(pts) + ' ' + floor + ' L' + sX(0) + ' ' + floor + ' Z';
+        var endVal = vals[vals.length - 1];
+        var col    = endVal >= 0 ? '#10B981' : '#EF4444';
+        var colRgb = endVal >= 0 ? '16,185,129' : '239,68,68';
+        var lx = sX(pts), ly = sY(vals[vals.length - 1]);
+
+        /* unique IDs per trader */
+        var gFill = 'gf' + p.uid, gGlow = 'gg' + p.uid, gBlur = 'gb' + p.uid;
+
+        /* horizontal grid lines */
+        var grid = '';
+        for (var g = 1; g <= 3; g++) {
+            var gy = PAD.t + (g / 4) * (H - PAD.t - PAD.b);
+            grid += '<line x1="' + PAD.l + '" y1="' + gy + '" x2="' + (W - PAD.r) + '" y2="' + gy + '" stroke="rgba(255,255,255,0.045)" stroke-width="1"/>';
+        }
+
+        return '<svg class="tp-equity-svg" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" style="--eq-col:' + col + ';--eq-rgb:' + colRgb + '">'
+            + '<defs>'
+            /* area fill gradient */
+            + '<linearGradient id="' + gFill + '" x1="0" y1="0" x2="0" y2="1">'
+            + '<stop offset="0%"   stop-color="' + col + '" stop-opacity="0.38"/>'
+            + '<stop offset="60%"  stop-color="' + col + '" stop-opacity="0.10"/>'
+            + '<stop offset="100%" stop-color="' + col + '" stop-opacity="0"/>'
+            + '</linearGradient>'
+            /* line glow filter */
+            + '<filter id="' + gGlow + '" x="-10%" y="-60%" width="120%" height="220%">'
+            + '<feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>'
+            + '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>'
+            + '</filter>'
+            /* soft blur for glow halo */
+            + '<filter id="' + gBlur + '" x="-20%" y="-80%" width="140%" height="260%">'
+            + '<feGaussianBlur in="SourceGraphic" stdDeviation="7"/>'
+            + '</filter>'
+            + '</defs>'
+            /* grid */
+            + grid
+            /* floor line */
+            + '<line x1="' + PAD.l + '" y1="' + floor + '" x2="' + (W - PAD.r) + '" y2="' + floor + '" stroke="rgba(' + colRgb + ',0.18)" stroke-width="1"/>'
+            /* area */
+            + '<path d="' + area + '" fill="url(#' + gFill + ')"/>'
+            /* halo (blurred wide stroke) */
+            + '<path d="' + path + '" fill="none" stroke="' + col + '" stroke-width="6" stroke-linejoin="round" filter="url(#' + gBlur + ')" opacity="0.28"/>'
+            /* main line with glow filter */
+            + '<path d="' + path + '" fill="none" stroke="' + col + '" stroke-width="2" stroke-linejoin="round" filter="url(#' + gGlow + ')"/>'
+            /* end-point rings */
+            + '<circle cx="' + lx + '" cy="' + ly + '" r="9"  fill="rgba(' + colRgb + ',0.10)"/>'
+            + '<circle cx="' + lx + '" cy="' + ly + '" r="5"  fill="rgba(' + colRgb + ',0.25)"/>'
+            + '<circle cx="' + lx + '" cy="' + ly + '" r="2.5" fill="' + col + '"/>'
+            + '<circle cx="' + lx + '" cy="' + ly + '" r="1"   fill="#fff" opacity="0.9"/>'
+            + '</svg>';
+    }
+
+    function _calendarHtml(p, rand) {
+        var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var YLBLS  = ['Mon','','Wed','','Fri','',''];
+        var WEEKS  = 52;
+        var CELL   = 12; /* px per cell + gap, for month label positioning */
+
+        /* Generate states — spread trades across recent weeks */
+        var totalCells = WEEKS * 7;
+        var tradeDens  = Math.min(0.72, Math.max(0.15, p.trades / 150));
+        var states = [];
+        for (var i = 0; i < totalCells; i++) {
+            var r = rand();
+            var inRange = i > totalCells * (1 - p.fundedDays / 365);
+            if (inRange && r > (1 - tradeDens)) {
+                if (r > 0.88)       states.push('loss');
+                else if (r > 0.78)  states.push('be');
+                else                states.push('win');
+            } else {
+                states.push('none');
+            }
+        }
+
+        /* Month labels — one per month-change along the week axis */
+        var refDate = new Date(2026, 3, 28); /* fixed anchor for determinism */
+        var startDate = new Date(refDate);
+        startDate.setDate(refDate.getDate() - WEEKS * 7);
+        var monthLabels = [], lastM = -1;
+        for (var w = 0; w < WEEKS; w++) {
+            var d = new Date(startDate);
+            d.setDate(startDate.getDate() + w * 7);
+            var m = d.getMonth();
+            if (m !== lastM) { monthLabels.push({w: w, lbl: MONTHS[m]}); lastM = m; }
+        }
+
+        /* Build HTML */
+        var html = '<div class="tp-cal-graph">';
+
+        /* Month label row */
+        html += '<div class="tp-cal-header"><div class="tp-cal-ylabel-spacer"></div><div class="tp-cal-months-row">';
+        for (var i = 0; i < monthLabels.length; i++) {
+            html += '<span class="tp-cal-mlbl" style="left:'+(monthLabels[i].w * CELL)+'px">'+monthLabels[i].lbl+'</span>';
+        }
+        html += '</div></div>';
+
+        /* Body: y-labels + week grid */
+        html += '<div class="tp-cal-body"><div class="tp-cal-ylabels">';
+        for (var d = 0; d < 7; d++) html += '<div class="tp-cal-ylabel">'+YLBLS[d]+'</div>';
+        html += '</div><div class="tp-cal-weeks">';
+        for (var w = 0; w < WEEKS; w++) {
+            html += '<div class="tp-cal-wcol">';
+            for (var d = 0; d < 7; d++) {
+                html += '<div class="tp-cal-cell tp-cal-cell--'+states[w*7+d]+'"></div>';
+            }
+            html += '</div>';
+        }
+        html += '</div></div>';
+
+        /* Legend */
+        html += '<div class="tp-cal-legend">'
+            +'<span class="tp-cal-leg"><span class="tp-cal-leg-dot tp-cal-c--none"></span>NO TRADE</span>'
+            +'<span class="tp-cal-leg"><span class="tp-cal-leg-dot tp-cal-c--win"></span>WIN</span>'
+            +'<span class="tp-cal-leg"><span class="tp-cal-leg-dot tp-cal-c--loss"></span>LOSS</span>'
+            +'<span class="tp-cal-leg"><span class="tp-cal-leg-dot tp-cal-c--be"></span>BREAKEVEN</span>'
+            +'</div>';
+
+        return html + '</div>';
+    }
+
+    var _TROPHY_DEFS = {
+        payday: {
+            name: 'PAYDAY',
+            hint: '5+ PAYOUTS',
+            color: '#F59E0B',
+            svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5.5" stroke-dasharray="1.5 2.2"/><line x1="12" y1="15.5" x2="12" y2="9"/><polyline points="9.5,11.5 12,9 14.5,11.5"/></svg>'
+        },
+        vault: {
+            name: 'VAULT',
+            hint: '10+ PAYOUTS',
+            color: '#10B981',
+            svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" width="28" height="28"><rect x="3.5" y="4.5" width="17" height="15" rx="1.5"/><circle cx="11" cy="12" r="4"/><circle cx="11" cy="12" r="1.2"/><line x1="11" y1="8" x2="11" y2="9.7"/><line x1="13.5" y1="9.2" x2="12.5" y2="10.6"/><line x1="14.5" y1="12" x2="16.5" y2="12"/><circle cx="5.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/><circle cx="5.5" cy="18.5" r=".9" fill="currentColor" stroke="none"/><circle cx="19" cy="6.5" r=".9" fill="currentColor" stroke="none"/><circle cx="19" cy="18.5" r=".9" fill="currentColor" stroke="none"/></svg>'
+        },
+        ironclad: {
+            name: 'IRONCLAD',
+            hint: '6 MONTHS',
+            color: '#06B6D4',
+            svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><line x1="7.5" y1="3" x2="16.5" y2="3"/><line x1="7.5" y1="21" x2="16.5" y2="21"/><path d="M7.5 3C7.5 3 7.5 10 12 12C7.5 14 7.5 21 7.5 21"/><path d="M16.5 3C16.5 3 16.5 10 12 12C16.5 14 16.5 21 16.5 21"/><line x1="9.8" y1="12" x2="14.2" y2="12" stroke-dasharray="1.2 1.5"/></svg>'
+        },
+        veteran: {
+            name: 'VETERAN',
+            hint: '1 YEAR',
+            color: '#8B5CF6',
+            svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><polygon points="12,2 20.5,7 20.5,17 12,22 3.5,17 3.5,7"/><line x1="3.5" y1="7" x2="20.5" y2="7"/><line x1="3.5" y1="17" x2="20.5" y2="17"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="3.5" y1="7" x2="12" y2="12"/><line x1="20.5" y1="7" x2="12" y2="12"/><line x1="3.5" y1="17" x2="12" y2="12"/><line x1="20.5" y1="17" x2="12" y2="12"/></svg>'
+        },
+        sniper: {
+            name: 'SNIPER',
+            hint: '70%+ WIN RATE',
+            color: '#EF4444',
+            svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" width="28" height="28"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><line x1="2" y1="12" x2="6.5" y2="12"/><line x1="17.5" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6.5"/><line x1="12" y1="17.5" x2="12" y2="22"/></svg>'
+        },
+        bullrun: {
+            name: 'BULL RUN',
+            hint: '25%+ PROFIT',
+            color: '#84CC16',
+            svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><line x1="2" y1="22" x2="22" y2="22"/><line x1="2" y1="22" x2="2" y2="4"/><rect x="3" y="16" width="4" height="6" fill="currentColor" stroke="currentColor" opacity=".3" rx=".5"/><rect x="9" y="12" width="4" height="10" fill="currentColor" stroke="currentColor" opacity=".3" rx=".5"/><rect x="15" y="7" width="4" height="15" fill="currentColor" stroke="currentColor" opacity=".3" rx=".5"/><polyline points="3,15 9.5,11 15.5,6 21,3"/><polyline points="17.5,3 21,3 21,6.5"/></svg>'
+        },
+        centurion: {
+            name: 'CENTURION',
+            hint: '100 TRADES',
+            color: '#F97316',
+            svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M13.5 2L5 14h6l-1.5 8L19 10h-6z"/><line x1="3" y1="10.5" x2="6.5" y2="10.5" stroke-dasharray="1 1.2"/><line x1="17.5" y1="13.5" x2="21" y2="13.5" stroke-dasharray="1 1.2"/></svg>'
+        },
+    };
+
+    function _trophies(p) {
+        var list = [];
+        if (p.payoutCount >= 5)  list.push(_TROPHY_DEFS.payday);
+        if (p.payoutCount >= 10) list.push(_TROPHY_DEFS.vault);
+        if (p.fundedDays >= 180) list.push(_TROPHY_DEFS.ironclad);
+        if (p.fundedDays >= 365) list.push(_TROPHY_DEFS.veteran);
+        if (p.winRate >= 70)     list.push(_TROPHY_DEFS.sniper);
+        if (p.profitPct >= 25)   list.push(_TROPHY_DEFS.bullrun);
+        if (p.trades >= 100)     list.push(_TROPHY_DEFS.centurion);
+        return list;
+    }
+
+    function _render(p) {
+        var rand = _rng(p.uid * 31337);
+        var tk   = _tierKey(p.profitPct);
+        var tc   = _TIER_CFG[tk];
+        var grad = GRADS[Math.abs(p.uid|0) % GRADS.length];
+        var comp = _composite(p, rand);
+        var scorePct = (comp.total / 100) * 100;
+        var trophyList = _trophies(p);
+        var handle = '@'+_esc((p.name||'').replace(/\s+/g,'').replace(/\./g,'').toLowerCase()+'_'+p.uid);
+
+        var memberSince = (function() {
+            var d = new Date();
+            d.setDate(d.getDate() - p.fundedDays);
+            return d.toLocaleDateString('en-US',{month:'short', year:'numeric'});
+        }());
+
+        var metricColor = function(score) {
+            if (score >= 16) return '#10B981';
+            if (score >= 10) return '#D4A843';
+            return '#D71921';
+        };
+
+        return ''
+            /* ── HEADER ── */
+            +'<div class="tp-hdr">'
+                +'<div class="tp-av-wrap">'
+                    +'<div class="tp-av" style="background:linear-gradient(135deg,'+grad[0]+','+grad[1]+')">'+_esc(_ini(p.name))+'</div>'
+                +'</div>'
+                +'<div class="tp-hdr-info">'
+                    +'<div class="tp-hdr-top">'
+                        +'<span class="tp-name">'+_esc(p.name)+'</span>'
+                        +'<span class="tp-season-tier-badge lb-tier--'+tk+'" style="color:'+tc.color+';border-color:'+tc.color+';background:rgba(0,0,0,0.2)">'+tc.label+'</span>'
+                    +'</div>'
+                    +'<div class="tp-handle">'+handle+'</div>'
+                    +'<div class="tp-hdr-meta">'
+                        +'<div class="tp-hdr-stat"><span class="tp-hdr-stat-lbl">MEMBER SINCE</span><span class="tp-hdr-stat-val">'+memberSince+'</span></div>'
+                        +'<div class="tp-hdr-stat"><span class="tp-hdr-stat-lbl">ACCOUNT SIZE</span><span class="tp-hdr-stat-val">'+_fmtK(p.size)+'</span></div>'
+                        +'<div class="tp-hdr-stat"><span class="tp-hdr-stat-lbl">TOTAL PROFIT</span><span class="tp-hdr-stat-val tp-profit">+'+_fmtMoney(p.profit)+'</span></div>'
+                        +'<div class="tp-hdr-stat"><span class="tp-hdr-stat-lbl">FUNDED</span><span class="tp-hdr-stat-val">'+_fmtDays(p.fundedDays)+'</span></div>'
+                    +'</div>'
+                +'</div>'
+            +'</div>'
+
+            /* ── SEASON 0 CARD ── */
+            +'<div class="tp-section-lbl">SEASON 0 — PERFORMANCE RATING</div>'
+            +'<div class="tp-season-card">'
+                +'<div class="tp-season-top">'
+                    +'<div class="tp-season-tier-big">'
+                        +'<span class="tp-season-tier-badge" style="color:'+tc.color+';border-color:'+tc.color+';background:rgba(0,0,0,0.25);font-size:9px;padding:5px 12px">'+tc.label+'</span>'
+                        +'<span class="tp-season-tier-lbl">CURRENT TIER</span>'
+                    +'</div>'
+                    +'<div class="tp-comp-wrap">'
+                        +'<div class="tp-comp-header">'
+                            +'<span class="tp-comp-title">COMPOSITE SCORE</span>'
+                            +'<span class="tp-comp-score">'+comp.total+'</span>'
+                        +'</div>'
+                        +'<div class="tp-comp-track"><div class="tp-comp-fill" style="width:'+scorePct+'%;background:'+tc.color+'"></div></div>'
+                        +'<div class="tp-metrics-row">'
+                            +['WR','PF','R:R','VOL','CONS'].map(function(lbl,i) {
+                                var scores = [comp.wr, comp.pf, comp.rr, comp.vol, comp.cons];
+                                var s = scores[i];
+                                var pct = (s/20)*100;
+                                var mc = metricColor(s);
+                                return '<div class="tp-metric">'
+                                    +'<span class="tp-metric-lbl">'+lbl+'</span>'
+                                    +'<div class="tp-metric-track"><div class="tp-metric-fill" style="width:'+pct+'%;background:'+mc+'"></div></div>'
+                                    +'<span class="tp-metric-val">'+s+'/20</span>'
+                                    +'</div>';
+                            }).join('')
+                        +'</div>'
+                    +'</div>'
+                +'</div>'
+            +'</div>'
+
+            /* ── STATS ROW ── */
+            +'<div class="tp-stats-row">'
+                +'<div class="tp-stat-box"><div class="tp-stat-lbl">WIN RATE</div><div class="tp-stat-val tp-green">'+p.winRate+'%</div></div>'
+                +'<div class="tp-stat-box"><div class="tp-stat-lbl">TOTAL TRADES</div><div class="tp-stat-val">'+p.trades+'</div></div>'
+                +'<div class="tp-stat-box"><div class="tp-stat-lbl">TOTAL PAYOUT</div><div class="tp-stat-val tp-green">'+_fmtK(p.totalPayout)+'</div></div>'
+                +'<div class="tp-stat-box"><div class="tp-stat-lbl">BEST PAYOUT</div><div class="tp-stat-val">'+_fmtK(p.highestPayout)+'</div></div>'
+            +'</div>'
+
+            /* ── EQUITY CURVE ── */
+            +'<div class="tp-section-lbl">EQUITY CURVE</div>'
+            +'<div class="tp-equity-wrap">'+_equitySvg(p, rand)+'</div>'
+
+            /* ── TRADING CALENDAR ── */
+            +'<div class="tp-section-lbl">TRADING ACTIVITY</div>'
+            +'<div class="tp-cal-wrap">'+_calendarHtml(p, rand)+'</div>'
+
+            /* ── TROPHY CASE ── */
+            +'<div class="tp-section-lbl">TROPHY CASE</div>'
+            +'<div class="tp-trophy-wrap">'
+                +(trophyList.length
+                    ? '<div class="tp-trophies">'+trophyList.map(function(t){
+                        return '<div class="tp-trophy" style="--tc:'+t.color+'">'
+                            +'<div class="tp-trophy-icon" style="color:'+t.color+'">'+t.svg+'</div>'
+                            +'<div class="tp-trophy-name">'+t.name+'</div>'
+                            +'<div class="tp-trophy-lbl">'+t.hint+'</div>'
+                            +'</div>';
+                      }).join('')+'</div>'
+                    : '<div class="tp-trophy-empty">[ NO TROPHIES YET ]</div>'
+                )
+            +'</div>';
+    }
+
+    function open(uid) {
+        var p = LeaderboardTab.getData(uid);
+        if (!p) return;
+        var body = document.getElementById('tpBody');
+        var overlay = document.getElementById('tpOverlay');
+        if (!body || !overlay) return;
+        body.innerHTML = _render(p);
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function close(e) {
+        if (e && e.target !== document.getElementById('tpOverlay')) return;
+        var overlay = document.getElementById('tpOverlay');
+        if (overlay) overlay.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') { close(null); }
+    });
+
+    return { open: open, close: close };
+}());
+
+/* ══════════════════════════════════════════════════════════
+   TESTIMONIALS TAB
+══════════════════════════════════════════════════════════ */
+window.TestimonialsTab = (function() {
+    'use strict';
+
+    var _sort = 'amount';
+    var _retry = 0;
+    var _gridWired = false;
+
+    var _TIER_CFG = {
+        legend:   { label:'LEGEND',   color:'#EC4899', rank:7 },
+        masters:  { label:'MASTERS',  color:'#F97316', rank:6 },
+        diamond:  { label:'DIAMOND',  color:'#06B6D4', rank:5 },
+        platinum: { label:'PLATINUM', color:'#8B5CF6', rank:4 },
+        gold:     { label:'GOLD',     color:'#D4A843', rank:3 },
+        silver:   { label:'SILVER',   color:'#9CA3AF', rank:2 },
+        bronze:   { label:'BRONZE',   color:'#CD7F32', rank:1 }
+    };
+
+    var _GRADS = [
+        ['#10B981','#0EA5E9'],['#8B5CF6','#EC4899'],['#F59E0B','#EF4444'],
+        ['#06B6D4','#6366F1'],['#10B981','#84CC16'],['#F97316','#FBBF24'],
+        ['#6366F1','#A855F7'],['#EF4444','#F97316'],['#0EA5E9','#10B981'],
+        ['#EC4899','#8B5CF6'],['#14B8A6','#3B82F6'],['#A855F7','#06B6D4']
+    ];
+
+    function _tierKey(pct) {
+        if (pct >= 30) return 'legend';
+        if (pct >= 27) return 'masters';
+        if (pct >= 24) return 'diamond';
+        if (pct >= 21) return 'platinum';
+        if (pct >= 19) return 'gold';
+        if (pct >= 17) return 'silver';
+        return 'bronze';
+    }
+
+    function _rng(seed) {
+        var s = seed >>> 0;
+        return function() { s = (Math.imul(1664525, s) + 1013904223) >>> 0; return s / 0xFFFFFFFF; };
+    }
+
+    function _ini(name) {
+        var p = (name||'').trim().split(/\s+/);
+        return p.length >= 2 ? (p[0][0]+p[p.length-1][0]).toUpperCase() : (name||'X').slice(0,2).toUpperCase();
+    }
+
+    function _esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function _fmtMoney(n) {
+        return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    function _fmtK(n) {
+        if (n >= 1000) { var k=n/1000; return '$'+(k%1===0?k.toFixed(0):k.toFixed(1))+'K'; }
+        return '$'+n;
+    }
+
+    function _renderStats(traders) {
+        var strip = document.getElementById('tmStatsStrip');
+        if (!strip) return;
+        var total     = traders.length;
+        var totalPaid = traders.reduce(function(s,t){ return s+(t.totalPayout||0); }, 0);
+        var highest   = traders.reduce(function(m,t){ return Math.max(m, t.highestPayout||0); }, 0);
+        var avg       = total > 0 ? totalPaid/total : 0;
+        var avgPt     = total > 0 ? Math.round(traders.reduce(function(s,t){ return s + 4 + (Math.abs(t.uid|0) % 20); }, 0) / total) : 0;
+        var stats = [
+            { label:'FUNDED TRADERS',  val:total,              fmt:'n',   color:'#10B981' },
+            { label:'TOTAL PAID OUT',  val:totalPaid,          fmt:'$',   color:'#8B5CF6' },
+            { label:'HIGHEST PAYOUT',  val:highest,            fmt:'$',   color:'#D4A843' },
+            { label:'AVG PAYOUT',      val:avg,                fmt:'$',   color:'#0EA5E9' },
+            { label:'AVG PAYOUT TIME', val:'< '+avgPt+'h',     fmt:'raw', color:'#F97316' }
+        ];
+        strip.innerHTML = stats.map(function(s) {
+            var d = s.fmt === '$' ? _fmtMoney(s.val) : s.val;
+            return '<div class="tm-stat" style="--ts-c:'+s.color+'">'
+                +'<div class="tm-stat-val">'+d+'</div>'
+                +'<div class="tm-stat-lbl">'+s.label+'</div>'
+                +'</div>';
+        }).join('');
+    }
+
+    function _sorted(traders) {
+        var arr = traders.slice();
+        if (_sort === 'amount') {
+            arr.sort(function(a,b){ return (b.totalPayout||0)-(a.totalPayout||0); });
+        } else if (_sort === 'tier') {
+            arr.sort(function(a,b){
+                return _TIER_CFG[_tierKey(b.profitPct||0)].rank - _TIER_CFG[_tierKey(a.profitPct||0)].rank;
+            });
+        }
+        return arr;
+    }
+
+    function _card(p) {
+        var tier = _tierKey(p.profitPct||0);
+        var cfg  = _TIER_CFG[tier];
+        var g    = _GRADS[Math.abs(p.uid|0) % _GRADS.length];
+        var pt   = '< ' + (4 + (Math.abs(p.uid|0) % 20)) + 'h';
+        var flag = p.country
+            ? '<img class="tm-card-flag" src="assets/img/flags/'+p.country.toLowerCase()+'.svg" onerror="this.style.display=\'none\'">'
+            : '';
+        return '<div class="tm-card" style="--tm-c:'+cfg.color+'" data-uid="'+_esc(p.uid||'')+'">'
+            +'<div class="tm-card-top">'
+            +'<div class="tm-card-av" style="background:linear-gradient(135deg,'+g[0]+','+g[1]+')">'+_esc(_ini(p.name))+'</div>'
+            +'<div class="tm-card-info">'
+            +'<div class="tm-card-name">'+_esc(p.name||'TRADER')+'</div>'
+            +'<div class="tm-card-meta">'+flag
+            +'<span class="tm-card-size">'+_fmtK(p.size||0)+'</span>'
+            +'<span class="tm-tier-bdg" style="color:'+cfg.color+';border-color:'+cfg.color+'40">'+cfg.label+'</span>'
+            +'</div>'
+            +'</div>'
+            +'<div class="tm-card-total">'+_fmtMoney(p.totalPayout||0)+'</div>'
+            +'</div>'
+            +'<div class="tm-card-foot">'
+            +'<div class="tm-card-fs"><span class="tm-fs-lbl">PAYOUTS</span><span class="tm-fs-val">'+(p.payoutCount||1)+'</span></div>'
+            +'<div class="tm-card-fs"><span class="tm-fs-lbl">WIN RATE</span><span class="tm-fs-val">'+(p.winRate||0)+'%</span></div>'
+            +'<div class="tm-card-fs"><span class="tm-fs-lbl">PROFIT</span><span class="tm-fs-val tm-profit">+'+(p.profitPct||0)+'%</span></div>'
+            +'<div class="tm-card-fs"><span class="tm-fs-lbl">PAYOUT TIME</span><span class="tm-fs-val">'+pt+'</span></div>'
+            +'</div>'
+            +'</div>';
+    }
+
+    function _renderGrid(traders) {
+        var grid = document.getElementById('tmGrid');
+        if (!grid) return;
+        if (!traders.length) {
+            grid.innerHTML = '<div class="tm-empty">[ NO FUNDED TRADERS YET ]</div>';
+            return;
+        }
+        grid.innerHTML = _sorted(traders).map(_card).join('');
+        if (!_gridWired) {
+            _gridWired = true;
+            grid.addEventListener('click', function(e) {
+                var c = e.target.closest('.tm-card');
+                if (c && c.dataset.uid && window.TraderProfile) TraderProfile.open(c.dataset.uid);
+            });
+        }
+    }
+
+    function _setSort(type) {
+        _sort = type;
+        document.querySelectorAll('#tmSortPills .tm-pill').forEach(function(b) {
+            b.classList.toggle('active', b.dataset.sort === type);
+        });
+        var data = typeof LeaderboardTab !== 'undefined' ? LeaderboardTab.getAll() : [];
+        _renderGrid(data);
+    }
+
+    function init() {
+        var data = typeof LeaderboardTab !== 'undefined' ? LeaderboardTab.getAll() : [];
+        if (!data || !data.length) {
+            if (_retry < 10) { _retry++; setTimeout(init, 400); }
+            return;
+        }
+        _retry = 0;
+        _renderStats(data);
+        _renderGrid(data);
+        var pills = document.getElementById('tmSortPills');
+        if (pills && !pills._wired) {
+            pills._wired = true;
+            pills.addEventListener('click', function(e) {
+                var btn = e.target.closest('.tm-pill');
+                if (btn) _setSort(btn.dataset.sort);
+            });
+        }
+    }
+
+    return { init: init };
+}());
+
+/* ── Certificates tab ── */
+window.CertTab = (function() {
+    'use strict';
+
+    var ACCENTS = {
+        eval:     '#10B981',
+        funded:   '#0EA5E9',
+        comp:     '#F59E0B',
+        payout:   '#8B5CF6',
+        lifetime: '#10B981'
+    };
+
+    var _flash = null;
+
+    function _showFlash(msg) {
+        if (_flash) { clearTimeout(_flash._t); _flash.remove(); }
+        var el = document.createElement('div');
+        el.className = 'cert-flash';
+        el.textContent = msg;
+        document.body.appendChild(el);
+        requestAnimationFrame(function() { el.classList.add('cert-flash--in'); });
+        _flash = el;
+        _flash._t = setTimeout(function() {
+            el.classList.remove('cert-flash--in');
+            setTimeout(function() { el.remove(); if (_flash === el) _flash = null; }, 300);
+        }, 2200);
+    }
+
+    function share(type, id, title, text) {
+        var fullText = 'Doji Funding · ' + title + ' — ' + text;
+        if (navigator.share) {
+            navigator.share({ title: 'Doji Funding — ' + title, text: fullText })
+                .catch(function() {});
+        } else if (navigator.clipboard) {
+            navigator.clipboard.writeText(fullText).then(function() {
+                _showFlash('[ COPIED TO CLIPBOARD ]');
+            }).catch(function() {
+                _showFlash('[ SHARE NOT SUPPORTED ]');
+            });
+        } else {
+            _showFlash('[ SHARE NOT SUPPORTED ]');
+        }
+    }
+
+    function download(type, id, title, sub) {
+        var accent = ACCENTS[type] || '#10B981';
+        var now    = new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+        var certNo = type.toUpperCase() + '-' + String(id).padStart(4, '0') + '-' + new Date().getFullYear();
+
+        var html = '<!DOCTYPE html><html lang="en"><head>'
+            + '<meta charset="UTF-8"><title>Certificate — ' + title + '</title>'
+            + '<style>'
+            + '*{margin:0;padding:0;box-sizing:border-box}'
+            + 'body{background:#fff;font-family:"Courier New",monospace;color:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:32px}'
+            + '.cert{width:640px;border:2px solid #111;padding:48px 52px;position:relative}'
+            + '.cert-corner{position:absolute;width:20px;height:20px;border-color:'+accent+'}'
+            + '.cert-corner.tl{top:-2px;left:-2px;border-top:3px solid;border-left:3px solid}'
+            + '.cert-corner.br{bottom:-2px;right:-2px;border-bottom:3px solid;border-right:3px solid}'
+            + '.cert-logo{font-size:11px;font-weight:700;letter-spacing:.18em;color:#888;margin-bottom:40px}'
+            + '.cert-label{font-size:9px;font-weight:700;letter-spacing:.18em;color:'+accent+';border:1px solid;border-color:'+accent+'40;background:'+accent+'0d;display:inline-block;padding:3px 10px;margin-bottom:28px}'
+            + '.cert-title{font-size:36px;font-weight:700;letter-spacing:-.01em;color:'+accent+';line-height:1;margin-bottom:10px}'
+            + '.cert-sub{font-size:13px;letter-spacing:.1em;color:#555;margin-bottom:36px}'
+            + '.cert-divider{height:1px;background:#eee;margin-bottom:24px}'
+            + '.cert-meta{font-size:10px;letter-spacing:.1em;color:#888;line-height:1.8}'
+            + '.cert-no{font-size:9px;letter-spacing:.08em;color:#bbb;margin-top:36px}'
+            + '@media print{body{padding:0}@page{margin:0;size:A4 landscape}}'
+            + '</style></head><body>'
+            + '<div class="cert">'
+            + '<div class="cert-corner tl"></div><div class="cert-corner br"></div>'
+            + '<div class="cert-logo">DOJI FUNDING</div>'
+            + '<div class="cert-label">' + type.toUpperCase() + ' CERTIFICATE</div>'
+            + '<div class="cert-title">' + _esc(title) + '</div>'
+            + '<div class="cert-sub">' + _esc(sub) + '</div>'
+            + '<div class="cert-divider"></div>'
+            + '<div class="cert-meta">'
+            + 'ISSUED BY &nbsp; DOJI FUNDING<br>'
+            + 'ISSUED ON &nbsp; ' + now + '<br>'
+            + '</div>'
+            + '<div class="cert-no">CERTIFICATE No. ' + certNo + '</div>'
+            + '</div>'
+            + '<script>window.onload=function(){window.print();}<\/script>'
+            + '</body></html>';
+
+        var w = window.open('', '_blank');
+        if (!w) { _showFlash('[ ALLOW POPUPS TO DOWNLOAD ]'); return; }
+        w.document.write(html);
+        w.document.close();
+    }
+
+    function _esc(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    return { share: share, download: download };
+}());
+
+
+/* ──────────────────────────────────────────────────────
+   AffDash — Affiliate tab utilities
+────────────────────────────────────────────────────── */
+var AffDash = (function() {
+
+    function copyText(elementId, btn) {
+        var el = document.getElementById(elementId);
+        if (!el) return;
+        var text = el.textContent.trim();
+        if (text.indexOf('dojifunding.com') !== -1 && text.indexOf('http') === -1) {
+            text = 'https://' + text;
+        }
+        navigator.clipboard.writeText(text).then(function() {
+            if (btn) {
+                var orig = btn.textContent;
+                btn.textContent = 'COPIED';
+                btn.classList.add('copied');
+                setTimeout(function() {
+                    btn.textContent = orig;
+                    btn.classList.remove('copied');
+                }, 1800);
+            }
+        }).catch(function() {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            if (btn) {
+                var orig = btn.textContent;
+                btn.textContent = 'COPIED';
+                btn.classList.add('copied');
+                setTimeout(function() {
+                    btn.textContent = orig;
+                    btn.classList.remove('copied');
+                }, 1800);
+            }
+        });
+    }
+
+    return { copyText: copyText };
+}());
+
+/* ═══════════════════════════════════════════════
+   SUPPORT TAB
+   ═══════════════════════════════════════════════ */
+var SupportTab = (function() {
+    'use strict';
+
+    var _bound = false;
+
+    function _setFeedback(el, msg, cls) {
+        el.textContent = msg;
+        el.className = 'sp-feedback' + (cls ? ' ' + cls : '');
+    }
+
+    function _bindForm(formId, feedbackId) {
+        var form = document.getElementById(formId);
+        var fb   = document.getElementById(feedbackId);
+        if (!form || !fb) return;
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var btn      = form.querySelector('.sp-btn');
+            var origText = btn ? btn.textContent : '';
+
+            _setFeedback(fb, '', '');
+            if (btn) { btn.disabled = true; btn.textContent = 'SENDING...'; }
+
+            var data = new FormData(form);
+            data.append('csrf', (window.DOJI_CONFIG && window.DOJI_CONFIG.csrfToken) || '');
+
+            fetch('api/support.php', { method: 'POST', body: data })
+                .then(function(r) { return r.json(); })
+                .then(function(json) {
+                    if (json.success) {
+                        _setFeedback(fb, "[SENT — WE'LL BE IN TOUCH SHORTLY]", 'ok');
+                        form.reset();
+                    } else {
+                        _setFeedback(fb, '[ERROR: ' + (json.error || 'PLEASE TRY AGAIN') + ']', 'err');
+                    }
+                })
+                .catch(function() {
+                    _setFeedback(fb, '[NETWORK ERROR — PLEASE RETRY]', 'err');
+                })
+                .finally(function() {
+                    if (btn) { btn.disabled = false; btn.textContent = origText; }
+                });
+        });
+    }
+
+    function openChat() {
+        if (typeof Tawk_API !== 'undefined' && Tawk_API.toggle) { Tawk_API.toggle(); return; }
+        if (typeof $crisp !== 'undefined') { $crisp.push(['do', 'chat:open']); return; }
+        if (typeof Intercom !== 'undefined') { Intercom('show'); return; }
+        window.location.href = 'mailto:hello@dojifunding.com?subject=Live+Chat+Request';
+    }
+
+    function init() {
+        if (_bound) return;
+        if (!document.getElementById('tab-support')) return;
+        _bindForm('spContactForm', 'spContactFeedback');
+        _bindForm('spBugForm',     'spBugFeedback');
+        _bound = true;
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    return { init: init, openChat: openChat };
+}());
+
+/* ═══════════════════════════════════════════════
+   WALLET ACHIEVEMENTS — category filter
+   ═══════════════════════════════════════════════ */
+var WalletAch = (function() {
+    'use strict';
+    var _bound = false;
+
+    function init() {
+        if (_bound) return;
+        var cats = document.querySelectorAll('.wlt-ach-cat');
+        if (!cats.length) return;
+        cats.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                cats.forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                var cat = this.dataset.cat;
+                document.querySelectorAll('.wlt-ach-card').forEach(function(card) {
+                    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+                });
+            });
+        });
+        _bound = true;
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    return { init: init };
 }());

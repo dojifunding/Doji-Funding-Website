@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>Doji Funding — Ecosystem Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@300;400;700&family=Doto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: #08090b; }
+body {
+  background: #08090b;
+  color: #E8E8E8;
+  font-family: 'Chivo Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 52px 40px 64px;
+  position: relative;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+.wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1160px;
+}
+.hdr {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 44px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #1a1a1a;
+}
+.hdr-eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: #10B981;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.hdr-title {
+  font-family: 'Doto', monospace;
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  line-height: 1;
+}
+.hdr-title .accent { color: #10B981; }
+.hdr-meta {
+  text-align: right;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: #3a3a3a;
+  text-transform: uppercase;
+  line-height: 2;
+}
+.diagram { width: 100%; }
+svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+/* ── Live dot on center node ── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.25; }
+}
+.live { animation: pulse 2.4s ease-in-out infinite; }
+
+/* ── Center node pulse (same period as wheel = 1.9 s) ── */
+@keyframes center-pulse {
+  0%, 100% { opacity: 0.1; }
+  50%      { opacity: 0.9; }
+}
+.center-pulse-anim {
+  animation: center-pulse 1.9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── Satellite glow overlays ── */
+.node-glow {
+  opacity: 0;
+  transition: opacity 0.65s ease;
+  pointer-events: none;
+}
+/* ── Glow connection lines ── */
+.conn-glow {
+  stroke-opacity: 0;
+  transition: stroke-opacity 0.65s ease;
+  pointer-events: none;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #1a1a1a;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  color: #2e2e2e;
+  text-transform: uppercase;
+}
+.fdots { display: flex; gap: 6px; align-items: center; }
+.fdot  { width: 6px; height: 6px; border-radius: 50%; background: #1a1a1a; }
+.fdot.on { background: #10B981; }
+@media print {
+  body { padding: 15mm; }
+  @page { size: A4 landscape; margin: 0; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hdr">
+  <div>
+    <div class="hdr-eyebrow">Ecosystem Map · v2.0 · 2026</div>
+    <div class="hdr-title">DOJI FUNDING<span class="accent">.</span></div>
+  </div>
+  <div class="hdr-meta">
+    Proprietary Trading Platform<br>
+    Trade Your Way · Get Funded<br>
+    dojifunding.com
+  </div>
+</header>
+
+<div class="diagram">
+<!--
+  LAYOUT (viewBox 0 0 1160 950)
+  ─────────────────────────────────────────────────────
+  Node 1 TRADING       x=65   y=60  w=265 h=248  → bottom 308
+  Node 2 ASSETS        x=448  y=28  w=264 h=226  → bottom 254
+  Node 3 INFRA         x=830  y=60  w=265 h=248  → bottom 308
+  CENTER (enlarged)    x=450  y=375 w=260 h=162  → bottom 537  cx=580 cy=456
+  Node 4 PLATFORM      x=65   y=642 w=265 h=280  → bottom 922
+  Node 5 ECONOMY       x=448  y=700 w=264 h=232  → bottom 932
+  Node 6 COMMUNITY     x=830  y=642 w=265 h=280  → bottom 922
+  ─────────────────────────────────────────────────────
+  Connection lines (center border → node border)
+  (490,375)→(330,278)   N1 right edge
+  (580,375)→(580,254)   N2 bottom edge
+  (670,375)→(830,278)   N3 left edge
+  (505,537)→(330,669)   N4 right edge
+  (580,537)→(580,700)   N5 top edge
+  (655,537)→(830,669)   N6 left edge
+-->
+<svg viewBox="0 0 1160 950" xmlns="http://www.w3.org/2000/svg"
+     font-family="'Chivo Mono', monospace"
+     text-rendering="optimizeLegibility"
+     shape-rendering="crispEdges">
+
+<defs>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="glow-sm" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <!-- Satellite node highlight -->
+  <filter id="glow-node" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blur"/>
+    <feMerge>
+      <feMergeNode in="blur"/>
+      <feMergeNode in="blur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+  <!-- Wide diffuse glow for center pulse -->
+  <filter id="glow-center" x="-70%" y="-70%" width="240%" height="240%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="24" result="b1"/>
+    <feGaussianBlur in="SourceGraphic" stdDeviation="8"  result="b2"/>
+    <feMerge>
+      <feMergeNode in="b1"/>
+      <feMergeNode in="b1"/>
+      <feMergeNode in="b2"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+  <linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%"   stop-color="#10B981" stop-opacity="0.8"/>
+    <stop offset="60%"  stop-color="#10B981" stop-opacity="0.4"/>
+    <stop offset="100%" stop-color="#10B981" stop-opacity="0.1"/>
+  </linearGradient>
+</defs>
+
+<!-- Construction grid -->
+<line x1="0"   y1="456" x2="1160" y2="456" stroke="#161616" stroke-width="1"/>
+<line x1="580" y1="0"   x2="580"  y2="950" stroke="#161616" stroke-width="1"/>
+
+<!-- ── Base connection lines (grey) ── -->
+<line id="base-conn-1" x1="490" y1="375" x2="330" y2="278" stroke="#232323" stroke-width="1.5"/>
+<line id="base-conn-2" x1="580" y1="375" x2="580" y2="254" stroke="#232323" stroke-width="1.5"/>
+<line id="base-conn-3" x1="670" y1="375" x2="830" y2="278" stroke="#232323" stroke-width="1.5"/>
+<line id="base-conn-4" x1="505" y1="537" x2="330" y2="669" stroke="#232323" stroke-width="1.5"/>
+<line id="base-conn-5" x1="580" y1="537" x2="580" y2="700" stroke="#232323" stroke-width="1.5"/>
+<line id="base-conn-6" x1="655" y1="537" x2="830" y2="669" stroke="#232323" stroke-width="1.5"/>
+
+<!-- ── Glow connection lines (animated green overlay) ── -->
+<line id="glow-conn-1" class="conn-glow" x1="490" y1="375" x2="330" y2="278" stroke="#10B981" stroke-width="2.5"/>
+<line id="glow-conn-2" class="conn-glow" x1="580" y1="375" x2="580" y2="254" stroke="#10B981" stroke-width="2.5"/>
+<line id="glow-conn-3" class="conn-glow" x1="670" y1="375" x2="830" y2="278" stroke="#10B981" stroke-width="2.5"/>
+<line id="glow-conn-4" class="conn-glow" x1="505" y1="537" x2="330" y2="669" stroke="#10B981" stroke-width="2.5"/>
+<line id="glow-conn-5" class="conn-glow" x1="580" y1="537" x2="580" y2="700" stroke="#10B981" stroke-width="2.5"/>
+<line id="glow-conn-6" class="conn-glow" x1="655" y1="537" x2="830" y2="669" stroke="#10B981" stroke-width="2.5"/>
+
+<!-- Midpoint markers -->
+<circle cx="410" cy="326" r="2.5" fill="#252525"/>
+<circle cx="580" cy="314" r="2.5" fill="#252525"/>
+<circle cx="750" cy="326" r="2.5" fill="#252525"/>
+<circle cx="418" cy="603" r="2.5" fill="#252525"/>
+<circle cx="580" cy="618" r="2.5" fill="#252525"/>
+<circle cx="743" cy="603" r="2.5" fill="#252525"/>
+
+
+<!-- ══════════════════════════════════════════
+     NODE 1 · TRADING PLATFORMS
+     x=65  y=60  w=265  h=248  bottom=308
+     ══════════════════════════════════════════ -->
+<rect x="65"  y="60"  width="265" height="248" fill="#111111" stroke="#1e1e1e" stroke-width="1"/>
+<rect x="65"  y="60"  width="265" height="2"   fill="#3a3a3a"/>
+<circle cx="82" cy="84" r="3" fill="#3a3a3a"/>
+<text x="93"  y="88"  fill="#484848" font-size="10"  letter-spacing="0.18em">TRADING PLATFORMS</text>
+<line x1="82"  y1="100" x2="311" y2="100" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="82"  y="130" fill="#FFFFFF" font-size="18" font-weight="700" letter-spacing="0.02em">DXtrade</text>
+<text x="82"  y="151" fill="#585858" font-size="11"  letter-spacing="0.08em">Web · Mobile · Multi-device</text>
+<line x1="82"  y1="165" x2="311" y2="165" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="82"  y="197" fill="#888888" font-size="15"  letter-spacing="0.02em">MetaTrader 5</text>
+<rect x="202" y="183" width="116" height="22" rx="1" fill="none" stroke="#272727" stroke-width="1"/>
+<text x="260" y="197" fill="#3e3e3e" font-size="9"   letter-spacing="0.12em" text-anchor="middle">COMING SOON</text>
+<text x="82"  y="219" fill="#404040" font-size="10"  letter-spacing="0.1em">MT5 INTEGRATION</text>
+<line x1="82"  y1="232" x2="311" y2="232" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="82"  y="257" fill="#2e2e2e" font-size="9.5" letter-spacing="0.12em">24/7 ACCESS · ALL DEVICES</text>
+<text x="82"  y="275" fill="#2e2e2e" font-size="9.5" letter-spacing="0.12em">NO RESTART REQUIRED</text>
+
+
+<!-- ══════════════════════════════════════════
+     NODE 2 · ASSET UNIVERSE
+     x=448  y=28  w=264  h=226  bottom=254
+     ══════════════════════════════════════════ -->
+<rect x="448" y="28"  width="264" height="226" fill="#111111" stroke="#1e1e1e" stroke-width="1"/>
+<rect x="448" y="28"  width="264" height="2"   fill="#3a3a3a"/>
+<circle cx="465" cy="52" r="3" fill="#3a3a3a"/>
+<text x="476" y="56"  fill="#484848" font-size="10"  letter-spacing="0.18em">ASSET UNIVERSE</text>
+<line x1="465" y1="68"  x2="693" y2="68"  stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="465" y="116" fill="#FFFFFF" font-family="'Doto', monospace" font-size="46" font-weight="700" letter-spacing="0.02em">1000+</text>
+<text x="465" y="135" fill="#10B981" font-size="10.5" letter-spacing="0.16em" filter="url(#glow-sm)">INSTRUMENTS</text>
+<line x1="465" y1="147" x2="693" y2="147" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="465" y="167" fill="#aaaaaa" font-size="12"  letter-spacing="0.05em">FX</text>
+<text x="497" y="167" fill="#484848" font-size="10"  letter-spacing="0.06em">Forex · 60+ Pairs</text>
+<text x="465" y="187" fill="#aaaaaa" font-size="12"  letter-spacing="0.05em">CRYPTO</text>
+<text x="527" y="187" fill="#484848" font-size="10"  letter-spacing="0.06em">Major + Alt Coins</text>
+<text x="465" y="207" fill="#aaaaaa" font-size="12"  letter-spacing="0.05em">COMM.</text>
+<text x="527" y="207" fill="#484848" font-size="10"  letter-spacing="0.06em">Gold · Silver · Oil · Gas</text>
+<text x="465" y="227" fill="#aaaaaa" font-size="12"  letter-spacing="0.05em">CFDs</text>
+<text x="497" y="227" fill="#484848" font-size="10"  letter-spacing="0.06em">Futures · Indices · Stocks</text>
+<text x="465" y="245" fill="#282828" font-size="8.5" letter-spacing="0.14em">FULL COVERAGE · DEEP LIQUIDITY</text>
+
+
+<!-- ══════════════════════════════════════════
+     NODE 3 · INFRASTRUCTURE
+     x=830  y=60  w=265  h=248  bottom=308
+     ══════════════════════════════════════════ -->
+<rect x="830" y="60"  width="265" height="248" fill="#111111" stroke="#1e2820" stroke-width="1"/>
+<rect x="830" y="60"  width="265" height="2"   fill="#10B981" opacity="0.6"/>
+<circle cx="847" cy="84" r="3" fill="#10B981" opacity="0.7" filter="url(#glow-sm)"/>
+<text x="858" y="88"  fill="#10B981" font-size="10"  letter-spacing="0.18em" opacity="0.75">INFRASTRUCTURE</text>
+<line x1="847" y1="100" x2="1076" y2="100" stroke="#1c2820" stroke-width="1"/>
+
+<text x="847" y="130" fill="#FFFFFF"  font-size="18"  font-weight="700" letter-spacing="0.02em">GBE Prime</text>
+<text x="847" y="151" fill="#10B981"  font-size="11"  letter-spacing="0.1em"  opacity="0.85">TIER-1 LIQUIDITY PROVIDER</text>
+<line x1="847" y1="165" x2="1076" y2="165" stroke="#1c2820" stroke-width="1"/>
+
+<text x="847" y="193" fill="#cccccc"  font-size="14"  letter-spacing="0.03em">Ultra-HQ Data Feed</text>
+<rect x="1012" y="179" width="44" height="22" rx="1" fill="none" stroke="#10B981" stroke-width="0.8" opacity="0.3"/>
+<text x="1034" y="193" fill="#10B981" font-size="8.5" letter-spacing="0.1em"  text-anchor="middle" opacity="0.55">UHQ</text>
+<text x="847"  y="213" fill="#484848" font-size="10"  letter-spacing="0.1em">INSTITUTIONAL GRADE · REAL-TIME</text>
+<line x1="847"  y1="226" x2="1076" y2="226" stroke="#1c2820" stroke-width="1"/>
+
+<text x="847" y="250" fill="#2e2e2e" font-size="9.5" letter-spacing="0.12em">TIGHT SPREADS · NO REQUOTES</text>
+<text x="847" y="269" fill="#2e2e2e" font-size="9.5" letter-spacing="0.12em">DEEP LIQUIDITY POOL</text>
+
+
+<!-- ══════════════════════════════════════════
+     CENTER · DOJI FUNDING  (enlarged)
+     x=450  y=375  w=260  h=162  bottom=537  cx=580
+     ══════════════════════════════════════════ -->
+
+<!-- Animated pulse ring — wide diffuse halo, same period as wheel (1.9 s) -->
+<rect class="center-pulse-anim" x="430" y="355" width="300" height="202"
+      fill="#10B981" fill-opacity="0.04" stroke="#10B981" stroke-width="1.5"
+      filter="url(#glow-center)"/>
+
+<!-- Static soft backdrop -->
+<rect x="438" y="363" width="284" height="186" fill="#10B981" opacity="0.015" filter="url(#glow)"/>
+
+<!-- Main box -->
+<rect x="450" y="375" width="260" height="162" fill="#111111"/>
+<rect x="450" y="375" width="260" height="1.5" fill="url(#cg)"/>
+<rect x="450" y="375" width="260" height="162" fill="none" stroke="#10B981" stroke-width="0.8" opacity="0.28"/>
+
+<!-- Corner L-marks -->
+<path d="M450,387 L450,375 L462,375" fill="none" stroke="#10B981" stroke-width="1" opacity="0.55"/>
+<path d="M698,375 L710,375 L710,387" fill="none" stroke="#10B981" stroke-width="1" opacity="0.55"/>
+<path d="M450,525 L450,537 L462,537" fill="none" stroke="#10B981" stroke-width="1" opacity="0.55"/>
+<path d="M698,537 L710,537 L710,525" fill="none" stroke="#10B981" stroke-width="1" opacity="0.55"/>
+
+<!-- Live dot -->
+<circle cx="468" cy="400" r="4" fill="#10B981" class="live" filter="url(#glow-sm)"/>
+
+<!-- Title -->
+<text x="484" y="408" fill="#FFFFFF" font-family="'Doto', monospace" font-size="24" font-weight="700" letter-spacing="0.06em">DOJI FUNDING</text>
+<text x="703" y="398" fill="#10B981" font-size="9">®</text>
+
+<!-- Divider -->
+<line x1="468" y1="424" x2="702" y2="424" stroke="#1e1e1e" stroke-width="1"/>
+
+<!-- Sub lines — spread out in the taller box -->
+<text x="468" y="447" fill="#484848" font-size="9.5"  letter-spacing="0.18em">PROPRIETARY TRADING PLATFORM</text>
+<text x="468" y="467" fill="#383838" font-size="9"    letter-spacing="0.14em">TRADE YOUR WAY · GET FUNDED</text>
+<text x="468" y="485" fill="#282828" font-size="8.5"  letter-spacing="0.12em">ECOSYSTEM v2.0 · 2026</text>
+<text x="468" y="521" fill="#1e1e1e" font-size="8"    letter-spacing="0.2em">dojifunding.com</text>
+
+
+<!-- ══════════════════════════════════════════
+     NODE 4 · PLATFORM & UX
+     x=65  y=642  w=265  h=280  bottom=922
+     ══════════════════════════════════════════ -->
+<rect x="65"  y="642" width="265" height="280" fill="#111111" stroke="#1e1e1e" stroke-width="1"/>
+<rect x="65"  y="642" width="265" height="2"   fill="#3a3a3a"/>
+<circle cx="82" cy="666" r="3" fill="#3a3a3a"/>
+<text x="93"  y="670" fill="#484848" font-size="10"  letter-spacing="0.18em">PLATFORM & UX</text>
+<line x1="82"  y1="682" x2="311" y2="682" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="82"  y="710" fill="#FFFFFF"  font-size="18" font-weight="700" letter-spacing="0.02em">Configurator</text>
+<text x="82"  y="730" fill="#585858"  font-size="11" letter-spacing="0.08em">CUSTOM CHALLENGE CONDITIONS</text>
+<text x="82"  y="745" fill="#404040"  font-size="9.5" letter-spacing="0.06em">Drawdown · Profit Target · Leverage · Period</text>
+<line x1="82"  y1="757" x2="311" y2="757" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="82"  y="780" fill="#cccccc"  font-size="15" letter-spacing="0.02em">Dashboard</text>
+<text x="82"  y="799" fill="#484848"  font-size="10" letter-spacing="0.1em">ANALYTICS · KPIs · MULTI-ACCOUNT</text>
+<line x1="82"  y1="812" x2="311" y2="812" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="82"  y="835" fill="#888888"  font-size="12" letter-spacing="0.04em">Economic Calendar</text>
+<text x="82"  y="856" fill="#888888"  font-size="12" letter-spacing="0.04em">Trading Journal</text>
+<line x1="82"  y1="869" x2="311" y2="869" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="82"  y="892" fill="#2e2e2e"  font-size="9.5" letter-spacing="0.12em">IMPACT · CCY · TYPE FILTERS</text>
+<text x="82"  y="910" fill="#2e2e2e"  font-size="9.5" letter-spacing="0.12em">REAL-TIME · INTEGRATED DATA</text>
+
+
+<!-- ══════════════════════════════════════════
+     NODE 5 · ECONOMY & FINANCE
+     x=448  y=700  w=264  h=232  bottom=932
+     ══════════════════════════════════════════ -->
+<rect x="448" y="700" width="264" height="232" fill="#111111" stroke="#1e1e1e" stroke-width="1"/>
+<rect x="448" y="700" width="264" height="2"   fill="#3a3a3a"/>
+<circle cx="465" cy="724" r="3" fill="#3a3a3a"/>
+<text x="476" y="728" fill="#484848" font-size="10"  letter-spacing="0.18em">ECONOMY & FINANCE</text>
+<line x1="465" y1="740" x2="693" y2="740" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="465" y="768" fill="#D4A843" font-family="'Doto', monospace" font-size="20" font-weight="700" letter-spacing="0.06em">DOJI COINS</text>
+<text x="465" y="787" fill="#585858" font-size="10"  letter-spacing="0.1em">1 COIN PER LOT TRADED · NO EXPIRY</text>
+<line x1="465" y1="800" x2="693" y2="800" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="465" y="822" fill="#cccccc" font-size="15"  letter-spacing="0.02em">Wallet</text>
+<text x="465" y="841" fill="#484848" font-size="10"  letter-spacing="0.1em">BALANCE · PAYOUTS · HISTORY</text>
+<line x1="465" y1="854" x2="693" y2="854" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="465" y="875" fill="#888888" font-size="11"  letter-spacing="0.04em">Rise · Confirmo (Crypto)</text>
+<text x="465" y="893" fill="#2e2e2e" font-size="9.5" letter-spacing="0.12em">WEEKLY PAYOUTS · NO MINIMUM</text>
+<text x="465" y="911" fill="#2e2e2e" font-size="9.5" letter-spacing="0.12em">1-STEP · 2-STEP CHALLENGES</text>
+
+
+<!-- ══════════════════════════════════════════
+     NODE 6 · COMMUNITY & GROWTH
+     x=830  y=642  w=265  h=280  bottom=922
+     ══════════════════════════════════════════ -->
+<rect x="830" y="642" width="265" height="280" fill="#111111" stroke="#1e1e1e" stroke-width="1"/>
+<rect x="830" y="642" width="265" height="2"   fill="#3a3a3a"/>
+<circle cx="847" cy="666" r="3" fill="#3a3a3a"/>
+<text x="858" y="670" fill="#484848" font-size="10"  letter-spacing="0.18em">COMMUNITY & GROWTH</text>
+<line x1="847" y1="682" x2="1076" y2="682" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="847" y="710" fill="#FFFFFF"  font-size="18" font-weight="700" letter-spacing="0.02em">Competitions</text>
+<text x="847" y="730" fill="#585858"  font-size="11" letter-spacing="0.08em">RANKINGS · PRIZES · LEADERBOARD</text>
+<text x="847" y="745" fill="#404040"  font-size="9.5" letter-spacing="0.06em">Global Trader Rankings · Updated Daily</text>
+<line x1="847" y1="757" x2="1076" y2="757" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="847" y="780" fill="#cccccc"  font-size="15" letter-spacing="0.02em">Affiliate Program</text>
+<text x="847" y="799" fill="#484848"  font-size="10" letter-spacing="0.1em">15–25% COMMISSION · WEEKLY PAYOUT</text>
+<line x1="847" y1="812" x2="1076" y2="812" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="847" y="835" fill="#888888"  font-size="12" letter-spacing="0.04em">Referral / Parrainage</text>
+<text x="847" y="852" fill="#404040"  font-size="9.5" letter-spacing="0.1em">+1 DOJI COIN PER REFERRAL</text>
+<line x1="847" y1="869" x2="1076" y2="869" stroke="#1c1c1c" stroke-width="1"/>
+
+<text x="847" y="892" fill="#2e2e2e"  font-size="9.5" letter-spacing="0.12em">24/7 SUPPORT · DEDICATED TEAM</text>
+<text x="847" y="910" fill="#2e2e2e"  font-size="9.5" letter-spacing="0.12em">KYC VERIFIED · COMPLIANCE</text>
+
+
+<!-- ══════════════════════════════════════════
+     SATELLITE GLOW OVERLAYS (rendered on top)
+     opacity:0 by default — driven by JS wheel
+     ══════════════════════════════════════════ -->
+<rect id="glow-node-1" class="node-glow" x="65"  y="60"  width="265" height="248"
+      fill="#10B981" fill-opacity="0.05" stroke="#10B981" stroke-width="2"
+      filter="url(#glow-node)"/>
+<rect id="glow-node-2" class="node-glow" x="448" y="28"  width="264" height="226"
+      fill="#10B981" fill-opacity="0.05" stroke="#10B981" stroke-width="2"
+      filter="url(#glow-node)"/>
+<rect id="glow-node-3" class="node-glow" x="830" y="60"  width="265" height="248"
+      fill="#10B981" fill-opacity="0.05" stroke="#10B981" stroke-width="2"
+      filter="url(#glow-node)"/>
+<rect id="glow-node-4" class="node-glow" x="65"  y="642" width="265" height="280"
+      fill="#10B981" fill-opacity="0.05" stroke="#10B981" stroke-width="2"
+      filter="url(#glow-node)"/>
+<rect id="glow-node-5" class="node-glow" x="448" y="700" width="264" height="232"
+      fill="#10B981" fill-opacity="0.05" stroke="#10B981" stroke-width="2"
+      filter="url(#glow-node)"/>
+<rect id="glow-node-6" class="node-glow" x="830" y="642" width="265" height="280"
+      fill="#10B981" fill-opacity="0.05" stroke="#10B981" stroke-width="2"
+      filter="url(#glow-node)"/>
+
+</svg>
+</div>
+
+<footer class="footer">
+  <div>dojifunding.com · ecosystem map · 2026</div>
+  <div class="fdots">
+    <div class="fdot on"></div>
+    <div class="fdot on"></div>
+    <div class="fdot on"></div>
+    <div class="fdot"></div>
+    <div class="fdot"></div>
+    <div class="fdot"></div>
+  </div>
+  <div>Proprietary Trading · Trade Your Way · Get Funded</div>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  // Clockwise: top-left → top-center → top-right → bot-right → bot-center → bot-left
+  var order = [1, 2, 3, 6, 5, 4];
+  var idx   = 0;
+  var prev  = null;
+
+  function tick() {
+    var id   = order[idx];
+    var node = document.getElementById('glow-node-' + id);
+    var conn = document.getElementById('glow-conn-' + id);
+
+    if (prev !== null) {
+      var pNode = document.getElementById('glow-node-' + prev);
+      var pConn = document.getElementById('glow-conn-' + prev);
+      if (pNode) pNode.style.opacity = '0';
+      if (pConn) pConn.style.strokeOpacity = '0';
+    }
+
+    if (node) node.style.opacity = '1';
+    if (conn) conn.style.strokeOpacity = '0.75';
+
+    prev = id;
+    idx  = (idx + 1) % order.length;
+  }
+
+  tick();
+  setInterval(tick, 1900);
+})();
+</script>
+
+</body>
+</html>

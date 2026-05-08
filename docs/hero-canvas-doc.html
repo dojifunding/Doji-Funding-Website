@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Documentation Technique — Hero Canvas Animations — Doji Funding</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 13pt;
+    line-height: 1.75;
+    color: #1a1a1a;
+    background: #ffffff;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 60px 80px;
+  }
+
+  /* ── Cover ── */
+  .cover {
+    text-align: center;
+    padding: 80px 0 60px;
+    border-bottom: 3px solid #10B981;
+    margin-bottom: 60px;
+  }
+  .cover-badge {
+    display: inline-block;
+    background: #10B981;
+    color: #000;
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-size: 30pt;
+    font-weight: 800;
+    color: #000;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .cover h1 span { color: #10B981; }
+  .cover-sub {
+    font-size: 12pt;
+    color: #555;
+    margin-bottom: 32px;
+  }
+  .cover-meta {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    font-size: 10pt;
+    color: #888;
+  }
+  .cover-meta strong { color: #333; }
+
+  /* ── TOC ── */
+  .toc {
+    background: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-left: 4px solid #10B981;
+    border-radius: 4px;
+    padding: 28px 32px;
+    margin-bottom: 56px;
+  }
+  .toc-title {
+    font-size: 10pt;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 16px;
+  }
+  .toc ol { padding-left: 20px; }
+  .toc li {
+    margin-bottom: 6px;
+    font-size: 11pt;
+  }
+  .toc a { color: #10B981; text-decoration: none; font-weight: 500; }
+  .toc a:hover { text-decoration: underline; }
+  .toc .sub {
+    list-style: none;
+    padding-left: 16px;
+    margin-top: 4px;
+  }
+  .toc .sub li { font-size: 10pt; color: #555; margin-bottom: 3px; }
+  .toc .sub a { color: #555; }
+
+  /* ── Sections ── */
+  h2 {
+    font-size: 18pt;
+    font-weight: 800;
+    color: #000;
+    margin-top: 56px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #10B981;
+    letter-spacing: -0.01em;
+  }
+  h2 .num {
+    display: inline-block;
+    background: #10B981;
+    color: #000;
+    font-size: 9pt;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-right: 10px;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+  }
+
+  h3 {
+    font-size: 13pt;
+    font-weight: 700;
+    color: #000;
+    margin-top: 32px;
+    margin-bottom: 12px;
+  }
+  h3::before {
+    content: '▸ ';
+    color: #10B981;
+    font-size: 10pt;
+  }
+
+  h4 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #444;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  p { margin-bottom: 14px; }
+
+  /* ── Code ── */
+  pre {
+    background: #0d0d0d;
+    color: #e8e8e8;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 9.5pt;
+    line-height: 1.65;
+    padding: 20px 24px;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 16px 0 24px;
+    border-left: 3px solid #10B981;
+  }
+  code {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 9pt;
+    background: #f0f0f0;
+    color: #c0392b;
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+  pre code {
+    background: none;
+    color: #e8e8e8;
+    padding: 0;
+    font-size: 9.5pt;
+  }
+
+  /* Syntax coloring */
+  .kw   { color: #ff7b72; }   /* keywords */
+  .fn   { color: #d2a8ff; }   /* function names */
+  .str  { color: #a5d6ff; }   /* strings */
+  .num  { color: #f9c74f; }   /* numbers */
+  .cmt  { color: #8b949e; font-style: italic; } /* comments */
+  .var  { color: #ffa657; }   /* variables */
+  .grn  { color: #7ee787; }   /* accent green */
+
+  /* ── Info boxes ── */
+  .box {
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 11.5pt;
+  }
+  .box-info  { background: #e8f7f1; border-left: 4px solid #10B981; }
+  .box-warn  { background: #fff8e6; border-left: 4px solid #f0a500; }
+  .box-tip   { background: #eef4ff; border-left: 4px solid #4a90d9; }
+  .box strong { font-weight: 700; }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0 28px;
+    font-size: 11pt;
+  }
+  th {
+    background: #10B981;
+    color: #000;
+    font-weight: 700;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f9f9f9; }
+  td code { font-size: 9pt; }
+
+  /* ── Lists ── */
+  ul, ol {
+    padding-left: 22px;
+    margin-bottom: 16px;
+  }
+  li { margin-bottom: 6px; }
+  li strong { color: #000; }
+
+  /* ── Diagram ── */
+  .diagram {
+    background: #0d0d0d;
+    color: #e8e8e8;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    line-height: 1.8;
+    padding: 20px 24px;
+    border-radius: 4px;
+    margin: 16px 0 24px;
+    text-align: center;
+    border: 1px solid #333;
+  }
+  .diagram .grn { color: #10B981; }
+  .diagram .dim { color: #666; }
+
+  /* ── Step blocks ── */
+  .steps { counter-reset: step; }
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+  .step-num {
+    counter-increment: step;
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    background: #10B981;
+    color: #000;
+    font-weight: 700;
+    font-size: 10pt;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-top: 2px;
+  }
+  .step-body { flex: 1; }
+  .step-body strong { display: block; font-size: 11pt; margin-bottom: 4px; }
+  .step-body p { margin: 0; font-size: 11.5pt; color: #444; }
+
+  /* ── Separator ── */
+  hr { border: none; border-top: 1px solid #eee; margin: 40px 0; }
+
+  /* ── Page footer ── */
+  .doc-footer {
+    margin-top: 80px;
+    padding-top: 20px;
+    border-top: 2px solid #10B981;
+    font-size: 9pt;
+    color: #aaa;
+    text-align: center;
+  }
+  .doc-footer strong { color: #555; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     COVER
+══════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-badge">Documentation Technique</div>
+  <h1>Hero Canvas<br><span>Animations 3D</span></h1>
+  <p class="cover-sub">Globe · Cube · Pyramide · Diamant — Dot Grid interactif<br>Doji Funding® — Frontend</p>
+  <div class="cover-meta">
+    <div><strong>Fichier principal :</strong> assets/js/hero-canvas.js</div>
+    <div><strong>Dépendances :</strong> Aucune</div>
+    <div><strong>API utilisée :</strong> Canvas 2D (pas WebGL)</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     TABLE DES MATIÈRES
+══════════════════════════════════════════════════ -->
+<div class="toc">
+  <div class="toc-title">Table des matières</div>
+  <ol>
+    <li><a href="#s1">Vue d'ensemble — Architecture du système</a></li>
+    <li><a href="#s2">Le Dot Grid — Grille de points interactifs</a>
+      <ul class="sub">
+        <li><a href="#s2a">Physique spring</a></li>
+        <li><a href="#s2b">Interaction souris</a></li>
+        <li><a href="#s2c">Warp spacetime</a></li>
+      </ul>
+    </li>
+    <li><a href="#s3">Les Shapes 3D — Principe commun</a>
+      <ul class="sub">
+        <li><a href="#s3a">Représentation des points</a></li>
+        <li><a href="#s3b">Interpolation des arêtes</a></li>
+        <li><a href="#s3c">Projection perspective</a></li>
+        <li><a href="#s3d">Rotation interactive</a></li>
+      </ul>
+    </li>
+    <li><a href="#s4">Le Globe — Guide détaillé de reconstruction</a>
+      <ul class="sub">
+        <li><a href="#s4a">Lignes de latitude</a></li>
+        <li><a href="#s4b">Méridiens (grands cercles)</a></li>
+        <li><a href="#s4c">Code complet annoté</a></li>
+      </ul>
+    </li>
+    <li><a href="#s5">Les autres shapes</a></li>
+    <li><a href="#s6">Intégration dans une page</a></li>
+    <li><a href="#s7">Paramètres de configuration</a></li>
+    <li><a href="#s8">Checklist — Refaire le globe from scratch</a></li>
+  </ol>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     S1 — VUE D'ENSEMBLE
+══════════════════════════════════════════════════ -->
+<h2 id="s1"><span class="num">01</span> Vue d'ensemble — Architecture</h2>
+
+<p>Tout le code réside dans un seul fichier auto-exécutable (IIFE) : <code>assets/js/hero-canvas.js</code>. Il n'utilise <strong>aucune bibliothèque externe</strong> — pas de Three.js, pas de GSAP, rien d'autre que l'API Canvas 2D native du navigateur.</p>
+
+<div class="box box-info">
+  <strong>Principe fondamental :</strong> La "3D" est simulée avec de simples calculs de trigonométrie et une projection perspective à la main. Le navigateur n'utilise que <code>ctx.arc()</code> pour dessiner des cercles — chaque point 3D devient un petit disque 2D sur le canvas.
+</div>
+
+<p>Chaque frame (60 fois par seconde via <code>requestAnimationFrame</code>), le moteur effectue deux passes :</p>
+
+<div class="diagram">
+<span class="dim">┌─────────────────────────────────────────────────────────┐</span><br>
+<span class="dim">│</span>  <span class="grn">FRAME N</span>  (appelé ~60×/sec par requestAnimationFrame)     <span class="dim">│</span><br>
+<span class="dim">├─────────────────────────────────────────────────────────┤</span><br>
+<span class="dim">│</span>                                                          <span class="dim">│</span><br>
+<span class="dim">│</span>  <span class="grn">PASSE 1 — DOT GRID</span>                                     <span class="dim">│</span><br>
+<span class="dim">│</span>  Pour chaque point de la grille :                        <span class="dim">│</span><br>
+<span class="dim">│</span>    1. Calcul du warp (anneau autour de la shape)         <span class="dim">│</span><br>
+<span class="dim">│</span>    2. Calcul répulsion souris                            <span class="dim">│</span><br>
+<span class="dim">│</span>    3. Application spring + friction                      <span class="dim">│</span><br>
+<span class="dim">│</span>    4. Dessin du point (blanc ou émeraude)                <span class="dim">│</span><br>
+<span class="dim">│</span>                                                          <span class="dim">│</span><br>
+<span class="dim">│</span>  <span class="grn">PASSE 2 — SHAPE 3D</span>                                     <span class="dim">│</span><br>
+<span class="dim">│</span>  Pour chaque point 3D de la shape :                      <span class="dim">│</span><br>
+<span class="dim">│</span>    1. Rotation Y puis X                                  <span class="dim">│</span><br>
+<span class="dim">│</span>    2. Projection perspective (division par Z)            <span class="dim">│</span><br>
+<span class="dim">│</span>    3. Tri par profondeur (painter's algorithm)           <span class="dim">│</span><br>
+<span class="dim">│</span>    4. Dessin du point (couleur + taille selon Z)         <span class="dim">│</span><br>
+<span class="dim">│</span>                                                          <span class="dim">│</span><br>
+<span class="dim">└─────────────────────────────────────────────────────────┘</span>
+</div>
+
+<p>L'objet principal <code>HeroCanvas</code> gère un canvas. S'il y a plusieurs canvas sur la page, autant d'instances sont créées.</p>
+
+
+<!-- ══════════════════════════════════════════════
+     S2 — DOT GRID
+══════════════════════════════════════════════════ -->
+<h2 id="s2"><span class="num">02</span> Le Dot Grid — Grille de points interactifs</h2>
+
+<p>La grille couvre tout le canvas. Les points sont espacés de 22px et ont un rayon de 1.5px. Chaque point est une instance de l'objet <code>Dot</code>.</p>
+
+<pre><code><span class="kw">var</span> <span class="var">GRID</span>  = <span class="num">22</span>;    <span class="cmt">// espacement entre les points en pixels</span>
+<span class="kw">var</span> <span class="var">DOT_R</span> = <span class="num">1.5</span>;   <span class="cmt">// rayon de chaque point en pixels</span>
+
+<span class="kw">function</span> <span class="fn">Dot</span>(ox, oy) {
+  <span class="kw">this</span>.ox    = ox; <span class="kw">this</span>.oy    = oy;  <span class="cmt">// position d'origine (fixe)</span>
+  <span class="kw">this</span>.x     = ox; <span class="kw">this</span>.y     = oy;  <span class="cmt">// position courante (déplacée)</span>
+  <span class="kw">this</span>.vx    = <span class="num">0</span>;  <span class="kw">this</span>.vy    = <span class="num">0</span>;   <span class="cmt">// vélocité</span>
+  <span class="kw">this</span>.green = <span class="num">0</span>;                    <span class="cmt">// 0 = blanc, 1 = émeraude</span>
+}</code></pre>
+
+<h3 id="s2a">Physique spring (ressort)</h3>
+
+<p>Chaque point est attiré vers sa position d'origine par un ressort. La formule est identique à un amortisseur physique : la force est proportionnelle à la distance, la friction dissipe l'énergie à chaque frame.</p>
+
+<pre><code><span class="cmt">// La "cible" peut être décalée par le warp (voir plus bas)</span>
+<span class="var">this</span>.vx += (target_x - <span class="kw">this</span>.x) * <span class="var">SPRING</span>;   <span class="cmt">// SPRING = 0.07</span>
+<span class="var">this</span>.vy += (target_y - <span class="kw">this</span>.y) * <span class="var">SPRING</span>;
+
+<span class="var">this</span>.vx *= <span class="var">FRIC</span>;   <span class="cmt">// FRIC = 0.82  → amortissement (freine la vélocité)</span>
+<span class="var">this</span>.vy *= <span class="var">FRIC</span>;
+
+<span class="var">this</span>.x  += <span class="kw">this</span>.vx;   <span class="cmt">// déplace le point</span>
+<span class="var">this</span>.y  += <span class="kw">this</span>.vy;</code></pre>
+
+<h3 id="s2b">Interaction souris — scatter émeraude</h3>
+
+<p>Quand le curseur entre dans un rayon de 115px autour d'un point, celui-ci est repoussé et devient émeraude. La couleur s'estompe progressivement après que le curseur s'éloigne.</p>
+
+<pre><code><span class="kw">var</span> <span class="var">M_RAD</span>   = <span class="num">115</span>;   <span class="cmt">// rayon d'influence de la souris (px)</span>
+<span class="kw">var</span> <span class="var">M_FORCE</span> = <span class="num">10</span>;    <span class="cmt">// force de répulsion</span>
+
+<span class="kw">if</span> (mouseOn) {
+  <span class="kw">var</span> dx = <span class="kw">this</span>.x - mouseX;
+  <span class="kw">var</span> dy = <span class="kw">this</span>.y - mouseY;
+  <span class="kw">var</span> d2 = dx*dx + dy*dy;
+
+  <span class="kw">if</span> (d2 < M_RAD * M_RAD) {
+    <span class="kw">var</span> d = Math.sqrt(d2) || <span class="num">1</span>;
+    <span class="kw">var</span> f = (M_RAD - d) / M_RAD;   <span class="cmt">// force décroît avec la distance</span>
+    <span class="kw">this</span>.vx   += (dx / d) * f * M_FORCE;
+    <span class="kw">this</span>.vy   += (dy / d) * f * M_FORCE;
+    <span class="kw">this</span>.green = <span class="num">1</span>;   <span class="cmt">// devient émeraude instantanément</span>
+  }
+}
+
+<span class="cmt">// Fade-out de la couleur émeraude</span>
+<span class="kw">if</span> (<span class="kw">this</span>.green > <span class="num">0</span>) {
+  <span class="kw">this</span>.green *= <span class="num">0.96</span>;   <span class="cmt">// diminue de 4% par frame → ~70 frames pour disparaître</span>
+  <span class="kw">if</span> (<span class="kw">this</span>.green < <span class="num">0.02</span>) <span class="kw">this</span>.green = <span class="num">0</span>;
+}</code></pre>
+
+<h3 id="s2c">Warp spacetime — anneau de distorsion</h3>
+
+<p>C'est l'effet le plus distinctif : les points se déforment en anneau autour du centre de la shape. C'est une fonction gaussienne — les points trop proches et trop loin ne bougent presque pas, seul l'anneau intermédiaire est poussé vers l'extérieur.</p>
+
+<pre><code><span class="kw">var</span> <span class="var">SP_PUSH</span> = <span class="num">58</span>;    <span class="cmt">// amplitude max du warp (px)</span>
+<span class="kw">var</span> <span class="var">SP_RAD</span>  = <span class="num">148</span>;   <span class="cmt">// rayon de référence (centre de l'anneau)</span>
+
+<span class="cmt">// sdx/sdy = vecteur du point vers le centre de la shape</span>
+<span class="kw">var</span> n   = distance_au_centre / SP_RAD;
+<span class="kw">var</span> amp = SP_PUSH * n * Math.exp(-n * n * <span class="num">0.7</span>);
+
+<span class="cmt">// La cible est déplacée dans la direction radiale d'une amplitude "amp"</span>
+target_x = origine_x + (direction_x / distance) * amp;
+target_y = origine_y + (direction_y / distance) * amp;</code></pre>
+
+<div class="box box-tip">
+  <strong>Astuce :</strong> La formule <code>n × e^(−n²×0.7)</code> produit un pic à <code>n ≈ 0.85</code>, soit environ 85% du rayon SP_RAD. C'est ce qui crée l'anneau visible. En modifiant 0.7, on change la largeur du pic.
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     S3 — SHAPES 3D
+══════════════════════════════════════════════════ -->
+<h2 id="s3"><span class="num">03</span> Les Shapes 3D — Principe commun</h2>
+
+<h3 id="s3a">Représentation des points</h3>
+
+<p>Chaque shape est simplement un tableau JavaScript de points 3D. Un point est un tableau de 3 valeurs <code>[X, Y, Z]</code> normalisées dans l'espace −1 à +1.</p>
+
+<pre><code><span class="cmt">// Exemple : 4 points d'un carré dans le plan Z=0</span>
+<span class="kw">var</span> points = [
+  [-<span class="num">1</span>, -<span class="num">1</span>,  <span class="num">0</span>],
+  [ <span class="num">1</span>, -<span class="num">1</span>,  <span class="num">0</span>],
+  [ <span class="num">1</span>,  <span class="num">1</span>,  <span class="num">0</span>],
+  [-<span class="num">1</span>,  <span class="num">1</span>,  <span class="num">0</span>]
+];</code></pre>
+
+<h3 id="s3b">Interpolation des arêtes — <code>edgePts(A, B, n)</code></h3>
+
+<p>Les shapes ne sont pas des meshes remplis — ce sont des wireframes faits de points. La fonction <code>edgePts</code> crée <code>n</code> points régulièrement espacés entre deux sommets A et B, simulant ainsi une arête visible.</p>
+
+<pre><code><span class="kw">function</span> <span class="fn">edgePts</span>(pa, pb, n) {
+  <span class="kw">var</span> pts = [];
+  <span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i <= n; i++) {
+    <span class="kw">var</span> t = i / n;   <span class="cmt">// t varie de 0 à 1</span>
+    pts.push([
+      pa[<span class="num">0</span>] + (pb[<span class="num">0</span>] - pa[<span class="num">0</span>]) * t,   <span class="cmt">// X interpolé</span>
+      pa[<span class="num">1</span>] + (pb[<span class="num">1</span>] - pa[<span class="num">1</span>]) * t,   <span class="cmt">// Y interpolé</span>
+      pa[<span class="num">2</span>] + (pb[<span class="num">2</span>] - pa[<span class="num">2</span>]) * t    <span class="cmt">// Z interpolé</span>
+    ]);
+  }
+  <span class="kw">return</span> pts;
+}</code></pre>
+
+<p>Exemple d'usage pour le cube — une arête entre deux sommets avec 44 points :</p>
+
+<pre><code>pts = pts.concat(<span class="fn">edgePts</span>([-<span class="num">1</span>,-<span class="num">1</span>,-<span class="num">1</span>], [<span class="num">1</span>,-<span class="num">1</span>,-<span class="num">1</span>], <span class="num">44</span>));</code></pre>
+
+<h3 id="s3c">Projection perspective</h3>
+
+<p>La projection transforme un point 3D en coordonnées 2D sur le canvas. Plus un point est loin (Z négatif = fond de la scène), plus il apparaît petit et sombre. Plus il est proche (Z positif), plus il est grand et lumineux.</p>
+
+<pre><code><span class="kw">var</span> sc  = <span class="num">120</span>;         <span class="cmt">// scale de base (rayon de la shape en pixels)</span>
+<span class="kw">var</span> fov = sc * <span class="num">3</span>;       <span class="cmt">// champ de vision (distance oeil → écran)</span>
+
+<span class="cmt">// 1. Rotation (détaillée section suivante)</span>
+<span class="kw">var</span> q = <span class="fn">rY</span>(point, rotY);
+    q = <span class="fn">rX</span>(q,     rotX);
+
+<span class="cmt">// 2. Translation Z pour éviter division par zéro</span>
+<span class="kw">var</span> qz = q[<span class="num">2</span>] * sc + sc * <span class="num">2.5</span>;
+
+<span class="cmt">// 3. Facteur de perspective : objets lointains semblent plus petits</span>
+<span class="kw">var</span> s = fov / qz;
+
+<span class="cmt">// 4. Coordonnées 2D finales</span>
+<span class="kw">var</span> px = centreX + q[<span class="num">0</span>] * sc * s;
+<span class="kw">var</span> py = centreY + q[<span class="num">1</span>] * sc * s;
+
+<span class="cmt">// 5. Opacité et taille selon la profondeur (painter's shading)</span>
+<span class="kw">var</span> alpha  = <span class="num">0.28</span> + (q[<span class="num">2</span>] + <span class="num">1</span>) * <span class="num">0.36</span>;   <span class="cmt">// 0.28 en fond → 1.0 en avant</span>
+<span class="kw">var</span> radius = <span class="num">1.1</span>  + (q[<span class="num">2</span>] + <span class="num">1</span>) * <span class="num">0.55</span>;   <span class="cmt">// plus petit en fond, plus grand en avant</span></code></pre>
+
+<div class="box box-info">
+  <strong>Painter's algorithm :</strong> Avant de dessiner, tous les points sont triés par Z croissant (les plus lointains d'abord). Ainsi les points proches sont dessinés par-dessus les lointains, créant l'illusion de profondeur sans calcul d'occlusion.
+</div>
+
+<h3 id="s3d">Rotation interactive</h3>
+
+<p>Deux types de rotation coexistent : une auto-rotation constante, et une rotation interactive pilotée par la souris. Un lerp (interpolation linéaire) lisse la transition entre les deux.</p>
+
+<pre><code><span class="cmt">// Fonctions de rotation 3D pures</span>
+<span class="kw">function</span> <span class="fn">rY</span>(p, a) {   <span class="cmt">// rotation autour de l'axe Y</span>
+  <span class="kw">var</span> c = Math.cos(a), s = Math.sin(a);
+  <span class="kw">return</span> [c*p[<span class="num">0</span>] + s*p[<span class="num">2</span>],  p[<span class="num">1</span>],  -s*p[<span class="num">0</span>] + c*p[<span class="num">2</span>]];
+}
+<span class="kw">function</span> <span class="fn">rX</span>(p, a) {   <span class="cmt">// rotation autour de l'axe X</span>
+  <span class="kw">var</span> c = Math.cos(a), s = Math.sin(a);
+  <span class="kw">return</span> [p[<span class="num">0</span>],  c*p[<span class="num">1</span>] - s*p[<span class="num">2</span>],  s*p[<span class="num">1</span>] + c*p[<span class="num">2</span>]];
+}
+
+<span class="cmt">// Chaque frame :</span>
+autoY += <span class="num">0.004</span>;   <span class="cmt">// auto-rotation constante (rad/frame)</span>
+
+<span class="kw">if</span> (mouseOver) {
+  <span class="cmt">// Souris : mappage position → angle</span>
+  tgtY = (mouseX / W - <span class="num">0.5</span>) * <span class="num">0.55</span> * <span class="num">2</span>;   <span class="cmt">// ±55° selon X</span>
+  tgtX = (mouseY / H - <span class="num">0.5</span>) * <span class="num">0.55</span>;      <span class="cmt">// ±27.5° selon Y</span>
+} <span class="kw">else</span> {
+  tgtY = autoY;                              <span class="cmt">// reprend l'auto-rotation</span>
+  tgtX += (<span class="num">0</span> - tgtX) * <span class="num">0.03</span>;              <span class="cmt">// revient à 0 progressivement</span>
+}
+
+<span class="cmt">// Lerp (interpolation douce) — ROT_LERP = 0.055</span>
+rotY += (tgtY - rotY) * <span class="num">0.055</span>;
+rotX += (tgtX - rotX) * <span class="num">0.055</span>;</code></pre>
+
+
+<!-- ══════════════════════════════════════════════
+     S4 — LE GLOBE
+══════════════════════════════════════════════════ -->
+<h2 id="s4"><span class="num">04</span> Le Globe — Guide détaillé de reconstruction</h2>
+
+<p>Le globe est composé de deux systèmes de lignes qui s'intersectent pour former la structure d'une sphère : des <strong>parallèles</strong> (lignes horizontales de latitude) et des <strong>méridiens</strong> (grands cercles verticaux).</p>
+
+<div class="diagram">
+<span class="grn">Parallèles (latitude)</span>        <span class="grn">Méridiens (longitude)</span><br><br>
+<span class="dim">       · · · · ·                    |   |   |</span><br>
+<span class="dim">     · · · · · · ·                 /     |     \</span><br>
+<span class="grn">   · · · · · · · · ·</span>          <span class="grn"> |       |       |</span><br>
+<span class="dim">   · · · · · · · · ·                \     |     /</span><br>
+<span class="dim">     · · · · · · ·                    |   |   |</span><br>
+<span class="dim">       · · · · ·</span>
+</div>
+
+<h3 id="s4a">Lignes de latitude (parallèles)</h3>
+
+<p>Chaque parallèle est un anneau horizontal à une hauteur Y donnée. Le rayon de l'anneau varie selon le cosinus de la latitude — maximal à l'équateur (cos 0° = 1), nul aux pôles (cos 90° = 0).</p>
+
+<pre><code><span class="cmt">// Parallèles tous les 15° entre −75° et +75°</span>
+<span class="cmt">// (les pôles à ±90° ne sont pas tracés — ils n'auraient qu'un seul point)</span>
+<span class="kw">for</span> (<span class="kw">var</span> latD = -<span class="num">75</span>; latD <= <span class="num">75</span>; latD += <span class="num">15</span>) {
+
+  <span class="kw">var</span> lat = latD * Math.PI / <span class="num">180</span>;   <span class="cmt">// convertir degrés → radians</span>
+
+  <span class="kw">var</span> r  = Math.cos(lat);   <span class="cmt">// rayon horizontal du cercle à cette latitude</span>
+  <span class="kw">var</span> yv = Math.sin(lat);   <span class="cmt">// hauteur Y (sin donne la composante verticale)</span>
+
+  <span class="cmt">// Nombre de points adaptatif : plus de points sur les grands cercles</span>
+  <span class="cmt">// L'équateur aura 52 points, les cercles polaires beaucoup moins</span>
+  <span class="kw">var</span> N = Math.max(<span class="num">12</span>, Math.round(r * <span class="num">52</span>));
+
+  <span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i < N; i++) {
+    <span class="kw">var</span> a = (i / N) * Math.PI * <span class="num">2</span>;   <span class="cmt">// angle sur le cercle (0 → 360°)</span>
+    pts.push([
+      r * Math.cos(a),   <span class="cmt">// X = projection horizontale</span>
+      yv,                <span class="cmt">// Y = hauteur fixe pour ce parallèle</span>
+      r * Math.sin(a)    <span class="cmt">// Z = profondeur</span>
+    ]);
+  }
+}</code></pre>
+
+<table>
+  <thead><tr><th>Latitude</th><th>r = cos(lat)</th><th>Nb de points</th></tr></thead>
+  <tbody>
+    <tr><td>0° (équateur)</td><td>1.00</td><td>52 points</td></tr>
+    <tr><td>±15°</td><td>0.97</td><td>50 points</td></tr>
+    <tr><td>±30°</td><td>0.87</td><td>45 points</td></tr>
+    <tr><td>±45°</td><td>0.71</td><td>37 points</td></tr>
+    <tr><td>±60°</td><td>0.50</td><td>26 points</td></tr>
+    <tr><td>±75°</td><td>0.26</td><td>14 points</td></tr>
+  </tbody>
+</table>
+
+<h3 id="s4b">Méridiens (grands cercles verticaux)</h3>
+
+<p>Chaque méridien est un grand cercle vertical qui passe par les deux pôles. Il est paramétré par son angle de longitude. L'astuce importante : <strong>chaque méridien est un cercle complet</strong> (0° à 360°), donc il dessine automatiquement les deux hémisphères. On n'a donc besoin que de 9 méridiens (de 0° à 160°, pas 180°) car le méridien à 0° et celui à 180° seraient identiques.</p>
+
+<pre><code><span class="cmt">// Méridiens tous les 20° de longitude</span>
+<span class="cmt">// De 0° à 160° : 9 méridiens (180° serait identique à 0° car cercle complet)</span>
+<span class="kw">for</span> (<span class="kw">var</span> lonD = <span class="num">0</span>; lonD < <span class="num">180</span>; lonD += <span class="num">20</span>) {
+
+  <span class="kw">var</span> lon = lonD * Math.PI / <span class="num">180</span>;   <span class="cmt">// convertir degrés → radians</span>
+  <span class="kw">var</span> M   = <span class="num">52</span>;   <span class="cmt">// points par méridien</span>
+
+  <span class="kw">for</span> (<span class="kw">var</span> j = <span class="num">0</span>; j <= M; j++) {
+    <span class="kw">var</span> th = (j / M) * Math.PI * <span class="num">2</span>;   <span class="cmt">// θ : 0 → 2π (cercle complet)</span>
+
+    <span class="cmt">// Formule d'un grand cercle en coordonnées sphériques :</span>
+    <span class="cmt">// x = cos(θ)·cos(lon)  →  projection sur X selon la longitude</span>
+    <span class="cmt">// y = sin(θ)           →  hauteur Y (de −1 à +1, les deux pôles)</span>
+    <span class="cmt">// z = cos(θ)·sin(lon)  →  profondeur Z selon la longitude</span>
+    pts.push([
+      Math.cos(th) * Math.cos(lon),
+      Math.sin(th),
+      Math.cos(th) * Math.sin(lon)
+    ]);
+  }
+}</code></pre>
+
+<div class="box box-warn">
+  <strong>Attention :</strong> Contrairement aux parallèles où l'angle θ va de 0 à 2π <em>horizontalement</em>, ici θ est l'angle <em>vertical</em> le long du méridien. Quand θ = 0, on est sur l'équateur face avant ; quand θ = π/2 on est au pôle nord ; quand θ = π on est sur l'équateur face arrière ; quand θ = 3π/2 on est au pôle sud.
+</div>
+
+<h3 id="s4c">Code complet annoté de buildSphere()</h3>
+
+<pre><code><span class="kw">function</span> <span class="fn">buildSphere</span>() {
+  <span class="kw">var</span> pts = [];   <span class="cmt">// tableau qui contiendra tous les points 3D</span>
+
+  <span class="cmt">// ══════════════════════════════════════════════════════</span>
+  <span class="cmt">// PARTIE 1 : Lignes de latitude (parallèles horizontaux)</span>
+  <span class="cmt">// ══════════════════════════════════════════════════════</span>
+  <span class="kw">for</span> (<span class="kw">var</span> latD = -<span class="num">75</span>; latD <= <span class="num">75</span>; latD += <span class="num">15</span>) {
+    <span class="kw">var</span> lat = latD * Math.PI / <span class="num">180</span>;
+    <span class="kw">var</span> r   = Math.cos(lat);   <span class="cmt">// rayon du parallèle (1 à l'équateur, 0 aux pôles)</span>
+    <span class="kw">var</span> yv  = Math.sin(lat);   <span class="cmt">// hauteur Y du parallèle</span>
+    <span class="kw">var</span> N   = Math.max(<span class="num">12</span>, Math.round(r * <span class="num">52</span>));  <span class="cmt">// nb points adaptatif</span>
+
+    <span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i < N; i++) {
+      <span class="kw">var</span> a = (i / N) * Math.PI * <span class="num">2</span>;
+      pts.push([r * Math.cos(a), yv, r * Math.sin(a)]);
+    }
+  }
+
+  <span class="cmt">// ══════════════════════════════════════════════════════</span>
+  <span class="cmt">// PARTIE 2 : Méridiens (grands cercles verticaux)</span>
+  <span class="cmt">// ══════════════════════════════════════════════════════</span>
+  <span class="kw">for</span> (<span class="kw">var</span> lonD = <span class="num">0</span>; lonD < <span class="num">180</span>; lonD += <span class="num">20</span>) {
+    <span class="kw">var</span> lon = lonD * Math.PI / <span class="num">180</span>;
+    <span class="kw">var</span> M   = <span class="num">52</span>;
+
+    <span class="kw">for</span> (<span class="kw">var</span> j = <span class="num">0</span>; j <= M; j++) {
+      <span class="kw">var</span> th = (j / M) * Math.PI * <span class="num">2</span>;
+      pts.push([
+        Math.cos(th) * Math.cos(lon),
+        Math.sin(th),
+        Math.cos(th) * Math.sin(lon)
+      ]);
+    }
+  }
+
+  <span class="kw">return</span> pts;   <span class="cmt">// ~900 points au total</span>
+}</code></pre>
+
+
+<!-- ══════════════════════════════════════════════
+     S5 — AUTRES SHAPES
+══════════════════════════════════════════════════ -->
+<h2 id="s5"><span class="num">05</span> Les autres shapes</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Shape</th>
+      <th>data-shape</th>
+      <th>Méthode de construction</th>
+      <th>Points ~</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Globe</strong></td>
+      <td><code>sphere</code></td>
+      <td>Anneaux de latitude + méridiens trigonométriques</td>
+      <td>~900</td>
+    </tr>
+    <tr>
+      <td><strong>Cube</strong></td>
+      <td><code>cube</code></td>
+      <td>8 sommets définis, 12 arêtes interpolées avec <code>edgePts()</code></td>
+      <td>~528</td>
+    </tr>
+    <tr>
+      <td><strong>Pyramide</strong></td>
+      <td><code>pyramid</code></td>
+      <td>Apex + 4 sommets base, arêtes + diagonales interpolées</td>
+      <td>~440</td>
+    </tr>
+    <tr>
+      <td><strong>Diamant</strong></td>
+      <td><code>diamond</code></td>
+      <td>3 niveaux (table octogonale + ceinture + culet), couronne et pavillon</td>
+      <td>~780</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Cube</h3>
+<pre><code><span class="cmt">// 8 sommets d'un cube unitaire (−1 à +1 sur chaque axe)</span>
+<span class="kw">var</span> C = [
+  [-<span class="num">1</span>,-<span class="num">1</span>,-<span class="num">1</span>], [<span class="num">1</span>,-<span class="num">1</span>,-<span class="num">1</span>], [<span class="num">1</span>,<span class="num">1</span>,-<span class="num">1</span>], [-<span class="num">1</span>,<span class="num">1</span>,-<span class="num">1</span>],  <span class="cmt">// face arrière</span>
+  [-<span class="num">1</span>,-<span class="num">1</span>, <span class="num">1</span>], [<span class="num">1</span>,-<span class="num">1</span>, <span class="num">1</span>], [<span class="num">1</span>,<span class="num">1</span>, <span class="num">1</span>], [-<span class="num">1</span>,<span class="num">1</span>, <span class="num">1</span>]   <span class="cmt">// face avant</span>
+];
+
+<span class="cmt">// 12 arêtes (paires d'indices dans C)</span>
+<span class="kw">var</span> E = [
+  [<span class="num">0</span>,<span class="num">1</span>],[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">2</span>,<span class="num">3</span>],[<span class="num">3</span>,<span class="num">0</span>],   <span class="cmt">// face arrière</span>
+  [<span class="num">4</span>,<span class="num">5</span>],[<span class="num">5</span>,<span class="num">6</span>],[<span class="num">6</span>,<span class="num">7</span>],[<span class="num">7</span>,<span class="num">4</span>],   <span class="cmt">// face avant</span>
+  [<span class="num">0</span>,<span class="num">4</span>],[<span class="num">1</span>,<span class="num">5</span>],[<span class="num">2</span>,<span class="num">6</span>],[<span class="num">3</span>,<span class="num">7</span>]    <span class="cmt">// arêtes latérales</span>
+];
+
+E.forEach(<span class="kw">function</span>(e) {
+  pts = pts.concat(<span class="fn">edgePts</span>(C[e[<span class="num">0</span>]], C[e[<span class="num">1</span>]], <span class="num">44</span>));  <span class="cmt">// 44 points par arête</span>
+});</code></pre>
+
+
+<!-- ══════════════════════════════════════════════
+     S6 — INTÉGRATION
+══════════════════════════════════════════════════ -->
+<h2 id="s6"><span class="num">06</span> Intégration dans une page</h2>
+
+<h3>1. Le canvas HTML</h3>
+<p>Placer le canvas à l'intérieur d'un conteneur <code>position: relative</code>. Le canvas est positionné en <code>position: absolute</code> et couvre tout le conteneur.</p>
+
+<pre><code><span class="cmt">&lt;!-- Conteneur parent (position: relative obligatoire) --&gt;</span>
+&lt;<span class="kw">section</span> class=<span class="str">"hero"</span> style=<span class="str">"position: relative; height: 600px;"</span>&gt;
+
+  &lt;<span class="kw">canvas</span>
+    class=<span class="str">"hero-shape-canvas"</span>
+    data-shape=<span class="str">"sphere"</span>    <span class="cmt">&lt;!-- sphere | cube | pyramid | diamond --&gt;</span>
+    data-cx=<span class="str">"0.65"</span>          <span class="cmt">&lt;!-- position X du centre : 0=gauche, 1=droite --&gt;</span>
+    data-cy=<span class="str">"0.5"</span>           <span class="cmt">&lt;!-- position Y du centre : 0=haut, 1=bas --&gt;</span>
+    data-scale=<span class="str">"1.0"</span>&gt;       <span class="cmt">&lt;!-- taille (1.0 = défaut 120px de rayon) --&gt;</span>
+  &lt;/<span class="kw">canvas</span>&gt;
+
+  &lt;<span class="cmt">&lt;!-- Contenu texte par-dessus --&gt;</span>
+
+&lt;/<span class="kw">section</span>&gt;</code></pre>
+
+<h3>2. Le CSS du canvas</h3>
+<pre><code>.hero-shape-canvas {
+  position: absolute;
+  top: <span class="num">0</span>; left: <span class="num">0</span>;
+  width: <span class="num">100</span>%; height: <span class="num">100</span>%;
+  pointer-events: none;   <span class="cmt">/* ne bloque pas les clics sur le contenu */</span>
+  opacity: .9;
+}</code></pre>
+
+<h3>3. Le script</h3>
+<pre><code><span class="cmt">&lt;!-- Charger le script en bas de page ou avec defer --&gt;</span>
+&lt;<span class="kw">script</span> defer src=<span class="str">"assets/js/hero-canvas.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;</code></pre>
+
+<div class="box box-info">
+  <strong>Auto-détection :</strong> Le script détecte automatiquement tous les éléments <code>.hero-shape-canvas</code> présents dans la page et crée une instance pour chacun. On peut avoir plusieurs shapes différents sur la même page.
+</div>
+
+<h3>4. Optimisation performances</h3>
+<p>Le moteur utilise un <code>IntersectionObserver</code> pour suspendre l'animation quand le canvas n'est pas visible à l'écran. L'animation reprend automatiquement quand il redevient visible. Sur mobile, la shape est automatiquement centrée (data-cx est ignoré, forcé à 0.5).</p>
+
+
+<!-- ══════════════════════════════════════════════
+     S7 — PARAMÈTRES
+══════════════════════════════════════════════════ -->
+<h2 id="s7"><span class="num">07</span> Paramètres de configuration</h2>
+
+<table>
+  <thead>
+    <tr><th>Variable JS</th><th>Valeur</th><th>Rôle</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>GRID</code></td><td>22</td><td>Espacement entre les points de la grille (px)</td></tr>
+    <tr><td><code>DOT_R</code></td><td>1.5</td><td>Rayon des points de la grille (px)</td></tr>
+    <tr><td><code>M_RAD</code></td><td>115</td><td>Rayon d'influence de la souris (px)</td></tr>
+    <tr><td><code>M_FORCE</code></td><td>10</td><td>Force de répulsion de la souris</td></tr>
+    <tr><td><code>SPRING</code></td><td>0.07</td><td>Raideur du ressort (retour à l'origine)</td></tr>
+    <tr><td><code>FRIC</code></td><td>0.82</td><td>Friction (0=stop immédiat, 1=pas d'amortissement)</td></tr>
+    <tr><td><code>SP_PUSH</code></td><td>58</td><td>Amplitude max du warp spacetime (px)</td></tr>
+    <tr><td><code>SP_RAD</code></td><td>148</td><td>Rayon de référence du warp (px)</td></tr>
+    <tr><td><code>S_SCALE</code></td><td>120</td><td>Rayon de base de la shape (px) — multiplié par data-scale</td></tr>
+    <tr><td><code>A_ROT</code></td><td>0.004</td><td>Vitesse d'auto-rotation (radians par frame)</td></tr>
+    <tr><td><code>ROT_LERP</code></td><td>0.055</td><td>Lissage de la rotation (valeur basse = inertie forte)</td></tr>
+    <tr><td><code>M_ROT_MAX</code></td><td>0.55</td><td>Angle max de rotation par la souris (radians)</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Attribut HTML</th><th>Valeur par défaut</th><th>Rôle</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>data-shape</code></td><td><code>sphere</code></td><td>Type de shape : sphere, cube, pyramid, diamond</td></tr>
+    <tr><td><code>data-cx</code></td><td><code>0.5</code></td><td>Position X du centre (0=gauche, 1=droite, 0.65=décalé droite)</td></tr>
+    <tr><td><code>data-cy</code></td><td><code>0.5</code></td><td>Position Y du centre (0=haut, 1=bas)</td></tr>
+    <tr><td><code>data-scale</code></td><td><code>1.0</code></td><td>Multiplicateur de taille (1.2 = 20% plus grand)</td></tr>
+  </tbody>
+</table>
+
+
+<!-- ══════════════════════════════════════════════
+     S8 — CHECKLIST
+══════════════════════════════════════════════════ -->
+<h2 id="s8"><span class="num">08</span> Checklist — Refaire le globe from scratch</h2>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <strong>Créer le fichier hero-canvas.js</strong>
+      <p>Wrapper IIFE : <code>(function() { 'use strict'; /* ... */ })();</code></p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <strong>Déclarer les constantes de configuration</strong>
+      <p>GRID, DOT_R, M_RAD, M_FORCE, SPRING, FRIC, SP_PUSH, SP_RAD, S_SCALE, A_ROT, ROT_LERP, M_ROT_MAX</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <strong>Implémenter l'objet Dot</strong>
+      <p>Constructeur avec ox/oy/x/y/vx/vy/green + méthodes tick() et draw()</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <strong>Implémenter buildSphere()</strong>
+      <p>Boucle latitude (parallèles) + boucle longitude (méridiens) → retourner le tableau de points 3D</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <strong>Implémenter les rotations rY() et rX()</strong>
+      <p>Deux fonctions pures de rotation 3D utilisant cos/sin</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <strong>Créer l'objet HeroCanvas</strong>
+      <p>Constructor → _buildShape() + _buildGrid() + _bind() + _observe() + _tick()</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <strong>Implémenter _draw()</strong>
+      <p>1. Mise à jour rotation | 2. clearRect | 3. Tick + draw de chaque dot | 4. Projection + tri + dessin de chaque point 3D</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">8</div>
+    <div class="step-body">
+      <strong>Bootstrap</strong>
+      <p><code>document.querySelectorAll('.hero-shape-canvas').forEach(el => new HeroCanvas(el))</code></p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">9</div>
+    <div class="step-body">
+      <strong>HTML + CSS</strong>
+      <p>Canvas avec classe <code>hero-shape-canvas</code> + attributs data-shape/cx/cy/scale + CSS position absolute + pointer-events:none</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">10</div>
+    <div class="step-body">
+      <strong>Charger le script</strong>
+      <p>Tag <code>&lt;script defer&gt;</code> en bas de page ou dans le head</p>
+    </div>
+  </div>
+</div>
+
+<div class="box box-tip">
+  <strong>Conseil :</strong> Pour tester rapidement, commencer avec seulement les méridiens (supprimer la boucle des parallèles) et vérifier que les cercles verticaux tournent correctement. Ajouter les parallèles ensuite. C'est plus facile à déboguer en deux étapes.
+</div>
+
+<hr>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<div class="doc-footer">
+  <strong>Doji Funding® — Documentation Interne Technique</strong><br>
+  Généré par Claude Code · Ne pas distribuer hors de l'équipe
+</div>
+
+</body>
+</html>

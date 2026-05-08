@@ -26,12 +26,53 @@ const Configurator = (function() {
         tab: 'onestep',
         sizeIdx: 9,
         target: 10, target1: 8, target2: 5,
-        daily: 5, max: 8,
+        daily: 5, max: 10,
         split: 80, days: 5, consistency: 30,
         dailyType: 'intraday', maxType: 'intraday',
         platform: 'dxtrade', payout: 'monthly',
-        overnight: false, overweek: false,
+        overnight: true, overweek: false,
         activePromo: null,
+    };
+
+    // ─── Pricing rates (% of base_price) ────────────────────────────────────────
+    // Calibrated at $50K one-step (bp=$249) — each rate × bp replaces the old
+    // fixed-$ modifier so the impact scales proportionally with account size.
+    const RATES = {
+        os: {
+            targetLow:   0.0803,  // +8.03% per % below 10   (≈$20  @bp$249)
+            targetHigh:  0.0602,  // −6.02% per % above 12   (≈$15  @bp$249)
+            dailyHigh:   0.2410,  // +24.1% per % above 5    (≈$60  @bp$249)
+            dailyHeavy:  0.4016,  // +40.2% per % above 7    (≈$100 @bp$249) — deterrent tier
+            dailyLow:    0.1205,  // −12.0% per % below 4    (≈$30  @bp$249)
+            maxHigh:     0.2008,  // +20.1% per % above 10   (≈$50  @bp$249)
+            maxLow:      0.0335,  // −3.35% per % below 10   (≈$8   @bp$249) — anchored at default 10%
+            days:        0.0602,  // +6.02% per day below 5  (≈$15  @bp$249)
+            consistency: 0.0080,  // ±0.80% per % vs 40      (≈$2   @bp$249)
+            split:       0.0161,  // ±1.61% per 1% vs 70     (≈$4   @bp$249)
+            overnight:   0.0763,  // +7.63%                  (≈$19  @bp$249)
+            overweek:    0.1165,  // +11.6%                  (≈$29  @bp$249)
+            ltIntraday:  0.0602,  // −6.02% per loss type    (≈$15  @bp$249)
+            ltStatic:    0.1004,  // +10.0% per loss type    (≈$25  @bp$249)
+        },
+        ts: {
+            targetLow:   0.0602,  // +6.02% per % below 10   (≈$15  @bp$249)
+            targetHigh:  0.0402,  // −4.02% per % above 12   (≈$10  @bp$249)
+            dailyHigh:   0.2008,  // +20.1% per % above 5    (≈$50  @bp$249)
+            dailyHeavy:  0.3213,  // +32.1% per % above 7    (≈$80  @bp$249) — deterrent tier
+            dailyLow:    0.1004,  // −10.0% per % below 5    (≈$25  @bp$249)
+            maxHigh:     0.1807,  // +18.1% per % above 10   (≈$45  @bp$249)
+            maxLow:      0.0402,  // −4.02% per % below 10   (≈$10  @bp$249) — gentler slope
+            days:        0.0402,  // +4.02% per day below 10 (≈$10  @bp$249)
+            consistency: 0.0120,  // ±1.20% per % vs 45      (≈$3   @bp$249)
+            split:       0.0241,  // ±2.41% per 1% vs 80     (≈$6   @bp$249)
+            overnight:   0.1004,  // +10.0%                  (≈$25  @bp$249)
+            overweek:    0.1566,  // +15.7%                  (≈$39  @bp$249)
+            ltIntraday:  0.0763,  // −7.63% per loss type    (≈$19  @bp$249)
+            ltStatic:    0.1165,  // +11.6% per loss type    (≈$29  @bp$249)
+        },
+        payBiweekly: 0.1165,      // +11.6% — inclus dans le prix de base (non appliqué)
+        payWeekly:   0.2369,      // +23.7%                  (≈$59  @bp$249)
+        eqSurcharge: 0.4016,      // +40.2%                  (≈$100 @bp$249)
     };
 
     // ─── Loss type hints ───
@@ -132,17 +173,35 @@ const Configurator = (function() {
 
         const t = S.tab;
         const sizeVal = '$' + accountSizes[S.sizeIdx].toLocaleString();
+        const _bp     = (basePricesData[t] || {})[accountSizes[S.sizeIdx]] || 249;
+        const _r      = RATES[t === 'onestep' ? 'os' : 'ts'];
         let html = '';
 
         // Account Size
-        html += makeSlider('sizeIdx', 'Account Size', 0, 19, 1, S.sizeIdx, '', '', ['$5K', '$50K', '$100K']);
+        html += makeSlider('sizeIdx', 'Account Size', 0, accountSizes.length - 1, 1, S.sizeIdx, '', '', ['$5K', '$50K', '$200K']);
 
         // Profit Target(s)
+        const _targetTip = 'Lower targets are easier to reach — more traders pass, which raises funding risk for the operator. That risk is priced in: a 5% target costs more than the 10% default. Higher targets (13%+) get a small discount because fewer traders reach them.';
         if (t === 'onestep') {
-            html += makeSlider('target', 'Profit Target', 5, 15, 1, S.target, '%');
+            html += makeSlider('target', 'Profit Target', 5, 15, 1, S.target, '%', _targetTip);
+            if (S.target < 10) {
+                const _ta = Math.round((10 - S.target) * _r.targetLow * _bp);
+                html += `<div class="target-hint hint-surcharge">Lower target → higher pass rate · +$${_ta} vs 10% default</div>`;
+            } else if (S.target > 12) {
+                const _ta = Math.round((S.target - 12) * _r.targetHigh * _bp);
+                html += `<div class="target-hint hint-discount">Higher target → fewer traders pass · −$${_ta} vs 12% threshold</div>`;
+            }
         } else {
-            html += makeSlider('target1', 'Profit Target Phase 1', 5, 12, 1, S.target1, '%');
-            html += makeSlider('target2', 'Profit Target Phase 2', 3, 8, 1, S.target2, '%');
+            html += makeSlider('target1', 'Profit Target Phase 1', 5, 12, 1, S.target1, '%', _targetTip);
+            html += makeSlider('target2', 'Profit Target Phase 2', 3, 8,  1, S.target2, '%');
+            const _tt = S.target1 + S.target2;
+            if (_tt < 10) {
+                const _ta = Math.round((10 - _tt) * _r.targetLow * _bp);
+                html += `<div class="target-hint hint-surcharge">Combined target low → higher pass rate · +$${_ta} vs 10% default</div>`;
+            } else if (_tt > 12) {
+                const _ta = Math.round((_tt - 12) * _r.targetHigh * _bp);
+                html += `<div class="target-hint hint-discount">Combined target high → fewer pass · −$${_ta} vs 12% threshold</div>`;
+            }
         }
 
         // Daily Loss + type
@@ -165,8 +224,13 @@ const Configurator = (function() {
             <div class="loss-hint">${lossHints.max[S.maxType]}</div>
         </div>`;
 
-        // Split
+        // Split — above 80% is "Doji Coins™ tier" (extra split unlocked via earned coins)
+        const _splitThreshold = 80;
+        const _splitCoins     = Math.max(0, S.split - _splitThreshold) / 5;
         html += makeSlider('split', 'Profit Split', t === 'onestep' ? 50 : 70, 90, 5, S.split, '%');
+        if (S.split > _splitThreshold) {
+            html += `<div class="doji-coins-hint">${_splitThreshold}% base · +${S.split - _splitThreshold}% via <span style="color:var(--accent);font-weight:700">Doji Coins™</span> (${_splitCoins} coin${_splitCoins !== 1 ? 's' : ''})</div>`;
+        }
 
         // Min Days
         html += makeSlider('days', 'Min Trading Days', t === 'onestep' ? 3 : 5, t === 'onestep' ? 10 : 20, 1, S.days, '',
@@ -184,25 +248,31 @@ const Configurator = (function() {
             </div>
         </div>`;
 
+        // Dynamic label prices — _bp and _r already computed at top of buildSliders
+        const _wkPrice = Math.round(RATES.payWeekly * _bp);
+        const _onPrice = Math.round(_r.overnight       * _bp);
+        const _owPrice = Math.round(_r.overweek        * _bp);
+        const _eqPrice = Math.round(RATES.eqSurcharge  * _bp);
+
         // Payout Frequency
         html += `<div style="margin-bottom:14px">
             <div class="slider-header"><span class="slider-label">Payout Frequency</span><span class="slider-val">${S.payout === 'monthly' ? 'Monthly' : S.payout === 'biweekly' ? 'Bi-Weekly' : 'Weekly'}</span></div>
-            ${makeToggle('payout', [{id:'monthly',label:'Monthly'},{id:'biweekly',label:'Bi-Weekly (+$29)'},{id:'weekly',label:'Weekly (+$59)'}], S.payout)}
+            ${makeToggle('payout', [{id:'monthly',label:'Monthly'},{id:'biweekly',label:'Bi-Weekly'},{id:'weekly',label:`Weekly (+$${_wkPrice})`}], S.payout)}
         </div>`;
 
         // Holding options (toggle switches)
-        const onPrice = t === 'onestep' ? 19 : 25;
-        const owPrice = t === 'onestep' ? 29 : 39;
         html += `<div class="switch-section">
             <div class="switch-section-label">Holding Options</div>
-            ${makeSwitch('overnight', !S.overweek && S.overnight, `Overnight Holding <span class="switch-price">+$${onPrice}</span>`, S.overweek, S.overweek ? 'Included with Overweek Holding' : 'Hold positions through the night', 'moon')}
-            ${makeSwitch('overweek', S.overweek, `Overweek Holding <span class="switch-price">+$${owPrice}</span>`, false, 'Hold through weekends · includes overnight', 'calendar')}
+            ${makeSwitch('overnight', !S.overweek && S.overnight, `Overnight Holding${!S.overnight && !S.overweek ? ` <span class="switch-price discount">−$${_onPrice}</span>` : ''}`, S.overweek, S.overweek ? 'Included with Overweek Holding' : (S.overnight ? `Included · disable to save −$${_onPrice}` : 'Intraday only — no overnight positions'), 'moon')}
+            ${makeSwitch('overweek', S.overweek, `Overweek Holding <span class="switch-price">+$${_owPrice}</span>`, false, 'Hold through weekends · includes overnight', 'calendar')}
         </div>`;
 
         // Equal loss warning
         if (S.daily === S.max) {
-            html += '<div class="warning-box"><strong>⚠ Daily Loss = Max Loss:</strong> This removes the daily loss safety net. A surcharge of +$100 is applied.</div>';
+            html += `<div class="warning-box"><strong>⚠ Daily Loss = Max Loss:</strong> This removes the daily loss safety net. A surcharge of +$${_eqPrice} is applied.</div>`;
         }
+
+        // Pass-rate surcharge is applied silently in calculatePrice() — not shown to trader per product spec.
 
         c.innerHTML = html;
 
@@ -212,57 +282,90 @@ const Configurator = (function() {
     }
 
     // ═══════════════════════
+    //  PASS-RATE ESTIMATION
+    // ═══════════════════════
+    // Returns estimated % of traders who would pass this configuration.
+    // Calibrated so the default config (~8%) stays in the safe zone (<15%).
+    // Critical zone (>22%) triggers the +40.2% surcharge automatically.
+    function estimatePassRate() {
+        const t  = S.tab;
+        let r = 8;
+        if (t === 'onestep') {
+            r += Math.max(0, 10 - S.target)  * 2.0;   // low target = easy
+            r -= Math.max(0, S.target - 10)  * 0.5;
+            r += Math.max(0, S.daily  - 5)   * 1.5;   // wide daily room
+            r += Math.max(0, S.max    - 10)  * 0.8;   // wide max room
+            r -= Math.max(0, 10 - S.max)     * 0.3;
+            r += Math.max(0, 5 - S.days)     * 0.8;   // few min days
+            r -= Math.max(0, S.consistency - 30) * 0.2;
+        } else {
+            const tt = S.target1 + S.target2;
+            r += Math.max(0, 13 - tt) * 1.5;
+            r -= Math.max(0, tt - 13) * 0.4;
+            r += Math.max(0, S.daily  - 5)    * 1.2;
+            r += Math.max(0, S.max    - 10)   * 0.6;
+            r -= Math.max(0, 10 - S.max)      * 0.3;
+            r += Math.max(0, 10 - S.days)     * 0.4;
+            r -= Math.max(0, S.consistency - 35) * 0.2;
+        }
+        return Math.max(5, Math.min(35, r));
+    }
+
+    // ═══════════════════════
     //  PRICING CALCULATION
     // ═══════════════════════
 
     function calculatePrice() {
-        const t = S.tab;
+        const t  = S.tab;
         const size = accountSizes[S.sizeIdx];
         const bp = (basePricesData[t] || {})[size] || 249;
+        const r  = RATES[t === 'onestep' ? 'os' : 'ts'];
 
         let diff = 0, spAdj = 0, optAdj = 0, ltAdj = 0;
 
         if (t === 'onestep') {
-            if (S.target < 10) diff += (10 - S.target) * 20;
-            if (S.target > 12) diff -= (S.target - 12) * 15;
-            if (S.daily > 5) diff += (S.daily - 5) * 60;
-            if (S.daily < 4) diff -= (4 - S.daily) * 30;
-            if (S.max > 8) diff += (S.max - 8) * 50;
-            if (S.max < 6) diff -= (6 - S.max) * 25;
-            if (S.days < 5) diff += (5 - S.days) * 15;
-            if (S.consistency < 40) diff -= (40 - S.consistency) * 2;
-            if (S.consistency > 40) diff += (S.consistency - 40) * 2;
-            spAdj = (S.split - 70) * 4;
-            if (S.overnight) optAdj += 19;
-            if (S.overweek) optAdj += 29;
-            if (S.dailyType === 'intraday') ltAdj -= 15;
-            else if (S.dailyType === 'static') ltAdj += 25;
-            if (S.maxType === 'intraday') ltAdj -= 15;
-            else if (S.maxType === 'static') ltAdj += 25;
+            if (S.target < 10) diff += (10 - S.target)  * r.targetLow  * bp;
+            if (S.target > 12) diff -= (S.target - 12)  * r.targetHigh * bp;
+            if (S.daily  > 5) { diff += Math.min(S.daily - 5, 2) * r.dailyHigh * bp;
+                               if (S.daily > 7) diff += (S.daily - 7) * r.dailyHeavy * bp; }
+            if (S.daily  < 4)  diff -= (4 - S.daily)    * r.dailyLow   * bp;
+            if (S.max    > 10) diff += (S.max    - 10)  * r.maxHigh    * bp;
+            if (S.max    < 10) diff -= (10 - S.max)     * r.maxLow     * bp;
+            if (S.days   < 5)  diff += (5 - S.days)     * r.days       * bp;
+            diff  += (S.consistency - 40) * r.consistency * bp;
+            spAdj  = (S.split - 70)       * r.split       * bp;
+            if (!S.overnight && !S.overweek) optAdj -= r.overnight * bp;  // intraday-only discount
+            if (S.overweek)                  optAdj += r.overweek  * bp;
+            if (S.dailyType === 'intraday') ltAdj -= r.ltIntraday * bp;
+            else if (S.dailyType === 'static')   ltAdj += r.ltStatic  * bp;
+            if (S.maxType   === 'intraday') ltAdj -= r.ltIntraday * bp;
+            else if (S.maxType   === 'static')   ltAdj += r.ltStatic  * bp;
         } else {
             const tt = S.target1 + S.target2;
-            if (tt < 10) diff += (10 - tt) * 15;
-            if (tt > 12) diff -= (tt - 12) * 10;
-            if (S.daily > 5) diff += (S.daily - 5) * 50;
-            if (S.daily < 5) diff -= (5 - S.daily) * 25;
-            if (S.max > 10) diff += (S.max - 10) * 45;
-            if (S.max < 10) diff -= (10 - S.max) * 20;
-            if (S.days < 10) diff += (10 - S.days) * 10;
-            if (S.consistency < 45) diff -= (45 - S.consistency) * 3;
-            if (S.consistency > 45) diff += (S.consistency - 45) * 3;
-            spAdj = (S.split - 80) * 6;
-            if (S.overnight) optAdj += 25;
-            if (S.overweek) optAdj += 39;
-            if (S.dailyType === 'intraday') ltAdj -= 19;
-            else if (S.dailyType === 'static') ltAdj += 29;
-            if (S.maxType === 'intraday') ltAdj -= 19;
-            else if (S.maxType === 'static') ltAdj += 29;
+            if (tt       < 10) diff += (10 - tt)        * r.targetLow  * bp;
+            if (tt       > 12) diff -= (tt - 12)        * r.targetHigh * bp;
+            if (S.daily  > 5) { diff += Math.min(S.daily - 5, 2) * r.dailyHigh * bp;
+                               if (S.daily > 7) diff += (S.daily - 7) * r.dailyHeavy * bp; }
+            if (S.daily  < 5)  diff -= (5 - S.daily)    * r.dailyLow   * bp;
+            if (S.max    > 10) diff += (S.max    - 10)  * r.maxHigh    * bp;
+            if (S.max    < 10) diff -= (10 - S.max)     * r.maxLow     * bp;
+            if (S.days   < 10) diff += (10 - S.days)    * r.days       * bp;
+            diff  += (S.consistency - 45) * r.consistency * bp;
+            spAdj  = (S.split - 80)       * r.split       * bp;
+            if (!S.overnight && !S.overweek) optAdj -= r.overnight * bp;
+            if (S.overweek)                  optAdj += r.overweek  * bp;
+            if (S.dailyType === 'intraday') ltAdj -= r.ltIntraday * bp;
+            else if (S.dailyType === 'static')   ltAdj += r.ltStatic  * bp;
+            if (S.maxType   === 'intraday') ltAdj -= r.ltIntraday * bp;
+            else if (S.maxType   === 'static')   ltAdj += r.ltStatic  * bp;
         }
 
-        const payAdj = S.payout === 'biweekly' ? 29 : S.payout === 'weekly' ? 59 : 0;
-        const eqSur = S.daily === S.max ? 100 : 0;
-        const raw = bp + diff + spAdj + optAdj + ltAdj + eqSur + payAdj;
-        const total = Math.max(raw, Math.round(bp * 0.5));
+        const payAdj = (S.payout === 'weekly' ? RATES.payWeekly : 0) * bp;
+        const eqSur  = S.daily === S.max ? RATES.eqSurcharge * bp : 0;
+        const pr     = estimatePassRate();
+        const prSur  = pr > 22 ? RATES.eqSurcharge * bp : 0;
+        const raw    = bp + diff + spAdj + optAdj + ltAdj + eqSur + prSur + payAdj;
+        const total  = Math.max(Math.round(raw), Math.round(bp * 0.5));
 
         let final = total;
         if (S.activePromo) {
@@ -882,6 +985,7 @@ const Configurator = (function() {
         } else if (id === 'overweek') {
             S.overweek = checked;
             if (checked) { S.overnight = false; if (S.days < 5) S.days = 5; }
+            else { S.overnight = true; }
         }
         buildSliders();
         updateUI();
@@ -922,7 +1026,7 @@ const Configurator = (function() {
             target: 8,  target1: 7,  target2: 4,
             daily: 5,   max: 10,     split: 85,  days: 5,  consistency: 25,
             dailyType: 'intraday', maxType: 'intraday',
-            platform: 'dxtrade', payout: 'monthly', overnight: false, overweek: false,
+            platform: 'dxtrade', payout: 'monthly', overnight: true, overweek: false,
         },
     };
 
@@ -946,7 +1050,7 @@ const Configurator = (function() {
             if (t === 'onestep') {
                 b.textContent = 'FAST TRACK';
                 b.style.cssText = 'border-radius:6px;padding:3px 10px;font-size:10px;font-weight:700;font-family:"Chivo Mono",monospace;letter-spacing:.08em;background:rgba(74,158,255,0.12);color:var(--blue);border:1px solid rgba(74,158,255,0.25)';
-                S.target = 10; S.daily = 5; S.max = 8; S.split = 80; S.days = 5; S.consistency = 30;
+                S.target = 10; S.daily = 5; S.max = 10; S.split = 80; S.days = 5; S.consistency = 30;
             } else {
                 b.textContent = 'CLASSIC';
                 b.style.cssText = 'border-radius:6px;padding:3px 10px;font-size:10px;font-weight:700;font-family:"Chivo Mono",monospace;letter-spacing:.08em;background:rgba(200,200,210,0.08);color:#c8c8d0;border:1px solid rgba(200,200,210,0.15)';
@@ -954,7 +1058,7 @@ const Configurator = (function() {
             }
             S.dailyType = 'intraday'; S.maxType = 'intraday';
             S.platform = 'dxtrade'; S.payout = 'monthly';
-            S.overnight = false; S.overweek = false; S.activePromo = null;
+            S.overnight = true; S.overweek = false; S.activePromo = null;
             document.getElementById('promoInput').value = '';
             document.getElementById('promoMsg').innerHTML = '';
             document.getElementById('promoBtn').classList.remove('applied');
@@ -967,11 +1071,11 @@ const Configurator = (function() {
 
         reset() {
             setActiveMode(null);
-            if (S.tab === 'onestep') { S.target = 10; S.daily = 5; S.max = 8; S.split = 80; S.days = 5; }
+            if (S.tab === 'onestep') { S.target = 10; S.daily = 5; S.max = 10; S.split = 80; S.days = 5; }
             else { S.target1 = 8; S.target2 = 5; S.daily = 5; S.max = 10; S.split = 80; S.days = 10; }
             S.consistency = 30; S.dailyType = 'intraday'; S.maxType = 'intraday';
             S.platform = 'dxtrade'; S.payout = 'monthly';
-            S.overnight = false; S.overweek = false;
+            S.overnight = true; S.overweek = false;
             S.activePromo = null; S.sizeIdx = 9;
             document.getElementById('promoInput').value = '';
             document.getElementById('promoMsg').innerHTML = '';

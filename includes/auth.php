@@ -10,10 +10,38 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// ─── DEV BYPASS — disable auth for development ────────────────────
+// TODO: set to false before going live
+define('DEV_AUTH_BYPASS', true);
+define('DEV_AUTH_EMAIL', 'scalpertrex@gmail.com');
+
+if (defined('DEV_AUTH_BYPASS') && DEV_AUTH_BYPASS && empty($_SESSION['user_id'])) {
+    // Load the real account from DB so the dev sees actual data
+    if (function_exists('getDB')) {
+        $__db = getDB();
+        if ($__db) {
+            $__stmt = $__db->prepare('SELECT id, email, first_name, last_name, created_at FROM users WHERE email = ? LIMIT 1');
+            $__stmt->execute([DEV_AUTH_EMAIL]);
+            $__u = $__stmt->fetch();
+            if ($__u) {
+                $_SESSION['user_id']         = $__u['id'];
+                $_SESSION['user_email']      = $__u['email'];
+                $_SESSION['user_first_name'] = $__u['first_name'];
+                $_SESSION['user_last_name']  = $__u['last_name'];
+                $_SESSION['user_created_at'] = $__u['created_at'];
+            }
+            unset($__stmt, $__u);
+        }
+        unset($__db);
+    }
+}
+// ──────────────────────────────────────────────────────────────────
+
 /**
  * Check if user is logged in
  */
 function isLoggedIn() {
+    if (defined('DEV_AUTH_BYPASS') && DEV_AUTH_BYPASS) return true;
     return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 }
 

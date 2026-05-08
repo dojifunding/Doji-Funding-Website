@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doji Funding — Configurator Technical Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:    #000000;
+    --bg2:   #0a0a0a;
+    --bg3:   #111111;
+    --bg4:   #1a1a1a;
+    --border: rgba(255,255,255,0.08);
+    --text:  #f0f0f0;
+    --text2: #a0a0a0;
+    --text3: #606060;
+    --green: #10B981;
+    --blue:  #4A9EFF;
+    --orange:#F59E0B;
+    --red:   #D71921;
+    --mono:  'Chivo Mono', monospace;
+    --sans:  'Space Grotesk', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── Layout ── */
+  .page { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  nav {
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    background: var(--bg2); border-right: 1px solid var(--border);
+    padding: 24px 0;
+  }
+  nav .nav-logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  nav .nav-logo span {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--green);
+  }
+  nav .nav-logo p { font-size: 10px; color: var(--text3); margin-top: 2px; }
+  nav a {
+    display: block; padding: 5px 20px;
+    font-family: var(--mono); font-size: 11px; color: var(--text3);
+    text-decoration: none; letter-spacing: .04em;
+    transition: color .15s;
+  }
+  nav a:hover { color: var(--green); }
+  nav .nav-section {
+    padding: 12px 20px 4px;
+    font-family: var(--mono); font-size: 9px; font-weight: 700;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--text3);
+    opacity: .5;
+  }
+
+  /* ── Main ── */
+  main { padding: 48px 56px; max-width: 960px; }
+
+  /* ── Typography ── */
+  h1 { font-size: 32px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 8px; }
+  h1 .sub { font-family: var(--mono); font-size: 12px; color: var(--green); letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 8px; }
+  h2 {
+    font-size: 20px; font-weight: 700; margin: 48px 0 16px;
+    padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  h2 .anchor { font-family: var(--mono); font-size: 10px; color: var(--green); margin-left: 10px; vertical-align: middle; }
+  h3 { font-size: 14px; font-weight: 700; margin: 28px 0 10px; color: var(--blue); font-family: var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+  p { color: var(--text2); margin-bottom: 12px; }
+  strong { color: var(--text); }
+  .lead { font-size: 15px; color: var(--text2); margin-bottom: 32px; line-height: 1.7; }
+
+  /* ── Code blocks ── */
+  pre {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 6px; padding: 20px 24px; overflow-x: auto;
+    font-family: var(--mono); font-size: 12px; line-height: 1.7;
+    color: #d4d4d4; margin-bottom: 20px;
+  }
+  code { font-family: var(--mono); font-size: 12px; }
+  .inline-code {
+    background: var(--bg4); border: 1px solid var(--border);
+    border-radius: 3px; padding: 1px 6px;
+    font-family: var(--mono); font-size: 11px; color: var(--blue);
+  }
+  .kw  { color: #569CD6; }
+  .str { color: #CE9178; }
+  .num { color: #B5CEA8; }
+  .cmt { color: #6A9955; }
+  .fn  { color: #DCDCAA; }
+  .key { color: #9CDCFE; }
+  .op  { color: #D4D4D4; }
+  .grn { color: var(--green); }
+  .org { color: var(--orange); }
+  .red { color: var(--red); }
+
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px; }
+  th {
+    background: var(--bg3); text-align: left;
+    padding: 8px 12px; font-family: var(--mono); font-size: 10px;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--text3);
+    border-bottom: 1px solid var(--border);
+  }
+  td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td code { color: var(--blue); }
+  td.num-col { font-family: var(--mono); color: var(--green); }
+  td.note-col { color: var(--text3); font-size: 12px; }
+
+  /* ── Callout boxes ── */
+  .callout {
+    border-left: 3px solid var(--green); background: rgba(16,185,129,.06);
+    padding: 14px 18px; border-radius: 0 6px 6px 0; margin-bottom: 20px;
+  }
+  .callout.warn { border-color: var(--orange); background: rgba(245,158,11,.06); }
+  .callout.danger { border-color: var(--red); background: rgba(215,25,33,.06); }
+  .callout p { color: var(--text2); margin: 0; }
+  .callout strong { color: var(--text); }
+
+  /* ── Formula blocks ── */
+  .formula {
+    background: var(--bg3); border: 1px solid rgba(16,185,129,.2);
+    border-radius: 6px; padding: 16px 20px; margin-bottom: 20px;
+    font-family: var(--mono); font-size: 12px; line-height: 2;
+  }
+  .formula .label { font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+  .formula .f-eq { color: var(--text); }
+  .formula .f-pos { color: var(--green); }
+  .formula .f-neg { color: var(--red); }
+  .formula .f-note { color: var(--text3); font-size: 11px; }
+
+  /* ── Pill tags ── */
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 99px; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .06em; }
+  .pill-green { background: rgba(16,185,129,.15); color: var(--green); border: 1px solid rgba(16,185,129,.3); }
+  .pill-blue  { background: rgba(74,158,255,.12); color: var(--blue);  border: 1px solid rgba(74,158,255,.25); }
+  .pill-orange{ background: rgba(245,158,11,.12); color: var(--orange);border: 1px solid rgba(245,158,11,.25); }
+  .pill-red   { background: rgba(215,25,33,.12);  color: var(--red);   border: 1px solid rgba(215,25,33,.25); }
+
+  /* ── Section divider ── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+  /* ── Two-col grid ── */
+  .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .box {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 6px; padding: 16px 18px;
+  }
+  .box h4 { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--green); margin-bottom: 10px; }
+  .box p { color: var(--text2); font-size: 13px; margin: 0; }
+  .box .val { font-family: var(--mono); color: var(--text); font-size: 13px; }
+
+  /* ── Page header ── */
+  .page-header {
+    border-bottom: 1px solid var(--border); padding-bottom: 32px; margin-bottom: 40px;
+  }
+  .meta { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: .08em; margin-top: 12px; }
+  .meta span { color: var(--text2); }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ═══════════════════════════════════
+     SIDEBAR NAV
+═══════════════════════════════════ -->
+<nav>
+  <div class="nav-logo">
+    <span>Doji Funding</span>
+    <p>Configurator Spec v1.6</p>
+  </div>
+  <div class="nav-section">Architecture</div>
+  <a href="#arch">Overview</a>
+  <a href="#data-flow">Data Flow</a>
+  <a href="#html-structure">HTML Structure</a>
+
+  <div class="nav-section">State</div>
+  <a href="#state">State Object S</a>
+  <a href="#defaults">Default Values</a>
+
+  <div class="nav-section">Pricing</div>
+  <a href="#tiers">Account Tiers</a>
+  <a href="#base-prices">Base Prices</a>
+  <a href="#rates">RATES Object</a>
+  <a href="#algorithm">Algorithm</a>
+  <a href="#passrate">Pass-Rate</a>
+  <a href="#floors">Price Floors</a>
+  <a href="#promo">Promo Codes</a>
+
+  <div class="nav-section">UI Components</div>
+  <a href="#makeSlider">makeSlider()</a>
+  <a href="#makeToggle">makeToggle()</a>
+  <a href="#makeSwitch">makeSwitch()</a>
+  <a href="#sliders">All Sliders</a>
+  <a href="#constraints">Constraints</a>
+
+  <div class="nav-section">Interactions</div>
+  <a href="#events">Event Handlers</a>
+  <a href="#presets">Presets / Modes</a>
+  <a href="#share">Share URL</a>
+  <a href="#getstate">getState()</a>
+  <a href="#public-api">Public API</a>
+
+  <div class="nav-section">Reference</div>
+  <a href="#css">CSS Classes</a>
+  <a href="#domids">DOM IDs</a>
+  <a href="#files">File Map</a>
+</nav>
+
+<!-- ═══════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════ -->
+<main>
+
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+  <h1>
+    <span class="sub">Technical Specification</span>
+    Challenge Configurator
+  </h1>
+  <p class="lead">
+    Complete reference for replicating the Doji Funding pricing configurator.<br>
+    Covers architecture, state, pricing algorithm, UI components, and all interaction rules.
+  </p>
+  <div class="meta">
+    File: <span>assets/js/configurator.js</span> &nbsp;·&nbsp;
+    Config: <span>config/pricing.php</span> &nbsp;·&nbsp;
+    CSS: <span>assets/css/configurator.css</span> &nbsp;·&nbsp;
+    Version: <span>1.6 — April 2026</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     1. ARCHITECTURE
+═══════════════════════════════════ -->
+<h2 id="arch">1. Architecture <span class="anchor">#arch</span></h2>
+
+<p>The configurator is a self-contained <strong>IIFE module</strong> (Immediately Invoked Function Expression). It exposes a minimal public API on <span class="inline-code">window.Configurator</span>. All internal state and helpers are private.</p>
+
+<pre><span class="kw">const</span> <span class="key">Configurator</span> <span class="op">=</span> (<span class="kw">function</span>() {
+    <span class="str">'use strict'</span>;
+    <span class="cmt">// private state, helpers, builders…</span>
+    <span class="kw">return</span> { <span class="cmt">/* public API */</span> };
+})();
+
+<span class="cmt">// Auto-init when DOM ready</span>
+document.addEventListener(<span class="str">'DOMContentLoaded'</span>, () => Configurator.init());</pre>
+
+<h3 id="data-flow">Data Flow</h3>
+<p>Pricing data originates in PHP and is injected into the page as a JSON global before <span class="inline-code">configurator.js</span> loads.</p>
+
+<pre><span class="cmt">/* config/pricing.php */</span>
+<span class="fn">getPricingJson</span>()  <span class="cmt">// returns JSON: { accountSizes, basePrices, promoCodes }</span>
+
+<span class="cmt">/* In the page template (e.g. challenges.php) */</span>
+&lt;script&gt;
+  window.DOJI_CONFIG = {
+    pricing:   &lt;?= getPricingJson() ?&gt;,
+    isLoggedIn: &lt;?= $isLoggedIn ?&gt;,
+    presets:   &lt;?= getPresetsJson() ?&gt;,       <span class="cmt">// optional — competitor presets</span>
+    user:      { affiliateSales: &lt;?= $sales ?&gt; },
+    affiliate: { unlockAt: 5 }
+  };
+&lt;/script&gt;
+&lt;script src=<span class="str">"assets/js/configurator.js"</span>&gt;&lt;/script&gt;</pre>
+
+<pre><span class="cmt">/* Inside configurator.js — reads the global */</span>
+<span class="kw">const</span> data          <span class="op">=</span> window.DOJI_CONFIG?.pricing <span class="op">||</span> {};
+<span class="kw">const</span> accountSizes  <span class="op">=</span> data.accountSizes  <span class="op">||</span> [];
+<span class="kw">const</span> basePricesData <span class="op">=</span> data.basePrices   <span class="op">||</span> {};
+<span class="kw">const</span> promoCodes     <span class="op">=</span> data.promoCodes   <span class="op">||</span> {};</pre>
+
+<h3 id="html-structure">Required HTML Structure</h3>
+<p>These IDs must exist in the page. The configurator reads/writes them directly.</p>
+
+<table>
+  <tr><th>ID</th><th>Element</th><th>Purpose</th></tr>
+  <tr><td><code>tab-onestep</code></td><td>button</td><td>One Step tab — gets <code>.active</code></td></tr>
+  <tr><td><code>tab-twostep</code></td><td>button</td><td>Two Step tab — gets <code>.active</code></td></tr>
+  <tr><td><code>cfgBadge</code></td><td>span</td><td>Shows "FAST TRACK" or "CLASSIC"</td></tr>
+  <tr><td><code>slidersContainer</code></td><td>div</td><td>Inner HTML replaced by <code>buildSliders()</code></td></tr>
+  <tr><td><code>summaryGrid</code></td><td>div</td><td>Inner HTML replaced by <code>updateUI()</code></td></tr>
+  <tr><td><code>priceDisplay</code></td><td>div</td><td>Rendered price / promo price</td></tr>
+  <tr><td><code>purchaseBtn</code></td><td>button</td><td>Button text set to "Purchase Challenge — $X"</td></tr>
+  <tr><td><code>noteBox</code></td><td>div</td><td>Contextual note (consistency / weekly payout)</td></tr>
+  <tr><td><code>promoInput</code></td><td>input[text]</td><td>Promo code entry</td></tr>
+  <tr><td><code>promoBtn</code></td><td>button</td><td>Apply button — gets <code>.applied</code> + "✓ Applied"</td></tr>
+  <tr><td><code>promoMsg</code></td><td>div</td><td>Success / error promo message</td></tr>
+  <tr><td><code>shareMsg</code></td><td>div</td><td>"✓ Link copied" confirmation</td></tr>
+  <tr><td><code>presetSelect</code></td><td>select</td><td>Preset/competitor picker (optional)</td></tr>
+</table>
+
+<p>Optional objectives section IDs (for the full objectives panel):</p>
+<table>
+  <tr><th>ID</th><th>Purpose</th></tr>
+  <tr><td><code>objectivesSection</code></td><td>Wrapper — if absent, <code>updateObjectives()</code> exits early</td></tr>
+  <tr><td><code>objEvalNum</code>, <code>objEvalTitle</code>, <code>objFundedNum</code></td><td>Phase step numbers</td></tr>
+  <tr><td><code>objTargetBox</code></td><td>Target / min days cards for eval phases</td></tr>
+  <tr><td><code>objDailyVal</code>, <code>objMaxVal</code></td><td>Eval daily/max loss values</td></tr>
+  <tr><td><code>objFDailyVal</code>, <code>objFMaxVal</code>, <code>objFConsVal</code></td><td>Funded loss / consistency values</td></tr>
+  <tr><td><code>objGuidelines</code></td><td>Eval guideline cards (news, overnight, inactivity, leverage)</td></tr>
+  <tr><td><code>objFlow</code></td><td>PASSED › KYC › CONTRACT › DOJI FUNDED flow bar</td></tr>
+  <tr><td><code>objFGuidelines</code></td><td>Funded guideline cards</td></tr>
+  <tr><td><code>objRewards</code></td><td>Split + capital reward cards</td></tr>
+  <tr><td><code>objTags</code></td><td>Tag pills (news, overnight, no time limit, etc.)</td></tr>
+  <tr><td><code>objChartDaily</code>, <code>objChartMax</code></td><td>Chart popover wrappers (eval)</td></tr>
+  <tr><td><code>objChartFdaily</code>, <code>objChartFmax</code></td><td>Chart popover wrappers (funded)</td></tr>
+  <tr><td><code>objChartDailySvg</code>, <code>objChartMaxSvg</code>, <code>objChartFdailySvg</code>, <code>objChartFmaxSvg</code></td><td>SVG elements filled by <code>drawObjCharts()</code></td></tr>
+  <tr><td><code>modeAffiliate</code></td><td>Affiliate mode card — gets <code>.mode-locked</code></td></tr>
+</table>
+
+
+<!-- ═══════════════════════════════════
+     2. STATE
+═══════════════════════════════════ -->
+<h2 id="state">2. State Object <span class="anchor">#state</span></h2>
+
+<p>All configurator state lives in a single mutable object <span class="inline-code">S</span>. It is never replaced — only its properties are updated.</p>
+
+<pre><span class="kw">const</span> S <span class="op">=</span> {
+    <span class="cmt">// Challenge type</span>
+    tab:         <span class="str">'onestep'</span>,   <span class="cmt">// 'onestep' | 'twostep'</span>
+    sizeIdx:     <span class="num">9</span>,           <span class="cmt">// index into accountSizes[] — default = $50K (index 9)</span>
+
+    <span class="cmt">// Profit targets (one-step uses target; two-step uses target1 + target2)</span>
+    target:      <span class="num">10</span>,          <span class="cmt">// one-step profit target %</span>
+    target1:     <span class="num">8</span>,           <span class="cmt">// two-step phase 1 target %</span>
+    target2:     <span class="num">5</span>,           <span class="cmt">// two-step phase 2 target %</span>
+
+    <span class="cmt">// Risk params</span>
+    daily:       <span class="num">5</span>,           <span class="cmt">// daily loss limit %</span>
+    max:         <span class="num">10</span>,          <span class="cmt">// max overall loss % — CONSTRAINT: daily ≤ max always</span>
+
+    <span class="cmt">// Funded account params</span>
+    split:       <span class="num">80</span>,          <span class="cmt">// profit split %</span>
+    days:        <span class="num">5</span>,           <span class="cmt">// min trading days (one-step default=5, two-step default=10)</span>
+    consistency: <span class="num">30</span>,          <span class="cmt">// consistency rule % (max single day vs total profit)</span>
+
+    <span class="cmt">// Loss calculation types</span>
+    dailyType:   <span class="str">'intraday'</span>,  <span class="cmt">// 'intraday' | 'eod' | 'static'</span>
+    maxType:     <span class="str">'intraday'</span>,  <span class="cmt">// 'intraday' | 'eod' | 'static'</span>
+
+    <span class="cmt">// Other toggles</span>
+    platform:    <span class="str">'dxtrade'</span>,   <span class="cmt">// 'dxtrade' (only option currently)</span>
+    payout:      <span class="str">'monthly'</span>,   <span class="cmt">// 'monthly' | 'biweekly' | 'weekly'</span>
+    overnight:   <span class="num">true</span>,        <span class="cmt">// overnight holding add-on</span>
+    overweek:    <span class="num">false</span>,       <span class="cmt">// overweek (weekend) holding add-on</span>
+
+    <span class="cmt">// Promo</span>
+    activePromo: <span class="num">null</span>,        <span class="cmt">// { type:'percent'|'fixed', value:N, label:'' } or null</span>
+};</pre>
+
+<h3 id="defaults">Default Values on Tab Switch / Reset</h3>
+<table>
+  <tr><th>Field</th><th>One Step default</th><th>Two Step default</th><th>Reset (both)</th></tr>
+  <tr><td><code>target</code></td><td class="num-col">10</td><td>—</td><td class="num-col">10 (os)</td></tr>
+  <tr><td><code>target1</code></td><td>—</td><td class="num-col">8</td><td class="num-col">8 (ts)</td></tr>
+  <tr><td><code>target2</code></td><td>—</td><td class="num-col">5</td><td class="num-col">5 (ts)</td></tr>
+  <tr><td><code>daily</code></td><td class="num-col">5</td><td class="num-col">5</td><td class="num-col">5</td></tr>
+  <tr><td><code>max</code></td><td class="num-col">10</td><td class="num-col">10</td><td class="num-col">10</td></tr>
+  <tr><td><code>split</code></td><td class="num-col">80</td><td class="num-col">80</td><td class="num-col">80</td></tr>
+  <tr><td><code>days</code></td><td class="num-col">5</td><td class="num-col">10</td><td class="num-col">5 (os) / 10 (ts)</td></tr>
+  <tr><td><code>consistency</code></td><td class="num-col">30</td><td class="num-col">30</td><td class="num-col">30</td></tr>
+  <tr><td><code>dailyType</code></td><td><code>'intraday'</code></td><td><code>'intraday'</code></td><td><code>'intraday'</code></td></tr>
+  <tr><td><code>maxType</code></td><td><code>'intraday'</code></td><td><code>'intraday'</code></td><td><code>'intraday'</code></td></tr>
+  <tr><td><code>payout</code></td><td><code>'monthly'</code></td><td><code>'monthly'</code></td><td><code>'monthly'</code></td></tr>
+  <tr><td><code>overnight</code></td><td><code>true</code></td><td><code>true</code></td><td><code>true</code></td></tr>
+  <tr><td><code>overweek</code></td><td><code>false</code></td><td><code>false</code></td><td><code>false</code></td></tr>
+  <tr><td><code>sizeIdx</code></td><td>—</td><td>—</td><td class="num-col">9 ($50K)</td></tr>
+  <tr><td><code>activePromo</code></td><td>—</td><td>—</td><td><code>null</code></td></tr>
+</table>
+
+
+<!-- ═══════════════════════════════════
+     3. PRICING — TIERS & BASE PRICES
+═══════════════════════════════════ -->
+<h2 id="tiers">3. Account Size Tiers <span class="anchor">#tiers</span></h2>
+
+<p>19 account sizes in 3 step groups. Array index 0–18.</p>
+
+<table>
+  <tr><th>Range</th><th>Step</th><th>Indices</th><th>Sizes</th></tr>
+  <tr><td>$5K – $50K</td><td>$5K</td><td>0–9</td><td>5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000</td></tr>
+  <tr><td>$50K – $100K</td><td>$10K</td><td>10–14</td><td>60000, 70000, 80000, 90000, 100000</td></tr>
+  <tr><td>$100K – $200K</td><td>$25K</td><td>15–18</td><td>125000, 150000, 175000, 200000</td></tr>
+</table>
+
+<div class="callout warn">
+  <p><strong>Skipped sizes:</strong> $55K, $65K, $75K, $85K, $95K are intentionally absent. No sizes between $100K and $125K.</p>
+</div>
+
+<h2 id="base-prices">Base Prices <span class="anchor">#base-prices</span></h2>
+
+<h3>One Step</h3>
+<table>
+  <tr><th>Size</th><th>Base Price</th><th>Ratio %</th><th>Size</th><th>Base Price</th><th>Ratio %</th></tr>
+  <tr><td>$5,000</td><td class="num-col">$39</td><td class="note-col">0.78%</td><td>$50,000</td><td class="num-col">$249</td><td class="note-col">0.50%</td></tr>
+  <tr><td>$10,000</td><td class="num-col">$59</td><td class="note-col">0.59%</td><td>$60,000</td><td class="num-col">$309</td><td class="note-col">0.52%</td></tr>
+  <tr><td>$15,000</td><td class="num-col">$79</td><td class="note-col">0.53%</td><td>$70,000</td><td class="num-col">$369</td><td class="note-col">0.53%</td></tr>
+  <tr><td>$20,000</td><td class="num-col">$99</td><td class="note-col">0.50%</td><td>$80,000</td><td class="num-col">$429</td><td class="note-col">0.54%</td></tr>
+  <tr><td>$25,000</td><td class="num-col">$119</td><td class="note-col">0.48%</td><td>$90,000</td><td class="num-col">$479</td><td class="note-col">0.53%</td></tr>
+  <tr><td>$30,000</td><td class="num-col">$139</td><td class="note-col">0.46%</td><td>$100,000</td><td class="num-col">$469</td><td class="note-col">0.47% ✓</td></tr>
+  <tr><td>$35,000</td><td class="num-col">$159</td><td class="note-col">0.45%</td><td>$125,000</td><td class="num-col">$569</td><td class="note-col">0.46%</td></tr>
+  <tr><td>$40,000</td><td class="num-col">$179</td><td class="note-col">0.45%</td><td>$150,000</td><td class="num-col">$669</td><td class="note-col">0.45%</td></tr>
+  <tr><td>$45,000</td><td class="num-col">$199</td><td class="note-col">0.44%</td><td>$175,000</td><td class="num-col">$759</td><td class="note-col">0.43%</td></tr>
+  <tr><td></td><td></td><td></td><td>$200,000</td><td class="num-col">$839</td><td class="note-col">0.42%</td></tr>
+</table>
+<p class="note-col" style="font-size:12px;margin-top:-12px;margin-bottom:20px">✓ $100K corrected from $499 → $469 to restore economy-of-scale slope (was a flat-ratio anomaly).</p>
+
+<h3>Two Step</h3>
+<table>
+  <tr><th>Size</th><th>Base Price</th><th>Size</th><th>Base Price</th><th>Size</th><th>Base Price</th></tr>
+  <tr><td>$5,000</td><td class="num-col">$69</td><td>$50,000</td><td class="num-col">$249</td><td>$125,000</td><td class="num-col">$479</td></tr>
+  <tr><td>$10,000</td><td class="num-col">$89</td><td>$60,000</td><td class="num-col">$309</td><td>$150,000</td><td class="num-col">$559</td></tr>
+  <tr><td>$15,000</td><td class="num-col">$109</td><td>$70,000</td><td class="num-col">$349</td><td>$175,000</td><td class="num-col">$629</td></tr>
+  <tr><td>$20,000</td><td class="num-col">$129</td><td>$80,000</td><td class="num-col">$379</td><td>$200,000</td><td class="num-col">$689</td></tr>
+  <tr><td>$25,000</td><td class="num-col">$149</td><td>$90,000</td><td class="num-col">$394</td><td></td><td></td></tr>
+  <tr><td>$30,000</td><td class="num-col">$169</td><td>$100,000</td><td class="num-col">$399</td><td></td><td></td></tr>
+  <tr><td>$35,000</td><td class="num-col">$189</td><td></td><td></td><td></td><td></td></tr>
+  <tr><td>$40,000</td><td class="num-col">$209</td><td></td><td></td><td></td><td></td></tr>
+  <tr><td>$45,000</td><td class="num-col">$229</td><td></td><td></td><td></td><td></td></tr>
+</table>
+
+
+<!-- ═══════════════════════════════════
+     4. RATES
+═══════════════════════════════════ -->
+<h2 id="rates">4. RATES Object <span class="anchor">#rates</span></h2>
+
+<p>All modifiers are stored as <strong>a fraction of the base price (bp)</strong>. This makes the $ impact scale proportionally across all 19 account sizes. Calibration anchor: <strong>$50K one-step, bp = $249</strong>.</p>
+
+<div class="callout">
+  <p><strong>Formula:</strong> modifier $ = rate × bp &nbsp;·&nbsp; Example: <code>targetLow = 0.0803</code>, bp = $249 → $20 per % below target default.</p>
+</div>
+
+<h3>One Step Rates (<code>RATES.os</code>)</h3>
+<table>
+  <tr><th>Key</th><th>Rate</th><th>≈$ @bp$249</th><th>Applied when…</th></tr>
+  <tr><td><code>targetLow</code></td><td class="num-col">0.0803</td><td class="num-col">+$20</td><td>per % below 10 (target &lt; 10)</td></tr>
+  <tr><td><code>targetHigh</code></td><td class="num-col">0.0602</td><td class="num-col">−$15</td><td>per % above 12 (target &gt; 12)</td></tr>
+  <tr><td><code>dailyHigh</code></td><td class="num-col">0.2410</td><td class="num-col">+$60</td><td>per % above 5 (daily 6–7, normal tier)</td></tr>
+  <tr><td><code>dailyHeavy</code></td><td class="num-col">0.4016</td><td class="num-col">+$100</td><td>per % above 7 (daily ≥ 8, deterrent tier)</td></tr>
+  <tr><td><code>dailyLow</code></td><td class="num-col">0.1205</td><td class="num-col">−$30</td><td>per % below 4 (daily &lt; 4)</td></tr>
+  <tr><td><code>maxHigh</code></td><td class="num-col">0.2008</td><td class="num-col">+$50</td><td>per % above 10 (max &gt; 10)</td></tr>
+  <tr><td><code>maxLow</code></td><td class="num-col">0.0335</td><td class="num-col">−$8</td><td>per % below 10 (max &lt; 10)</td></tr>
+  <tr><td><code>days</code></td><td class="num-col">0.0602</td><td class="num-col">+$15</td><td>per day below 5 (days &lt; 5)</td></tr>
+  <tr><td><code>consistency</code></td><td class="num-col">0.0080</td><td class="num-col">±$2</td><td>per % vs anchor 40 (can be + or −)</td></tr>
+  <tr><td><code>split</code></td><td class="num-col">0.0161</td><td class="num-col">±$4</td><td>per 1% vs anchor 70 (can be + or −)</td></tr>
+  <tr><td><code>overnight</code></td><td class="num-col">0.0763</td><td class="num-col">+$19</td><td>discount when not overnight AND not overweek</td></tr>
+  <tr><td><code>overweek</code></td><td class="num-col">0.1165</td><td class="num-col">+$29</td><td>surcharge when overweek = true</td></tr>
+  <tr><td><code>ltIntraday</code></td><td class="num-col">0.0602</td><td class="num-col">−$15</td><td>per loss-type field set to 'intraday'</td></tr>
+  <tr><td><code>ltStatic</code></td><td class="num-col">0.1004</td><td class="num-col">+$25</td><td>per loss-type field set to 'static'</td></tr>
+</table>
+
+<h3>Two Step Rates (<code>RATES.ts</code>)</h3>
+<table>
+  <tr><th>Key</th><th>Rate</th><th>≈$ @bp$249</th><th>Applied when…</th></tr>
+  <tr><td><code>targetLow</code></td><td class="num-col">0.0602</td><td class="num-col">+$15</td><td>per % below 10 (target1+target2 &lt; 10)</td></tr>
+  <tr><td><code>targetHigh</code></td><td class="num-col">0.0402</td><td class="num-col">−$10</td><td>per % above 12 (target1+target2 &gt; 12)</td></tr>
+  <tr><td><code>dailyHigh</code></td><td class="num-col">0.2008</td><td class="num-col">+$50</td><td>per % above 5 (daily 6–7)</td></tr>
+  <tr><td><code>dailyHeavy</code></td><td class="num-col">0.3213</td><td class="num-col">+$80</td><td>per % above 7 (daily ≥ 8, deterrent)</td></tr>
+  <tr><td><code>dailyLow</code></td><td class="num-col">0.1004</td><td class="num-col">−$25</td><td>per % below 5 (daily &lt; 5)</td></tr>
+  <tr><td><code>maxHigh</code></td><td class="num-col">0.1807</td><td class="num-col">+$45</td><td>per % above 10 (max &gt; 10)</td></tr>
+  <tr><td><code>maxLow</code></td><td class="num-col">0.0402</td><td class="num-col">−$10</td><td>per % below 10 (max &lt; 10)</td></tr>
+  <tr><td><code>days</code></td><td class="num-col">0.0402</td><td class="num-col">+$10</td><td>per day below 10 (days &lt; 10)</td></tr>
+  <tr><td><code>consistency</code></td><td class="num-col">0.0120</td><td class="num-col">±$3</td><td>per % vs anchor 45</td></tr>
+  <tr><td><code>split</code></td><td class="num-col">0.0241</td><td class="num-col">±$6</td><td>per 1% vs anchor 80</td></tr>
+  <tr><td><code>overnight</code></td><td class="num-col">0.1004</td><td class="num-col">+$25</td><td>discount when intraday-only</td></tr>
+  <tr><td><code>overweek</code></td><td class="num-col">0.1566</td><td class="num-col">+$39</td><td>surcharge when overweek = true</td></tr>
+  <tr><td><code>ltIntraday</code></td><td class="num-col">0.0763</td><td class="num-col">−$19</td><td>per loss-type field set to 'intraday'</td></tr>
+  <tr><td><code>ltStatic</code></td><td class="num-col">0.1165</td><td class="num-col">+$29</td><td>per loss-type field set to 'static'</td></tr>
+</table>
+
+<h3>Common Rates</h3>
+<table>
+  <tr><th>Key</th><th>Rate</th><th>≈$ @bp$249</th><th>Notes</th></tr>
+  <tr><td><code>payBiweekly</code></td><td class="num-col">0.1165</td><td class="num-col">—</td><td class="note-col">NOT applied — included in base price (product decision)</td></tr>
+  <tr><td><code>payWeekly</code></td><td class="num-col">0.2369</td><td class="num-col">+$59</td><td>Applied only when <code>S.payout === 'weekly'</code></td></tr>
+  <tr><td><code>eqSurcharge</code></td><td class="num-col">0.4016</td><td class="num-col">+$100</td><td>Equal-loss surcharge AND pass-rate surcharge (same rate)</td></tr>
+</table>
+
+
+<!-- ═══════════════════════════════════
+     5. PRICING ALGORITHM
+═══════════════════════════════════ -->
+<h2 id="algorithm">5. Pricing Algorithm <span class="anchor">#algorithm</span></h2>
+
+<p><span class="inline-code">calculatePrice()</span> returns <span class="inline-code">{ basePrice, total, final, display }</span>.</p>
+
+<div class="formula">
+  <div class="label">Full Formula</div>
+  <div class="f-eq">bp     = basePricesData[tab][accountSizes[sizeIdx]] <span class="f-note">// lookup table</span></div>
+  <div class="f-eq">raw    = bp + diff + spAdj + optAdj + ltAdj + eqSur + prSur + payAdj</div>
+  <div class="f-eq">total  = max( round(raw), round(bp × 0.5) )         <span class="f-note">// price floor</span></div>
+  <div class="f-eq">final  = max( round(total − discount), round(bp × 0.3) )  <span class="f-note">// promo floor</span></div>
+  <div class="f-eq">display = activePromo ? final : total</div>
+</div>
+
+<h3>One Step — diff components</h3>
+<pre><span class="cmt">// Profit Target (anchor: 10%, free zone: 10–12%)</span>
+<span class="kw">if</span> (S.target <span class="op">&lt;</span> <span class="num">10</span>) diff <span class="op">+=</span> (<span class="num">10</span> <span class="op">-</span> S.target) <span class="op">*</span> r.targetLow  <span class="op">*</span> bp;
+<span class="kw">if</span> (S.target <span class="op">&gt;</span> <span class="num">12</span>) diff <span class="op">-=</span> (S.target <span class="op">-</span> <span class="num">12</span>) <span class="op">*</span> r.targetHigh <span class="op">*</span> bp;
+
+<span class="cmt">// Daily Loss — two-tier surcharge (anchor: 5%)</span>
+<span class="kw">if</span> (S.daily <span class="op">&gt;</span> <span class="num">5</span>) {
+    diff <span class="op">+=</span> Math.min(S.daily <span class="op">-</span> <span class="num">5</span>, <span class="num">2</span>) <span class="op">*</span> r.dailyHigh  <span class="op">*</span> bp;  <span class="cmt">// +24.1% per % for 6–7%</span>
+    <span class="kw">if</span> (S.daily <span class="op">&gt;</span> <span class="num">7</span>) diff <span class="op">+=</span> (S.daily <span class="op">-</span> <span class="num">7</span>) <span class="op">*</span> r.dailyHeavy <span class="op">*</span> bp;  <span class="cmt">// +40.2% per % for 8%+</span>
+}
+<span class="kw">if</span> (S.daily <span class="op">&lt;</span> <span class="num">4</span>)  diff <span class="op">-=</span> (<span class="num">4</span> <span class="op">-</span> S.daily) <span class="op">*</span> r.dailyLow   <span class="op">*</span> bp;  <span class="cmt">// discount &lt;4%</span>
+
+<span class="cmt">// Max Loss (anchor: 10%)</span>
+<span class="kw">if</span> (S.max <span class="op">&gt;</span> <span class="num">10</span>) diff <span class="op">+=</span> (S.max <span class="op">-</span> <span class="num">10</span>) <span class="op">*</span> r.maxHigh <span class="op">*</span> bp;
+<span class="kw">if</span> (S.max <span class="op">&lt;</span> <span class="num">10</span>) diff <span class="op">-=</span> (<span class="num">10</span> <span class="op">-</span> S.max) <span class="op">*</span> r.maxLow  <span class="op">*</span> bp;
+
+<span class="cmt">// Min Days (anchor: 5)</span>
+<span class="kw">if</span> (S.days <span class="op">&lt;</span> <span class="num">5</span>) diff <span class="op">+=</span> (<span class="num">5</span> <span class="op">-</span> S.days) <span class="op">*</span> r.days <span class="op">*</span> bp;
+
+<span class="cmt">// Consistency (anchor: 40) — can be + or −</span>
+diff <span class="op">+=</span> (S.consistency <span class="op">-</span> <span class="num">40</span>) <span class="op">*</span> r.consistency <span class="op">*</span> bp;
+
+<span class="cmt">// Split (anchor: 70) — computed separately as spAdj</span>
+spAdj <span class="op">=</span> (S.split <span class="op">-</span> <span class="num">70</span>) <span class="op">*</span> r.split <span class="op">*</span> bp;</pre>
+
+<h3>Two Step — diff components</h3>
+<pre><span class="cmt">// Combined target = target1 + target2 (anchor: 10–12%)</span>
+<span class="kw">const</span> tt <span class="op">=</span> S.target1 <span class="op">+</span> S.target2;
+<span class="kw">if</span> (tt <span class="op">&lt;</span> <span class="num">10</span>) diff <span class="op">+=</span> (<span class="num">10</span> <span class="op">-</span> tt) <span class="op">*</span> r.targetLow  <span class="op">*</span> bp;
+<span class="kw">if</span> (tt <span class="op">&gt;</span> <span class="num">12</span>) diff <span class="op">-=</span> (tt <span class="op">-</span> <span class="num">12</span>) <span class="op">*</span> r.targetHigh <span class="op">*</span> bp;
+
+<span class="cmt">// Daily Loss — same two-tier formula as one-step</span>
+<span class="cmt">// But discount threshold is 5 (not 4) for two-step</span>
+<span class="kw">if</span> (S.daily <span class="op">&lt;</span> <span class="num">5</span>) diff <span class="op">-=</span> (<span class="num">5</span> <span class="op">-</span> S.daily) <span class="op">*</span> r.dailyLow <span class="op">*</span> bp;
+
+<span class="cmt">// Max Loss — same as one-step (anchor: 10%)</span>
+
+<span class="cmt">// Min Days (anchor: 10 for two-step)</span>
+<span class="kw">if</span> (S.days <span class="op">&lt;</span> <span class="num">10</span>) diff <span class="op">+=</span> (<span class="num">10</span> <span class="op">-</span> S.days) <span class="op">*</span> r.days <span class="op">*</span> bp;
+
+<span class="cmt">// Consistency (anchor: 45 for two-step)</span>
+diff <span class="op">+=</span> (S.consistency <span class="op">-</span> <span class="num">45</span>) <span class="op">*</span> r.consistency <span class="op">*</span> bp;
+
+<span class="cmt">// Split (anchor: 80 for two-step)</span>
+spAdj <span class="op">=</span> (S.split <span class="op">-</span> <span class="num">80</span>) <span class="op">*</span> r.split <span class="op">*</span> bp;</pre>
+
+<h3>Common Adjustments (both tabs)</h3>
+<pre><span class="cmt">// Holding — overnight/overweek (both tabs use same keys)</span>
+<span class="kw">if</span> (!S.overnight <span class="op">&amp;&amp;</span> !S.overweek) optAdj <span class="op">-=</span> r.overnight <span class="op">*</span> bp;  <span class="cmt">// intraday-only discount</span>
+<span class="kw">if</span> (S.overweek)                  optAdj <span class="op">+=</span> r.overweek  <span class="op">*</span> bp;  <span class="cmt">// weekend surcharge</span>
+
+<span class="cmt">// Loss type — applied to BOTH dailyType and maxType independently</span>
+<span class="kw">if</span> (S.dailyType <span class="op">===</span> <span class="str">'intraday'</span>) ltAdj <span class="op">-=</span> r.ltIntraday <span class="op">*</span> bp;
+<span class="kw">else if</span> (S.dailyType <span class="op">===</span> <span class="str">'static'</span>)   ltAdj <span class="op">+=</span> r.ltStatic  <span class="op">*</span> bp;
+<span class="kw">if</span> (S.maxType   <span class="op">===</span> <span class="str">'intraday'</span>) ltAdj <span class="op">-=</span> r.ltIntraday <span class="op">*</span> bp;
+<span class="kw">else if</span> (S.maxType   <span class="op">===</span> <span class="str">'static'</span>)   ltAdj <span class="op">+=</span> r.ltStatic  <span class="op">*</span> bp;
+<span class="cmt">// 'eod' type → no adjustment (neutral)</span>
+
+<span class="cmt">// Payout — only weekly adds cost; bi-weekly is included in base price</span>
+<span class="kw">const</span> payAdj <span class="op">=</span> (S.payout <span class="op">===</span> <span class="str">'weekly'</span> <span class="op">?</span> RATES.payWeekly : <span class="num">0</span>) <span class="op">*</span> bp;
+
+<span class="cmt">// Equal-loss surcharge (shown to user in warning box)</span>
+<span class="kw">const</span> eqSur <span class="op">=</span> S.daily <span class="op">===</span> S.max <span class="op">?</span> RATES.eqSurcharge <span class="op">*</span> bp : <span class="num">0</span>;
+
+<span class="cmt">// Pass-rate surcharge (silent — not shown to user)</span>
+<span class="kw">const</span> pr    <span class="op">=</span> estimatePassRate();
+<span class="kw">const</span> prSur <span class="op">=</span> pr <span class="op">&gt;</span> <span class="num">22</span> <span class="op">?</span> RATES.eqSurcharge <span class="op">*</span> bp : <span class="num">0</span>;</pre>
+
+
+<!-- ═══════════════════════════════════
+     6. PASS-RATE ESTIMATION
+═══════════════════════════════════ -->
+<h2 id="passrate">6. Pass-Rate Estimation <span class="anchor">#passrate</span></h2>
+
+<p><span class="inline-code">estimatePassRate()</span> returns a value clamped to <strong>5–35%</strong>. It is a heuristic — not a real statistical model. Baseline: <strong>8%</strong> (default config).</p>
+
+<pre><span class="cmt">// ONE STEP</span>
+r <span class="op">=</span> <span class="num">8</span>
+r <span class="op">+=</span> max(<span class="num">0</span>, <span class="num">10</span> <span class="op">-</span> S.target)       <span class="op">*</span> <span class="num">2.0</span>   <span class="cmt">// easy target → more pass</span>
+r <span class="op">-=</span> max(<span class="num">0</span>, S.target <span class="op">-</span> <span class="num">10</span>)       <span class="op">*</span> <span class="num">0.5</span>
+r <span class="op">+=</span> max(<span class="num">0</span>, S.daily <span class="op">-</span> <span class="num">5</span>)         <span class="op">*</span> <span class="num">1.5</span>   <span class="cmt">// wide daily room</span>
+r <span class="op">+=</span> max(<span class="num">0</span>, S.max <span class="op">-</span> <span class="num">10</span>)          <span class="op">*</span> <span class="num">0.8</span>   <span class="cmt">// wide max room</span>
+r <span class="op">-=</span> max(<span class="num">0</span>, <span class="num">10</span> <span class="op">-</span> S.max)          <span class="op">*</span> <span class="num">0.3</span>
+r <span class="op">+=</span> max(<span class="num">0</span>, <span class="num">5</span> <span class="op">-</span> S.days)          <span class="op">*</span> <span class="num">0.8</span>   <span class="cmt">// fewer min days = easier</span>
+r <span class="op">-=</span> max(<span class="num">0</span>, S.consistency <span class="op">-</span> <span class="num">30</span>)  <span class="op">*</span> <span class="num">0.2</span>   <span class="cmt">// strict consistency = harder</span>
+
+<span class="cmt">// TWO STEP</span>
+r <span class="op">=</span> <span class="num">8</span>; tt <span class="op">=</span> S.target1 <span class="op">+</span> S.target2
+r <span class="op">+=</span> max(<span class="num">0</span>, <span class="num">13</span> <span class="op">-</span> tt)             <span class="op">*</span> <span class="num">1.5</span>
+r <span class="op">-=</span> max(<span class="num">0</span>, tt <span class="op">-</span> <span class="num">13</span>)             <span class="op">*</span> <span class="num">0.4</span>
+r <span class="op">+=</span> max(<span class="num">0</span>, S.daily <span class="op">-</span> <span class="num">5</span>)         <span class="op">*</span> <span class="num">1.2</span>
+r <span class="op">+=</span> max(<span class="num">0</span>, S.max <span class="op">-</span> <span class="num">10</span>)          <span class="op">*</span> <span class="num">0.6</span>
+r <span class="op">-=</span> max(<span class="num">0</span>, <span class="num">10</span> <span class="op">-</span> S.max)          <span class="op">*</span> <span class="num">0.3</span>
+r <span class="op">+=</span> max(<span class="num">0</span>, <span class="num">10</span> <span class="op">-</span> S.days)         <span class="op">*</span> <span class="num">0.4</span>
+r <span class="op">-=</span> max(<span class="num">0</span>, S.consistency <span class="op">-</span> <span class="num">35</span>)  <span class="op">*</span> <span class="num">0.2</span>
+
+<span class="kw">return</span> Math.max(<span class="num">5</span>, Math.min(<span class="num">35</span>, r));</pre>
+
+<table>
+  <tr><th>Zone</th><th>Range</th><th>Effect</th></tr>
+  <tr><td><span class="pill pill-green">SAFE</span></td><td>&lt; 15%</td><td>No surcharge</td></tr>
+  <tr><td><span class="pill pill-orange">WATCH</span></td><td>15–20%</td><td>No surcharge</td></tr>
+  <tr><td><span class="pill pill-orange">DANGER</span></td><td>20–22%</td><td>No surcharge</td></tr>
+  <tr><td><span class="pill pill-red">CRITICAL</span></td><td>&gt; 22%</td><td><strong>+40.2% × bp surcharge (prSur)</strong> — silent, not shown to trader</td></tr>
+</table>
+
+<div class="callout warn">
+  <p><strong>Product decision:</strong> The pass-rate surcharge is included in the displayed price without being labelled separately. The warning zones are internal only and never rendered in the UI.</p>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     7. PRICE FLOORS
+═══════════════════════════════════ -->
+<h2 id="floors">7. Price Floors <span class="anchor">#floors</span></h2>
+
+<div class="cols2">
+  <div class="box">
+    <h4>Standard Floor</h4>
+    <div class="val">total = max(round(raw), round(bp × 0.5))</div>
+    <p>Prevents the calculated price from falling below 50% of base price, regardless of discounts from easy configurations.</p>
+  </div>
+  <div class="box">
+    <h4>Promo Floor</h4>
+    <div class="val">final = max(round(total − discount), round(bp × 0.3))</div>
+    <p>Prevents promo codes from discounting below 30% of base price.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════
+     8. PROMO CODES
+═══════════════════════════════════ -->
+<h2 id="promo">8. Promo Code System <span class="anchor">#promo</span></h2>
+
+<p>Codes are case-insensitive on input (uppercased before lookup). Sourced from <span class="inline-code">config/pricing.php → $promoCodes</span>.</p>
+
+<table>
+  <tr><th>Code</th><th>Type</th><th>Value</th><th>Label</th></tr>
+  <tr><td><code>DOJI10</code></td><td>percent</td><td class="num-col">10%</td><td>10% off</td></tr>
+  <tr><td><code>DOJI20</code></td><td>percent</td><td class="num-col">20%</td><td>20% off</td></tr>
+  <tr><td><code>LAUNCH25</code></td><td>percent</td><td class="num-col">25%</td><td>25% Launch Discount</td></tr>
+  <tr><td><code>WELCOME</code></td><td>percent</td><td class="num-col">20%</td><td>20% Welcome Discount</td></tr>
+  <tr><td><code>TRADER50</code></td><td>fixed</td><td class="num-col">$50</td><td>$50 off</td></tr>
+</table>
+
+<pre><span class="cmt">// Discount calculation</span>
+<span class="kw">const</span> disc <span class="op">=</span> S.activePromo.type <span class="op">===</span> <span class="str">'percent'</span>
+    <span class="op">?</span> total <span class="op">*</span> S.activePromo.value <span class="op">/</span> <span class="num">100</span>
+    <span class="op">:</span> S.activePromo.value;   <span class="cmt">// fixed $</span>
+final <span class="op">=</span> Math.max(Math.round(total <span class="op">-</span> disc), Math.round(bp <span class="op">*</span> <span class="num">0.3</span>));</pre>
+
+
+<!-- ═══════════════════════════════════
+     9. UI BUILDER FUNCTIONS
+═══════════════════════════════════ -->
+<h2 id="makeSlider">9. makeSlider() <span class="anchor">#makeSlider</span></h2>
+
+<pre><span class="fn">makeSlider</span>(id, label, min, max, step, val, suffix, tooltip, ticks)</pre>
+
+<table>
+  <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>id</code></td><td>string</td><td>State key — used in <code>data-slider-id</code> and event calls</td></tr>
+  <tr><td><code>label</code></td><td>string</td><td>Display label</td></tr>
+  <tr><td><code>min</code></td><td>number</td><td>Range minimum</td></tr>
+  <tr><td><code>max</code></td><td>number</td><td>Range maximum</td></tr>
+  <tr><td><code>step</code></td><td>number</td><td>Step increment</td></tr>
+  <tr><td><code>val</code></td><td>number</td><td>Current value</td></tr>
+  <tr><td><code>suffix</code></td><td>string</td><td><code>'%'</code> or <code>''</code> — appended to displayed value</td></tr>
+  <tr><td><code>tooltip</code></td><td>string|undefined</td><td>If set, renders a <code>?</code> icon with a popup</td></tr>
+  <tr><td><code>ticks</code></td><td>array|undefined</td><td>If set, renders tick labels below track (e.g. <code>['$5K','$50K','$200K']</code>)</td></tr>
+</table>
+
+<p><strong>Special value display:</strong> IDs in <span class="inline-code">pctIds</span> (<code>target, target1, target2, daily, max</code>) display as <code>10% ($50,000)</code> — the dollar equivalent is computed from the current account size. All others display as <code>val + suffix</code>.</p>
+
+<p><strong>Fill & thumb position:</strong> CSS <code>width</code> and <code>left</code> are set to <code>((val-min)/(max-min))*100</code>%.</p>
+
+<p><strong>Events on input:</strong> <code>oninput</code> → <span class="inline-code">Configurator.onSliderLive(id, this)</span> — throttled via <code>requestAnimationFrame</code>. <code>onchange</code> → <span class="inline-code">Configurator.onSliderDone(id, this.value)</span> — full rebuild.</p>
+
+<h2 id="makeToggle">makeToggle() <span class="anchor">#makeToggle</span></h2>
+
+<pre><span class="fn">makeToggle</span>(id, options, active, small)</pre>
+
+<table>
+  <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>id</code></td><td>string</td><td>Toggle group identifier</td></tr>
+  <tr><td><code>options</code></td><td>array</td><td>Array of <code>{ id, label }</code> objects</td></tr>
+  <tr><td><code>active</code></td><td>string</td><td>Currently active option id</td></tr>
+  <tr><td><code>small</code></td><td>bool</td><td>Adds <code>.toggle-sm</code> class for compact display</td></tr>
+</table>
+
+<p>Renders a <span class="inline-code">.toggle-group</span> with <span class="inline-code">.toggle-btn</span> buttons. Active button gets <span class="inline-code">.active</span>. Each button calls <span class="inline-code">Configurator.onToggle(id, optionId)</span>.</p>
+
+<h2 id="makeSwitch">makeSwitch() <span class="anchor">#makeSwitch</span></h2>
+
+<pre><span class="fn">makeSwitch</span>(id, checked, label, disabled, subtext, icon)</pre>
+
+<table>
+  <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>id</code></td><td>string</td><td>Switch identifier</td></tr>
+  <tr><td><code>checked</code></td><td>bool</td><td>On/off state</td></tr>
+  <tr><td><code>label</code></td><td>string</td><td>Label text (may contain HTML spans)</td></tr>
+  <tr><td><code>disabled</code></td><td>bool</td><td>If true: adds <code>.disabled</code>, click is no-op</td></tr>
+  <tr><td><code>subtext</code></td><td>string</td><td>Secondary description shown below label</td></tr>
+  <tr><td><code>icon</code></td><td>string</td><td><code>'moon'</code> → crescent SVG; anything else → calendar SVG</td></tr>
+</table>
+
+<p>Calls <span class="inline-code">Configurator.onCheck(id, !this.classList.contains('active'))</span> on click. Checked state adds <span class="inline-code">.active</span> to the row and <span class="inline-code">.on</span> to the knob container.</p>
+
+
+<!-- ═══════════════════════════════════
+     10. ALL SLIDERS
+═══════════════════════════════════ -->
+<h2 id="sliders">10. All Sliders — Parameters <span class="anchor">#sliders</span></h2>
+
+<table>
+  <tr><th>ID</th><th>Label</th><th>Min</th><th>Max</th><th>Step</th><th>Default</th><th>Suffix</th><th>Tooltip?</th><th>Ticks?</th></tr>
+  <tr><td><code>sizeIdx</code></td><td>Account Size</td><td>0</td><td>18</td><td>1</td><td>9</td><td>(none)</td><td>—</td><td>$5K · $50K · $200K</td></tr>
+  <tr><td><code>target</code></td><td>Profit Target</td><td>5</td><td>15</td><td>1</td><td>10</td><td>%</td><td>Yes</td><td>—</td></tr>
+  <tr><td><code>target1</code></td><td>Profit Target Phase 1</td><td>5</td><td>12</td><td>1</td><td>8</td><td>%</td><td>Yes</td><td>—</td></tr>
+  <tr><td><code>target2</code></td><td>Profit Target Phase 2</td><td>3</td><td>8</td><td>1</td><td>5</td><td>%</td><td>—</td><td>—</td></tr>
+  <tr><td><code>daily</code></td><td>Daily Loss</td><td>2 (os) / 3 (ts)</td><td>8</td><td>1</td><td>5</td><td>%</td><td>—</td><td>—</td></tr>
+  <tr><td><code>max</code></td><td>Max Loss</td><td>4 (os) / 6 (ts)</td><td>12 (os) / 15 (ts)</td><td>1</td><td>10</td><td>%</td><td>—</td><td>—</td></tr>
+  <tr><td><code>split</code></td><td>Profit Split</td><td>50 (os) / 70 (ts)</td><td>90</td><td>5</td><td>80</td><td>%</td><td>—</td><td>—</td></tr>
+  <tr><td><code>days</code></td><td>Min Trading Days</td><td>3 (os) / 5 (ts)</td><td>10 (os) / 20 (ts)</td><td>1</td><td>5 (os) / 10 (ts)</td><td>(none)</td><td>Yes</td><td>—</td></tr>
+  <tr><td><code>consistency</code></td><td>Consistency Rule</td><td>10</td><td>30 (if weekly) / 50</td><td>10</td><td>30</td><td>%</td><td>Yes</td><td>—</td></tr>
+</table>
+
+<h3 id="constraints">Slider Constraints</h3>
+<table>
+  <tr><th>Trigger</th><th>Rule</th></tr>
+  <tr><td>Drag <code>max</code></td><td>If <code>S.daily &gt; S.max</code> → clamp <code>S.daily = S.max</code> and update daily slider visual</td></tr>
+  <tr><td>Drag <code>daily</code></td><td>Silently clamp to <code>S.max</code> during live drag (<code>onSliderLive</code>)</td></tr>
+  <tr><td>Drag <code>days</code> when overweek=true</td><td>Min days enforced at 5: <code>Math.max(val, 5)</code></td></tr>
+  <tr><td>Switch payout → weekly</td><td>If <code>S.consistency &gt; 30</code> → set <code>S.consistency = 30</code></td></tr>
+  <tr><td>Switch overweek ON</td><td><code>S.overnight = false</code>; if <code>S.days &lt; 5</code> → <code>S.days = 5</code></td></tr>
+  <tr><td>Switch overweek OFF</td><td><code>S.overnight = true</code> (restored automatically)</td></tr>
+</table>
+
+<h3>Inline Hints (rendered after specific sliders)</h3>
+<table>
+  <tr><th>Condition</th><th>Element</th><th>Class</th><th>Message</th></tr>
+  <tr><td>One-step target &lt; 10</td><td>div.target-hint</td><td>.hint-surcharge</td><td>"Lower target → higher pass rate · +$X vs 10% default"</td></tr>
+  <tr><td>One-step target &gt; 12</td><td>div.target-hint</td><td>.hint-discount</td><td>"Higher target → fewer traders pass · −$X vs 12% threshold"</td></tr>
+  <tr><td>Two-step combined &lt; 10</td><td>div.target-hint</td><td>.hint-surcharge</td><td>"Combined target low → higher pass rate · +$X vs 10% default"</td></tr>
+  <tr><td>Two-step combined &gt; 12</td><td>div.target-hint</td><td>.hint-discount</td><td>"Combined target high → fewer pass · −$X vs 12% threshold"</td></tr>
+  <tr><td>split &gt; 80</td><td>div.doji-coins-hint</td><td>—</td><td>"80% base · +X% via Doji Coins™ (N coin[s])"</td></tr>
+  <tr><td>daily === max</td><td>div.warning-box</td><td>—</td><td>"⚠ Daily Loss = Max Loss: surcharge of +$X applied."</td></tr>
+</table>
+
+
+<!-- ═══════════════════════════════════
+     11. EVENT HANDLERS
+═══════════════════════════════════ -->
+<h2 id="events">11. Event Handlers <span class="anchor">#events</span></h2>
+
+<h3>onSliderLive(id, inputEl) — called on every drag tick (oninput)</h3>
+<p>Updates state immediately. Updates <em>only</em> the dragged slider's visual (fill width, thumb position, value label) via <span class="inline-code">_updateSliderVisual()</span>. Throttles the full <span class="inline-code">updateUI()</span> call via <span class="inline-code">requestAnimationFrame</span> — only one rAF frame queued at a time. Does <strong>not</strong> call <span class="inline-code">buildSliders()</span>.</p>
+
+<h3>onSliderDone(id, val) — called on drag release (onchange)</h3>
+<p>Applies final constraints, then calls full <span class="inline-code">buildSliders()</span> + <span class="inline-code">updateUI()</span>. This is the "reconcile" pass that handles warning boxes, cascaded constraints, and hint divs.</p>
+
+<h3>onToggle(id, val)</h3>
+<p>Updates the corresponding <span class="inline-code">S</span> field. Special: when <code>payout → 'weekly'</code>, clamps <code>S.consistency</code> to 30. Calls <span class="inline-code">buildSliders()</span> + <span class="inline-code">updateUI()</span>.</p>
+
+<h3>onCheck(id, checked)</h3>
+<p>Handles overnight/overweek switches. Enforces the overnight↔overweek coupling rule. Calls <span class="inline-code">buildSliders()</span> + <span class="inline-code">updateUI()</span>.</p>
+
+
+<!-- ═══════════════════════════════════
+     12. PRESETS / MODES
+═══════════════════════════════════ -->
+<h2 id="presets">12. Presets &amp; Modes <span class="anchor">#presets</span></h2>
+
+<h3>Internal MODES (mode cards on the challenge page)</h3>
+<table>
+  <tr><th>Mode ID</th><th>Tab</th><th>target</th><th>daily</th><th>max</th><th>split</th><th>days</th><th>cons.</th><th>daily/maxType</th><th>payout</th><th>overnight</th></tr>
+  <tr><td><code>cheap</code></td><td>uses current</td><td>5 / 6+4</td><td>3</td><td>6</td><td>60%</td><td>5</td><td>30</td><td>intraday/intraday</td><td>monthly</td><td>false</td></tr>
+  <tr><td><code>po</code></td><td>uses current</td><td>10 / 8+5</td><td>8</td><td>12</td><td>90%</td><td>5</td><td>20</td><td>static/static</td><td>weekly</td><td>true</td></tr>
+  <tr><td><code>beginner</code></td><td>uses current</td><td>8 / 6+4</td><td>3</td><td>6</td><td>80%</td><td>7</td><td>40</td><td>intraday/intraday</td><td>monthly</td><td>false</td></tr>
+  <tr><td><code>affiliate</code></td><td>uses current</td><td>8 / 7+4</td><td>5</td><td>10</td><td>85%</td><td>5</td><td>25</td><td>intraday/intraday</td><td>monthly</td><td>true</td></tr>
+</table>
+
+<p>Applied via <span class="inline-code">Configurator.applyMode(modeId)</span>. Uses <span class="inline-code">Object.assign(S, cfg)</span>. The <strong>affiliate</strong> mode is locked behind <span class="inline-code">window.DOJI_CONFIG.user.affiliateSales &lt; affiliateUnlockAt</span> (default threshold: 5 sales).</p>
+
+<h3>External Presets (competitor/custom, loaded from DOJI_CONFIG.presets)</h3>
+<p>Loaded via <span class="inline-code">Configurator.loadPreset(presetId)</span>. Presets are grouped (<span class="inline-code">{ group: 'Group Name', presets: [{id, name, tab, config: {...}}] }</span>). The preset picker (<span class="inline-code">#presetSelect</span>) is populated with <span class="inline-code">&lt;optgroup&gt;</span> elements on <span class="inline-code">init()</span>.</p>
+
+
+<!-- ═══════════════════════════════════
+     13. SHARE URL
+═══════════════════════════════════ -->
+<h2 id="share">13. Share URL Encoding <span class="anchor">#share</span></h2>
+
+<p><span class="inline-code">Configurator.share()</span> builds a URL for <span class="inline-code">challenges.php</span> with all state encoded as query parameters, then copies it to clipboard.</p>
+
+<table>
+  <tr><th>Param</th><th>State source</th><th>Values</th></tr>
+  <tr><td><code>t</code></td><td>S.tab</td><td><code>1</code> = onestep, <code>2</code> = twostep</td></tr>
+  <tr><td><code>s</code></td><td>accountSizes[S.sizeIdx]</td><td>Raw number (e.g. 50000)</td></tr>
+  <tr><td><code>d</code></td><td>S.daily</td><td>Integer</td></tr>
+  <tr><td><code>m</code></td><td>S.max</td><td>Integer</td></tr>
+  <tr><td><code>sp</code></td><td>S.split</td><td>Integer</td></tr>
+  <tr><td><code>dy</code></td><td>S.days</td><td>Integer</td></tr>
+  <tr><td><code>c</code></td><td>S.consistency</td><td>Integer</td></tr>
+  <tr><td><code>p</code></td><td>S.payout[0]</td><td><code>m</code>=monthly, <code>b</code>=biweekly, <code>w</code>=weekly</td></tr>
+  <tr><td><code>on</code></td><td>S.overnight</td><td><code>1</code> or <code>0</code></td></tr>
+  <tr><td><code>ow</code></td><td>S.overweek</td><td><code>1</code> or <code>0</code></td></tr>
+  <tr><td><code>dl</code></td><td>S.dailyType[0]</td><td><code>i</code>=intraday, <code>e</code>=eod, <code>s</code>=static</td></tr>
+  <tr><td><code>ml</code></td><td>S.maxType[0]</td><td><code>i</code>=intraday, <code>e</code>=eod, <code>s</code>=static</td></tr>
+  <tr><td><code>pl</code></td><td>S.platform[0]</td><td><code>d</code>=dxtrade</td></tr>
+  <tr><td><code>tg</code></td><td>S.target (onestep only)</td><td>Integer</td></tr>
+  <tr><td><code>t1</code></td><td>S.target1 (twostep only)</td><td>Integer</td></tr>
+  <tr><td><code>t2</code></td><td>S.target2 (twostep only)</td><td>Integer</td></tr>
+  <tr><td><code>promo</code></td><td>activePromo code key</td><td>URL-encoded string (optional)</td></tr>
+</table>
+
+<p><strong>On init:</strong> if <code>t</code> param is present, all params are read and applied to S, then <span class="inline-code">history.replaceState(null, '', location.pathname)</span> cleans the URL.</p>
+
+<p><strong>Clamp on restore:</strong> all numeric values are run through <span class="inline-code">clamp(val, min, max)</span> on parse to prevent out-of-range state from a modified URL.</p>
+
+
+<!-- ═══════════════════════════════════
+     14. getState()
+═══════════════════════════════════ -->
+<h2 id="getstate">14. getState() Output <span class="anchor">#getstate</span></h2>
+
+<p>Returns a flat object used by <span class="inline-code">PurchaseModal.open()</span> and exposed as <span class="inline-code">Configurator.getState()</span>.</p>
+
+<pre>{
+  type:              <span class="str">'one_step'</span> | <span class="str">'two_step'</span>,
+  account_size:      <span class="num">50000</span>,               <span class="cmt">// raw number</span>
+  platform:          <span class="str">'dxtrade'</span>,
+  profit_target_1:   <span class="num">10</span>,                  <span class="cmt">// S.target (os) or S.target1 (ts)</span>
+  profit_target_2:   <span class="num">5</span> | <span class="num">null</span>,             <span class="cmt">// S.target2 (ts) or null (os)</span>
+  daily_loss:        <span class="num">5</span>,
+  max_loss:          <span class="num">10</span>,
+  profit_split:      <span class="num">80</span>,
+  min_trading_days:  <span class="num">5</span>,
+  consistency_rule:  <span class="num">30</span>,
+  daily_loss_type:   <span class="str">'intraday'</span> | <span class="str">'eod'</span> | <span class="str">'static'</span>,
+  max_loss_type:     <span class="str">'intraday'</span> | <span class="str">'eod'</span> | <span class="str">'static'</span>,
+  payout_frequency:  <span class="str">'monthly'</span> | <span class="str">'biweekly'</span> | <span class="str">'weekly'</span>,
+  overnight_holding: <span class="num">true</span> | <span class="num">false</span>,
+  weekend_holding:   <span class="num">true</span> | <span class="num">false</span>,
+  base_price:        <span class="num">249</span>,
+  final_price:       <span class="num">249</span>,
+  promo_discount:    <span class="num">0</span>,                   <span class="cmt">// total − final; 0 if no promo</span>
+  promo_code:        <span class="str">''</span>,                  <span class="cmt">// '' if no promo</span>
+}</pre>
+
+
+<!-- ═══════════════════════════════════
+     15. PUBLIC API
+═══════════════════════════════════ -->
+<h2 id="public-api">15. Public API <span class="anchor">#public-api</span></h2>
+
+<table>
+  <tr><th>Method</th><th>Called from</th><th>Description</th></tr>
+  <tr><td><code>Configurator.init()</code></td><td>DOMContentLoaded</td><td>Restores from URL, populates preset select, builds UI</td></tr>
+  <tr><td><code>Configurator.setTab(t)</code></td><td>Tab buttons onclick</td><td>Switches 'onestep'/'twostep', resets defaults, rebuilds</td></tr>
+  <tr><td><code>Configurator.reset()</code></td><td>Reset button</td><td>Resets all state to defaults for current tab, clears promo</td></tr>
+  <tr><td><code>Configurator.onSliderLive(id, el)</code></td><td>slider oninput</td><td>Live drag update (throttled)</td></tr>
+  <tr><td><code>Configurator.onSliderDone(id, val)</code></td><td>slider onchange</td><td>Drag-end full rebuild</td></tr>
+  <tr><td><code>Configurator.onToggle(id, val)</code></td><td>toggle-btn onclick</td><td>Toggle group selection</td></tr>
+  <tr><td><code>Configurator.onCheck(id, val)</code></td><td>switch-row onclick</td><td>Switch toggle</td></tr>
+  <tr><td><code>Configurator.applyPromo()</code></td><td>Apply button onclick</td><td>Reads #promoInput, validates, applies promo</td></tr>
+  <tr><td><code>Configurator.share()</code></td><td>Share button onclick</td><td>Builds share URL, copies to clipboard</td></tr>
+  <tr><td><code>Configurator.purchase()</code></td><td>Purchase button onclick</td><td>Opens auth modal if not logged in, else PurchaseModal</td></tr>
+  <tr><td><code>Configurator.getState()</code></td><td>Purchase modal / API</td><td>Returns flat state object with prices</td></tr>
+  <tr><td><code>Configurator.applyMode(modeId)</code></td><td>Mode card onclick</td><td>Applies preset mode config to S</td></tr>
+  <tr><td><code>Configurator.loadPreset(presetId)</code></td><td>Preset select onchange</td><td>Applies external preset (competitor/custom)</td></tr>
+</table>
+
+<p>Also exposed globally: <span class="inline-code">window.toggleObjChart(type)</span> — toggles the chart popover in the objectives section.</p>
+
+
+<!-- ═══════════════════════════════════
+     16. CSS CLASSES
+═══════════════════════════════════ -->
+<h2 id="css">16. CSS Classes Inventory <span class="anchor">#css</span></h2>
+
+<h3>Layout</h3>
+<table>
+  <tr><th>Class</th><th>Description</th></tr>
+  <tr><td><code>.cfg-layout</code></td><td>2-column grid: sliders panel + summary panel, 24px gap</td></tr>
+  <tr><td><code>.cfg-panel</code></td><td>Panel card: bg3, border, 28px padding, radius-sm</td></tr>
+  <tr><td><code>.cfg-header</code></td><td>flex space-between, bottom border, mb 24px</td></tr>
+  <tr><td><code>.cfg-title</code></td><td>18px bold heading</td></tr>
+  <tr><td><code>.cfg-badge</code></td><td>Mono uppercase tag: "FAST TRACK" or "CLASSIC"</td></tr>
+</table>
+
+<h3>Type Tabs</h3>
+<table>
+  <tr><th>Class</th><th>Description</th></tr>
+  <tr><td><code>.type-tabs</code></td><td>Tab container, max-width 500px, centered, bottom border radius</td></tr>
+  <tr><td><code>.type-tab</code></td><td>Flex-1 button, bg4, text3. Active: bg green, color bg.</td></tr>
+  <tr><td><code>.type-tab.active</code></td><td>Green background, dark text</td></tr>
+  <tr><td><code>.type-tab-sub</code></td><td>10px mono sub-label inside tab</td></tr>
+</table>
+
+<h3>Mode Strip</h3>
+<table>
+  <tr><th>Class</th><th>Description</th></tr>
+  <tr><td><code>.mode-strip</code></td><td>Container above configurator</td></tr>
+  <tr><td><code>.mode-cards</code></td><td>Flex row, 10px gap, wrap</td></tr>
+  <tr><td><code>.mode-card</code></td><td>Flex column card, min-width 120px, bg3, border, cursor pointer</td></tr>
+  <tr><td><code>.mode-card.active</code></td><td>Green border + subtle green bg tint</td></tr>
+  <tr><td><code>.mode-card.mode-locked</code></td><td>Opacity/disabled state</td></tr>
+  <tr><td><code>.mode-tag</code></td><td>9px mono uppercase label</td></tr>
+  <tr><td><code>.mode-name</code></td><td>14px bold</td></tr>
+  <tr><td><code>.mode-desc</code></td><td>11px text3</td></tr>
+</table>
+
+<h3>Sliders</h3>
+<table>
+  <tr><th>Class</th><th>Description</th></tr>
+  <tr><td><code>.slider-wrap</code></td><td>Slider container with <code>data-slider-id</code> attribute</td></tr>
+  <tr><td><code>.slider-header</code></td><td>flex space-between: label + value</td></tr>
+  <tr><td><code>.slider-label</code></td><td>Label text</td></tr>
+  <tr><td><code>.slider-val</code></td><td>Current value display (updated live)</td></tr>
+  <tr><td><code>.slider-track</code></td><td>Relative container for bg/fill/thumb/input</td></tr>
+  <tr><td><code>.slider-bg</code></td><td>Gray background track</td></tr>
+  <tr><td><code>.slider-fill</code></td><td>Green filled portion (width set by JS)</td></tr>
+  <tr><td><code>.slider-thumb</code></td><td>Drag handle (left set by JS)</td></tr>
+  <tr><td><code>.slider-input</code></td><td>Actual range input — transparent overlay</td></tr>
+  <tr><td><code>.slider-ticks</code></td><td>Tick label row below track</td></tr>
+  <tr><td><code>.tip-wrap</code></td><td>Tooltip container (relative)</td></tr>
+  <tr><td><code>.tip-icon</code></td><td>The "?" circle</td></tr>
+  <tr><td><code>.tip-popup</code></td><td>Tooltip popup div (shown on hover)</td></tr>
+</table>
+
+<h3>Toggle Groups</h3>
+<table>
+  <tr><th>Class</th><th>Description</th></tr>
+  <tr><td><code>.toggle-group</code></td><td>Flex row of buttons with shared border</td></tr>
+  <tr><td><code>.toggle-group.toggle-sm</code></td><td>Compact variant (used for loss type)</td></tr>
+  <tr><td><code>.toggle-btn</code></td><td>Individual button. Active: green bg + dark text</td></tr>
+  <tr><td><code>.toggle-btn.active</code></td><td>Active state</td></tr>
+</table>
+
+<h3>Switch Rows</h3>
+<table>
+  <tr><th>Class</th><th>Description</th></tr>
+  <tr><td><code>.switch-section</code></td><td>Container for grouped switches</td></tr>
+  <tr><td><code>.switch-section-label</code></td><td>Section heading above switches</td></tr>
+  <tr><td><code>.switch-row</code></td><td>iOS-style toggle row</td></tr>
+  <tr><td><code>.switch-row.active</code></td><td>Switch is ON</td></tr>
+  <tr><td><code>.switch-row.disabled</code></td><td>Non-interactive state</td></tr>
+  <tr><td><code>.switch-left</code></td><td>Icon + text area (flex row)</td></tr>
+  <tr><td><code>.switch-icon</code></td><td>SVG icon wrapper</td></tr>
+  <tr><td><code>.switch-text</code></td><td>Label + subtext column</td></tr>
+  <tr><td><code>.switch-label</code></td><td>Primary label</td></tr>
+  <tr><td><code>.switch-sub</code></td><td>Secondary description text</td></tr>
+  <tr><td><code>.switch-toggle</code></td><td>The pill toggle indicator</td></tr>
+  <tr><td><code>.switch-toggle.on</code></td><td>Green state</td></tr>
+  <tr><td><code>.switch-knob</code></td><td>White circle inside toggle</td></tr>
+  <tr><td><code>.switch-price</code></td><td>Inline price span in label</td></tr>
+  <tr><td><code>.switch-price.discount</code></td><td>Price shown in green (discount)</td></tr>
+</table>
+
+<h3>Hints &amp; Warnings</h3>
+<table>
+  <tr><th>Class</th><th>Description</th></tr>
+  <tr><td><code>.target-hint</code></td><td>11px mono hint below target slider</td></tr>
+  <tr><td><code>.target-hint.hint-surcharge</code></td><td>Orange color (target &lt; 10)</td></tr>
+  <tr><td><code>.target-hint.hint-discount</code></td><td>Green color (target &gt; 12)</td></tr>
+  <tr><td><code>.doji-coins-hint</code></td><td>11px text3, shown when split &gt; 80%</td></tr>
+  <tr><td><code>.loss-type-label</code></td><td>Label for the loss type toggle</td></tr>
+  <tr><td><code>.loss-hint</code></td><td>Description of selected loss type</td></tr>
+  <tr><td><code>.warning-box</code></td><td>General warning (equal-loss)</td></tr>
+</table>
+
+<h3>Summary Grid</h3>
+<table>
+  <tr><th>Class</th><th>Description</th></tr>
+  <tr><td><code>.summary-account</code></td><td>Account size header card</td></tr>
+  <tr><td><code>.summary-account-size</code></td><td>Large "$50,000" display</td></tr>
+  <tr><td><code>.summary-account-info</code></td><td>Type + platform labels</td></tr>
+  <tr><td><code>.summary-phase-tabs</code></td><td>Evaluation / Funded tab selector</td></tr>
+  <tr><td><code>.summary-phase-tab</code></td><td>Tab button</td></tr>
+  <tr><td><code>.summary-phase-tab.active</code></td><td>Active tab</td></tr>
+  <tr><td><code>.summary-phase-panel</code></td><td>Panel content (hidden unless active)</td></tr>
+  <tr><td><code>.summary-phase-panel.active</code></td><td>Visible panel</td></tr>
+  <tr><td><code>.summary-cards</code></td><td>Metric card grid</td></tr>
+  <tr><td><code>.summary-cards.cols-2</code></td><td>2-column card grid</td></tr>
+  <tr><td><code>.summary-cards.cols-3</code></td><td>3-column card grid</td></tr>
+  <tr><td><code>.summary-card</code></td><td>Individual metric card</td></tr>
+  <tr><td><code>.summary-card-label</code></td><td>Small label</td></tr>
+  <tr><td><code>.summary-card-pct</code></td><td>Large percentage value</td></tr>
+  <tr><td><code>.summary-card-dollar</code></td><td>Dollar equivalent</td></tr>
+  <tr><td><code>.summary-card-tag</code></td><td>Small tag (intraday/eod/static)</td></tr>
+  <tr><td><code>.summary-details</code></td><td>Detail row list</td></tr>
+  <tr><td><code>.summary-detail-row</code></td><td>flex space-between row</td></tr>
+</table>
+
+<h3>Price Display</h3>
+<table>
+  <tr><th>Class</th><th>Description</th></tr>
+  <tr><td><code>.price-val</code></td><td>Large price value display</td></tr>
+  <tr><td><code>.price-promo</code></td><td>Container when promo active</td></tr>
+  <tr><td><code>.price-original</code></td><td>Strikethrough original price</td></tr>
+  <tr><td><code>.price-badge</code></td><td>"-20%" or "-$50" badge</td></tr>
+</table>
+
+<h3>Promo</h3>
+<table>
+  <tr><th>Class</th><th>Description</th></tr>
+  <tr><td><code>.promo-msg</code></td><td>Base promo message</td></tr>
+  <tr><td><code>.promo-msg.ok</code></td><td>Green success</td></tr>
+  <tr><td><code>.promo-msg.err</code></td><td>Red error</td></tr>
+  <tr><td><code>.promoBtn.applied</code></td><td>Applied state (shows "✓ Applied")</td></tr>
+</table>
+
+
+<!-- ═══════════════════════════════════
+     17. FILE MAP
+═══════════════════════════════════ -->
+<h2 id="files">17. File Map <span class="anchor">#files</span></h2>
+
+<table>
+  <tr><th>File</th><th>Role</th></tr>
+  <tr><td><code>config/pricing.php</code></td><td>Source of truth: account sizes, base prices, promo codes. Exports via <code>getPricingJson()</code>.</td></tr>
+  <tr><td><code>assets/js/configurator.js</code></td><td>The full IIFE module. All logic, state, builders, and public API.</td></tr>
+  <tr><td><code>assets/css/configurator.css</code></td><td>All configurator-specific styles. Uses CSS variables from global theme.</td></tr>
+  <tr><td><code>challenges.php</code></td><td>Main page that embeds the configurator. Injects <code>window.DOJI_CONFIG</code> and includes the scripts.</td></tr>
+  <tr><td><code>includes/auth.php</code></td><td>Session auth — sets <code>$isLoggedIn</code> for the config injection.</td></tr>
+</table>
+
+<h3>CSS Variables (from global theme — not in configurator.css)</h3>
+<table>
+  <tr><th>Variable</th><th>Value</th><th>Used for</th></tr>
+  <tr><td><code>--bg</code></td><td>#000 (OLED black)</td><td>Page background</td></tr>
+  <tr><td><code>--bg3</code></td><td>#111</td><td>Panel background</td></tr>
+  <tr><td><code>--bg4</code></td><td>#1a1a1a</td><td>Input / tab inactive bg</td></tr>
+  <tr><td><code>--border</code></td><td>rgba(255,255,255,0.08)</td><td>All borders</td></tr>
+  <tr><td><code>--text</code> / <code>--text1</code></td><td>#f0f0f0</td><td>Primary text</td></tr>
+  <tr><td><code>--text3</code></td><td>#606060</td><td>Muted / metadata text</td></tr>
+  <tr><td><code>--green</code></td><td>#10B981</td><td>Accent — active states, success, positive values</td></tr>
+  <tr><td><code>--blue</code></td><td>#4A9EFF</td><td>One-step badge, secondary accent</td></tr>
+  <tr><td><code>--orange</code></td><td>#F59E0B</td><td>Warnings</td></tr>
+  <tr><td><code>--red</code></td><td>#D71921</td><td>Errors, breach lines, equal-loss warning</td></tr>
+  <tr><td><code>--accent</code></td><td>#10B981</td><td>Alias for --green (Doji Coins™ highlight)</td></tr>
+  <tr><td><code>--radius-sm</code></td><td>6px</td><td>Card / panel corner radius</td></tr>
+  <tr><td><code>--font-mono</code></td><td>'Chivo Mono', monospace</td><td>Labels, badges, ticks, promo input</td></tr>
+  <tr><td><code>--font-heading</code></td><td>'Nippo', 'Space Grotesk', sans-serif</td><td>Headings, tab labels</td></tr>
+</table>
+
+<hr>
+
+<div style="font-family:'Chivo Mono',monospace;font-size:10px;color:#444;letter-spacing:.08em;margin-top:32px;text-align:center">
+  DOJI FUNDING — CONFIGURATOR SPEC v1.6 — APRIL 2026 — INTERNAL USE ONLY
+</div>
+
+</main>
+</div>
+</body>
+</html>
