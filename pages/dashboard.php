@@ -469,17 +469,21 @@ foreach ($challenges as $ch) {
 
         <!-- Sidebar footer -->
         <div class="dash-sidebar-foot">
-            <button class="dash-theme-switch" id="dashThemeSwitch" onclick="Dashboard.toggleTheme()" title="Toggle theme">
-                <svg id="dashThemeIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></svg>
+            <button class="dash-foot-theme-row" id="dashThemeSwitch" onclick="Dashboard.toggleTheme()" title="Toggle theme">
+                <span class="dash-foot-row-label">THEME</span>
+                <div class="dash-foot-row-right">
+                    <span class="dash-foot-theme-txt" id="dashThemeLabel">DARK</span>
+                    <svg id="dashThemeIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></svg>
+                </div>
             </button>
             <a href="https://discord.gg/kNUqAqCppU" target="_blank" rel="noopener noreferrer" class="dash-discord-btn" title="Join Doji Funding Discord">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 00-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 00-5.487 0 12.36 12.36 0 00-.617-1.23A.077.077 0 008.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 00-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 00.031.055 20.03 20.03 0 005.993 2.98.078.078 0 00.084-.026 13.83 13.83 0 001.226-1.963.074.074 0 00-.041-.104 13.201 13.201 0 01-1.872-.878.075.075 0 01-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 01.078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 01.079.009c.12.098.245.195.372.288a.075.075 0 01-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 00-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 00.084.028 19.963 19.963 0 006.002-2.981.076.076 0 00.032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 00-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
-                <span>Discord</span>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 00-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 00-5.487 0 12.36 12.36 0 00-.617-1.23A.077.077 0 008.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 00-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 00.031.055 20.03 20.03 0 005.993 2.98.078.078 0 00.084-.026 13.83 13.83 0 001.226-1.963.074.074 0 00-.041-.104 13.201 13.201 0 01-1.872-.878.075.075 0 01-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 01.078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 01.079.009c.12.098.245.195.372.288a.075.075 0 01-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 00-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 00.084.028 19.963 19.963 0 006.002-2.981.076.076 0 00.032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 00-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+                <span>JOIN DISCORD</span>
+                <?= pix('external', 10, 10) ?>
             </a>
             <a href="index.php" class="dash-back-link">
-                <?= pix('menu', 13, 13) ?>
                 dojifunding.com
-                <?= pix('external', 11, 11) ?>
+                <?= pix('external', 10, 10) ?>
             </a>
         </div>
 
@@ -1852,6 +1856,7 @@ foreach ($challenges as $ch) {
                     'competition' => pix('medal',      18, 18),
                     'social'      => pix('users',      18, 18),
                     'loyalty'     => pix('shield',     18, 18),
+                    'community'   => pix('heart',      18, 18),
                 ];
                 $_achColors = [
                     'platform'    => '#6366F1',
@@ -1862,6 +1867,7 @@ foreach ($challenges as $ch) {
                     'competition' => '#8B5CF6',
                     'social'      => '#F97316',
                     'loyalty'     => '#EC4899',
+                    'community'   => '#00B67A',
                 ];
                 $_achievements = [
                     /* PLATFORM */
@@ -1904,6 +1910,13 @@ foreach ($challenges as $ch) {
                     ['key'=>'days_30',          'cat'=>'loyalty',     'title'=>'MONTH IN',         'desc'=>'30 days active on the platform',             'dc'=>200],
                     ['key'=>'days_90',          'cat'=>'loyalty',     'title'=>'THREE MONTHS',     'desc'=>'90 days active on the platform',             'dc'=>500],
                     ['key'=>'days_365',         'cat'=>'loyalty',     'title'=>'ONE YEAR',         'desc'=>'One full year with Doji Funding',            'dc'=>2500],
+                    /* COMMUNITY */
+                    ['key'=>'pfm_vote',         'cat'=>'community',   'title'=>'PEOPLE\'S CHOICE', 'desc'=>'Vote Doji Funding as your favorite prop firm on PropFirmMatch', 'dc'=>150],
+                    ['key'=>'pfm_review',       'cat'=>'community',   'title'=>'PROPFIRM VOICE',   'desc'=>'Leave a review for Doji Funding on PropFirmMatch',              'dc'=>300],
+                    ['key'=>'tp_review',        'cat'=>'community',   'title'=>'TRUSTED REVIEW',   'desc'=>'Leave a review for Doji Funding on Trustpilot',                'dc'=>300],
+                    ['key'=>'google_review',    'cat'=>'community',   'title'=>'GOOGLE CERTIFIED', 'desc'=>'Leave a review for Doji Funding on Google',                    'dc'=>300],
+                    ['key'=>'discord_payout',   'cat'=>'community',   'title'=>'PROOF OF PAYMENT', 'desc'=>'Share your payout screenshot in the Doji Discord server',      'dc'=>200],
+                    ['key'=>'discord_join',     'cat'=>'community',   'title'=>'CONNECTED',        'desc'=>'Join the Discord server and link your account to the dashboard','dc'=>250],
                 ];
                 $_unlockedAch = [];
                 try {
@@ -2057,7 +2070,8 @@ foreach ($challenges as $ch) {
                         <div class="pyo-ei-ref"><?= htmlspecialchars($eaRef) ?></div>
                         <div class="pyo-ei-meta"><?= htmlspecialchars(formatMoney($ea['account_size'])) ?> &nbsp;·&nbsp; <?= $eaSplit ?>% SPLIT</div>
                         <div class="pyo-ei-profit <?= $eaProfit >= 0 ? 'green' : '' ?>"><?= ($eaProfit >= 0 ? '+' : '') . formatMoney($eaProfit) ?></div>
-                        <button class="pyo-request-btn" type="button" onclick="PayoutModal.open()">REQUEST PAYOUT →</button>
+                        <button class="pyo-request-btn" type="button"
+                            onclick="RequestPayoutModal.open(<?= $ea['id'] ?>, '<?= htmlspecialchars($eaRef, ENT_QUOTES) ?>', <?= round($eaProfit * ($eaSplit / 100), 2) ?>)">REQUEST PAYOUT →</button>
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -2156,8 +2170,18 @@ foreach ($challenges as $ch) {
 
                     <!-- ── Left: User card ── -->
                     <div class="dash-profile-left">
-                        <div class="dash-user-card">
-                            <div class="dash-user-card-av"><?= $initials ?></div>
+                        <?php
+                        $_profGrads = [
+                            ['#10B981','#0EA5E9'],['#8B5CF6','#EC4899'],['#F59E0B','#EF4444'],
+                            ['#06B6D4','#6366F1'],['#10B981','#84CC16'],['#F97316','#FBBF24'],
+                            ['#6366F1','#A855F7'],['#EF4444','#F97316'],['#0EA5E9','#10B981'],
+                            ['#EC4899','#8B5CF6'],['#14B8A6','#3B82F6'],['#A855F7','#06B6D4'],
+                        ];
+                        $_gIdx   = abs($userId) % count($_profGrads);
+                        $_gStyle = 'background:linear-gradient(135deg,' . $_profGrads[$_gIdx][0] . ',' . $_profGrads[$_gIdx][1] . ')';
+                    ?>
+                    <div class="dash-user-card">
+                            <div class="dash-user-card-av" style="<?= $_gStyle ?>"><?= $initials ?></div>
                             <div class="dash-user-card-name"><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></div>
                             <div class="dash-user-card-email"><?= htmlspecialchars($profile['email'] ?? '') ?></div>
                             <div class="dash-user-card-badge <?= $kycClass[$kycStatus] ?>">
@@ -2172,13 +2196,6 @@ foreach ($challenges as $ch) {
                             <?php if (!empty($user['created_at'])): ?>
                             <div class="dash-user-card-since">Member since <?= date('M Y', strtotime($user['created_at'])) ?></div>
                             <?php endif; ?>
-                        </div>
-
-                        <!-- Coins widget -->
-                        <div class="dash-coins-card">
-                            <div class="dash-coins-card-icon">🪙</div>
-                            <div class="dash-coins-card-val"><?= number_format($overview['doji_coins'] ?? 0) ?></div>
-                            <div class="dash-coins-card-label">Doji Coins</div>
                         </div>
                     </div>
 
@@ -2638,12 +2655,37 @@ foreach ($challenges as $ch) {
                         <!-- Section: Discord -->
                         <div class="dash-psection" id="psec-discord">
                             <div class="dash-psection-head">
-                                <?= pix('message', 16, 16) ?>
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 00-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 00-5.487 0 12.36 12.36 0 00-.617-1.23A.077.077 0 008.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 00-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 00.031.055 20.03 20.03 0 005.993 2.98.078.078 0 00.084-.026 13.83 13.83 0 001.226-1.963.074.074 0 00-.041-.104 13.201 13.201 0 01-1.872-.878.075.075 0 01-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 01.078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 01.079.009c.12.098.245.195.372.288a.075.075 0 01-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 00-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 00.084.028 19.963 19.963 0 006.002-2.981.076.076 0 00.032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 00-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
                                 Discord
-                                <span class="dash-psection-badge" style="background:rgba(255,255,255,0.06);color:var(--dash-text3);margin-left:auto">Coming Soon</span>
                             </div>
                             <div class="dash-psection-body">
-                                <p class="dash-psection-desc">Connect your Discord account to access the Doji Funding community server and receive role-based access. This feature will be available shortly.</p>
+                                <?php
+                                $discMsg = $_GET['discord'] ?? '';
+                                ?>
+                                <?php if (!empty($profile['discord_id'])): ?>
+                                <div class="disc-linked">
+                                    <?= pix('check', 14, 14) ?>
+                                    <span>Account linked — <strong><?= htmlspecialchars($discordUser['username'] ?? 'Discord ID ' . $profile['discord_id']) ?></strong></span>
+                                </div>
+                                <?php else: ?>
+                                <?php if ($discMsg === 'already_linked'): ?>
+                                <div class="disc-error"><?= pix('info', 13, 13) ?> This Discord account is already linked to another Doji Funding account.</div>
+                                <?php elseif ($discMsg === 'token_error' || $discMsg === 'user_error'): ?>
+                                <div class="disc-error"><?= pix('info', 13, 13) ?> Connection failed. Please try again.</div>
+                                <?php endif; ?>
+                                <p class="disc-desc">Link your Discord account to automatically receive your roles on the Doji Funding server.</p>
+                                <div class="disc-steps">
+                                    <div class="disc-step"><span class="disc-step-n">1</span>Click the button below</div>
+                                    <div class="disc-step"><span class="disc-step-n">2</span>Authorize Doji Bot on Discord</div>
+                                    <div class="disc-step"><span class="disc-step-n">3</span>You're redirected back — roles assigned instantly</div>
+                                </div>
+                                <div class="disc-actions">
+                                    <a href="api/discord-auth.php" class="dash-btn disc-oauth-btn">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 00-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 00-5.487 0 12.36 12.36 0 00-.617-1.23A.077.077 0 008.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 00-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 00.031.055 20.03 20.03 0 005.993 2.98.078.078 0 00.084-.026 13.83 13.83 0 001.226-1.963.074.074 0 00-.041-.104 13.201 13.201 0 01-1.872-.878.075.075 0 01-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 01.078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 01.079.009c.12.098.245.195.372.288a.075.075 0 01-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 00-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 00.084.028 19.963 19.963 0 006.002-2.981.076.076 0 00.032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 00-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+                                        Connect Discord
+                                    </a>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -2882,17 +2924,84 @@ foreach ($challenges as $ch) {
 
                     <div class="stat-kpi-card" draggable="true">
                         <div class="stat-kpi-drag">⠿</div>
-                        <div class="stat-kpi-lbl">WIN RATE</div>
-                        <div class="stat-kpi-val" id="skWr">—</div>
-                        <div class="stat-seg-bar" id="skWrSegs"><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div></div>
-                        <div class="stat-kpi-sub" id="skWrSub">—</div>
+                        <div class="stat-kpi-lbl">TRADE WIN %</div>
+                        <div class="kpi-gauge-body">
+                            <div class="stat-kpi-val" id="skWr">—</div>
+                            <div class="kpi-gauge-arc-col">
+                                <svg viewBox="0 0 100 56" class="kpi-gauge-svg" aria-hidden="true">
+                                    <defs>
+                                        <filter id="gfWr" x="-30%" y="-60%" width="160%" height="220%">
+                                            <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000" flood-opacity="0.55"/>
+                                        </filter>
+                                    </defs>
+                                    <path class="kpi-gauge-track" d="M 10 52 A 40 40 0 0 1 50 12 A 40 40 0 0 1 90 52"/>
+                                    <path class="kpi-gauge-green" id="skWrGaugeGn" d="M 10 52 A 40 40 0 0 1 50 12" filter="url(#gfWr)"/>
+                                    <path class="kpi-gauge-red"   id="skWrGaugeRd" d="M 50 12 A 40 40 0 0 1 90 52" filter="url(#gfWr)"/>
+                                    <path class="kpi-gauge-hl"    d="M 10 52 A 40 40 0 0 1 50 12 A 40 40 0 0 1 90 52"/>
+                                    <circle class="kpi-gauge-dot" id="skWrGaugeDt" cx="50" cy="12" r="3"/>
+                                </svg>
+                                <div class="kpi-gauge-counts">
+                                    <span class="kpi-gc-win"  id="skWrWins">—</span>
+                                    <span class="kpi-gc-be"   id="skWrBe">—</span>
+                                    <span class="kpi-gc-loss" id="skWrLosses">—</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="stat-kpi-card" draggable="true">
                         <div class="stat-kpi-drag">⠿</div>
                         <div class="stat-kpi-lbl">PROFIT FACTOR</div>
-                        <div class="stat-kpi-val" id="skPf">—</div>
-                        <div class="stat-kpi-sub" id="skPfSub">—</div>
+                        <div class="kpi-gauge-body">
+                            <div class="stat-kpi-val" id="skPf">—</div>
+                            <div class="kpi-circ-ring">
+                                <svg viewBox="0 0 100 100" class="kpi-circ-svg" aria-hidden="true">
+                                    <defs>
+                                        <filter id="gfPf" x="-20%" y="-20%" width="140%" height="140%">
+                                            <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#000" flood-opacity="0.65"/>
+                                        </filter>
+                                    </defs>
+                                    <circle class="kpi-circ-track" cx="50" cy="50" r="38"/>
+                                    <circle class="kpi-circ-red"   id="skPfCircRd" cx="50" cy="50" r="38"
+                                            stroke-dasharray="119.38 238.76" stroke-dashoffset="-59.69"/>
+                                    <circle class="kpi-circ-green" id="skPfCircGn" cx="50" cy="50" r="38"
+                                            stroke-dasharray="119.38 238.76" stroke-dashoffset="-59.69"/>
+                                    <circle class="kpi-circ-hl"    cx="50" cy="50" r="38"
+                                            stroke-dasharray="29.85 208.91" stroke-dashoffset="14.92"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="kpi-gauge-counts">
+                            <span class="kpi-gc-win"  id="skPfGrossWin">—</span>
+                            <span class="kpi-gc-loss" id="skPfGrossLoss">—</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-kpi-card" draggable="true">
+                        <div class="stat-kpi-drag">⠿</div>
+                        <div class="stat-kpi-lbl">DAY WIN %</div>
+                        <div class="kpi-gauge-body">
+                            <div class="stat-kpi-val" id="skDwr">—</div>
+                            <div class="kpi-gauge-arc-col">
+                                <svg viewBox="0 0 100 56" class="kpi-gauge-svg" aria-hidden="true">
+                                    <defs>
+                                        <filter id="gfDwr" x="-30%" y="-60%" width="160%" height="220%">
+                                            <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000" flood-opacity="0.55"/>
+                                        </filter>
+                                    </defs>
+                                    <path class="kpi-gauge-track" d="M 10 52 A 40 40 0 0 1 50 12 A 40 40 0 0 1 90 52"/>
+                                    <path class="kpi-gauge-green" id="skDwrGaugeGn" d="M 10 52 A 40 40 0 0 1 50 12" filter="url(#gfDwr)"/>
+                                    <path class="kpi-gauge-red"   id="skDwrGaugeRd" d="M 50 12 A 40 40 0 0 1 90 52" filter="url(#gfDwr)"/>
+                                    <path class="kpi-gauge-hl"    d="M 10 52 A 40 40 0 0 1 50 12 A 40 40 0 0 1 90 52"/>
+                                    <circle class="kpi-gauge-dot" id="skDwrGaugeDt" cx="50" cy="12" r="3"/>
+                                </svg>
+                                <div class="kpi-gauge-counts">
+                                    <span class="kpi-gc-win"  id="skDwrWins">—</span>
+                                    <span class="kpi-gc-be"   id="skDwrBe">—</span>
+                                    <span class="kpi-gc-loss" id="skDwrLosses">—</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="stat-kpi-card" draggable="true">
@@ -2941,9 +3050,12 @@ foreach ($challenges as $ch) {
 
                     <div class="stat-kpi-card" draggable="true">
                         <div class="stat-kpi-drag">⠿</div>
-                        <div class="stat-kpi-lbl">AVG R:R</div>
+                        <div class="stat-kpi-lbl">AVG WIN/LOSS</div>
                         <div class="stat-kpi-val" id="skRR">—</div>
-                        <div class="stat-kpi-sub" id="skRRSub">REWARD / RISK RATIO</div>
+                        <div class="kpi-rr-bar">
+                            <div class="kpi-rr-green" id="skRRBarGreen"><span id="skRRAvgWin">—</span></div>
+                            <div class="kpi-rr-red"   id="skRRBarRed"><span id="skRRAvgLoss">—</span></div>
+                        </div>
                     </div>
 
                     <div class="stat-kpi-card" draggable="true">
@@ -3061,12 +3173,18 @@ foreach ($challenges as $ch) {
                             <span class="stat-chart-hint">TRADER PROFILE</span>
                         </div>
                         <div class="stat-chart-body" style="height:170px"><canvas id="chartDna"></canvas></div>
-                        <div class="stat-dna-result">
-                            <div class="stat-dna-letter" id="statDnaGrade">—</div>
-                            <div class="stat-dna-detail">
-                                <div class="stat-dna-score" id="statDnaGradeLbl">— / 10</div>
-                                <div class="stat-dna-desc" id="statDnaGradeDesc">—</div>
-                                <div class="stat-seg-bar stat-seg-bar-sm" id="statDnaSegs"><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div><div class="stat-seg"></div></div>
+                        <div class="stat-dna-result stat-dna-result-v2">
+                            <div class="stat-dna-v2-score">
+                                <div class="stat-dna-v2-lbl">YOUR DNA SCORE</div>
+                                <div class="stat-dna-v2-val" id="statDnaScoreVal">—</div>
+                            </div>
+                            <div class="stat-dna-v2-bar-col">
+                                <div class="stat-dna-v2-track">
+                                    <div class="stat-dna-v2-marker" id="statDnaBarMarker" style="left:2%"></div>
+                                </div>
+                                <div class="stat-dna-v2-ticks">
+                                    <span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span>
+                                </div>
                             </div>
                         </div>
                         <div class="stat-kpi-drag">⠿</div>
@@ -4473,6 +4591,84 @@ $tier = $tier_map[$aff_tier];
     <!-- Sidebar overlay (mobile drawer) -->
     <div class="dash-sidebar-overlay" id="dashSidebarOverlay"></div>
 
+</div>
+
+<!-- ══ REQUEST PAYOUT TO WALLET MODAL ══ -->
+<div class="modal-overlay" id="requestPayoutModal" role="dialog" aria-modal="true">
+    <div class="modal modal-payout">
+        <canvas class="modal-dot-canvas" aria-hidden="true"></canvas>
+        <div class="modal-content">
+            <button class="modal-close" onclick="RequestPayoutModal.close()" aria-label="Close">&times;</button>
+
+            <!-- ─ STEP 1 ─ -->
+            <div id="rptStep1">
+                <div class="pyt-header">
+                    <div class="pyt-avail-label">SOURCE ACCOUNT</div>
+                    <div class="pyt-avail-val" id="rptAccountRef" style="font-size:15px">—</div>
+                </div>
+                <div class="pyt-header" style="margin-top:12px">
+                    <div class="pyt-avail-label">AVAILABLE FOR PAYOUT</div>
+                    <div class="pyt-avail-val" id="rptMaxDisplay">—</div>
+                </div>
+
+                <div class="form-group" style="margin-top:20px">
+                    <label class="form-label">Amount <span class="form-req">*</span></label>
+                    <div class="pyt-amount-wrap">
+                        <span class="pyt-currency">$</span>
+                        <input class="form-input pyt-amount-input" type="number" id="rptAmount"
+                               placeholder="0.00" min="1" step="0.01"
+                               oninput="RequestPayoutModal.validate()">
+                        <button class="pyt-max-btn" type="button" onclick="RequestPayoutModal.setMax()">MAX</button>
+                    </div>
+                    <div class="form-error" id="rptAmountErr"></div>
+                </div>
+
+                <div class="pyt-disclaimer">
+                    <div class="pyt-disclaimer-title">ℹ PAYOUT TO WALLET</div>
+                    <p class="pyt-disclaimer-body">The requested amount will be credited to your Doji Wallet. From the Wallet tab you can then initiate a withdrawal to your preferred payment method (Rise, Confirmo, etc.).</p>
+                    <label class="pyt-check-lbl">
+                        <input type="checkbox" id="rptAck" onchange="RequestPayoutModal.validate()">
+                        <span>I confirm the amount and agree to credit it to my Doji Wallet.</span>
+                    </label>
+                </div>
+
+                <button class="form-btn" id="rptSubmitBtn" type="button" onclick="RequestPayoutModal.submit()" disabled>
+                    CREDIT TO WALLET →
+                </button>
+            </div>
+
+            <!-- ─ STEP 2: CONFIRMATION ─ -->
+            <div id="rptStep2" style="display:none">
+                <div class="pyt-success-block">
+                    <div class="pyt-success-icon">✓</div>
+                    <h2 class="modal-title">Credited to Wallet</h2>
+                    <p class="modal-sub">Your payout has been credited to your Doji Wallet.</p>
+                </div>
+                <div class="pyt-recap">
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">AMOUNT CREDITED</span>
+                        <span class="pyt-recap-val" id="rptRecapAmt">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">SOURCE</span>
+                        <span class="pyt-recap-val" id="rptRecapSource">—</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">DESTINATION</span>
+                        <span class="pyt-recap-val" style="color:var(--accent)">DOJI WALLET</span>
+                    </div>
+                    <div class="pyt-recap-row">
+                        <span class="pyt-recap-lbl">STATUS</span>
+                        <span class="pyt-recap-val" style="color:var(--success)">CREDITED</span>
+                    </div>
+                </div>
+                <button class="form-btn" type="button" onclick="RequestPayoutModal.goToWallet()">
+                    GO TO WALLET →
+                </button>
+            </div>
+
+        </div>
+    </div>
 </div>
 
 <!-- ══ PAYOUT MODAL ══ -->

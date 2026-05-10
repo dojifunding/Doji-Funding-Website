@@ -355,9 +355,9 @@ const Dashboard = (function() {
 
     function updateThemeIcon(theme) {
         var icon = document.getElementById('dashThemeIcon');
-        if (!icon) return;
-        // In dark mode show sun (click → go light), in light mode show moon (click → go dark)
-        icon.innerHTML = theme === 'dark' ? SUN_PATH : MOON_PATH;
+        if (icon) icon.innerHTML = theme === 'dark' ? SUN_PATH : MOON_PATH;
+        var lbl = document.getElementById('dashThemeLabel');
+        if (lbl) lbl.textContent = theme === 'dark' ? 'DARK' : 'LIGHT';
     }
 
     function applyTheme(theme) {
@@ -545,9 +545,63 @@ const Dashboard = (function() {
         })();
     }
 
+    // ── Discord link code generator ──
+    var _discTimer = null;
+
+    function generateDiscordCode() {
+        var btn    = document.getElementById('discGenBtn');
+        var status = document.getElementById('discStatus');
+        var wrap   = document.getElementById('discCodeWrap');
+        var codeEl = document.getElementById('discCode');
+        var timer  = document.getElementById('discCodeTimer');
+        var csrf   = document.getElementById('discCsrf');
+        if (!btn) return;
+
+        btn.disabled = true;
+        status.textContent = '';
+
+        fetch('api/discord-link.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'csrf=' + encodeURIComponent(csrf.value),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (!data.success) {
+                status.textContent = data.error || 'Error';
+                btn.disabled = false;
+                return;
+            }
+            codeEl.textContent = data.code;
+            wrap.style.display = 'block';
+            btn.textContent    = 'Regenerate Code';
+            btn.disabled       = false;
+
+            // Countdown timer
+            var remaining = data.expires_in;
+            clearInterval(_discTimer);
+            _discTimer = setInterval(function() {
+                remaining--;
+                var m = Math.floor(remaining / 60);
+                var s = remaining % 60;
+                timer.textContent = 'Expires in ' + m + ':' + (s < 10 ? '0' : '') + s;
+                if (remaining <= 0) {
+                    clearInterval(_discTimer);
+                    codeEl.textContent  = '——————';
+                    timer.textContent   = 'Code expired — generate a new one';
+                    btn.disabled        = false;
+                }
+            }, 1000);
+        })
+        .catch(function() {
+            status.textContent = 'Network error';
+            btn.disabled = false;
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', init);
 
-    return { switchTab, filterChallenges, copyReferral, setTheme, toggleTheme, submitKycDoc, showProfileSection, togglePublicProfile };
+    return { switchTab, filterChallenges, copyReferral, setTheme, toggleTheme, submitKycDoc, showProfileSection, togglePublicProfile, generateDiscordCode };
 })();
 
 /* ═══════════════════════════════════════════════════
@@ -1094,6 +1148,119 @@ var ChallengeCredentials = (function() {
         tick();
         setInterval(tick, 1000);
     });
+}());
+
+/* ── Request Payout to Wallet Modal ── */
+const RequestPayoutModal = (function () {
+    'use strict';
+
+    var _accountId  = 0;
+    var _accountRef = '';
+    var _maxAmt     = 0;
+
+    function open(accountId, ref, maxAmt) {
+        _accountId  = accountId;
+        _accountRef = ref;
+        _maxAmt     = parseFloat(maxAmt) || 0;
+
+        var fmt = '$' + _maxAmt.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        var refEl = document.getElementById('rptAccountRef');
+        var maxEl = document.getElementById('rptMaxDisplay');
+        var amtEl = document.getElementById('rptAmount');
+        var ackEl = document.getElementById('rptAck');
+        if (refEl) refEl.textContent = ref;
+        if (maxEl) maxEl.textContent = fmt;
+        if (amtEl) { amtEl.value = ''; amtEl.max = _maxAmt; }
+        if (ackEl) ackEl.checked = false;
+        var errEl = document.getElementById('rptAmountErr');
+        if (errEl) errEl.textContent = '';
+        _showStep(1);
+        validate();
+        var overlay = document.getElementById('requestPayoutModal');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+        var overlay = document.getElementById('requestPayoutModal');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function setMax() {
+        var el = document.getElementById('rptAmount');
+        if (el) { el.value = _maxAmt.toFixed(2); validate(); }
+    }
+
+    function validate() {
+        var amtEl = document.getElementById('rptAmount');
+        var ackEl = document.getElementById('rptAck');
+        var errEl = document.getElementById('rptAmountErr');
+        var btn   = document.getElementById('rptSubmitBtn');
+        if (!amtEl || !ackEl || !btn) return;
+        var val   = parseFloat(amtEl.value);
+        var amtOk = amtEl.value !== '' && !isNaN(val) && val > 0;
+        if (amtOk && val > _maxAmt) {
+            if (errEl) errEl.textContent = 'Exceeds eligible payout.';
+            amtOk = false;
+        } else {
+            if (errEl) errEl.textContent = '';
+        }
+        btn.disabled = !(amtOk && ackEl.checked);
+    }
+
+    function submit() {
+        var amtEl = document.getElementById('rptAmount');
+        var val   = parseFloat(amtEl ? amtEl.value : 0);
+        if (!val || val <= 0) return;
+        var btn = document.getElementById('rptSubmitBtn');
+        if (btn) { btn.disabled = true; btn.textContent = 'PROCESSING...'; }
+
+        var fd = new FormData();
+        fd.append('challenge_id', _accountId);
+        fd.append('amount',       val.toFixed(2));
+        fd.append('csrf',         window.App && window.App.csrfToken ? window.App.csrfToken : '');
+
+        fetch('api/request-payout.php', { method: 'POST', body: fd })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.success) {
+                    var fmt = '$' + val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    document.getElementById('rptRecapAmt').textContent    = fmt;
+                    document.getElementById('rptRecapSource').textContent = _accountRef;
+                    _showStep(2);
+                } else {
+                    if (btn) { btn.disabled = false; btn.textContent = 'CREDIT TO WALLET →'; }
+                    var errEl = document.getElementById('rptAmountErr');
+                    if (errEl) errEl.textContent = data.error || 'An error occurred. Please try again.';
+                }
+            })
+            .catch(function () {
+                if (btn) { btn.disabled = false; btn.textContent = 'CREDIT TO WALLET →'; }
+                var errEl = document.getElementById('rptAmountErr');
+                if (errEl) errEl.textContent = 'Network error. Please try again.';
+            });
+    }
+
+    function goToWallet() {
+        close();
+        if (typeof Dashboard !== 'undefined') Dashboard.switchTab('wallet');
+    }
+
+    function _showStep(n) {
+        var s1 = document.getElementById('rptStep1');
+        var s2 = document.getElementById('rptStep2');
+        if (s1) s1.style.display = n === 1 ? '' : 'none';
+        if (s2) s2.style.display = n === 2 ? '' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var overlay = document.getElementById('requestPayoutModal');
+        if (!overlay) return;
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    });
+
+    return { open: open, close: close, setMax: setMax, validate: validate, submit: submit, goToWallet: goToWallet };
 }());
 
 /* ── Payout Modal ── */
@@ -2612,7 +2779,8 @@ const LeaderboardTab = (function() {
     }
 
     function getData(uid) {
-        for (var i = 0; i < LB_DATA.length; i++) { if (LB_DATA[i].uid === uid) return LB_DATA[i]; }
+        var id = +uid;
+        for (var i = 0; i < LB_DATA.length; i++) { if (+LB_DATA[i].uid === id) return LB_DATA[i]; }
         return null;
     }
 

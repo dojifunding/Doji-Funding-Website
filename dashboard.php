@@ -22,6 +22,33 @@ if (!isLoggedIn()) {
 }
 
 $userId  = $_SESSION['user_id'];
+
+// Discord OAuth — process HMAC-signed token from bot redirect
+if (($_GET['discord'] ?? '') === 'pending' && isset($_GET['t'])) {
+    $decoded = base64_decode(strtr($_GET['t'], '-_', '+/'), true);
+    $parts   = $decoded !== false ? explode(':', $decoded, 4) : [];
+    $ok      = false;
+    if (count($parts) === 4) {
+        [$cbUid, $cbDiscordId, $cbTs, $cbSig] = $parts;
+        $cbUid = (int)$cbUid;
+        $cbTs  = (int)$cbTs;
+        if ($cbUid === (int)$userId && abs(time() - $cbTs) <= 300) {
+            $expected = hash_hmac('sha256', $cbUid . ':' . $cbDiscordId . ':' . $cbTs, BOT_SECRET);
+            if (hash_equals($expected, $cbSig)) {
+                $db   = getDB();
+                $stmt = $db->prepare('SELECT id FROM users WHERE discord_id = ? AND id != ?');
+                $stmt->execute([$cbDiscordId, $cbUid]);
+                if ($stmt->fetch()) {
+                    header('Location: ' . SITE_URL . '/dashboard.php?discord=already_linked#settings'); exit;
+                }
+                $db->prepare('UPDATE users SET discord_id = ? WHERE id = ?')->execute([$cbDiscordId, $cbUid]);
+                header('Location: ' . SITE_URL . '/dashboard.php?discord=linked#settings'); exit;
+            }
+        }
+    }
+    header('Location: ' . SITE_URL . '/dashboard.php?discord=token_error#settings'); exit;
+}
+
 $overview = getDashboardOverview($userId);
 $challenges = getUserChallenges($userId);
 $payouts = getUserPayouts($userId);

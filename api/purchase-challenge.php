@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // ── Auth ─────────────────────────────────────────────────────
 if (!isLoggedIn()) {
-    jsonResponse(['error' => 'Authentication required.'], 401);
+    jsonResponse(['error' => 'Authentication required.'], 403);
 }
 
 // ── CSRF ─────────────────────────────────────────────────────

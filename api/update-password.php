@@ -8,7 +8,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/auth.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') jsonResponse(['error' => 'Method not allowed'], 405);
-if (!isLoggedIn()) jsonResponse(['error' => 'Unauthorized'], 401);
+if (!isLoggedIn()) jsonResponse(['error' => 'Unauthorized'], 403);
 if (!verifyCsrf($_POST['csrf'] ?? '')) jsonResponse(['error' => 'Invalid session.'], 403);
 
 $userId  = $_SESSION['user_id'];
@@ -29,7 +29,7 @@ try {
     $user = $stmt->fetch();
 
     if (!$user || !password_verify($current, $user['password_hash'])) {
-        jsonResponse(['error' => 'Current password is incorrect.'], 401);
+        jsonResponse(['error' => 'Current password is incorrect.'], 400);
     }
 
     $hash = password_hash($newPw, PASSWORD_BCRYPT, ['cost' => 12]);

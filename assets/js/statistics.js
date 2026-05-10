@@ -143,13 +143,27 @@ const StatisticsTab = (function () {
         var nLongWins  = trades.filter(function (t) { return t.long && t.win; }).length;
         var nShortWins = trades.filter(function (t) { return !t.long && t.win; }).length;
 
+        /* day-level win rate */
+        var dayWins = 0, dayLosses = 0, dayBe = 0;
+        for (var di = 1; di < equity.length; di++) {
+            var diff = equity[di] - equity[di - 1];
+            if (diff > 0.5) dayWins++;
+            else if (diff < -0.5) dayLosses++;
+            else dayBe++;
+        }
+        var dayTotal   = dayWins + dayLosses + dayBe;
+        var dayWinRate = dayTotal > 0 ? dayWins / dayTotal * 100 : 0;
+
         return {
             netPnl: equity[equity.length - 1] || 0,
             winRate: winRate, avgWin: avgWin, avgLoss: avgLoss,
+            grossWin: grossWin, grossLoss: grossLoss,
             pf: pf, expectancy: expectancy, avgRR: avgRR,
             sharpe: sharpe, sortino: sortino,
             maxDDPct: maxDD * 100, calmar: calmar, consist: consist,
             nTrades: trades.length, nWins: wins.length, nLosses: losses.length,
+            nBe: Math.round(trades.length * 0.02),
+            dayWins: dayWins, dayLosses: dayLosses, dayBe: dayBe, dayWinRate: dayWinRate,
             bestTrade: bestTrade, worstTrade: worstTrade,
             nLong: nLong, nShort: nShort, nLongWins: nLongWins, nShortWins: nShortWins,
         };
@@ -159,18 +173,28 @@ const StatisticsTab = (function () {
     function pal() {
         var light = document.documentElement.getAttribute('data-theme') === 'light';
         return {
-            accent:     '#10B981',
-            accentFill: 'rgba(16,185,129,0.18)',
-            amber:      '#D4A843',
-            error:      '#D71921',
-            errorFill:  'rgba(215,25,33,0.22)',
-            info:       '#5B9BF6',
-            grid:       light ? 'rgba(0,0,0,0.06)'   : 'rgba(255,255,255,0.05)',
-            tick:       light ? 'rgba(0,0,0,0.40)'   : 'rgba(255,255,255,0.32)',
-            ttBg:       light ? '#FFFFFF'             : '#1A1A1A',
-            ttBorder:   light ? '#DDDDDD'             : '#333333',
-            ttText:     light ? '#1A1A1A'             : '#E8E8E8',
+            /* data colors — darker/more saturated in light mode for contrast */
+            cyan:    light ? '#0891B2' : '#22D3EE',
+            green:   light ? '#16A34A' : '#4ADE80',
+            amber:   light ? '#B45309' : '#FBBF24',
+            error:   '#D71921',
+            indigo:  light ? '#4338CA' : '#818CF8',
+            /* UI chrome */
+            chartBg: light ? 'rgba(0,0,0,0.05)'  : 'rgba(255,255,255,0.06)',
+            grid:    light ? 'rgba(0,0,0,0.10)'  : 'rgba(255,255,255,0.05)',
+            tick:    light ? 'rgba(0,0,0,0.65)'  : 'rgba(255,255,255,0.32)',
+            ttBg:    light ? '#FFFFFF'            : '#1A1A1A',
+            ttBorder:light ? '#DDDDDD'            : '#333333',
+            ttText:  light ? '#1A1A1A'            : '#E8E8E8',
         };
+    }
+
+    /* ─── rgba helper ───────────────────────────────────── */
+    function hex2rgba(hex, alpha) {
+        var r = parseInt(hex.slice(1, 3), 16);
+        var g = parseInt(hex.slice(3, 5), 16);
+        var b = parseInt(hex.slice(5, 7), 16);
+        return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
     }
 
     /* ─── Apply Chart.js global defaults ───────────────── */
@@ -192,6 +216,19 @@ const StatisticsTab = (function () {
         Chart.defaults.plugins.tooltip.cornerRadius           = 0;
         Chart.defaults.animation.duration                     = 750;
         Chart.defaults.animation.easing                       = 'easeOutQuart';
+        if (!Chart.registry.plugins.get('chartBg')) {
+            Chart.register({
+                id: 'chartBg',
+                beforeDraw: function (chart) {
+                    var light = document.documentElement.getAttribute('data-theme') === 'light';
+                    var ctx   = chart.ctx;
+                    ctx.save();
+                    ctx.fillStyle = light ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.06)';
+                    ctx.fillRect(0, 0, chart.width, chart.height);
+                    ctx.restore();
+                }
+            });
+        }
     }
 
     /* ─── Build chart datasets ──────────────────────────── */
@@ -250,15 +287,14 @@ const StatisticsTab = (function () {
         };
     }
 
-    function dnaScores(metrics, trades) {
-        var avgDur   = trades.reduce(function (s, t) { return s + t.durationMin; }, 0) / (trades.length || 1);
+    function dnaScores(metrics) {
         return [
-            Math.min(10, 4.5 + metrics.winRate * 6.5),          /* DISCIPLINE   */
-            metrics.consist,                                      /* CONSISTENCY  */
-            Math.min(10, metrics.pf * 2.2),                      /* RISK MGMT    */
-            Math.min(10, 3 + metrics.sharpe * 1.8),              /* EXECUTION    */
-            Math.min(10, avgDur / 22),                           /* PATIENCE     */
-            Math.min(10, 2 + metrics.pf * 2.8),                  /* EDGE         */
+            Math.min(10, metrics.winRate * 14),                   /* WIN %            0%→0  50%→7  71%+→10 */
+            Math.min(10, Math.max(0, (metrics.pf - 1) * 5)),      /* PROFIT FACTOR    1→0   2→5   3→10    */
+            Math.min(10, Math.max(0, metrics.avgRR * 5)),          /* AVG WIN/LOSS     0→0   1→5   2→10    */
+            Math.min(10, Math.max(0, metrics.calmar * 1.5)),       /* RECOVERY FACTOR  0→0   4→6   7+→10   */
+            Math.max(0,  10 - metrics.maxDDPct * 0.4),             /* MAX DRAWDOWN     0%→10 10%→6 25%+→0  */
+            metrics.consist,                                        /* CONSISTENCY                          */
         ];
     }
 
@@ -374,17 +410,17 @@ const StatisticsTab = (function () {
         var cvEq = getCanvas('chartEquity');
         if (cvEq) {
             var gradEq = cvEq.getContext('2d').createLinearGradient(0, 0, 0, 220);
-            gradEq.addColorStop(0, 'rgba(16,185,129,0.28)');
-            gradEq.addColorStop(1, 'rgba(16,185,129,0)');
+            gradEq.addColorStop(0, hex2rgba(c.cyan, 0.24));
+            gradEq.addColorStop(1, hex2rgba(c.cyan, 0));
 
             /* trailing daily stop: follows running peak */
             var eqDatasets = [{
                 label: 'EQUITY',
                 data: data.equity,
-                borderColor: '#10B981', borderWidth: 1.5,
+                borderColor: c.cyan, borderWidth: 1.5,
                 fill: true, backgroundColor: gradEq,
                 pointRadius: 0, pointHoverRadius: 4,
-                pointHoverBackgroundColor: '#10B981',
+                pointHoverBackgroundColor: c.cyan,
                 tension: 0.35, order: 0,
             }];
 
@@ -397,14 +433,14 @@ const StatisticsTab = (function () {
                 eqDatasets.push({
                     label: 'DAILY STOP',
                     data: stopDailyCurve,
-                    borderColor: 'rgba(212,168,67,0.80)', borderWidth: 1.5,
+                    borderColor: hex2rgba(c.amber, 0.80), borderWidth: 1.5,
                     borderDash: [5, 3],
                     pointRadius: 0, fill: false, tension: 0.2, order: 1,
                 });
                 eqDatasets.push({
                     label: 'MAX STOP',
                     data: data.dates.map(function () { return data.stopMaxLevel; }),
-                    borderColor: 'rgba(215,25,33,0.75)', borderWidth: 1.5,
+                    borderColor: hex2rgba(c.error, 0.75), borderWidth: 1.5,
                     borderDash: [5, 3],
                     pointRadius: 0, fill: false, tension: 0, order: 2,
                 });
@@ -498,8 +534,8 @@ const StatisticsTab = (function () {
                 labels: mo.labels,
                 datasets: [{
                     data: mo.values,
-                    backgroundColor: mo.values.map(function (v) { return v >= 0 ? 'rgba(16,185,129,0.72)' : 'rgba(215,25,33,0.62)'; }),
-                    borderColor:     mo.values.map(function (v) { return v >= 0 ? '#10B981' : '#D71921'; }),
+                    backgroundColor: mo.values.map(function (v) { return v >= 0 ? hex2rgba(c.green, 0.72) : hex2rgba(c.error, 0.62); }),
+                    borderColor:     mo.values.map(function (v) { return v >= 0 ? c.green : c.error; }),
                     borderWidth: 1, borderRadius: 2,
                 }]
             },
@@ -520,16 +556,15 @@ const StatisticsTab = (function () {
         });
 
         /* 3. Win / Loss / BE Donut ────────────────────── */
-        var be = Math.round(metrics.nTrades * 0.02);
         var cvWinloss = getCanvas('chartWinloss');
         if (cvWinloss) _charts.winloss = new Chart(cvWinloss, {
             type: 'doughnut',
             data: {
                 labels: ['WIN', 'LOSS', 'BREAKEVEN'],
                 datasets: [{
-                    data: [metrics.nWins, metrics.nLosses, be],
-                    backgroundColor: ['rgba(16,185,129,0.78)', 'rgba(215,25,33,0.68)', 'rgba(212,168,67,0.55)'],
-                    borderColor:     ['#10B981', '#D71921', '#D4A843'],
+                    data: [metrics.nWins, metrics.nLosses, metrics.nBe],
+                    backgroundColor: [hex2rgba(c.green, 0.78), hex2rgba(c.error, 0.68), hex2rgba(c.amber, 0.55)],
+                    borderColor:     [c.green, c.error, c.amber],
                     borderWidth: 1, hoverOffset: 6,
                 }]
             },
@@ -546,7 +581,7 @@ const StatisticsTab = (function () {
                     tooltip: {
                         callbacks: {
                             label: function (item) {
-                                var total = metrics.nWins + metrics.nLosses + be;
+                                var total = metrics.nWins + metrics.nLosses + metrics.nBe;
                                 return ' ' + item.raw + ' · ' + ((item.raw / total) * 100).toFixed(1) + '%';
                             }
                         }
@@ -556,22 +591,23 @@ const StatisticsTab = (function () {
         });
 
         /* 4. Trading DNA Radar ────────────────────────── */
-        var dna    = dnaScores(metrics, data.trades);
+        var dna    = dnaScores(metrics);
         var dnaAvg = dna.reduce(function (s, v) { return s + v; }, 0) / dna.length;
         var _dnaGradeMap = [
-            { min: 9.5, letter: 'S',  color: '#10B981' },
-            { min: 8.5, letter: 'A+', color: '#10B981' },
-            { min: 7.5, letter: 'A',  color: '#10B981' },
-            { min: 6.5, letter: 'B+', color: '#D4A843' },
-            { min: 5.5, letter: 'B',  color: '#D4A843' },
-            { min: 4.5, letter: 'C+', color: '#D4A843' },
-            { min: 3.5, letter: 'C',  color: '#999999' },
-            { min: 0,   letter: 'D',  color: '#D71921' },
+            { min: 9.5, letter: 'S',  color: c.green },
+            { min: 8.5, letter: 'A+', color: c.green },
+            { min: 7.5, letter: 'A',  color: c.green },
+            { min: 6.5, letter: 'B+', color: c.amber },
+            { min: 5.5, letter: 'B',  color: c.amber },
+            { min: 4.5, letter: 'C+', color: c.amber },
+            { min: 3.5, letter: 'C',  color: '#888888' },
+            { min: 0,   letter: 'D',  color: c.error },
         ];
         var _dnaDescMap = { S: '[ ELITE TRADER ]', 'A+': '[ EXCEPTIONAL ]', A: '[ EXCELLENT ]', 'B+': '[ VERY GOOD ]', B: '[ GOOD ]', 'C+': '[ AVERAGE ]', C: '[ BELOW AVERAGE ]', D: '[ NEEDS IMPROVEMENT ]' };
         var _dnaGrade   = _dnaGradeMap.find(function (g) { return dnaAvg >= g.min; }) || _dnaGradeMap[_dnaGradeMap.length - 1];
-        var _dnaSegClass = { '#10B981': 'stat-seg-on', '#D4A843': 'stat-seg-on-amber', '#999999': 'stat-seg-on-gray', '#D71921': 'stat-seg-on-red' }[_dnaGrade.color] || 'stat-seg-on';
-        var _dnaRadarBg  = { '#10B981': 'rgba(16,185,129,0.12)', '#D4A843': 'rgba(212,168,67,0.12)', '#999999': 'rgba(153,153,153,0.12)', '#D71921': 'rgba(215,25,33,0.12)' }[_dnaGrade.color] || 'rgba(16,185,129,0.12)';
+        var _dnaGradeIdx = _dnaGradeMap.indexOf(_dnaGrade);
+        var _dnaSegClass = _dnaGradeIdx <= 2 ? 'stat-seg-on' : _dnaGradeIdx <= 5 ? 'stat-seg-on-amber' : _dnaGradeIdx === 6 ? 'stat-seg-on-gray' : 'stat-seg-on-red';
+        var _dnaRadarBg  = hex2rgba(_dnaGrade.color, 0.12);
         function _applyDnaGrade(gradeId, lblId, descId, segsId) {
             var gEl = document.getElementById(gradeId);
             var lEl = document.getElementById(lblId);
@@ -584,18 +620,43 @@ const StatisticsTab = (function () {
         _applyDnaGrade('statDnaGrade', 'statDnaGradeLbl', 'statDnaGradeDesc', 'statDnaSegs');
         _applyDnaGrade('ovDnaGrade',   'ovDnaGradeLbl',   'ovDnaGradeDesc',   'ovDnaSegs');
 
+        /* v2 score bar */
+        var _dna100     = dnaAvg * 10;
+        var _dnaScoreEl = document.getElementById('statDnaScoreVal');
+        var _dnaMarkEl  = document.getElementById('statDnaBarMarker');
+        (function () {
+            var p = Math.min(100, Math.max(0, _dna100));
+            var r1, g1, b1, r2, g2, b2, t;
+            if (p <= 50) {
+                r1=0xD7; g1=0x19; b1=0x21;  /* #D71921 red  */
+                r2=0xF5; g2=0x9E; b2=0x0B;  /* #F59E0B amber */
+                t = p / 50;
+            } else {
+                r1=0xF5; g1=0x9E; b1=0x0B;  /* #F59E0B amber */
+                r2=0x10; g2=0xB9; b2=0x81;  /* #10B981 green */
+                t = (p - 50) / 50;
+            }
+            var col = 'rgb(' + Math.round(r1+(r2-r1)*t) + ',' + Math.round(g1+(g2-g1)*t) + ',' + Math.round(b1+(b2-b1)*t) + ')';
+            if (_dnaScoreEl) { _dnaScoreEl.textContent = _dna100.toFixed(1); _dnaScoreEl.style.color = col; }
+            if (_dnaMarkEl)  _dnaMarkEl.style.left = Math.min(98, Math.max(2, _dna100)).toFixed(1) + '%';
+        }());
+
+        var _isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        var _dnaGrid = _isLight ? 'rgba(0,0,0,0.13)' : 'rgba(255,255,255,0.13)';
+        var _dnaLbl  = _isLight ? 'rgba(0,0,0,0.72)'  : 'rgba(255,255,255,0.72)';
+
         var cvDna = getCanvas('chartDna');
         if (cvDna) _charts.dna = new Chart(cvDna, {
             type: 'radar',
             data: {
-                labels: ['DISCIPLINE', 'CONSISTENCY', 'RISK MGMT', 'EXECUTION', 'PATIENCE', 'EDGE'],
+                labels: ['WIN %', 'PROFIT FACTOR', 'AVG WIN/LOSS', 'RECOVERY FACTOR', 'MAX DRAWDOWN', 'CONSISTENCY'],
                 datasets: [{
                     data: dna,
-                    borderColor: _dnaGrade.color, borderWidth: 1.5,
-                    backgroundColor: _dnaRadarBg,
-                    pointBackgroundColor: _dnaGrade.color,
-                    pointBorderColor: '#000',
-                    pointRadius: 3, pointHoverRadius: 5,
+                    borderColor: c.indigo, borderWidth: 2,
+                    backgroundColor: hex2rgba(c.indigo, 0.22),
+                    pointBackgroundColor: c.indigo,
+                    pointBorderColor: 'rgba(0,0,0,0.55)',
+                    pointRadius: 4, pointHoverRadius: 6,
                 }]
             },
             options: {
@@ -604,11 +665,12 @@ const StatisticsTab = (function () {
                     r: {
                         min: 0, max: 10,
                         ticks: { display: false, stepSize: 2 },
-                        grid: { color: c.grid },
-                        angleLines: { color: c.grid },
+                        grid: { color: _dnaGrid },
+                        angleLines: { color: _dnaGrid },
                         pointLabels: {
                             font: { family: "'Chivo Mono', monospace", size: 9 },
-                            color: c.tick,
+                            color: _dnaLbl,
+                            padding: 4,
                         }
                     }
                 },
@@ -625,8 +687,8 @@ const StatisticsTab = (function () {
                 labels: sess.labels,
                 datasets: [{
                     data: sess.values,
-                    backgroundColor: ['rgba(16,185,129,0.70)', 'rgba(212,168,67,0.70)', 'rgba(91,155,246,0.65)', 'rgba(153,153,153,0.50)'],
-                    borderColor:     ['#10B981', '#D4A843', '#5B9BF6', '#666'],
+                    backgroundColor: [hex2rgba(c.cyan, 0.70), hex2rgba(c.amber, 0.70), hex2rgba(c.indigo, 0.65), 'rgba(153,153,153,0.50)'],
+                    borderColor:     [c.cyan, c.amber, c.indigo, '#666'],
                     borderWidth: 1, borderRadius: 2,
                 }]
             },
@@ -654,8 +716,8 @@ const StatisticsTab = (function () {
                 labels: dow.labels,
                 datasets: [{
                     data: dow.values,
-                    backgroundColor: dow.values.map(function (v) { return v >= 0 ? 'rgba(16,185,129,0.68)' : 'rgba(215,25,33,0.58)'; }),
-                    borderColor:     dow.values.map(function (v) { return v >= 0 ? '#10B981' : '#D71921'; }),
+                    backgroundColor: dow.values.map(function (v) { return v >= 0 ? hex2rgba(c.green, 0.68) : hex2rgba(c.error, 0.58); }),
+                    borderColor:     dow.values.map(function (v) { return v >= 0 ? c.green : c.error; }),
                     borderWidth: 1, borderRadius: 2,
                 }]
             },
@@ -684,8 +746,8 @@ const StatisticsTab = (function () {
                     {
                         label: '# TRADES',
                         data: dur.counts,
-                        backgroundColor: 'rgba(91,155,246,0.62)',
-                        borderColor: '#5B9BF6',
+                        backgroundColor: hex2rgba(c.cyan, 0.62),
+                        borderColor: c.cyan,
                         borderWidth: 1, borderRadius: 2,
                         yAxisID: 'yN',
                     },
@@ -693,8 +755,8 @@ const StatisticsTab = (function () {
                         label: 'AVG P&L',
                         type: 'line',
                         data: dur.avgPnl,
-                        borderColor: '#D4A843', borderWidth: 2,
-                        pointBackgroundColor: '#D4A843',
+                        borderColor: c.amber, borderWidth: 2,
+                        pointBackgroundColor: c.amber,
                         pointRadius: 4, pointHoverRadius: 6,
                         tension: 0.3, yAxisID: 'yP',
                     }
@@ -772,6 +834,40 @@ const StatisticsTab = (function () {
         renderAssetBars(buildAssetData(data.filteredAccounts || []));
     }
 
+    /* ─── Update semicircle gauge SVG paths ─────────────── */
+    function updateGauge(greenId, redId, dotId, pct) {
+        var gEl = document.getElementById(greenId);
+        var rEl = document.getElementById(redId);
+        var dEl = document.getElementById(dotId);
+        if (!gEl || !rEl || !dEl) return;
+        var p  = Math.max(0.02, Math.min(0.98, pct / 100));
+        var a  = Math.PI * (1 - p);
+        var sx = (50 + 40 * Math.cos(a)).toFixed(2);
+        var sy = (52 - 40 * Math.sin(a)).toFixed(2);
+        gEl.setAttribute('d', 'M 10 52 A 40 40 0 0 1 ' + sx + ' ' + sy);
+        rEl.setAttribute('d', 'M ' + sx + ' ' + sy + ' A 40 40 0 0 1 90 52');
+        dEl.setAttribute('cx', sx);
+        dEl.setAttribute('cy', sy);
+    }
+
+    /* ─── Full-circle donut gauge (Profit Factor) ───────── */
+    function updateCircGauge(greenId, redId, pct) {
+        var gEl = document.getElementById(greenId);
+        var rEl = document.getElementById(redId);
+        if (!gEl || !rEl) return;
+        var r      = 38;
+        var circum = 2 * Math.PI * r;                   // 238.76
+        var p      = Math.max(0.02, Math.min(0.98, pct / 100));
+        var gLen   = (circum * p).toFixed(2);
+        var rLen   = (circum * (1 - p)).toFixed(2);
+        var c      = circum.toFixed(2);
+        var off    = (-(circum * 0.25)).toFixed(2);      // start from 12 o'clock
+        gEl.setAttribute('stroke-dasharray',  gLen + ' ' + c);
+        gEl.setAttribute('stroke-dashoffset', off);
+        rEl.setAttribute('stroke-dasharray',  rLen + ' ' + c);
+        rEl.setAttribute('stroke-dashoffset', (parseFloat(off) - parseFloat(gLen)).toFixed(2));
+    }
+
     /* ─── Fill segmented bar (10 blocks) ───────────────── */
     function setSegs(id, pct, onClass) {
         var el = document.getElementById(id);
@@ -827,12 +923,23 @@ const StatisticsTab = (function () {
 
         var wrPct = m.winRate * 100;
         setVal('skWr', f1(wrPct) + '%', wrPct >= 55 ? 'green' : wrPct >= 45 ? '' : 'red');
-        setSegs('skWrSegs', wrPct, wrPct >= 55 ? 'stat-seg-on' : wrPct >= 45 ? 'stat-seg-on-amber' : 'stat-seg-on-red');
-        setSub('skWrSub', m.nWins + ' W · ' + m.nLosses + ' L');
+        updateGauge('skWrGaugeGn', 'skWrGaugeRd', 'skWrGaugeDt', wrPct);
+        setSub('skWrWins',   m.nWins);
+        setSub('skWrBe',     m.nBe);
+        setSub('skWrLosses', m.nLosses);
 
         var pfCls = m.pf >= 1.8 ? 'green' : m.pf >= 1 ? '' : 'red';
         setVal('skPf', f2(m.pf), pfCls);
-        setSub('skPfSub', m.pf >= 2 ? '[ STRONG EDGE ]' : m.pf >= 1.5 ? '[ POSITIVE EDGE ]' : m.pf >= 1 ? '[ MARGINAL ]' : '[ NEGATIVE EDGE ]');
+        var pfGaugePct = Math.min(98, m.pf / (m.pf + 1) * 100);
+        updateCircGauge('skPfCircGn', 'skPfCircRd', pfGaugePct);
+        setSub('skPfGrossWin',  '+$' + Math.round(m.grossWin  / 1000) + 'K');
+        setSub('skPfGrossLoss', '−$' + Math.round(m.grossLoss / 1000) + 'K');
+
+        setVal('skDwr', f1(m.dayWinRate) + '%', m.dayWinRate >= 55 ? 'green' : m.dayWinRate >= 45 ? '' : 'red');
+        updateGauge('skDwrGaugeGn', 'skDwrGaugeRd', 'skDwrGaugeDt', m.dayWinRate);
+        setSub('skDwrWins',   m.dayWins);
+        setSub('skDwrBe',     m.dayBe);
+        setSub('skDwrLosses', m.dayLosses);
 
         var shCls = m.sharpe >= 1.5 ? 'green' : m.sharpe >= 0.5 ? '' : 'red';
         setVal('skSharpe', f2(m.sharpe), shCls);
@@ -868,7 +975,15 @@ const StatisticsTab = (function () {
 
         var rrCls = m.avgRR >= 2 ? 'green' : m.avgRR >= 1 ? '' : 'red';
         setVal('skRR', f2(m.avgRR), rrCls);
-        setSub('skRRSub', m.avgRR >= 2 ? '[ EXCELLENT ]' : m.avgRR >= 1.5 ? '[ GOOD ]' : m.avgRR >= 1 ? '[ BREAK-EVEN ]' : '[ SUB-OPTIMAL ]');
+        var rrTotal   = m.avgWin + m.avgLoss || 1;
+        var rrWinFlex = (m.avgWin / rrTotal * 10).toFixed(2);
+        var rrLossFlex= (m.avgLoss / rrTotal * 10).toFixed(2);
+        var rrGreen = document.getElementById('skRRBarGreen');
+        var rrRed   = document.getElementById('skRRBarRed');
+        if (rrGreen) rrGreen.style.flex = rrWinFlex;
+        if (rrRed)   rrRed.style.flex   = rrLossFlex;
+        setSub('skRRAvgWin',  '+$' + Math.round(m.avgWin));
+        setSub('skRRAvgLoss', '−$' + Math.round(m.avgLoss));
 
         /* Best Trade */
         setVal('skBest', fmtPnl(m.bestTrade.pnl), 'green');
@@ -1122,7 +1237,7 @@ const StatisticsTab = (function () {
         (function () {
             var _d   = buildData();
             var _m   = computeMetrics(_d);
-            var _dna = dnaScores(_m, _d.trades);
+            var _dna = dnaScores(_m);
             var _avg = _dna.reduce(function (s, v) { return s + v; }, 0) / _dna.length;
             var _lm  = [
                 { min: 9.5, letter: 'S',  color: '#10B981' },

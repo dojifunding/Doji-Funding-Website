@@ -49,7 +49,7 @@ try {
 
     if (!$user) {
         // Generic error to prevent email enumeration
-        jsonResponse(['error' => 'Invalid email or password.'], 401);
+        jsonResponse(['error' => 'Invalid email or password.'], 400);
     }
 
     // Check if account is active
@@ -60,7 +60,7 @@ try {
     // Verify password
     if (!password_verify($password, $user['password_hash'])) {
         // TODO: Implement login attempt tracking / rate limiting
-        jsonResponse(['error' => 'Invalid email or password.'], 401);
+        jsonResponse(['error' => 'Invalid email or password.'], 400);
     }
 
     // Update last login

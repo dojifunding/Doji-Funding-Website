@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 if (!isLoggedIn()) {
-    jsonResponse(['success' => false, 'error' => 'Authentication required'], 401);
+    jsonResponse(['success' => false, 'error' => 'Authentication required'], 403);
 }
 
 $csrf = $_POST['csrf'] ?? '';

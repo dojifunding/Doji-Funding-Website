@@ -12,7 +12,7 @@ define('SITE_TAGLINE', 'Trade Your Way. Get Funded.');
 define('SITE_YEAR', '2026');
 
 // Version (for cache busting CSS/JS/images)
-define('ASSET_VERSION', '496');
+define('ASSET_VERSION', '519');
 
 // Branding
 define('BRAND_COLOR_GREEN', '#10B981');
@@ -24,6 +24,12 @@ define('DOJI_COIN_FILE', 'assets/img/doji-coin.svg?v=' . ASSET_VERSION);
 define('STAT_FUNDED_TRADERS', '4,200+');
 define('STAT_PAID_OUT', '$12M+');
 define('STAT_SUPPORT', '24/7');
+
+// Discord OAuth2
+define('DISCORD_CLIENT_ID',     '1502242627205070919');
+define('DISCORD_CLIENT_SECRET', 'Qj7JjSL-MuhvlA0uCnhLiHoD_f7-iiM2');
+define('DISCORD_REDIRECT_URI',  'https://revenge-pegboard-onslaught.ngrok-free.dev/discord-callback');
+define('BOT_SECRET',            'b9153306e12ae4a139332f5cf1a9d8a6746cbfb267ae7bac94c05d54e777308f');
 
 // Account limits
 define('MIN_ACCOUNT', 5000);
