@@ -406,23 +406,41 @@ const StatisticsTab = (function () {
 
         var showStops = !!data.isSingleAcct;
 
-        /* 1. Equity Curve ─────────────────────────────── */
+        /* 1. Equity Curve + Drawdown — single canvas, stacked axes ── */
         var cvEq = getCanvas('chartEquity');
         if (cvEq) {
-            var gradEq = cvEq.getContext('2d').createLinearGradient(0, 0, 0, 220);
-            gradEq.addColorStop(0, hex2rgba(c.cyan, 0.24));
-            gradEq.addColorStop(1, hex2rgba(c.cyan, 0));
+            var ctx   = cvEq.getContext('2d');
+            var totalH = 310;
+            var splitY = totalH * 0.78; /* ~80% equity, ~20% drawdown */
 
-            /* trailing daily stop: follows running peak */
-            var eqDatasets = [{
-                label: 'EQUITY',
-                data: data.equity,
-                borderColor: c.cyan, borderWidth: 1.5,
-                fill: true, backgroundColor: gradEq,
-                pointRadius: 0, pointHoverRadius: 4,
-                pointHoverBackgroundColor: c.cyan,
-                tension: 0.35, order: 0,
-            }];
+            var gradEq = ctx.createLinearGradient(0, 0, 0, splitY);
+            gradEq.addColorStop(0,    hex2rgba(c.green, 0.52));
+            gradEq.addColorStop(0.65, hex2rgba(c.green, 0.18));
+            gradEq.addColorStop(1,    hex2rgba(c.green, 0.02));
+
+            var gradDD = ctx.createLinearGradient(0, splitY, 0, totalH);
+            gradDD.addColorStop(0,   'rgba(215,25,33,0.04)');
+            gradDD.addColorStop(0.5, 'rgba(215,25,33,0.30)');
+            gradDD.addColorStop(1,   'rgba(215,25,33,0.65)');
+
+            var eqDatasets = [
+                {
+                    label: 'EQUITY',
+                    data: data.equity,
+                    borderColor: c.green, borderWidth: 1.5,
+                    fill: 'origin', backgroundColor: gradEq,
+                    pointRadius: 0, pointHoverRadius: 4,
+                    pointHoverBackgroundColor: c.green,
+                    tension: 0.35, order: 0, yAxisID: 'yE',
+                },
+                {
+                    label: 'DRAWDOWN',
+                    data: data.drawdown,
+                    borderColor: '#D71921', borderWidth: 1.5,
+                    fill: 'origin', backgroundColor: gradDD,
+                    pointRadius: 0, tension: 0.3, order: 1, yAxisID: 'yD',
+                },
+            ];
 
             if (showStops) {
                 var runPeak = 0;
@@ -435,14 +453,14 @@ const StatisticsTab = (function () {
                     data: stopDailyCurve,
                     borderColor: hex2rgba(c.amber, 0.80), borderWidth: 1.5,
                     borderDash: [5, 3],
-                    pointRadius: 0, fill: false, tension: 0.2, order: 1,
+                    pointRadius: 0, fill: false, tension: 0.2, order: 2, yAxisID: 'yE',
                 });
                 eqDatasets.push({
                     label: 'MAX STOP',
                     data: data.dates.map(function () { return data.stopMaxLevel; }),
                     borderColor: hex2rgba(c.error, 0.75), borderWidth: 1.5,
                     borderDash: [5, 3],
-                    pointRadius: 0, fill: false, tension: 0, order: 2,
+                    pointRadius: 0, fill: false, tension: 0, order: 3, yAxisID: 'yE',
                 });
             }
 
@@ -459,10 +477,21 @@ const StatisticsTab = (function () {
                                 callback: function (v, i) { return data.dates[i] ? data.dates[i].slice(5) : ''; }
                             }
                         },
-                        y: {
-                            position: 'right', grid: { color: c.grid },
-                            ticks: {
-                                callback: function (v) { return (v >= 0 ? '+$' : '−$') + Math.abs(v / 1000).toFixed(1) + 'K'; }
+                        yE: {
+                            type: 'linear', position: 'right',
+                            stack: 'eqdd', stackWeight: 4,
+                            min: 0,
+                            grid: { color: c.grid },
+                            ticks: { callback: function (v) { return v === 0 ? '0' : '$' + (v / 1000).toFixed(0) + 'K'; } }
+                        },
+                        yD: {
+                            type: 'linear', position: 'right',
+                            stack: 'eqdd', stackWeight: 1,
+                            max: 0,
+                            grid: { color: c.grid },
+                            ticks: { callback: function (v) { return v.toFixed(1) + '%'; } },
+                            afterBuildTicks: function (axis) {
+                                axis.ticks = axis.ticks.filter(function (t) { return t.value !== 0; });
                             }
                         }
                     },
@@ -472,7 +501,7 @@ const StatisticsTab = (function () {
                             labels: {
                                 font: { family: "'Chivo Mono', monospace", size: 9 },
                                 color: c.tick, boxWidth: 10, padding: 12,
-                                filter: function (item) { return item.text !== 'EQUITY'; }
+                                filter: function (item) { return item.text !== 'EQUITY' && item.text !== 'DRAWDOWN'; }
                             }
                         },
                         tooltip: {
@@ -480,6 +509,7 @@ const StatisticsTab = (function () {
                                 title: function (items) { return items[0].label; },
                                 label: function (item) {
                                     var v = item.raw;
+                                    if (item.dataset.yAxisID === 'yD') return ' DD: ' + v.toFixed(2) + '%';
                                     return ' ' + item.dataset.label + ': ' + (v >= 0 ? '+$' : '−$') + Math.abs(v).toLocaleString('en', { maximumFractionDigits: 0 });
                                 }
                             }
@@ -504,6 +534,20 @@ const StatisticsTab = (function () {
         setEqEl('eqCurrent', fmtEq(eqCurrent), eqCurrent >= 0 ? 'green' : 'red');
         setEqEl('eqHigh', fmtEq(eqHigh), 'green');
         setEqEl('eqLow',  fmtEq(eqLow),  'red');
+
+        /* extra footer stats */
+        var m = metrics;
+        var eqAccounts = window.DojiStatAccounts || [];
+        var eqLotTotal = 0;
+        var eqHasLots  = eqAccounts.some(function (a) { return a.lots > 0; });
+        if (eqHasLots) {
+            eqAccounts.forEach(function (a) { eqLotTotal += (a.lots || 0); });
+        } else {
+            eqLotTotal = m.nTrades * 0.018;
+        }
+        setEqEl('eqTrades', m.nTrades.toString(), '');
+        setEqEl('eqLots',   eqLotTotal.toFixed(2), '');
+        setEqEl('eqExpect', fmtEq(m.expectancy), m.expectancy >= 0 ? 'green' : 'red');
 
         /* stop section — only for single account */
         var stopSection = document.getElementById('eqStopSection');
@@ -789,9 +833,10 @@ const StatisticsTab = (function () {
         /* 8. Drawdown Timeline ─────────────────────────── */
         var cvDD = getCanvas('chartDrawdown');
         if (cvDD) {
-            var gradDD = cvDD.getContext('2d').createLinearGradient(0, 0, 0, 140);
-            gradDD.addColorStop(0, 'rgba(215,25,33,0)');
-            gradDD.addColorStop(1, 'rgba(215,25,33,0.40)');
+            var gradDD = cvDD.getContext('2d').createLinearGradient(0, 0, 0, 80);
+            gradDD.addColorStop(0,   'rgba(215,25,33,0.04)');
+            gradDD.addColorStop(0.4, 'rgba(215,25,33,0.28)');
+            gradDD.addColorStop(1,   'rgba(215,25,33,0.62)');
 
         _charts.drawdown = new Chart(cvDD, {
             type: 'line',
@@ -799,13 +844,14 @@ const StatisticsTab = (function () {
                 labels: data.dates,
                 datasets: [{
                     data: data.drawdown,
-                    borderColor: '#D71921', borderWidth: 1,
-                    fill: true, backgroundColor: gradDD,
+                    borderColor: '#D71921', borderWidth: 1.5,
+                    fill: 'origin', backgroundColor: gradDD,
                     pointRadius: 0, tension: 0.3,
                 }]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
+                layout: { padding: { top: 2 } },
                 scales: {
                     x: {
                         grid: { display: false },
@@ -822,7 +868,7 @@ const StatisticsTab = (function () {
                 plugins: {
                     tooltip: {
                         callbacks: {
-                            label: function (item) { return ' ' + item.raw.toFixed(2) + '%'; }
+                            label: function (item) { return ' DD: ' + item.raw.toFixed(2) + '%'; }
                         }
                     }
                 }
@@ -970,8 +1016,10 @@ const StatisticsTab = (function () {
         } else {
             totalLots = m.nTrades * 0.018; /* ~0.018 lots/trade synthetic estimate */
         }
+        var totalFees = totalLots * 3.5; /* ~$3.50/lot round-trip commission estimate */
         setVal('skLots', totalLots.toFixed(2), '');
         setSub('skLotsSub', m.nTrades + ' TRADES');
+        setSub('skFeesSub', '~$' + totalFees.toLocaleString('en', { maximumFractionDigits: 0 }) + ' FEES');
 
         var rrCls = m.avgRR >= 2 ? 'green' : m.avgRR >= 1 ? '' : 'red';
         setVal('skRR', f2(m.avgRR), rrCls);

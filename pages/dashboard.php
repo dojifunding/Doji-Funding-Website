@@ -3045,7 +3045,8 @@ foreach ($challenges as $ch) {
                         <div class="stat-kpi-drag">⠿</div>
                         <div class="stat-kpi-lbl">TOTAL LOTS</div>
                         <div class="stat-kpi-val" id="skLots">—</div>
-                        <div class="stat-kpi-sub" id="skLotsSub">LOTS TRADED</div>
+                        <div class="stat-kpi-sub" id="skLotsSub">—</div>
+                        <div class="stat-kpi-sub" id="skFeesSub">—</div>
                     </div>
 
                     <div class="stat-kpi-card" draggable="true">
@@ -3070,13 +3071,6 @@ foreach ($challenges as $ch) {
                         <div class="stat-kpi-lbl">WORST TRADE</div>
                         <div class="stat-kpi-val red" id="skWorst">—</div>
                         <div class="stat-kpi-sub" id="skWorstSub">—</div>
-                    </div>
-
-                    <div class="stat-kpi-card" draggable="true">
-                        <div class="stat-kpi-drag">⠿</div>
-                        <div class="stat-kpi-lbl">TOTAL TRADES</div>
-                        <div class="stat-kpi-val" id="skTotal">—</div>
-                        <div class="stat-kpi-sub" id="skTotalSub">—</div>
                     </div>
 
                     <div class="stat-kpi-card stat-kpi-wide" draggable="true">
@@ -3114,16 +3108,17 @@ foreach ($challenges as $ch) {
                 <!-- Charts grid (8 draggable cards) -->
                 <div class="stat-chart-grid" id="statChartGrid">
 
-                    <!-- 1. Equity Curve — full width -->
+                    <!-- 1. Equity Curve + Drawdown — combined full width -->
                     <div class="stat-chart-card stat-chart-full" draggable="true">
                         <div class="stat-chart-head">
                             <span class="stat-chart-title">EQUITY CURVE</span>
+                            <span class="stat-chart-hint">DRAWDOWN PERIODS</span>
                             <div class="stat-chart-controls">
                                 <button class="stat-ctrl-btn stat-ctrl-active" data-granularity="daily">DAILY</button>
                                 <button class="stat-ctrl-btn" data-granularity="weekly">WEEKLY</button>
                             </div>
                         </div>
-                        <div class="stat-chart-body" style="height:196px"><canvas id="chartEquity"></canvas></div>
+                        <div class="stat-chart-body" style="height:310px"><canvas id="chartEquity"></canvas></div>
                         <div class="stat-eq-footer">
                             <div class="stat-eq-stat">
                                 <div class="stat-eq-lbl">CURRENT P&L</div>
@@ -3137,8 +3132,19 @@ foreach ($challenges as $ch) {
                                 <div class="stat-eq-lbl">TROUGH</div>
                                 <div class="stat-eq-val red" id="eqLow">—</div>
                             </div>
+                            <div class="stat-eq-stat">
+                                <div class="stat-eq-lbl">TOTAL TRADES</div>
+                                <div class="stat-eq-val" id="eqTrades">—</div>
+                            </div>
+                            <div class="stat-eq-stat">
+                                <div class="stat-eq-lbl">TOTAL LOTS</div>
+                                <div class="stat-eq-val" id="eqLots">—</div>
+                            </div>
+                            <div class="stat-eq-stat">
+                                <div class="stat-eq-lbl">EXPECTANCY</div>
+                                <div class="stat-eq-val" id="eqExpect">—</div>
+                            </div>
                             <div id="eqStopSection" style="display:none">
-                                <div class="stat-eq-sep"></div>
                                 <div class="stat-eq-stat">
                                     <div class="stat-eq-lbl">DAILY STOP <span class="stat-eq-stop-type" id="eqDailyStopType">—</span></div>
                                     <div class="stat-eq-val amber" id="eqDailyDist">—</div>
@@ -3211,17 +3217,7 @@ foreach ($challenges as $ch) {
                         <div class="stat-kpi-drag">⠿</div>
                     </div>
 
-                    <!-- 8. Drawdown Timeline — full width -->
-                    <div class="stat-chart-card stat-chart-full" draggable="true">
-                        <div class="stat-chart-head">
-                            <span class="stat-chart-title">DRAWDOWN PERIODS</span>
-                            <span class="stat-chart-hint">UNDERWATER EQUITY</span>
-                        </div>
-                        <div class="stat-chart-body" style="height:130px"><canvas id="chartDrawdown"></canvas></div>
-                        <div class="stat-kpi-drag">⠿</div>
-                    </div>
-
-                    <!-- 9. Traded Assets — full width -->
+                    <!-- 8. Traded Assets — full width -->
                     <div class="stat-chart-card stat-chart-full" draggable="true">
                         <div class="stat-chart-head">
                             <span class="stat-chart-title">TRADED ASSETS</span>
@@ -4098,226 +4094,242 @@ $tier_map = [
 ];
 $tier = $tier_map[$aff_tier];
 ?>
-                <div class="aff-split">
+                <div class="wlt-grid">
 
-                    <!-- ──────── LEFT: PARRAINAGE ──────── -->
-                    <div class="aff-panel aff-panel--left">
-
-                        <div class="aff-panel-hdr">
-                            <div class="aff-panel-icon">
-                                <?= pix('users', 16, 16) ?>
+                    <!-- ─ PARRAINAGE card ─ -->
+                    <div class="wlt-card" style="--wlt-accent:#6366F1">
+                        <div class="wlt-card-head">
+                            <div class="wlt-card-title">PARRAINAGE</div>
+                            <div class="wlt-card-bal-row">
+                                <div class="wlt-card-bal wlt-card-bal--coins"><?= $ref_coins ?> <span class="wlt-dc-sym">DC</span></div>
                             </div>
-                            <div>
-                                <div class="aff-panel-title">PARRAINAGE</div>
-                                <div class="aff-panel-sub">REFER FRIENDS · EARN DOJI COINS</div>
+                            <div class="wlt-card-sub">REFER FRIENDS · EARN DOJI COINS</div>
+                            <div class="wlt-card-prog-wrap">
+                                <?php
+                                $_refSegs   = 20;
+                                $_refTarget = 20;
+                                $_refPct    = min(100, ($ref_count / $_refTarget) * 100);
+                                $_refOnSegs = (int)round($_refSegs * $_refPct / 100);
+                                ?>
+                                <div class="wlt-seg-bar">
+                                    <?php for ($_s = 0; $_s < $_refSegs; $_s++): ?>
+                                    <div class="wlt-seg<?= $_s < $_refOnSegs ? ' wlt-seg-on wlt-seg-indigo' : '' ?>"></div>
+                                    <?php endfor; ?>
+                                </div>
+                                <div class="wlt-card-prog-labels">
+                                    <span class="wlt-prog-lbl indigo"><?= $ref_count ?> REFERRALS</span>
+                                    <span class="wlt-prog-lbl dim">1 DC / REFERRAL · NO LIMIT</span>
+                                </div>
                             </div>
                         </div>
+                        <div class="aff-card-body">
 
-                        <!-- Stats row -->
-                        <div class="aff-kpi-row">
-                            <div class="aff-kpi" style="--kpi-c:#0EA5E9">
-                                <div class="aff-kpi-val"><?= $ref_count ?></div>
-                                <div class="aff-kpi-lbl">FRIENDS REFERRED</div>
+                            <!-- Stats row -->
+                            <div class="aff-kpi-row">
+                                <div class="aff-kpi" style="--kpi-c:#0EA5E9">
+                                    <div class="aff-kpi-val"><?= $ref_count ?></div>
+                                    <div class="aff-kpi-lbl">FRIENDS REFERRED</div>
+                                </div>
+                                <div class="aff-kpi" style="--kpi-c:#D4A843">
+                                    <div class="aff-kpi-val"><?= $ref_coins ?></div>
+                                    <div class="aff-kpi-lbl">COINS EARNED</div>
+                                </div>
+                                <div class="aff-kpi" style="--kpi-c:#8B5CF6">
+                                    <div class="aff-kpi-val">1:1</div>
+                                    <div class="aff-kpi-lbl">COIN / REFERRAL</div>
+                                </div>
                             </div>
-                            <div class="aff-kpi" style="--kpi-c:#D4A843">
-                                <div class="aff-kpi-val"><?= $ref_coins ?></div>
-                                <div class="aff-kpi-lbl">COINS EARNED</div>
-                            </div>
-                            <div class="aff-kpi" style="--kpi-c:#8B5CF6">
-                                <div class="aff-kpi-val">1:1</div>
-                                <div class="aff-kpi-lbl">COIN / REFERRAL</div>
-                            </div>
-                        </div>
 
-                        <!-- Referral code block -->
-                        <div class="aff-block">
-                            <div class="aff-block-lbl">YOUR REFERRAL CODE</div>
+                            <!-- Referral code block -->
+                            <div class="aff-block">
+                                <div class="aff-block-lbl">YOUR REFERRAL CODE</div>
+                                <?php if (!empty($profile['referral_code'])): ?>
+                                <div class="aff-code-row">
+                                    <span class="aff-code-val" id="refCodeText"><?= htmlspecialchars($profile['referral_code']) ?></span>
+                                    <button class="aff-copy-btn" onclick="AffDash.copyText('refCodeText', this)">COPY</button>
+                                </div>
+                                <div class="aff-block-hint">Share this code — your friend enters it at checkout and you both benefit.</div>
+                                <?php else: ?>
+                                <div class="aff-block-hint" style="color:var(--text-dis)">Your code will be generated after your first challenge purchase.</div>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Share link -->
                             <?php if (!empty($profile['referral_code'])): ?>
-                            <div class="aff-code-row">
-                                <span class="aff-code-val" id="refCodeText"><?= htmlspecialchars($profile['referral_code']) ?></span>
-                                <button class="aff-copy-btn" onclick="AffDash.copyText('refCodeText', this)">COPY</button>
+                            <div class="aff-block">
+                                <div class="aff-block-lbl">SHARE LINK</div>
+                                <div class="aff-code-row">
+                                    <span class="aff-code-val aff-code-url" id="refLinkText">dojifunding.com?ref=<?= htmlspecialchars($profile['referral_code']) ?></span>
+                                    <button class="aff-copy-btn" onclick="AffDash.copyText('refLinkText', this)">COPY</button>
+                                </div>
                             </div>
-                            <div class="aff-block-hint">Share this code — your friend enters it at checkout and you both benefit.</div>
-                            <?php else: ?>
-                            <div class="aff-block-hint" style="color:var(--text-dis)">Your code will be generated after your first challenge purchase.</div>
                             <?php endif; ?>
-                        </div>
 
-                        <!-- Share link -->
-                        <?php if (!empty($profile['referral_code'])): ?>
-                        <div class="aff-block">
-                            <div class="aff-block-lbl">SHARE LINK</div>
-                            <div class="aff-code-row">
-                                <span class="aff-code-val aff-code-url" id="refLinkText">dojifunding.com?ref=<?= htmlspecialchars($profile['referral_code']) ?></span>
-                                <button class="aff-copy-btn" onclick="AffDash.copyText('refLinkText', this)">COPY</button>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-
-                        <!-- How it works -->
-                        <div class="aff-block">
-                            <div class="aff-block-lbl">HOW IT WORKS</div>
-                            <div class="aff-steps-list">
-                                <div class="aff-step-row">
-                                    <div class="aff-step-num">01</div>
-                                    <div class="aff-step-txt">Share your referral code or link with friends</div>
-                                </div>
-                                <div class="aff-step-row">
-                                    <div class="aff-step-num">02</div>
-                                    <div class="aff-step-txt">Friend enters the code at checkout when purchasing a challenge</div>
-                                </div>
-                                <div class="aff-step-row">
-                                    <div class="aff-step-num">03</div>
-                                    <div class="aff-step-txt">You receive <span style="color:var(--accent)">+1 Doji Coin</span> automatically — no limit</div>
+                            <!-- How it works -->
+                            <div class="aff-block">
+                                <div class="aff-block-lbl">HOW IT WORKS</div>
+                                <div class="aff-steps-list">
+                                    <div class="aff-step-row">
+                                        <div class="aff-step-num">01</div>
+                                        <div class="aff-step-txt">Share your referral code or link with friends</div>
+                                    </div>
+                                    <div class="aff-step-row">
+                                        <div class="aff-step-num">02</div>
+                                        <div class="aff-step-txt">Friend enters the code at checkout when purchasing a challenge</div>
+                                    </div>
+                                    <div class="aff-step-row">
+                                        <div class="aff-step-num">03</div>
+                                        <div class="aff-step-txt">You receive <span style="color:#6366F1">+1 Doji Coin</span> automatically — no limit</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Referral history -->
-                        <div class="aff-block">
-                            <div class="aff-block-lbl">REFERRAL HISTORY</div>
-                            <div class="aff-history">
-                                <?php foreach ($ref_referrals as $r): ?>
-                                <div class="aff-hist-row">
-                                    <div class="aff-hist-name"><?= htmlspecialchars($r['name']) ?></div>
-                                    <div class="aff-hist-date"><?= date('d M Y', strtotime($r['date'])) ?></div>
-                                    <div class="aff-hist-status aff-hist-ok">PURCHASED</div>
-                                    <div class="aff-hist-coin" style="color:var(--accent)">+<?= $r['coins'] ?> <?= pix('coin', 10, 10) ?></div>
+                            <!-- Referral history -->
+                            <div class="aff-block">
+                                <div class="aff-block-lbl">REFERRAL HISTORY</div>
+                                <div class="aff-history">
+                                    <?php foreach ($ref_referrals as $r): ?>
+                                    <div class="aff-hist-row">
+                                        <div class="aff-hist-name"><?= htmlspecialchars($r['name']) ?></div>
+                                        <div class="aff-hist-date"><?= date('d M Y', strtotime($r['date'])) ?></div>
+                                        <div class="aff-hist-status aff-hist-ok">PURCHASED</div>
+                                        <div class="aff-hist-coin" style="color:var(--accent)">+<?= $r['coins'] ?> <?= pix('coin', 10, 10) ?></div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div><!-- /parrainage card -->
+
+                    <!-- ─ AFFILIATION card ─ -->
+                    <div class="wlt-card" style="--wlt-accent:#10B981">
+                        <div class="wlt-card-head">
+                            <div class="wlt-card-title" style="display:flex;align-items:center;gap:8px">
+                                AFFILIATION
+                                <?php if ($aff_status === 'active'): ?>
+                                <span class="aff-status-badge aff-status-active">ACTIVE</span>
+                                <?php elseif ($aff_status === 'pending'): ?>
+                                <span class="aff-status-badge aff-status-pending">PENDING</span>
+                                <?php else: ?>
+                                <span class="aff-status-badge">NOT APPLIED</span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="wlt-card-bal-row">
+                                <div class="wlt-card-bal">$<?= number_format($aff_earnings, 2) ?></div>
+                                <div class="wlt-card-btns">
+                                    <?php if ($aff_status !== 'active'): ?>
+                                    <a href="affiliates.php" class="wlt-action-btn wlt-btn-accent" style="text-decoration:none">APPLY</a>
+                                    <a href="mailto:affiliates@dojifunding.com" class="wlt-action-btn wlt-btn-ghost" style="text-decoration:none">CONTACT</a>
+                                    <?php else: ?>
+                                    <a href="affiliates.php" class="wlt-action-btn wlt-btn-ghost" style="text-decoration:none">PUBLIC PAGE</a>
+                                    <a href="mailto:affiliates@dojifunding.com" class="wlt-action-btn wlt-btn-ghost" style="text-decoration:none">CONTACT</a>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="wlt-card-sub">TOTAL EARNED · <?= $tier['rate'] ?>% COMMISSION · $<?= number_format($aff_pending, 2) ?> PENDING</div>
+                            <div class="wlt-card-prog-wrap">
+                                <?php
+                                $_tierMin    = (int)$tier['min'];
+                                $_tierMax    = (int)($tier['max'] ?? 200);
+                                $_tierRange  = max(1, $_tierMax - $_tierMin);
+                                $_tierPct    = max(0, min(100, (($aff_conversions - $_tierMin) / $_tierRange) * 100));
+                                $_tierSegs   = 20;
+                                $_tierOnSegs = (int)round($_tierSegs * $_tierPct / 100);
+                                ?>
+                                <div class="wlt-seg-bar">
+                                    <?php for ($_s = 0; $_s < $_tierSegs; $_s++): ?>
+                                    <div class="wlt-seg<?= $_s < $_tierOnSegs ? ' wlt-seg-on wlt-seg-green' : '' ?>"></div>
+                                    <?php endfor; ?>
+                                </div>
+                                <div class="wlt-card-prog-labels">
+                                    <span class="wlt-prog-lbl green"><?= $aff_conversions ?> CONVERSIONS</span>
+                                    <span class="wlt-prog-lbl dim"><?= $tier['label'] ?> TIER</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="aff-card-body">
+
+                            <!-- Tier strip -->
+                            <div class="aff-tier-strip">
+                                <?php foreach ($tier_map as $k => $t): ?>
+                                <div class="aff-tier-item <?= $k === $aff_tier ? 'aff-tier-active' : '' ?>" style="--tier-c:<?= $t['color'] ?>">
+                                    <div class="aff-tier-name"><?= $t['label'] ?></div>
+                                    <div class="aff-tier-rate"><?= $t['rate'] ?>%</div>
+                                    <div class="aff-tier-range"><?= $t['min'] ?><?= $t['max'] ? '–'.$t['max'] : '+' ?> REF/MO</div>
                                 </div>
                                 <?php endforeach; ?>
                             </div>
-                        </div>
 
-                    </div><!-- /aff-panel left -->
-
-                    <!-- ──────── RIGHT: AFFILIATION ──────── -->
-                    <div class="aff-panel aff-panel--right">
-
-                        <div class="aff-panel-hdr">
-                            <div class="aff-panel-icon">
-                                <?= pix('share', 16, 16) ?>
-                            </div>
-                            <div>
-                                <div class="aff-panel-title">AFFILIATION</div>
-                                <div class="aff-panel-sub">EARN COMMISSIONS ON EVERY REFERRAL</div>
-                            </div>
-                            <?php if ($aff_status === 'active'): ?>
-                            <span class="aff-status-badge aff-status-active">ACTIVE</span>
-                            <?php elseif ($aff_status === 'pending'): ?>
-                            <span class="aff-status-badge aff-status-pending">PENDING</span>
-                            <?php else: ?>
-                            <span class="aff-status-badge">NOT APPLIED</span>
-                            <?php endif; ?>
-                        </div>
-
-                        <!-- Tier + rate -->
-                        <div class="aff-tier-strip">
-                            <?php foreach ($tier_map as $k => $t): ?>
-                            <div class="aff-tier-item <?= $k === $aff_tier ? 'aff-tier-active' : '' ?>" style="--tier-c:<?= $t['color'] ?>">
-                                <div class="aff-tier-name"><?= $t['label'] ?></div>
-                                <div class="aff-tier-rate"><?= $t['rate'] ?>%</div>
-                                <div class="aff-tier-range"><?= $t['min'] ?><?= $t['max'] ? '–'.$t['max'] : '+' ?> REF/MO</div>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-
-                        <!-- KPIs -->
-                        <div class="aff-kpi-row">
-                            <div class="aff-kpi" style="--kpi-c:#06B6D4">
-                                <div class="aff-kpi-val"><?= number_format($aff_clicks) ?></div>
-                                <div class="aff-kpi-lbl">LINK CLICKS</div>
-                            </div>
-                            <div class="aff-kpi" style="--kpi-c:#10B981">
-                                <div class="aff-kpi-val"><?= $aff_conversions ?></div>
-                                <div class="aff-kpi-lbl">CONVERSIONS</div>
-                            </div>
-                            <div class="aff-kpi" style="--kpi-c:#8B5CF6">
-                                <div class="aff-kpi-val"><?= $aff_cookie_days ?>D</div>
-                                <div class="aff-kpi-lbl">COOKIE</div>
-                            </div>
-                        </div>
-
-                        <!-- Earnings block -->
-                        <div class="aff-earnings-row">
-                            <div class="aff-earn-card" style="--earn-c:#10B981">
-                                <div class="aff-earn-lbl">TOTAL EARNED</div>
-                                <div class="aff-earn-val">$<?= number_format($aff_earnings, 2) ?></div>
-                            </div>
-                            <div class="aff-earn-card" style="--earn-c:#F59E0B">
-                                <div class="aff-earn-lbl">PENDING</div>
-                                <div class="aff-earn-val">$<?= number_format($aff_pending, 2) ?></div>
-                            </div>
-                            <div class="aff-earn-card" style="--earn-c:#0EA5E9">
-                                <div class="aff-earn-lbl">PAYOUT</div>
-                                <div class="aff-earn-val">WEEKLY</div>
-                            </div>
-                        </div>
-
-                        <!-- Affiliate link -->
-                        <div class="aff-block">
-                            <div class="aff-block-lbl">YOUR AFFILIATE LINK</div>
-                            <div class="aff-code-row">
-                                <span class="aff-code-val aff-code-url" id="affLinkText"><?= htmlspecialchars(str_replace('https://', '', $aff_link)) ?></span>
-                                <button class="aff-copy-btn" onclick="AffDash.copyText('affLinkText', this)">COPY</button>
-                            </div>
-                            <div class="aff-block-hint">30-day cookie tracking · works on all challenge purchases</div>
-                        </div>
-
-                        <!-- Promo assets -->
-                        <div class="aff-block">
-                            <div class="aff-block-lbl">PROMO ASSETS</div>
-                            <div class="aff-assets-grid">
-                                <div class="aff-asset-item">
-                                    <?= pix('table',   16, 16) ?>
-                                    <span>Banners</span>
-                                    <span class="aff-asset-tag">SOON</span>
+                            <!-- KPIs -->
+                            <div class="aff-kpi-row">
+                                <div class="aff-kpi" style="--kpi-c:#06B6D4">
+                                    <div class="aff-kpi-val"><?= number_format($aff_clicks) ?></div>
+                                    <div class="aff-kpi-lbl">LINK CLICKS</div>
                                 </div>
-                                <div class="aff-asset-item">
-                                    <?= pix('monitor', 16, 16) ?>
-                                    <span>Social Kit</span>
-                                    <span class="aff-asset-tag">SOON</span>
+                                <div class="aff-kpi" style="--kpi-c:#10B981">
+                                    <div class="aff-kpi-val"><?= $aff_conversions ?></div>
+                                    <div class="aff-kpi-lbl">CONVERSIONS</div>
                                 </div>
-                                <div class="aff-asset-item">
-                                    <?= pix('tag',     16, 16) ?>
-                                    <span>Promo Codes</span>
-                                    <span class="aff-asset-tag">SOON</span>
-                                </div>
-                                <div class="aff-asset-item">
-                                    <?= pix('pen',     16, 16) ?>
-                                    <span>Ad Copy</span>
-                                    <span class="aff-asset-tag">SOON</span>
+                                <div class="aff-kpi" style="--kpi-c:#8B5CF6">
+                                    <div class="aff-kpi-val"><?= $aff_cookie_days ?>D</div>
+                                    <div class="aff-kpi-lbl">COOKIE</div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Commission details -->
-                        <div class="aff-block">
-                            <div class="aff-block-lbl">COMMISSION DETAILS</div>
-                            <div class="aff-comm-rows">
-                                <div class="aff-comm-row"><span>Current rate</span><span style="color:var(--accent)"><?= $tier['rate'] ?>%</span></div>
-                                <div class="aff-comm-row"><span>Cookie duration</span><span><?= $aff_cookie_days ?> days</span></div>
-                                <div class="aff-comm-row"><span>Payout cycle</span><span>Weekly</span></div>
-                                <div class="aff-comm-row"><span>Min. withdrawal</span><span>None</span></div>
-                                <div class="aff-comm-row"><span>Methods</span><span>Rise · Confirmo</span></div>
+                            <!-- Affiliate link -->
+                            <div class="aff-block">
+                                <div class="aff-block-lbl">YOUR AFFILIATE LINK</div>
+                                <div class="aff-code-row">
+                                    <span class="aff-code-val aff-code-url" id="affLinkText"><?= htmlspecialchars(str_replace('https://', '', $aff_link)) ?></span>
+                                    <button class="aff-copy-btn" onclick="AffDash.copyText('affLinkText', this)">COPY</button>
+                                </div>
+                                <div class="aff-block-hint">30-day cookie tracking · works on all challenge purchases</div>
                             </div>
-                        </div>
 
-                        <!-- CTA -->
-                        <?php if ($aff_status !== 'active'): ?>
-                        <div class="aff-cta-bar">
-                            <a href="affiliates.php" class="dash-btn dash-btn-primary" style="text-decoration:none">Apply to Affiliate Program</a>
-                            <a href="mailto:affiliates@dojifunding.com" class="dash-btn" style="text-decoration:none">Contact Team</a>
-                        </div>
-                        <?php else: ?>
-                        <div class="aff-cta-bar">
-                            <a href="affiliates.php" class="dash-btn" style="text-decoration:none">View Public Page</a>
-                            <a href="mailto:affiliates@dojifunding.com" class="dash-btn" style="text-decoration:none">Contact Manager</a>
-                        </div>
-                        <?php endif; ?>
+                            <!-- Promo assets -->
+                            <div class="aff-block">
+                                <div class="aff-block-lbl">PROMO ASSETS</div>
+                                <div class="aff-assets-grid">
+                                    <div class="aff-asset-item">
+                                        <?= pix('table',   16, 16) ?>
+                                        <span>Banners</span>
+                                        <span class="aff-asset-tag">SOON</span>
+                                    </div>
+                                    <div class="aff-asset-item">
+                                        <?= pix('monitor', 16, 16) ?>
+                                        <span>Social Kit</span>
+                                        <span class="aff-asset-tag">SOON</span>
+                                    </div>
+                                    <div class="aff-asset-item">
+                                        <?= pix('tag',     16, 16) ?>
+                                        <span>Promo Codes</span>
+                                        <span class="aff-asset-tag">SOON</span>
+                                    </div>
+                                    <div class="aff-asset-item">
+                                        <?= pix('pen',     16, 16) ?>
+                                        <span>Ad Copy</span>
+                                        <span class="aff-asset-tag">SOON</span>
+                                    </div>
+                                </div>
+                            </div>
 
-                    </div><!-- /aff-panel right -->
+                            <!-- Commission details -->
+                            <div class="aff-block">
+                                <div class="aff-block-lbl">COMMISSION DETAILS</div>
+                                <div class="aff-comm-rows">
+                                    <div class="aff-comm-row"><span>Current rate</span><span style="color:#10B981"><?= $tier['rate'] ?>%</span></div>
+                                    <div class="aff-comm-row"><span>Cookie duration</span><span><?= $aff_cookie_days ?> days</span></div>
+                                    <div class="aff-comm-row"><span>Payout cycle</span><span>Weekly</span></div>
+                                    <div class="aff-comm-row"><span>Min. withdrawal</span><span>None</span></div>
+                                    <div class="aff-comm-row"><span>Methods</span><span>Rise · Confirmo</span></div>
+                                </div>
+                            </div>
 
-                </div><!-- /aff-split -->
+                        </div>
+                    </div><!-- /affiliation card -->
+
+                </div><!-- /wlt-grid -->
             </div>
 
             <!-- ══ TAB: TESTIMONIALS ══ -->
