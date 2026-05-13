@@ -123,6 +123,12 @@ const Dashboard = (function() {
         const titleEl = document.getElementById('dashPageTitle');
         if (titleEl) titleEl.textContent = TAB_TITLES[tabName] || tabName;
 
+        // Init Market Intelligence on first calendar visit
+        if (tabName === 'calendar' && typeof MarketOverview !== 'undefined' && !switchTab._mktInit) {
+            switchTab._mktInit = true;
+            MarketOverview.init();
+        }
+
         // Show greeting only on overview tab
         var greetingEl = document.getElementById('dashGreeting');
         if (greetingEl) greetingEl.style.display = tabName === 'overview' ? '' : 'none';

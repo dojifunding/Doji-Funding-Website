@@ -19,6 +19,19 @@ $kycStatus  = $profile['kyc_status'] ?? 'none';
 $kycClass   = ['none' => 'kyc-none', 'pending' => 'kyc-pending', 'approved' => 'kyc-approved', 'rejected' => 'kyc-rejected'];
 $initials   = strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1));
 
+// ── Onboarding state ──────────────────────────────────────
+$onbSteps = [
+    'welcome'   => true,
+    'profile'   => !empty($profile['phone']) && !empty($profile['country']),
+    'kyc'       => ($profile['kyc_status'] ?? 'none') !== 'none',
+    'challenge' => !empty($challenges),
+    'discord'   => !empty($profile['discord_id']),
+];
+$onbCompletedCount = count(array_filter($onbSteps));
+$showOnbModal      = empty($profile['onboarding_modal_seen']);
+$showOnbChecklist  = empty($profile['onboarding_dismissed']);
+// ──────────────────────────────────────────────────────────
+
 // ── Topbar: total allocation across active + funded accounts ──
 $topbar_capital = 0;
 $topbar_pnl        = 0;
@@ -477,13 +490,13 @@ foreach ($challenges as $ch) {
                 </div>
             </button>
             <a href="https://discord.gg/kNUqAqCppU" target="_blank" rel="noopener noreferrer" class="dash-discord-btn" title="Join Doji Funding Discord">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 00-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 00-5.487 0 12.36 12.36 0 00-.617-1.23A.077.077 0 008.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 00-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 00.031.055 20.03 20.03 0 005.993 2.98.078.078 0 00.084-.026 13.83 13.83 0 001.226-1.963.074.074 0 00-.041-.104 13.201 13.201 0 01-1.872-.878.075.075 0 01-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 01.078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 01.079.009c.12.098.245.195.372.288a.075.075 0 01-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 00-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 00.084.028 19.963 19.963 0 006.002-2.981.076.076 0 00.032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 00-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
                 <span>JOIN DISCORD</span>
-                <?= pix('external', 10, 10) ?>
+                <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 00-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 00-5.487 0 12.36 12.36 0 00-.617-1.23A.077.077 0 008.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 00-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 00.031.055 20.03 20.03 0 005.993 2.98.078.078 0 00.084-.026 13.83 13.83 0 001.226-1.963.074.074 0 00-.041-.104 13.201 13.201 0 01-1.872-.878.075.075 0 01-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 01.078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 01.079.009c.12.098.245.195.372.288a.075.075 0 01-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 00-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 00.084.028 19.963 19.963 0 006.002-2.981.076.076 0 00.032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 00-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
             </a>
             <a href="index.php" class="dash-back-link">
-                dojifunding.com
-                <?= pix('external', 10, 10) ?>
+                <span class="dash-back-txt">dojifunding.com</span>
+                <img src="assets/img/doji white.svg?v=<?= ASSET_VERSION ?>" alt="Doji" class="dash-foot-logo dash-logo-dark">
+                <img src="assets/img/doji black.svg?v=<?= ASSET_VERSION ?>" alt="Doji" class="dash-foot-logo dash-logo-light">
             </a>
         </div>
 
@@ -894,10 +907,42 @@ foreach ($challenges as $ch) {
         })();
         </script>
 
+        <script>
+        (function () {
+            var sidebar  = document.querySelector('.dash-sidebar');
+            var mainWrap = document.querySelector('.dash-main-wrap');
+            var KEY      = 'doji_sidebar_collapsed';
+
+            function applyState(collapsed) {
+                if (!sidebar || !mainWrap) return;
+                sidebar.classList.toggle('nav-collapsed', collapsed);
+                mainWrap.classList.toggle('nav-collapsed', collapsed);
+            }
+
+            /* Apply immediately — sidebar + mainWrap already in DOM at this point */
+            applyState(localStorage.getItem(KEY) === '1');
+
+            /* Button is below this script in DOM — wait for DOMContentLoaded */
+            document.addEventListener('DOMContentLoaded', function () {
+                var btn = document.getElementById('sidebarToggle');
+                if (!btn) return;
+                btn.addEventListener('click', function () {
+                    var collapsed = !sidebar.classList.contains('nav-collapsed');
+                    applyState(collapsed);
+                    localStorage.setItem(KEY, collapsed ? '1' : '0');
+                });
+            });
+        })();
+        </script>
 
         <main class="dash-main" id="main-content">
 
             <div class="dash-page-head">
+                <button class="dash-sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <svg class="sidebar-toggle-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </button>
                 <h1 class="dash-page-title" id="dashPageTitle">DASHBOARD</h1>
             </div>
 
@@ -910,7 +955,7 @@ foreach ($challenges as $ch) {
                 </div>
                 <button class="dash-kyc-banner-btn" onclick="Dashboard.switchTab('settings'); Dashboard.showProfileSection('verification')">Resubmit →</button>
             </div>
-            <?php elseif ($kycStatus === 'none'): ?>
+            <?php else: ?>
             <div class="dash-kyc-banner">
                 <span class="dash-kyc-banner-icon"><?= pix('shield', 18, 18) ?></span>
                 <div class="dash-kyc-banner-text">
@@ -935,27 +980,51 @@ foreach ($challenges as $ch) {
             <!-- ══ TAB: OVERVIEW ══ -->
             <div class="dash-tab active" id="tab-overview">
 
-                <?php if ($overview['total_challenges'] == 0): ?>
-                <div class="dash-onboard">
-                    <p class="dash-onboard-title">Getting Started</p>
-                    <div class="dash-onboard-steps">
-                        <div class="dash-onboard-step" onclick="Dashboard.switchTab('settings'); Dashboard.showProfileSection('profile')">
-                            <span class="dash-onboard-num">01</span>
-                            <span class="dash-onboard-label">Complete Your Profile</span>
-                            <span class="dash-onboard-desc">Add your address, phone, and timezone so your account is ready for payouts.</span>
-                            <span class="dash-onboard-cta">Go to Profile →</span>
+                <?php if ($showOnbChecklist): ?>
+                <div class="onb-checklist" id="onbChecklist">
+                    <div class="onb-cl-header">
+                        <div>
+                            <div class="onb-cl-title">GUIDE DE DÉMARRAGE</div>
+                            <div class="onb-cl-sub"><?= $onbCompletedCount ?> / 5 ÉTAPES COMPLÉTÉES</div>
                         </div>
-                        <div class="dash-onboard-step" onclick="Dashboard.switchTab('settings'); Dashboard.showProfileSection('verification')">
-                            <span class="dash-onboard-num">02</span>
-                            <span class="dash-onboard-label">Verify Your Identity</span>
-                            <span class="dash-onboard-desc">Submit a government-issued ID. Required to receive payouts and funded account access.</span>
-                            <span class="dash-onboard-cta">Start Verification →</span>
+                        <button class="onb-cl-dismiss" onclick="Onboarding.dismissChecklist()">MASQUER ×</button>
+                    </div>
+
+                    <div class="onb-cl-progress">
+                        <?php for ($i = 0; $i < 5; $i++): ?>
+                        <div class="onb-cl-seg<?= $i < $onbCompletedCount ? ' done' : '' ?>"></div>
+                        <?php endfor; ?>
+                    </div>
+
+                    <div class="onb-cl-steps">
+                        <div class="onb-cl-step<?= $onbSteps['welcome'] ? ' done' : '' ?>">
+                            <div class="onb-cl-check"><span class="onb-cl-check-tick">✓</span></div>
+                            <span class="onb-cl-name">BIENVENUE SUR DOJI FUNDING</span>
+                            <span class="onb-cl-arrow">→</span>
                         </div>
-                        <div class="dash-onboard-step" onclick="Dashboard.switchTab('configurator')">
-                            <span class="dash-onboard-num">03</span>
-                            <span class="dash-onboard-label">Configure Your Challenge</span>
-                            <span class="dash-onboard-desc">Choose your account size, risk profile, and trading type. Price updates live as you configure.</span>
-                            <span class="dash-onboard-cta">Open Configurator →</span>
+                        <div class="onb-cl-step<?= $onbSteps['profile'] ? ' done' : '' ?>"
+                             <?= !$onbSteps['profile'] ? "onclick=\"Dashboard.switchTab('settings'); Dashboard.showProfileSection('profile')\"" : '' ?>>
+                            <div class="onb-cl-check"><span class="onb-cl-check-tick">✓</span></div>
+                            <span class="onb-cl-name">PROFIL COMPLÉTÉ</span>
+                            <span class="onb-cl-arrow">→</span>
+                        </div>
+                        <div class="onb-cl-step<?= $onbSteps['kyc'] ? ' done' : '' ?>"
+                             <?= !$onbSteps['kyc'] ? "onclick=\"Dashboard.switchTab('settings'); Dashboard.showProfileSection('verification')\"" : '' ?>>
+                            <div class="onb-cl-check"><span class="onb-cl-check-tick">✓</span></div>
+                            <span class="onb-cl-name">IDENTITÉ VÉRIFIÉE (KYC)</span>
+                            <span class="onb-cl-arrow">→</span>
+                        </div>
+                        <div class="onb-cl-step<?= $onbSteps['challenge'] ? ' done' : '' ?>"
+                             <?= !$onbSteps['challenge'] ? "onclick=\"Dashboard.switchTab('configurator')\"" : '' ?>>
+                            <div class="onb-cl-check"><span class="onb-cl-check-tick">✓</span></div>
+                            <span class="onb-cl-name">PREMIER CHALLENGE LANCÉ</span>
+                            <span class="onb-cl-arrow">→</span>
+                        </div>
+                        <div class="onb-cl-step<?= $onbSteps['discord'] ? ' done' : '' ?>"
+                             <?= !$onbSteps['discord'] ? "onclick=\"window.open('https://discord.gg/kNUqAqCppU','_blank')\"" : '' ?>>
+                            <div class="onb-cl-check"><span class="onb-cl-check-tick">✓</span></div>
+                            <span class="onb-cl-name">DISCORD REJOINT</span>
+                            <span class="onb-cl-arrow">→</span>
                         </div>
                     </div>
                 </div>
@@ -3772,16 +3841,16 @@ foreach ($challenges as $ch) {
 
                 <!-- ── LIFETIME PAYOUT ── -->
                 <div class="cert-section">
+                    <?php
+                    $ltLocked = $certTotal <= 0;
+                    $ltAccent = $ltLocked ? 'rgba(255,255,255,0.25)' : $gradeColor;
+                    ?>
                     <div class="cert-section-hdr">
-                        <span class="cert-section-dot" style="background:#10B981"></span>
+                        <span class="cert-section-dot" style="background:<?= $ltAccent ?>"></span>
                         LIFETIME PAYOUT
                         <span class="cert-section-count">1</span>
                     </div>
                     <div class="cert-grid">
-                        <?php
-                        $ltLocked = $certTotal <= 0;
-                        $ltAccent = $ltLocked ? 'rgba(255,255,255,0.25)' : $gradeColor;
-                        ?>
                         <div class="cert-card<?= $ltLocked ? ' cert-card--locked' : '' ?>" style="--cert-accent:<?= $ltAccent ?>">
                             <div class="cert-card-top">
                                 <span class="cert-badge" style="color:<?= $ltAccent ?>;border-color:<?= $ltLocked ? 'rgba(255,255,255,0.12)' : 'rgba(16,185,129,.28)' ?>;background:<?= $ltLocked ? 'rgba(255,255,255,0.04)' : 'rgba(16,185,129,.07)' ?>">
@@ -4059,6 +4128,61 @@ foreach ($challenges as $ch) {
                 </div><!-- /cal-split-right -->
 
             </div><!-- /cal-split-layout -->
+
+            <!-- ══ MARKET INTELLIGENCE ══ -->
+            <div class="mkt-panel" id="mktPanel">
+                <div class="mkt-header">
+                    <div class="mkt-header-left">
+                        <span class="mkt-title">MARKET INTELLIGENCE</span>
+                        <span class="mkt-subtitle">AI MULTI-AGENT ANALYSIS · 6 SPECIALISTS</span>
+                    </div>
+                    <div class="mkt-header-right">
+                        <span class="mkt-stale-badge" id="mktStaleBadge" style="display:none">STALE</span>
+                        <span class="mkt-age" id="mktAge">—</span>
+                        <button class="mkt-refresh-btn" id="mktRefresh" onclick="MarketOverview.refresh()">
+                            <?= pix('refresh', 11, 11) ?> REFRESH
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading -->
+                <div class="mkt-loading" id="mktLoading">
+                    <span class="mkt-loading-dot"></span>
+                    <span class="mkt-loading-txt">ANALYZING MARKET CONDITIONS...</span>
+                </div>
+
+                <!-- Content -->
+                <div id="mktContent" style="display:none">
+                    <div class="mkt-verdict-row">
+                        <div class="mkt-regime-col">
+                            <div class="mkt-col-label">REGIME</div>
+                            <div class="mkt-regime-val" id="mktRegime">—</div>
+                            <div class="mkt-col-label" style="margin-top:18px">CONVICTION</div>
+                            <div class="mkt-seg-bar" id="mktConvictionSegs"></div>
+                            <div class="mkt-conviction-score" id="mktConvictionScore">—</div>
+                        </div>
+                        <div class="mkt-reasoning-col">
+                            <div class="mkt-col-label">ANALYSIS</div>
+                            <p class="mkt-reasoning-txt" id="mktReasoning">—</p>
+                        </div>
+                    </div>
+
+                    <div class="mkt-agents-hdr">
+                        <span class="mkt-col-label">AGENT OPINIONS</span>
+                    </div>
+                    <div class="mkt-agents-grid" id="mktAgentsGrid"></div>
+
+                    <div class="mkt-footer-row">
+                        DATA · YAHOO FINANCE · FEAR &amp; GREED INDEX · REFRESHES EVERY <?= AI_MARKET_CACHE_MIN ?> MIN
+                    </div>
+                </div>
+
+                <!-- Error -->
+                <div class="mkt-error" id="mktError" style="display:none">
+                    <span class="mkt-error-txt" id="mktErrorTxt">Analysis unavailable.</span>
+                </div>
+            </div><!-- /mkt-panel -->
+
             </div><!-- /tab-calendar -->
 
             <!-- ══ TAB: AFFILIATE ══ -->
@@ -5150,3 +5274,79 @@ $tier = $tier_map[$aff_tier];
         </div>
     </div>
 </div>
+
+<?php if ($showOnbModal): ?>
+<!-- ══ ONBOARDING MODAL ══ -->
+<div class="onb-overlay" id="onbOverlay">
+    <div class="onb-modal">
+
+        <div class="onb-header">
+            <div class="onb-header-left">
+                <div class="onb-dot active" id="onbDot0"></div>
+                <div class="onb-dot" id="onbDot1"></div>
+                <div class="onb-dot" id="onbDot2"></div>
+                <div class="onb-dot" id="onbDot3"></div>
+                <div class="onb-dot" id="onbDot4"></div>
+                <span class="onb-step-label" id="onbStepLabel">ÉTAPE 1 / 5</span>
+            </div>
+            <button class="onb-skip-btn" onclick="Onboarding.skip()">IGNORER ×</button>
+        </div>
+
+        <!-- Étape 1 : Bienvenue -->
+        <div class="onb-step-panel" id="onbStep0">
+            <div class="onb-body">
+                <div class="onb-step-num">01 · BIENVENUE</div>
+                <div class="onb-step-title">Bienvenue,<br><?= htmlspecialchars($user['first_name']) ?>&nbsp;!</div>
+                <p class="onb-step-desc">Doji Funding est une société de trading propriétaire. Prouve tes compétences, obtiens un compte financé et partage les profits jusqu'à 90&nbsp;%. Ce guide te prépare en 5&nbsp;étapes rapides.</p>
+            </div>
+        </div>
+
+        <!-- Étape 2 : Profil -->
+        <div class="onb-step-panel" id="onbStep1" style="display:none">
+            <div class="onb-body">
+                <div class="onb-step-num">02 · PROFIL</div>
+                <div class="onb-step-title">Complète<br>ton profil</div>
+                <p class="onb-step-desc">Renseigne ton adresse, numéro de téléphone et pays. Ces informations sont requises pour activer les paiements et accéder à ton compte financé.</p>
+                <a class="onb-action-link" onclick="Onboarding.skip(); Dashboard.switchTab('settings'); Dashboard.showProfileSection('profile')">ALLER AU PROFIL →</a>
+            </div>
+        </div>
+
+        <!-- Étape 3 : KYC -->
+        <div class="onb-step-panel" id="onbStep2" style="display:none">
+            <div class="onb-body">
+                <div class="onb-step-num">03 · VÉRIFICATION</div>
+                <div class="onb-step-title">Vérifie ton<br>identité</div>
+                <p class="onb-step-desc">Soumets une pièce d'identité officielle (passeport, carte d'identité). Requis pour être éligible aux payouts et à l'accès compte financé.</p>
+                <a class="onb-action-link" onclick="Onboarding.skip(); Dashboard.switchTab('settings'); Dashboard.showProfileSection('verification')">SOUMETTRE KYC →</a>
+            </div>
+        </div>
+
+        <!-- Étape 4 : Challenge -->
+        <div class="onb-step-panel" id="onbStep3" style="display:none">
+            <div class="onb-body">
+                <div class="onb-step-num">04 · CHALLENGE</div>
+                <div class="onb-step-title">Lance ton<br>premier challenge</div>
+                <p class="onb-step-desc">Configure ton compte de trading — taille, profil de risque et type. Les prix se mettent à jour en temps réel. Lance ta carrière de trader financé dès aujourd'hui.</p>
+                <a class="onb-action-link" onclick="Onboarding.skip(); Dashboard.switchTab('configurator')">OUVRIR LE CONFIGURATEUR →</a>
+            </div>
+        </div>
+
+        <!-- Étape 5 : Discord -->
+        <div class="onb-step-panel" id="onbStep4" style="display:none">
+            <div class="onb-body">
+                <div class="onb-step-num">05 · COMMUNAUTÉ</div>
+                <div class="onb-step-title">Rejoins la<br>communauté</div>
+                <p class="onb-step-desc">Support en temps réel, annonces exclusives et communauté de traders ambitieux. Rejoins le Discord officiel Doji Funding et échange avec des milliers de traders.</p>
+                <a class="onb-action-link" href="https://discord.gg/kNUqAqCppU" target="_blank" rel="noopener">REJOINDRE DISCORD →</a>
+            </div>
+        </div>
+
+        <div class="onb-footer">
+            <button class="onb-back-btn" id="onbBack" onclick="Onboarding.back()" style="visibility:hidden">← RETOUR</button>
+            <button class="onb-next-btn" id="onbNext" onclick="Onboarding.next()">SUIVANT →</button>
+        </div>
+
+    </div>
+</div>
+<script>document.addEventListener('DOMContentLoaded', function(){ Onboarding.init(); });</script>
+<?php endif; ?>

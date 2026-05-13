@@ -12,6 +12,9 @@ Thumbs.db
 .env
 .env.local
 
+# Local secrets (API keys, OAuth secrets — never commit)
+config/secrets.local.php
+
 # Logs
 *.log
 error_log
@@ -26,8 +29,10 @@ package-lock.json
 # Large binaries
 assets/img/hero-video.mp4
 
-# Database dumps
+# Database dumps (allow versioned migrations)
 *.sql
+!database/migration_*.sql
+!database/schema.sql
 
 # Uploads
 uploads/

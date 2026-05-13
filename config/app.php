@@ -1,10 +1,15 @@
 <?php
 /**
  * Doji Funding — Global Application Config
- * 
+ *
  * Central configuration for site-wide settings.
- * Edit these values to update across all pages.
+ * Secrets (API keys, OAuth secrets) live in config/secrets.local.php — never committed.
  */
+
+// Load local secrets before constants are defined (not committed to git)
+if (file_exists(__DIR__ . '/secrets.local.php')) {
+    require_once __DIR__ . '/secrets.local.php';
+}
 
 define('SITE_NAME', 'Doji Funding®');
 define('SITE_URL', 'https://dojifunding.com');
@@ -12,7 +17,7 @@ define('SITE_TAGLINE', 'Trade Your Way. Get Funded.');
 define('SITE_YEAR', '2026');
 
 // Version (for cache busting CSS/JS/images)
-define('ASSET_VERSION', '542');
+define('ASSET_VERSION', '558');
 
 // Branding
 define('BRAND_COLOR_GREEN', '#10B981');
@@ -25,11 +30,17 @@ define('STAT_FUNDED_TRADERS', '4,200+');
 define('STAT_PAID_OUT', '$12M+');
 define('STAT_SUPPORT', '24/7');
 
-// Discord OAuth2
-define('DISCORD_CLIENT_ID',     '1502242627205070919');
-define('DISCORD_CLIENT_SECRET', 'Qj7JjSL-MuhvlA0uCnhLiHoD_f7-iiM2');
-define('DISCORD_REDIRECT_URI',  'https://revenge-pegboard-onslaught.ngrok-free.dev/discord-callback');
-define('BOT_SECRET',            'b9153306e12ae4a139332f5cf1a9d8a6746cbfb267ae7bac94c05d54e777308f');
+// Discord OAuth2 — secrets in secrets.local.php
+define('DISCORD_CLIENT_ID',    '1502242627205070919');
+defined('DISCORD_CLIENT_SECRET') || define('DISCORD_CLIENT_SECRET', '');
+define('DISCORD_REDIRECT_URI', 'https://dojifunding.com/discord-callback');
+defined('BOT_SECRET')            || define('BOT_SECRET', '');
+
+// AI — Market Intelligence — key in secrets.local.php
+define('AI_PROVIDER',         'claude');           // 'claude' or 'openai'
+defined('AI_API_KEY')          || define('AI_API_KEY', '');
+define('AI_MODEL',            'claude-haiku-4-5-20251001');
+define('AI_MARKET_CACHE_MIN', 30);
 
 // Account limits
 define('MIN_ACCOUNT', 5000);
